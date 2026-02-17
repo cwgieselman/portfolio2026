@@ -1,8 +1,4 @@
 pageKey: "bmtx-nextgen"
-figma:
-  fileKey: "TODO:fileKey"
-  nodeId: "215:227"
-  fetchedAt: "TODO:fetchedAt"
 sections:
   - sectionKey: "section-01"
     mode: "composite"
@@ -13,9 +9,11 @@ sections:
             includes:
               - include: "components/header.njk"
                 params:
+                  level: "h1"
                   headline: "BMTx Banking as a Service Platform"
+                  showEyebrow: false
+                  showSubhead: true
                   subhead: "Design Foundations for a Regulated Financial Platform"
-                  eyebrow: "Eyebrow Text Eyebrow Text"
           - wrapper: "text--bmtx-nextgen--p1--contentcell-2"
             includes:
               - include: "components/text-block.njk"
@@ -49,8 +47,10 @@ sections:
             includes:
               - include: "components/header.njk"
                 params:
+                  level: "h2"
                   headline: "Turning design intent into build-ready specification"
-                  subhead: "Design Foundations for a Regulated Financial Platform"
+                  showEyebrow: true
+                  showSubhead: false
                   eyebrow: "BMTx Banking as a Service platform"
           - wrapper: "figure--bmtx-nextgen--p3--contentcell-3"
             includes:
@@ -89,8 +89,10 @@ sections:
             includes:
               - include: "components/header.njk"
                 params:
+                  level: "h2"
                   headline: "Reaching system readiness"
-                  subhead: "Design Foundations for a Regulated Financial Platform"
+                  showEyebrow: true
+                  showSubhead: false
                   eyebrow: "BMTx Banking as a Service platform"
           - wrapper: "figure--bmtx-nextgen--p4--contentcell-3"
             includes:

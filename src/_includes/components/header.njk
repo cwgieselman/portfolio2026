@@ -1,41 +1,47 @@
 {#
-  Header Component — top-level param API (Figma truth, no TODO output)
+  Header Component — top-level param API
 
-  Expects:
+  Params:
   - id (optional)
   - level (optional): "h1" | "h2" (default "h1")
-  - headline (optional): string
-
-  - showEyebrow (optional): boolean (if missing, inferred from eyebrow presence)
-  - eyebrow (optional): string
-
-  - showSubhead (optional): boolean (if missing, inferred from subhead presence)
-  - subhead (optional): string
+  - headline (required)
+  - showEyebrow (optional): boolean (default false)
+  - eyebrow (optional)
+  - showSubhead (optional): boolean (default false)
+  - subhead (optional)
 #}
 
 {% set hId = id %}
 {% set hLevel = level | default("h1") %}
 
-{% set showEyebrowResolved = (showEyebrow if showEyebrow is not undefined else (eyebrow and eyebrow | length)) %}
-{% set showSubheadResolved = (showSubhead if showSubhead is not undefined else (subhead and subhead | length)) %}
+{# optional element gates: default false if not provided #}
+{% set showEyebrowResolved = (showEyebrow | default(false)) %}
+{% set showSubheadResolved = (showSubhead | default(false)) %}
+
+{# normalize strings #}
+{% set headlineText = (headline | default("") | trim) %}
+{% set eyebrowText = (eyebrow | default("") | trim) %}
+{% set subheadText  = (subhead  | default("") | trim) %}
 
 <div class="header">
 
-  {% if showEyebrowResolved and eyebrow %}
-    <p class="header__eyebrow">{{ eyebrow }}</p>
+  {% if showEyebrowResolved and eyebrowText %}
+    <p class="header__eyebrow">{{ eyebrowText }}</p>
   {% endif %}
 
-  {% if headline %}
+  {% if headlineText %}
     <{{ hLevel }}
       class="header__headline"
       {% if hId %}id="{{ hId }}"{% endif %}
     >
-      {{ headline }}
+      {{ headlineText }}
     </{{ hLevel }}>
+  {% else %}
+    <!-- HEADER ERROR: missing required param "headline" -->
   {% endif %}
 
-  {% if showSubheadResolved and subhead %}
-    <p class="header__subhead">{{ subhead }}</p>
+  {% if showSubheadResolved and subheadText %}
+    <p class="header__subhead">{{ subheadText }}</p>
   {% endif %}
 
 </div>

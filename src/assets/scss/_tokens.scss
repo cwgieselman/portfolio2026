@@ -80,23 +80,23 @@
 
     /* Shape - Corner Radius */
     --corner-none: 0;
-    --corner-xxs: var(--scale--25);
-    --corner-xs: var(--scale--50);
-    --corner-s: var(--scale--75);
-    --corner-m: var(--scale--100);
-    --corner-xl: var(--scale--150);
-    --corner-xxl: var(--scale--200);
+    --corner-xxs: var(--scale-25);
+    --corner-xs: var(--scale-50);
+    --corner-s: var(--scale-75);
+    --corner-m: var(--scale-100);
+    --corner-xl: var(--scale-150);
+    --corner-xxl: var(--scale-200);
     --corner-full: 1000px;
 
     /* Spacing */
-    --spacing-xxs: var(--scale--25);
-    --spacing-xs: var(--scale--50);
-    --spacing-s: var(--scale--75);
-    --spacing-m: var(--scale--100);
-    --spacing-l: var(--scale--125);
-    --spacing-xl: var(--scale--150);
-    --spacing-xxl: var(--scale--200);
-    --spacing-xxxl: var(--scale--250);
+    --spacing-xxs: var(--scale-25);
+    --spacing-xs: var(--scale-50);
+    --spacing-s: var(--scale-75);
+    --spacing-m: var(--scale-100);
+    --spacing-l: var(--scale-125);
+    --spacing-xl: var(--scale-150);
+    --spacing-xxl: var(--scale-200);
+    --spacing-xxxl: var(--scale-250);
 
     /* Effects <!-- TODO: make tokenize this --> */
     --elevation---one: 0px 2px 12px rgba(6, 31, 56, 1);
