@@ -123,12 +123,23 @@ PARAM EXTRACTION RULES (by include)
 - hasAlt: true only if alt is not TODO and not empty
 - If missing caption: omit (do not invent)
 
-4) components/link-block.njk params:
-- links: array of { text, href }
-- text: raw link label text
-- href: ONLY if explicitly present in the JSON (e.g., in a URL text node). Otherwise "TODO:href"
-- If there are N links with labels but no hrefs, emit N entries with TODO hrefs.
-- If no links found: links: [] and report warning.
+4.0) components/link-block.njk params (contract):
+- hasSecondary: boolean
+- primary: object with keys { priority, label, URL, link }
+- secondary: object with keys { priority, label, URL, link } (only when hasSecondary true)
+
+4.1) Extraction rules:
+- Derive primary from the nested instance "link--primary".
+- Derive secondary from the nested instance "link--secondary".
+- Map Figma link props to YAML keys exactly:
+  - priority -> "Primary" or "Secondary"
+  - label -> label text
+  - URL -> URL string (if absent, omit URL)
+  - link -> anchor text string
+
+- Do not emit placeholder strings like "TODO:href".
+- If URL is missing for a link, omit URL so `components/link.njk` renders the disabled span.
+
 
 5) multi includes:
 - Emit both includes in the order specified in renderSpec.

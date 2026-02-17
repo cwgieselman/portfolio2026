@@ -49,6 +49,33 @@ Build command:
 
 ---
 
+## Branch Naming Convention
+
+Branches follow this format:
+  `<key>/<4-5-word-kebab-description>`
+
+Examples:
+- `stabilize/link-block-contract`
+- `build/inficon-case-layout`
+- `experiment/prototype-grid-variants`
+
+### Branch Keys
+
+| Key         | Purpose |
+|------------|---------|
+| `rehab/`    | Initial barrage of fixes to restore structural integrity and eliminate drift |
+| `stabilize/`| Contract alignment and systemic corrections |
+| `build/`    | New feature work |
+| `experiment/` | Prototypes, explorations, non-permanent ideas |
+
+Notes:
+- Use short, descriptive kebab-case after the slash.
+- No spaces.
+- No long sentences.
+- Branch name should describe the structural intent, not the emotional state.
+
+---
+
 ## Project Conventions
 
 - Only one rendering pipeline is active (compiled-page system).
@@ -58,11 +85,49 @@ Build command:
 
 ---
 
-## Fix Log
+## Component API: Links
 
-This section records each repair commit in order.
+### `components/link.njk`
 
-### Commit 1 – Repository Initialization
-- Quarantined legacy pages and alternate render paths.
-- Preserved only `/portfolio/bmtx-nextgen/` as active page.
-- Established deterministic pipeline structure.
+Top-level params:
+
+| Param      | Required | Description |
+|------------|----------|-------------|
+| `priority` | No       | `"Primary"` or `"Secondary"` (default `"Primary"`) |
+| `label`    | No       | Small label text above link text (default `"Link"`) |
+| `URL`      | No       | If present → renders `<a>`; if absent → renders disabled `<span>` |
+| `link`     | No       | Main link text (anchor text) |
+
+Behavior:
+- If `URL` exists → clickable `<a>`
+- If `URL` missing/empty → disabled `<span>` with `aria-disabled="true"`
+- No placeholder strings are emitted
+
+
+---
+
+### `components/link-block.njk`
+
+Top-level params:
+
+| Param          | Required | Description |
+|----------------|----------|-------------|
+| `hasSecondary` | No       | Boolean controlling whether secondary link is rendered |
+| `primary`      | Yes (in practice) | Object passed directly to `link.njk` |
+| `secondary`    | Only if `hasSecondary: true` | Object passed directly to `link.njk` |
+
+Object shape:
+
+```yaml
+primary:
+  priority: "Primary"
+  label: "Link"
+  URL: "https://example.com"
+  link: "Descriptive link text"
+  
+Rules:
+- link-block does not accept links: []
+- Links are role-based (primary, secondary), not array-based
+- Missing URL results in disabled rendering via link.njk
+
+---
