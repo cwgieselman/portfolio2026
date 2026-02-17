@@ -29,7 +29,7 @@ sections:
                 params:
                   body: |
                     Because growth strategy necessitated the ability to scale and customize instances rapidly, an initiative dubbed NextGen was planned to replace the legacy system with a modular web app.
-                    
+
                     Existing UI and workflow artifacts conveyed design intent and were sufficient for designing individual features but needed to be normalized, then systemized to serve as build-ready design specifications for NextGen.
                   subhead: "Consistency becomes a Requirement"
           - wrapper: "figure--bmtx-nextgen--p2--contentcell-2"
@@ -38,7 +38,7 @@ sections:
                 params:
                   caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
                   src: "TODO:src"
-                  alt: "Image description for assistive technology. If this is blank the image will be marked as  role=\"presentation\"."
+                  alt: 'Image description for assistive technology. If this is blank the image will be marked as  role="presentation".'
                   hasAlt: true
   - sectionKey: "section-02"
     mode: "normal"
@@ -58,7 +58,7 @@ sections:
                 params:
                   caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
                   src: "TODO:src"
-                  alt: "Image description for assistive technology. If this is blank the image will be marked as  role=\"presentation\"."
+                  alt: 'Image description for assistive technology. If this is blank the image will be marked as  role="presentation".'
                   hasAlt: true
           - wrapper: "multi--bmtx-nextgen--p3--contentcell-2"
             includes:
@@ -69,14 +69,17 @@ sections:
                     Consolidate, then normalize existing design intent.
                     Translate that intent into build-ready specs.
                     Use those specs to establish a component library.
-                    
+
                     My near-term task was to create a Design System capable of allowing my teammates to reconstruct the platform artifacts in Figma.
                   subhead: "Before the Platform Could Support the Roadmap"
               - include: "components/link-block.njk"
                 params:
-                  links:
-                    - text: "Extracting Design Intent from Legacy Axure"
-                      href: "https://www.craiggieselman.com"
+                  hasSecondary: false
+                  primary:
+                    priority: "Primary"
+                    label: "Link"
+                    URL: "https://www.craiggieselman.com"
+                    link: "Extracting Design Intent from Legacy Axure"
   - sectionKey: "section-03"
     mode: "normal"
     pages:
@@ -95,7 +98,7 @@ sections:
                 params:
                   caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
                   src: "TODO:src"
-                  alt: "Image description for assistive technology. If this is blank the image will be marked as  role=\"presentation\"."
+                  alt: 'Image description for assistive technology. If this is blank the image will be marked as  role="presentation".'
                   hasAlt: true
           - wrapper: "text--bmtx-nextgen--p4--contentcell-2"
             includes:
@@ -103,8 +106,16 @@ sections:
                 params:
                   body: |
                     Once the foundation of the Library was established, a teammate migrated the platform’s ~200 screens to Figma in about a week using the defined variables and components.
-                    
+
                     Use of the Library also eliminated most of the inconsistency present in the legacy artifacts, resulting in a tighter, more consistent interface.
-                    
+
                     These gains demonstrated that the system had reached a level of completeness to warrant engineering handoff, even as it continued to evolve.
                   subhead: "Before the Platform Could Support the Roadmap"
+              - include: "components/link-block.njk"
+                params:
+                  hasSecondary: false
+                  primary:
+                    priority: "Primary"
+                    label: "Link"
+                    URL: "https://www.craiggieselman.com"
+                    link: "Design System Architecture at Handoff"

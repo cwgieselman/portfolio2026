@@ -1,9 +1,16 @@
 {% set wrapper = cell.wrapper %}
 
+
+
+
+
+
 <div class="content-cell" data-cell="{{ wrapper }}">
   {% if cell.includes and (cell.includes | length) %}
     {% for item in cell.includes %}
       {% if item.include %}
+
+        {% set params = item.params or {} %}
 
         {# Reset scoped vars to prevent leakage across cells/includes #}
         {% set id = null %}
@@ -32,7 +39,6 @@
         {% set alt = null %}
         {% set sizes = null %}
 
-        {% set params = item.params or {} %}
         {# Map params into scope (top-level) #}
         {% set id = params.id %}
         {% set level = params.level %}
