@@ -103,3 +103,47 @@ Each fix must:
 - Address exactly one failure.
 - Be committed independently.
 - Be logged in README.
+
+
+
+
+## Link Component Contract
+
+### 1. `link.njk`
+
+Input contract:
+- priority?: "Primary" | "Secondary"
+- label?: string
+- URL?: string
+- link?: string
+
+Rendering contract:
+- If `URL` is present → `<a>`
+- If `URL` is absent → `<span aria-disabled="true">`
+- No TODO markers or placeholder URLs permitted
+
+---
+
+### 2. `link-block.njk`
+
+Input contract:
+- hasSecondary?: boolean
+- primary: { priority, label, URL, link }
+- secondary?: { priority, label, URL, link }
+
+Rules:
+- `primary` is rendered unconditionally if present.
+- `secondary` is rendered only if `hasSecondary === true`.
+- `links: []` is invalid and must not be emitted by the compiler.
+- YAML must not contain placeholder values (e.g., "TODO:href").
+
+---
+
+### Compiler Rule (Figma → YAML)
+
+For link-block instances:
+
+- Map `link--primary` to `primary`
+- Map `link--secondary` to `secondary`
+- Emit `hasSecondary: true` only when secondary exists
+- Omit `URL` if not explicitly defined in Figma JSON
