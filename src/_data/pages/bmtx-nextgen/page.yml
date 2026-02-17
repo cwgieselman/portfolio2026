@@ -1,0 +1,110 @@
+pageKey: "bmtx-nextgen"
+figma:
+  fileKey: "TODO:fileKey"
+  nodeId: "215:227"
+  fetchedAt: "TODO:fetchedAt"
+sections:
+  - sectionKey: "section-01"
+    mode: "composite"
+    pages:
+      - pageKey: "page-01"
+        cells:
+          - wrapper: "header--bmtx-nextgen--p1--contentcell-1"
+            includes:
+              - include: "components/header.njk"
+                params:
+                  headline: "BMTx Banking as a Service Platform"
+                  subhead: "Design Foundations for a Regulated Financial Platform"
+                  eyebrow: "Eyebrow Text Eyebrow Text"
+          - wrapper: "text--bmtx-nextgen--p1--contentcell-2"
+            includes:
+              - include: "components/text-block.njk"
+                params:
+                  body: "BM Technologies (BMTx) provides digital banking services to higher education and enterprise institutions. Its Banking-as-a-Service (BaaS) platform enables customers to offer checking and savings accounts to their end users through a partner bank, without assuming direct regulatory responsibility."
+      - pageKey: "page-02"
+        cells:
+          - wrapper: "text--bmtx-nextgen--p2--contentcell-1"
+            includes:
+              - include: "components/text-block.njk"
+                params:
+                  body: |
+                    Because growth strategy necessitated the ability to scale and customize instances rapidly, an initiative dubbed NextGen was planned to replace the legacy system with a modular web app.
+                    
+                    Existing UI and workflow artifacts conveyed design intent and were sufficient for designing individual features but needed to be normalized, then systemized to serve as build-ready design specifications for NextGen.
+                  subhead: "Consistency becomes a Requirement"
+          - wrapper: "figure--bmtx-nextgen--p2--contentcell-2"
+            includes:
+              - include: "components/figure.njk"
+                params:
+                  caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
+                  src: "TODO:src"
+                  alt: "Image description for assistive technology. If this is blank the image will be marked as  role=\"presentation\"."
+                  hasAlt: true
+  - sectionKey: "section-02"
+    mode: "normal"
+    pages:
+      - pageKey: "page-01"
+        cells:
+          - wrapper: "header--bmtx-nextgen--p3--contentcell-1"
+            includes:
+              - include: "components/header.njk"
+                params:
+                  headline: "Turning design intent into build-ready specification"
+                  subhead: "Design Foundations for a Regulated Financial Platform"
+                  eyebrow: "BMTx Banking as a Service platform"
+          - wrapper: "figure--bmtx-nextgen--p3--contentcell-3"
+            includes:
+              - include: "components/figure.njk"
+                params:
+                  caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
+                  src: "TODO:src"
+                  alt: "Image description for assistive technology. If this is blank the image will be marked as  role=\"presentation\"."
+                  hasAlt: true
+          - wrapper: "multi--bmtx-nextgen--p3--contentcell-2"
+            includes:
+              - include: "components/text-block.njk"
+                params:
+                  body: |
+                    My role at this point was specific:
+                    Consolidate, then normalize existing design intent.
+                    Translate that intent into build-ready specs.
+                    Use those specs to establish a component library.
+                    
+                    My near-term task was to create a Design System capable of allowing my teammates to reconstruct the platform artifacts in Figma.
+                  subhead: "Before the Platform Could Support the Roadmap"
+              - include: "components/link-block.njk"
+                params:
+                  links:
+                    - text: "Extracting Design Intent from Legacy Axure"
+                      href: "https://www.craiggieselman.com"
+  - sectionKey: "section-03"
+    mode: "normal"
+    pages:
+      - pageKey: "page-01"
+        cells:
+          - wrapper: "header--bmtx-nextgen--p4--contentcell-1"
+            includes:
+              - include: "components/header.njk"
+                params:
+                  headline: "Reaching system readiness"
+                  subhead: "Design Foundations for a Regulated Financial Platform"
+                  eyebrow: "BMTx Banking as a Service platform"
+          - wrapper: "figure--bmtx-nextgen--p4--contentcell-3"
+            includes:
+              - include: "components/figure.njk"
+                params:
+                  caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
+                  src: "TODO:src"
+                  alt: "Image description for assistive technology. If this is blank the image will be marked as  role=\"presentation\"."
+                  hasAlt: true
+          - wrapper: "text--bmtx-nextgen--p4--contentcell-2"
+            includes:
+              - include: "components/text-block.njk"
+                params:
+                  body: |
+                    Once the foundation of the Library was established, a teammate migrated the platform’s ~200 screens to Figma in about a week using the defined variables and components.
+                    
+                    Use of the Library also eliminated most of the inconsistency present in the legacy artifacts, resulting in a tighter, more consistent interface.
+                    
+                    These gains demonstrated that the system had reached a level of completeness to warrant engineering handoff, even as it continued to evolve.
+                  subhead: "Before the Platform Could Support the Roadmap"

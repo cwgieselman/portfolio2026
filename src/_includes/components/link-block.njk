@@ -1,0 +1,28 @@
+{#
+  Link-Block — top-level param API (no TODO output)
+
+  Expects:
+  - hasSecondary (optional): boolean
+  - primary (optional): { priority, label, URL, link }
+  - secondary (optional): { priority, label, URL, link }
+#}
+
+<div class="link-block">
+
+  {% if primary %}
+    {% set priority = primary.priority %}
+    {% set label = primary.label %}
+    {% set URL = primary.URL %}
+    {% set link = primary.link %}
+    {% include "components/link.njk" %}
+  {% endif %}
+
+  {% if hasSecondary and secondary %}
+    {% set priority = secondary.priority %}
+    {% set label = secondary.label %}
+    {% set URL = secondary.URL %}
+    {% set link = secondary.link %}
+    {% include "components/link.njk" %}
+  {% endif %}
+
+</div>

@@ -1,0 +1,22 @@
+{# Figure Component ./src/components/figure.njk #}
+
+{% set figureType = type | default("Desktop") %}
+{% set showCaption = (showCaption if showCaption is not undefined else true) %}
+{% set imageSizes = sizes | default("(max-width: 900px) 100vw, 900px") %}
+
+{# FPO source when missing OR blank #}
+{% set finalSrc = (src if src and (src | length) else "/assets/images/figure-placeholder.jpg") %}
+
+{# Presentational unless explicit alt provided #}
+{% set hasAltResolved = (hasAlt if hasAlt is not undefined else (alt and alt | length)) %}
+{% set altValue = (alt if hasAltResolved else "") %}
+
+<figure class="figure figure--{{ figureType | lower }}">
+  <div class="figure__media">
+    {% image finalSrc, altValue, imageSizes %}
+  </div>
+
+  {% if showCaption and caption %}
+    <figcaption class="figure__caption">{{ caption }}</figcaption>
+  {% endif %}
+</figure>

@@ -1,0 +1,6 @@
+{# layouts/page.njk #}
+<div class="layout__page" data-page="{{ pageId }}">
+  {% for cell in cells %}
+    {% include "layouts/content-cell.njk" %}
+  {% endfor %}
+</div>

@@ -1,0 +1,18 @@
+{# layouts/section.njk #}
+{% set firstWrapper = section.pages[0].cells[0].wrapper %}
+
+{% if not (firstWrapper and firstWrapper.startsWith("header--")) %}
+  {{ does_not_exist.strict_section_rule_failed }}
+{% endif %}
+
+{% set sectionLabelId = firstWrapper.replace("header--", "") %}
+
+<section
+  class="layout__section"
+  data-section="{{ section.id }}"
+  aria-labelledby="{{ sectionLabelId }}"
+>
+  {% for page in section.pages %}
+    {% include "layouts/page.njk" %}
+  {% endfor %}
+</section>

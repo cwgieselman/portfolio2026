@@ -1,0 +1,68 @@
+{% set wrapper = cell.wrapper %}
+
+<div class="content-cell" data-cell="{{ wrapper }}">
+  {% if cell.includes and (cell.includes | length) %}
+    {% for item in cell.includes %}
+      {% if item.include %}
+
+        {# Reset scoped vars to prevent leakage across cells/includes #}
+        {% set id = null %}
+        {% set level = null %}
+        {% set headline = null %}
+        {% set eyebrow = null %}
+        {% set showEyebrow = null %}
+        {% set subhead = null %}
+        {% set showSubhead = null %}
+
+        {% set body = null %}
+
+        {% set priority = null %}
+        {% set label = null %}
+        {% set URL = null %}
+        {% set link = null %}
+        {% set hasSecondary = null %}
+        {% set primary = null %}
+        {% set secondary = null %}
+
+        {% set type = null %}
+        {% set showCaption = null %}
+        {% set caption = null %}
+        {% set src = null %}
+        {% set hasAlt = null %}
+        {% set alt = null %}
+        {% set sizes = null %}
+
+        {% set params = item.params or {} %}
+        {# Map params into scope (top-level) #}
+        {% set id = params.id %}
+        {% set level = params.level %}
+        {% set headline = params.headline %}
+        {% set eyebrow = params.eyebrow %}
+        {% set showEyebrow = params.showEyebrow %}
+        {% set subhead = params.subhead %}
+        {% set showSubhead = params.showSubhead %}
+
+        {% set body = params.body %}
+
+        {% set priority = params.priority %}
+        {% set label = params.label %}
+        {% set URL = params.URL %}
+        {% set link = params.link %}
+        {% set hasSecondary = params.hasSecondary %}
+        {% set primary = params.primary %}
+        {% set secondary = params.secondary %}
+
+        {% set type = params.type %}
+        {% set showCaption = params.showCaption %}
+        {% set caption = params.caption %}
+        {% set src = params.src %}
+        {% set hasAlt = params.hasAlt %}
+        {% set alt = params.alt %}
+        {% set sizes = params.sizes %}
+
+        {% include item.include %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+</div>

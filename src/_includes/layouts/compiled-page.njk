@@ -1,0 +1,21 @@
+{# layouts/compiled-page.njk #}
+{% set data = pages[pageKey] %}
+
+{% if not data %}
+  <pre>Missing compiled data for pageKey="{{ pageKey }}"</pre>
+{% else %}
+
+  {% for section in data.sections %}
+    <section class="layout__section{% if section.mode == 'composite' %} is-composite{% endif %}"
+             data-section="{{ section.sectionKey }}">
+
+      {% for pageItem in section.pages %}
+        {% set pageId = pageItem.pageKey %}
+        {% set cells = pageItem.cells %}
+        {% include "layouts/page.njk" %}
+      {% endfor %}
+
+    </section>
+  {% endfor %}
+
+{% endif %}

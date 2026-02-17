@@ -1,0 +1,27 @@
+{#
+  Text-Block — top-level param API (no TODO output)
+
+  Expects:
+  - level (optional): "h3" | "None"
+  - showSubhead (optional): boolean (if missing, inferred from subhead presence)
+  - subhead (optional): string
+  - body (optional): string
+#}
+
+{% set showSubheadResolved = (showSubhead if showSubhead is not undefined else (subhead and subhead | length)) %}
+
+<div class="text-block">
+
+  {% if showSubheadResolved and subhead %}
+    {% if level == "h3" %}
+      <h3 class="text-block__subhead">{{ subhead }}</h3>
+    {% else %}
+      <p class="text-block__subhead">{{ subhead }}</p>
+    {% endif %}
+  {% endif %}
+
+  {% if body %}
+    <p class="text-block__body">{{ body }}</p>
+  {% endif %}
+
+</div>

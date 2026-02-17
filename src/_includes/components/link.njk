@@ -1,0 +1,32 @@
+{#
+  Link — top-level param API (no TODO output)
+
+  Expects:
+  - priority (optional): "Primary" | "Secondary" (default "Primary")
+  - label (optional): string (default "Link")
+  - URL (optional): string
+  - link (optional): string (anchor text)
+
+  Rule:
+  - If URL is missing/empty, render a non-clickable span (still shows label/text).
+#}
+
+{% set pr = priority | default("Primary") %}
+{% set lb = label | default("Link") %}
+{% set href = URL %}
+{% set txt = link %}
+
+{% if href %}
+  <a class="link link--{{ pr | lower }}" href="{{ href }}">
+    <span class="link__label">{{ lb }}</span>
+    {% if txt %}<span class="link__text">{{ txt }}</span>{% endif %}
+    <svg class="link__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+{% else %}
+  <span class="link link--{{ pr | lower }} link--disabled" aria-disabled="true">
+    <span class="link__label">{{ lb }}</span>
+    {% if txt %}<span class="link__text">{{ txt }}</span>{% endif %}
+  </span>
+{% endif %}

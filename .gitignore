@@ -137,3 +137,16 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# macOS
+.DS_Store
+
+# website compiled by 11ty (generated files, not source code)
+_site/
+
+# docs created by compiler (generated files, not source code)
+_docs/
+src/_figma-json/
+
+# Figma compiler local secrets
+.figma-token.json

@@ -1,0 +1,19 @@
+/* src/assets/scss/main.scss */
+
+@use "tokens";
+@use "base";
+@use "typography";
+
+/* 11ty _includes found in src/_includes/layouts */
+@use "layout";
+
+/* 11ty _includes found in src/_includes/components */
+@use "components/content-cell";
+@use "components/header";
+@use "components/text-block";
+@use "components/figure";
+@use "components/link";
+@use "components/link-block";
+
+/* Generated placements (Codex) */
+@use "placements/bmtx-nextgen";

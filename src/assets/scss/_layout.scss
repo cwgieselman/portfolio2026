@@ -1,0 +1,55 @@
+/* this should be full-bleed */
+.layout {
+    width: 100%;
+}
+
+.layout__section {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: clip;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.layout__page {
+    width: var(--ff-field-width);
+    margin: 0;
+    display: grid;
+    justify-self: center;
+
+    /* Columns: Built from Figma COL-- tracks, in order from left to right */
+    grid-template-columns:
+        [field-start iu1-start] 228px /* 0 → 228: before page-start */
+        [page-start] 100px /* 228 → 328: page to frame */
+        [frame-start] 32px /* 328 → 360: frame to iu1-end */
+        [iu1-end] 24px /* 360 → 384: gutter */
+        [iu2-start] 360px /* 384 → 744: IU2 */
+        [iu2-end] 24px /* 744 → 768: gutter */
+        [iu3-start] 360px /* 768 → 1128: IU3 */
+        [iu3-end] 24px /* 1128 → 1152: gutter */
+        [iu4-start] 360px /* 1152 → 1512: IU4 */
+        [iu4-end] 24px /* 1512 → 1536: gutter */
+        [iu5-start] 32px /* 1536 → 1568: partial IU5 to frame-end */
+        [frame-end] 100px /* 1568 → 1668: frame to page */
+        [page-end] 228px /* 1668 → 1896: page to field-end */
+        [iu5-end field-end];
+
+    /* Rows: Built from Figma ROW-- tracks, in order from top to bottom
+     Total: 900px (y=100 to y=1000) */
+    grid-template-rows:
+        [page-start] 20px /* 100 → 120 */
+        [iu1-start] 80px /* 120 → 200 */
+        [frame-start] 144px /* 200 → 344 */
+        [iu1-endwide] 24px /* 344 → 368 */
+        [iu2-startwide] 116px /* 368 → 484 */
+        [iu1-endsplit] 24px /* 484 → 508 */
+        [iu2-startsplit] 84px /* 508 → 592 */
+        [iu2-endwide] 24px /* 592 → 616 */
+        [iu3-startwide] 116px /* 616 → 732 */
+        [iu2-endsplit] 24px /* 732 → 756 */
+        [iu3-startsplit] 144px /* 756 → 900 */
+        [frame-end] 80px /* 900 → 980 */
+        [iu3-end] 20px /* 980 → 1000 */
+        [page-end]; /* End at 1000 (900px total) */
+}

@@ -1,0 +1,29 @@
+{
+  "name": "cg-portfolio2026",
+  "version": "1.0.0",
+  "description": "2026 Portfolio for Craig Gieselman - Product Designer (UX and Design Systems",
+  "scripts": {
+    "start": "npm run sass:watch & eleventy --serve",
+    "build": "npm run sass:build && eleventy",
+    "clean": "rm -rf _site",
+    "sass:build": "sass src/assets/scss/main.scss:src/assets/css/main.css --no-source-map",
+    "sass:watch": "sass src/assets/scss/main.scss:src/assets/css/main.css --watch",
+    "figma:fetch": "node scripts/figma-fetch-node.mjs"
+  },
+  "keywords": [
+    "portfolio",
+    "11ty",
+    "design-systems",
+    "product design",
+    "ux design",
+    "ui design"
+  ],
+  "author": "Craig Gieselman",
+  "license": "MIT",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "@11ty/eleventy-img": "^5.0.0",
+    "js-yaml": "^4.1.1",
+    "sass": "^1.97.3"
+  }
+}
