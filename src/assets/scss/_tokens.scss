@@ -78,6 +78,10 @@
     --web---button--small: var(--scale-75);
     --web---eyebrow: var(--scale-100);
 
+    /* Display line-heights (grid-snapped) */
+    --web---title-h1--lh: var(--scale-400); /* 72px */
+    --web---section--heading-h2--lh: var(--scale-300); /* 48px */
+
     /* Shape - Corner Radius */
     --corner-none: 0;
     --corner-xxs: var(--scale-25);
