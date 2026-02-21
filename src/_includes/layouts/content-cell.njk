@@ -1,4 +1,4 @@
-{# layouts/content-cell.njk #}
+{# layouts/content-cell.njk (figure isolation) #}
 
 {% set wrapper = cell.wrapper %}
 
@@ -17,9 +17,7 @@
         {% set showEyebrow = null %}
         {% set subhead = null %}
         {% set showSubhead = null %}
-
         {% set body = null %}
-
         {% set priority = null %}
         {% set label = null %}
         {% set URL = null %}
@@ -27,7 +25,6 @@
         {% set hasSecondary = null %}
         {% set primary = null %}
         {% set secondary = null %}
-
         {% set type = null %}
         {% set showCaption = null %}
         {% set caption = null %}
@@ -36,13 +33,8 @@
         {% set alt = null %}
         {% set sizes = null %}
 
-        {# ------------------------------- #}
         {# Chapter label injection (Header) #}
-        {# ------------------------------- #}
-        {# Default id from params #}
         {% set id = params.id %}
-
-        {# Inject derived id ONLY for the first include of the first cell of the first page in the section #}
         {% if sectionTitleId
           and pageItemIndex0 == 0
           and cellIndex0 == 0
@@ -52,33 +44,41 @@
           {% set id = sectionTitleId %}
         {% endif %}
 
-        {# Map params into scope (top-level) #}
-        {% set level = params.level %}
-        {% set headline = params.headline %}
-        {% set eyebrow = params.eyebrow %}
-        {% set showEyebrow = params.showEyebrow %}
-        {% set subhead = params.subhead %}
-        {% set showSubhead = params.showSubhead %}
+        {# Default behavior: hydrate globals for legacy components #}
+        {% if item.include != "components/figure.njk" %}
+          {% set level = params.level %}
+          {% set headline = params.headline %}
+          {% set eyebrow = params.eyebrow %}
+          {% set showEyebrow = params.showEyebrow %}
+          {% set subhead = params.subhead %}
+          {% set showSubhead = params.showSubhead %}
+          {% set body = params.body %}
 
-        {% set body = params.body %}
+          {% set priority = params.priority %}
+          {% set label = params.label %}
+          {% set URL = params.URL %}
+          {% set link = params.link %}
+          {% set hasSecondary = params.hasSecondary %}
+          {% set primary = params.primary %}
+          {% set secondary = params.secondary %}
 
-        {% set priority = params.priority %}
-        {% set label = params.label %}
-        {% set URL = params.URL %}
-        {% set link = params.link %}
-        {% set hasSecondary = params.hasSecondary %}
-        {% set primary = params.primary %}
-        {% set secondary = params.secondary %}
+          {% set type = params.type %}
+          {% set showCaption = params.showCaption %}
+          {% set caption = params.caption %}
+          {% set src = params.src %}
+          {% set hasAlt = params.hasAlt %}
+          {% set alt = params.alt %}
+          {% set sizes = params.sizes %}
+        {% endif %}
 
-        {% set type = params.type %}
-        {% set showCaption = params.showCaption %}
-        {% set caption = params.caption %}
-        {% set src = params.src %}
-        {% set hasAlt = params.hasAlt %}
-        {% set alt = params.alt %}
-        {% set sizes = params.sizes %}
+        {# Figure isolation: provide params object for new-style figure template #}
+        {% if item.include == "components/figure.njk" %}
+          {% set figureParams = params %}
+          {% include item.include %}
+        {% else %}
+          {% include item.include %}
+        {% endif %}
 
-        {% include item.include %}
       {% endif %}
     {% endfor %}
   {% endif %}

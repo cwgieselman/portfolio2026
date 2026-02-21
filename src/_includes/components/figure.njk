@@ -1,15 +1,19 @@
-{# Figure Component — passthrough image v1 #}
+{% set p = figureParams %}
 
-<figure class="figure figure--{{ type }}">
+<figure class="figure figure--{{ p.type }}">
   <div class="figure__media">
-    {% if hasAlt %}
-      <img src="{{ src }}" alt="{{ alt }}" loading="lazy" decoding="async" />
+    {% if not p.src %}
+      <!-- figure:error missing src -->
     {% else %}
-      <img src="{{ src }}" alt="" role="presentation" loading="lazy" decoding="async" />
+      {% if p.hasAlt %}
+        <img src="{{ p.src }}" alt="{{ p.alt }}" loading="lazy" decoding="async" />
+      {% else %}
+        <img src="{{ p.src }}" alt="" role="presentation" loading="lazy" decoding="async" />
+      {% endif %}
     {% endif %}
   </div>
 
-  {% if showCaption and caption %}
-    <figcaption class="figure__caption">{{ caption }}</figcaption>
+  {% if p.showCaption and p.caption %}
+    <figcaption class="figure__caption">{{ p.caption }}</figcaption>
   {% endif %}
 </figure>
