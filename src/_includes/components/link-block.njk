@@ -1,27 +1,23 @@
 {#
-  Link-Block — top-level param API
+  Link-Block — deterministic param API
 
-  Expects:
-  - hasSecondary (optional): boolean
-  - primary (optional): { priority, label, URL, link }
-  - secondary (optional): { priority, label, URL, link }
+  Expects (via linkBlockParams):
+  - hasSecondary: boolean
+  - primary: { priority, label, URL, link }
+  - secondary: { priority, label, URL, link }
 #}
+
+{% set p = linkBlockParams %}
 
 <div class="link-block">
 
-  {% if primary %}
-    {% set priority = primary.priority %}
-    {% set label = primary.label %}
-    {% set URL = primary.URL %}
-    {% set link = primary.link %}
+  {% if p.primary %}
+    {% set linkParams = p.primary %}
     {% include "components/link.njk" %}
   {% endif %}
 
-  {% if hasSecondary and secondary %}
-    {% set priority = secondary.priority %}
-    {% set label = secondary.label %}
-    {% set URL = secondary.URL %}
-    {% set link = secondary.link %}
+  {% if p.hasSecondary and p.secondary %}
+    {% set linkParams = p.secondary %}
     {% include "components/link.njk" %}
   {% endif %}
 

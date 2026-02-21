@@ -1,33 +1,31 @@
 {#
-  Link — top-level param API
+  Link — deterministic param API
 
-  Expects:
-  - priority (optional): "Primary" | "Secondary" (default "Primary")
-  - label (optional): string (default "Link")
-  - URL (optional): string
-  - link (optional): string (anchor text)
+  Expects (via linkParams):
+  - priority: "Primary" | "Secondary"
+  - label: string
+  - URL: string
+  - link: string
 
   Rule:
   - If URL is missing/empty, render a non-clickable span (still shows label/text).
-
-  TODOs:
-  - Update SVG
 #}
 
-{% set pr = priority | default("Primary") %}
-{% set lb = label | default("Link") %}
-{% set href = URL %}
-{% set txt = link %}
+{% set p = linkParams %}
+
+{% set pr = p.priority %}
+{% set lb = p.label %}
+{% set href = p.URL %}
+{% set txt = p.link %}
 
 {% if href %}
   <a class="link link--{{ pr | lower }}" href="{{ href }}">
     <span class="link__label">{{ lb }}
-        <svg class="link__icon" width="20" height="20" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <svg class="link__icon" width="20" height="20" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </span>
     {% if txt %}<span class="link__text">{{ txt }}</span>{% endif %}
-
   </a>
 {% else %}
   <span class="link link--{{ pr | lower }} link--disabled" aria-disabled="true">
