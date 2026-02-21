@@ -73,24 +73,27 @@
   --web---button: var(--scale-100);
   --web---button--small: var(--scale-75);
   --web---eyebrow: var(--scale-100);
+  /* Display line-heights (grid-snapped) */
+  --web---title-h1--lh: var(--scale-400); /* 72px */
+  --web---section--heading-h2--lh: var(--scale-300); /* 48px */
   /* Shape - Corner Radius */
   --corner-none: 0;
-  --corner-xxs: var(--scale--25);
-  --corner-xs: var(--scale--50);
-  --corner-s: var(--scale--75);
-  --corner-m: var(--scale--100);
-  --corner-xl: var(--scale--150);
-  --corner-xxl: var(--scale--200);
+  --corner-xxs: var(--scale-25);
+  --corner-xs: var(--scale-50);
+  --corner-s: var(--scale-75);
+  --corner-m: var(--scale-100);
+  --corner-xl: var(--scale-150);
+  --corner-xxl: var(--scale-200);
   --corner-full: 1000px;
   /* Spacing */
-  --spacing-xxs: var(--scale--25);
-  --spacing-xs: var(--scale--50);
-  --spacing-s: var(--scale--75);
-  --spacing-m: var(--scale--100);
-  --spacing-l: var(--scale--125);
-  --spacing-xl: var(--scale--150);
-  --spacing-xxl: var(--scale--200);
-  --spacing-xxxl: var(--scale--250);
+  --spacing-xxs: var(--scale-25);
+  --spacing-xs: var(--scale-50);
+  --spacing-s: var(--scale-75);
+  --spacing-m: var(--scale-100);
+  --spacing-l: var(--scale-125);
+  --spacing-xl: var(--scale-150);
+  --spacing-xxl: var(--scale-200);
+  --spacing-xxxl: var(--scale-250);
   /* Effects <!-- TODO: make tokenize this --> */
   --elevation---one: 0px 2px 12px rgba(6, 31, 56, 1);
   --ff-field-width: 1896px;
@@ -188,25 +191,51 @@ p {
   /* no positioning rules */
 }
 
+/* _includes/components/header.njk */
 .header {
   display: grid;
-  gap: var(--space-2, 0.5rem);
 }
 
 .header__eyebrow {
   margin: 0;
-  /* token hook */
-  color: var(--color-eyebrow, currentColor);
+  font-family: var(--font-brand);
+  font-size: var(--web---eyebrow);
+  font-weight: var(--font-bold);
+  font-style: normal;
+  text-transform: uppercase;
+  line-height: calc(var(--web---eyebrow) * 2);
+  letter-spacing: calc(var(--web---eyebrow) / 4);
+  color: var(--color-link-label);
 }
 
 .header__headline {
   margin: 0;
+  font-family: var(--font-brand);
+  font-style: normal;
+  letter-spacing: 0;
+  color: var(--color-primary-base);
+}
+
+/* size by semantic element */
+h1.header__headline {
+  font-size: var(--web---title-h1);
+  line-height: var(--web---title-h1--lh);
+}
+
+h2.header__headline {
+  font-size: var(--web---section--heading-h2);
+  line-height: var(--web---section--heading-h2--lh);
 }
 
 .header__subhead {
   margin: 0;
-  /* token hook */
-  color: var(--color-subhead, currentColor);
+  font-family: var(--font-plain);
+  font-size: var(--web---lead-subheading);
+  font-weight: var(--font-regular);
+  font-style: normal;
+  line-height: calc(var(--web---lead-subheading) * 2);
+  letter-spacing: 0;
+  color: var(--color-text);
 }
 
 .text-block {
@@ -262,7 +291,7 @@ p {
   margin: 0;
 }
 
-/* Link */
+/* _includes/components/link.njk */
 a.link {
   color: inherit;
   text-decoration: none;
@@ -334,7 +363,7 @@ a.link:hover .link__icon {
   transform: translateY(1px);
 }
 
-/* Link-Block */
+/* _includes/components/link-block.njk */
 .link-block {
   display: grid;
   gap: var(--spacing-s, 12px);
@@ -394,3 +423,5 @@ a.link:hover .link__icon {
   grid-column: 3/6;
   grid-row: 4/12;
 }
+
+/*# sourceMappingURL=main.css.map */

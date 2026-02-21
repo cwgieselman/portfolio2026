@@ -1,20 +1,46 @@
+/* _includes/components/header.njk */
+
 .header {
     display: grid;
-    gap: var(--space-2, 0.5rem);
 }
 
 .header__eyebrow {
     margin: 0;
-    /* token hook */
-    color: var(--color-eyebrow, currentColor);
+    font-family: var(--font-brand);
+    font-size: var(--web---eyebrow);
+    font-weight: var(--font-bold);
+    font-style: normal;
+    text-transform: uppercase;
+    line-height: calc(var(--web---eyebrow) * 2);
+    letter-spacing: calc(var(--web---eyebrow) / 4);
+    color: var(--color-link-label);
 }
 
 .header__headline {
     margin: 0;
+    font-family: var(--font-brand);
+    font-style: normal;
+    letter-spacing: 0;
+    color: var(--color-primary-base);
+}
+
+/* size by semantic element */
+h1.header__headline {
+    font-size: var(--web---title-h1);
+    line-height: var(--web---title-h1--lh);
+}
+h2.header__headline {
+    font-size: var(--web---section--heading-h2);
+    line-height: var(--web---section--heading-h2--lh);
 }
 
 .header__subhead {
     margin: 0;
-    /* token hook */
-    color: var(--color-subhead, currentColor);
+    font-family: var(--font-plain);
+    font-size: var(--web---lead-subheading);
+    font-weight: var(--font-regular);
+    font-style: normal;
+    line-height: calc(var(--web---lead-subheading) * 2);
+    letter-spacing: 0;
+    color: var(--color-text);
 }

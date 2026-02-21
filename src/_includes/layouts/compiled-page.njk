@@ -5,17 +5,18 @@
   <pre>Missing compiled data for pageKey="{{ pageKey }}"</pre>
 {% else %}
 
-  {% for section in data.sections %}
+    {% for section in data.sections %}
+    {% set sectionTitleId = section.sectionKey ~ "__title" %}
     <section class="layout__section{% if section.mode == 'composite' %} is-composite{% endif %}"
-             data-section="{{ section.sectionKey }}">
-
-      {% for pageItem in section.pages %}
+            data-section="{{ section.sectionKey }}"
+            aria-labelledby="{{ sectionTitleId }}">
+        {% for pageItem in section.pages %}
+        {% set pageItemIndex0 = loop.index0 %}
         {% set pageId = pageItem.pageKey %}
         {% set cells = pageItem.cells %}
         {% include "layouts/page.njk" %}
-      {% endfor %}
-
+        {% endfor %}
     </section>
-  {% endfor %}
+    {% endfor %}
 
 {% endif %}

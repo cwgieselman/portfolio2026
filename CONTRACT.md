@@ -104,6 +104,53 @@ Each fix must:
 - Be committed independently.
 - Be logged in README.
 
+---
+
+## 7. Chapter Semantics Contract
+
+Sections represent narrative chapters.
+
+Each `<section.layout__section>` must:
+
+- Include `aria-labelledby="<sectionKey>__title"`
+- Contain a header component as the first semantic heading
+- The first header in the section receives:
+  id="<sectionKey>__title"
+
+This wiring is implemented in template logic.
+
+YAML must NOT:
+- Define header IDs manually
+- Emit aria attributes
+- Infer section labeling behavior
+
+Section labeling is deterministic and derived from `section.sectionKey`.
+
+---
+
+## 8. Display Typography Contract (H1 / H2)
+
+Display typography uses explicit grid-snapped line-height tokens.
+
+Rules:
+
+- Font-size is defined via semantic tokens:
+  - `--web---title-h1`
+  - `--web---section--heading-h2`
+
+- Line-height is defined via explicit tokens:
+  - `--web---title-h1--lh`
+  - `--web---section--heading-h2--lh`
+
+- Line-height must be snapped to the 4px metric scale.
+- No multiplier math is permitted for display leading.
+- No inline styles are permitted.
+
+Example:
+
+```css
+--web---title-h1: var(--scale-350);      /* 56px */
+--web---title-h1--lh: var(--scale-400);  /* 72px */
 
 
 

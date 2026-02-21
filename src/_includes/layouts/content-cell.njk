@@ -1,9 +1,6 @@
+{# layouts/content-cell.njk #}
+
 {% set wrapper = cell.wrapper %}
-
-
-
-
-
 
 <div class="content-cell" data-cell="{{ wrapper }}">
   {% if cell.includes and (cell.includes | length) %}
@@ -39,8 +36,23 @@
         {% set alt = null %}
         {% set sizes = null %}
 
-        {# Map params into scope (top-level) #}
+        {# ------------------------------- #}
+        {# Chapter label injection (Header) #}
+        {# ------------------------------- #}
+        {# Default id from params #}
         {% set id = params.id %}
+
+        {# Inject derived id ONLY for the first include of the first cell of the first page in the section #}
+        {% if sectionTitleId
+          and pageItemIndex0 == 0
+          and cellIndex0 == 0
+          and loop.index0 == 0
+          and item.include == "components/header.njk"
+        %}
+          {% set id = sectionTitleId %}
+        {% endif %}
+
+        {# Map params into scope (top-level) #}
         {% set level = params.level %}
         {% set headline = params.headline %}
         {% set eyebrow = params.eyebrow %}
@@ -70,5 +82,4 @@
       {% endif %}
     {% endfor %}
   {% endif %}
-
 </div>

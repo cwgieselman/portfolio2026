@@ -106,6 +106,41 @@ No redesign, no feature expansion.
 
 ---
 
+### Documentation Consistency Rule
+
+All documentation updates must:
+
+- Follow existing structural formatting
+- Use declarative contract language
+- Avoid conversational tone
+- Avoid decorative formatting
+- Avoid speculative phrasing
+
+Documentation defines rules, not commentary.
+
+---
+
+### Chapter Semantics Rule
+
+Sections represent chapters.
+
+- Section key drives heading ID derivation.
+- First header in section receives derived ID.
+- Section applies `aria-labelledby`.
+- YAML must not define heading IDs.
+
+---
+
+### Display Typography Rule
+
+For H1 and H2:
+
+- Font-size is semantic.
+- Line-height is explicitly tokenized.
+- Line-height must be grid-snapped.
+- Multiplier-based leading is not permitted for display type.
+---
+
 ## 7. Component Rehab Protocol
 
 Each rehab cycle addresses exactly one component.
