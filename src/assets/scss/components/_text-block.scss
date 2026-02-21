@@ -1,9 +1,19 @@
 .text-block {
     display: grid;
     gap: var(--space-2, 0.5rem);
-}
 
-.text-block__subhead,
-.text-block__body {
-    margin: 0;
+    &__subhead {
+        margin: 0;
+        font-size: var(--web---lead-subheading);
+        color: var(--color-text-primary);
+    }
+
+    &__body {
+        display: grid;
+        row-gap: var(--space-stack-sm);
+
+        p {
+            margin: 0;
+        }
+    }
 }

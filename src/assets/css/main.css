@@ -242,9 +242,16 @@ h2.header__headline {
   display: grid;
   gap: var(--space-2, 0.5rem);
 }
-
-.text-block__subhead,
+.text-block__subhead {
+  margin: 0;
+  font-size: var(--web---lead-subheading);
+  color: var(--color-text-primary);
+}
 .text-block__body {
+  display: grid;
+  row-gap: var(--space-stack-sm);
+}
+.text-block__body p {
   margin: 0;
 }
 

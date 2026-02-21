@@ -18,18 +18,22 @@ sections:
             includes:
               - include: "components/text-block.njk"
                 params:
-                  body: "BM Technologies (BMTx) provides digital banking services to higher education and enterprise institutions. Its Banking-as-a-Service (BaaS) platform enables customers to offer checking and savings accounts to their end users through a partner bank, without assuming direct regulatory responsibility."
+                  level: "None"
+                  showSubhead: false
+                  body:
+                    - "BM Technologies (BMTx) provides digital banking services to higher education and enterprise institutions. Its Banking-as-a-Service (BaaS) platform enables customers to offer checking and savings accounts to their end users through a partner bank, without assuming direct regulatory responsibility."
       - pageKey: "page-02"
         cells:
           - wrapper: "text--bmtx-nextgen--p2--contentcell-1"
             includes:
               - include: "components/text-block.njk"
                 params:
-                  body: |
-                    Because growth strategy necessitated the ability to scale and customize instances rapidly, an initiative dubbed NextGen was planned to replace the legacy system with a modular web app.
-
-                    Existing UI and workflow artifacts conveyed design intent and were sufficient for designing individual features but needed to be normalized, then systemized to serve as build-ready design specifications for NextGen.
+                  level: "none"
+                  showSubhead: true
                   subhead: "Consistency becomes a Requirement"
+                  body:
+                    - "Because growth strategy necessitated the ability to scale and customize instances rapidly, an initiative dubbed <em>NextGen</em> was planned to replace the legacy system with a modular web app."
+                    - "Existing UI and workflow artifacts conveyed design intent and were sufficient for designing individual features but needed to be normalized, then systemized to serve as build-ready design specifications for NextGen."
           - wrapper: "figure--bmtx-nextgen--p2--contentcell-2"
             includes:
               - include: "components/figure.njk"
@@ -38,6 +42,7 @@ sections:
                   src: "TODO:src"
                   alt: 'Image description for assistive technology. If this is blank the image will be marked as  role="presentation".'
                   hasAlt: true
+
   - sectionKey: "section-02"
     mode: "normal"
     pages:
@@ -64,14 +69,13 @@ sections:
             includes:
               - include: "components/text-block.njk"
                 params:
-                  body: |
-                    My role at this point was specific:
-                    Consolidate, then normalize existing design intent.
-                    Translate that intent into build-ready specs.
-                    Use those specs to establish a component library.
-
-                    My near-term task was to create a Design System capable of allowing my teammates to reconstruct the platform artifacts in Figma.
-                  subhead: "Before the Platform Could Support the Roadmap"
+                  showSubhead: false
+                  body:
+                    - "My role at this point was specific:"
+                    - "Consolidate, then normalize existing design intent."
+                    - "Translate that intent into build-ready specs."
+                    - "Use those specs to establish a component library."
+                    - "My near-term task was to create a Design System capable of allowing my teammates to reconstruct the platform artifacts in Figma."
               - include: "components/link-block.njk"
                 params:
                   hasSecondary: false
@@ -80,6 +84,7 @@ sections:
                     label: "Link"
                     URL: "https://www.craiggieselman.com"
                     link: "Extracting Design Intent from Legacy Axure"
+
   - sectionKey: "section-03"
     mode: "normal"
     pages:
@@ -106,13 +111,11 @@ sections:
             includes:
               - include: "components/text-block.njk"
                 params:
-                  body: |
-                    Once the foundation of the Library was established, a teammate migrated the platform’s ~200 screens to Figma in about a week using the defined variables and components.
-
-                    Use of the Library also eliminated most of the inconsistency present in the legacy artifacts, resulting in a tighter, more consistent interface.
-
-                    These gains demonstrated that the system had reached a level of completeness to warrant engineering handoff, even as it continued to evolve.
-                  subhead: "Before the Platform Could Support the Roadmap"
+                  showSubhead: false
+                  body:
+                    - "Once the foundation of the Library was established, a teammate migrated the platform’s ~200 screens to Figma in about a week using the defined variables and components."
+                    - "Use of the Library also eliminated most of the inconsistency present in the legacy artifacts, resulting in a tighter, more consistent interface."
+                    - "These gains demonstrated that the system had reached a level of completeness to warrant engineering handoff, even as it continued to evolve."
               - include: "components/link-block.njk"
                 params:
                   hasSecondary: false
