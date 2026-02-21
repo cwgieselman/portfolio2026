@@ -1,7 +1,7 @@
-# Deterministic Mapping Contract
-Figma → YAML → Eleventy → HTML → CSS
+# Deterministic Rendering Contract  
+Figma → YAML → Eleventy → HTML → CSS  
 
-This file defines the non-negotiable data and rendering rules.
+This file defines the non-negotiable structural and rendering rules for the active system.
 
 ---
 
@@ -11,102 +11,80 @@ Only the compiled-page pipeline is valid.
 
 Active flow:
 
-pages.js
-    ↓
-_data/pages/<pageKey>/page.yml
-    ↓
-layouts/compiled-page.njk
-    ↓
-layouts/page.njk
-    ↓
-content-cell.njk
-    ↓
-component include
+pages.js  
+↓  
+_data/pages/<pageKey>/page.yml  
+↓  
+layouts/compiled-page.njk  
+↓  
+layouts/page.njk  
+↓  
+layouts/content-cell.njk  
+↓  
+component include  
 
-No alternative front-matter section systems are allowed.
+No alternative front-matter rendering systems are permitted.
 
 ---
 
 ## 2. Data Ownership
 
-Figma JSON = design intent (not consumed directly by templates)
+Figma JSON  
+- Represents design intent only.  
+- Not consumed directly by templates.
 
-YAML = implementation contract (only source of content + structure)
+YAML  
+- Is the implementation contract.  
+- Is the only source of structure and content.
 
-Templates must NEVER:
+Templates must NOT:
+
 - Reach into global collections implicitly
-- Access page.* unless explicitly passed
-- Access site.data unless explicitly passed
+- Access `page.*` unless explicitly passed
+- Access `site.data` unless explicitly passed
+- Infer structure from content
+- Reshape parameter objects
 
-Includes receive a single object and render only that object.
-
----
-
-## 3. Structural Determinism
-
-For each content cell in YAML:
-
-Required fields:
-- component
-- grid placement data
-- content payload
-
-If required data is missing:
-- Render HTML comment marker:
-  <!-- TODO: missing <field> -->
-
-Silent failure is not allowed.
+Each include receives a single `params` object and renders only that object.
 
 ---
 
-## 4. Layout Rules
+## 3. Layout Contract — content-cell Executor
 
-No offset positioning:
-- No absolute positioning
-- No transform offsets
-- No negative margins
+File  
+`src/_includes/layouts/content-cell.njk`
 
-Grid placement must use:
-- Named grid lines
-- grid-column
-- grid-row
-- align-self / justify-self if required
+Purpose  
+- Executes each include exactly once.
+- Prevents scope leakage.
+- Injects derived chapter semantics deterministically.
+- Does not reshape or hydrate globals.
 
----
+Input Shape
 
-## 5. CSS Loading
+cell:  
+- wrapper: string  
+- includes:  
+  - include: string  
+  - params: object  
 
-base.njk must load:
+Execution Rules
 
-/assets/css/main.css
+- Each include MUST render exactly once.
+- No global variable hydration is permitted.
+- No param reshaping is permitted.
+- Params must be passed as explicit component-specific objects:
+  - headerParams
+  - textBlockParams
+  - figureParams
+  - linkBlockParams
+  - linkParams
 
-If styling appears missing, verification order:
-
-1. CSS file exists at expected path.
-2. CSS file is loaded in browser (Network tab).
-3. Class names match rendered markup.
-4. No later stylesheet overrides intended rules.
-
----
-
-## 6. Debug Method
-
-When a mismatch occurs:
-
-1. Confirm YAML contains expected structure.
-2. Confirm compiled-page.njk passes correct object.
-3. Confirm include renders correct markup.
-4. Confirm CSS selector matches markup.
-5. Confirm CSS file is loaded.
-
-Each fix must:
-- Address exactly one failure.
-- Be committed independently.
-- Be logged in README.
+Unknown include paths must render a non-fatal HTML comment in the DOM.
 
 ---
 
-## 7. Chapter Semantics Contract
+## 4. Chapter Semantics Contract
 
 Sections represent narrative chapters.
 
@@ -114,17 +92,75 @@ Each `<section.layout__section>` must:
 
 - Include `aria-labelledby="<sectionKey>__title"`
 - Contain a header component as the first semantic heading
-- The first header in the section receives:
-  id="<sectionKey>__title"
 
-This wiring is implemented in template logic.
+Derived ID Rule:
+
+- Derived ID: `${sectionKey}__title`
+- Applied only when:
+  - First page in section
+  - First cell on page
+  - First include in cell
+  - Include path == `components/header.njk`
 
 YAML must NOT:
-- Define header IDs manually
+
+- Define heading IDs
 - Emit aria attributes
-- Infer section labeling behavior
+- Infer labeling behavior
 
 Section labeling is deterministic and derived from `section.sectionKey`.
+
+---
+
+## 5. Structural Determinism
+
+Templates must:
+
+- Render exactly what YAML defines.
+- Fail visibly when required fields are missing.
+- Never silently omit required structure.
+
+If required component data is missing, render an HTML comment marker:
+
+`<!-- missing <field> -->`
+
+Silent failure is not permitted.
+
+---
+
+## 6. Layout Rules
+
+No offset positioning:
+
+- No `position: absolute`
+- No transform offsets
+- No negative margins
+
+Placement must use:
+
+- Named grid lines
+- `grid-column`
+- `grid-row`
+- `align-self`
+- `justify-self`
+
+Spacing must be controlled by grid and gap.  
+Margin stacking is not permitted inside structural components.
+
+---
+
+## 7. CSS Loading Contract
+
+`base.njk` must load:
+
+`/assets/css/main.css`
+
+If styling appears incorrect, verify in order:
+
+1. CSS file exists at expected path
+2. CSS file is loaded in browser
+3. Class names match rendered DOM
+4. No later stylesheet overrides rules
 
 ---
 
@@ -134,141 +170,199 @@ Display typography uses explicit grid-snapped line-height tokens.
 
 Rules:
 
-- Font-size is defined via semantic tokens:
+- Font-size uses semantic tokens:
   - `--web---title-h1`
   - `--web---section--heading-h2`
 
-- Line-height is defined via explicit tokens:
+- Line-height uses explicit tokens:
   - `--web---title-h1--lh`
   - `--web---section--heading-h2--lh`
 
 - Line-height must be snapped to the 4px metric scale.
-- No multiplier math is permitted for display leading.
+- Multiplier-based leading is not permitted.
 - No inline styles are permitted.
 
 Example:
 
 ```css
---web---title-h1: var(--scale-350);      /* 56px */
---web---title-h1--lh: var(--scale-400);  /* 72px */
-
-
-
-## Link Component Contract
-
-### `link.njk`
-
-Input contract:
-- priority?: "Primary" | "Secondary"
-- label?: string
-- URL?: string
-- link?: string
-
-Rendering contract:
-- If `URL` is present → `<a>`
-- If `URL` is absent → `<span aria-disabled="true">`
-- No TODO markers or placeholder URLs permitted
+--web---title-h1: var(--scale-350);
+--web---title-h1--lh: var(--scale-400);
 
 ---
 
-## Link Block Component Contract
-
-### `link-block.njk`
-
-Input contract:
-- hasSecondary?: boolean
-- primary: { priority, label, URL, link }
-- secondary?: { priority, label, URL, link }
-
-Rules:
-- `primary` is rendered unconditionally if present.
-- `secondary` is rendered only if `hasSecondary === true`.
-- `links: []` is invalid and must not be emitted by the compiler.
-- YAML must not contain placeholder values (e.g., "TODO:href").
+# Component Contracts (Active Route)
 
 ---
 
+## Header
 
-## Text Block  Component Contract
-### `text-block.njk`
+include: `components/header.njk`
 
-Canonical Data Shape
+### Inputs (`headerParams`)
 
-params:
-  level: "h3" | "None"
-  showSubhead: boolean
-  subhead: string
-  body: array[string]
+- level: `"h1" | "h2" | "h3"`
+- headline: string
+- showEyebrow: boolean
+- eyebrow: string
+- showSubhead: boolean
+- subhead: string
 
-Constraints
+### Inputs (`headerParamsId`)
+
+- Derived heading ID for chapter semantics injection
+
+### Rules
+
+- No inferred flags.
+- YAML must not define heading IDs.
+- ID is applied only when `headerParamsId` is provided.
+
+### DOM Shape
+
+~~~html
+<header class="header">
+  <p class="header__eyebrow"></p> <!-- optional -->
+  <h1|h2|h3 class="header__headline" id=""></h1|h2|h3>
+  <p class="header__subhead"></p> <!-- optional -->
+</header>
+~~~
+
+---
+
+## Text Block
+
+include: `components/text-block.njk`
+
+### Inputs (`textBlockParams`)
+
+- level: `"h3" | "None"`
+- showSubhead: boolean
+- subhead: string
+- body: array[string]
+
+### Constraints
 
 - `body` MUST be an array.
 - Multi-paragraph strings are not permitted.
-- Template MUST NOT derive showSubhead.
-- Template MUST NOT split strings into paragraphs.
-- Template MUST NOT reshape data.
-- All structural decisions are defined in YAML.
+- Template must not derive `showSubhead`.
+- Template must not split strings.
+- Template must not reshape data.
 
-DOM Structure
+### DOM Shape
 
+~~~html
 <div class="text-block">
-  <h3|p class="text-block__subhead"></h3|p>
+  <h3|p class="text-block__subhead"></h3|p> <!-- optional -->
   <div class="text-block__body">
     <p></p>
     <p></p>
   </div>
 </div>
+~~~
 
-Styling Rules
+---
 
-- `.text-block` uses grid for vertical rhythm.
-- Spacing via `row-gap` only.
-- No margin stacking.
-- Typography values sourced from tokens.
-- Line-height must be explicitly tokenized.
-- No global typography overrides allowed.
+## Figure (Temporary Passthrough v1)
 
-Validation
+include: `components/figure.njk`
 
-A text-block instance is valid when:
+### Inputs (`figureParams`)
 
-- YAML matches canonical shape.
-- Rendered DOM matches contract.
-- Paragraph count equals body array length.
-- Subhead renders only when explicitly enabled.
-- No placeholder strings.
-
-
-
-
-### Compiler Rule (Figma → YAML)
-
-For link-block instances:
-
-- Map `link--primary` to `primary`
-- Map `link--secondary` to `secondary`
-- Emit `hasSecondary: true` only when secondary exists
-- Omit `URL` if not explicitly defined in Figma JSON
-
-
-### figure — API (Temporary Passthrough v1)
-
-include: components/figure.njk
-
-Params
-- type: "desktop" | "mobile" | "composite"
+- type: `"desktop" | "mobile" | "composite"`
 - showCaption: boolean
 - caption: string
 - src: string (public path)
 - hasAlt: boolean
 - alt: string
 
-Example
+### Rules
 
-params:
-  type: "desktop"
-  showCaption: true
-  caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
-  src: "/assets/images/figure-placeholder.jpg"
-  hasAlt: true
-  alt: "Image description for assistive technology."
+- `src` MUST be a public URL path under `/assets/images/`.
+- Eleventy Image plugin is not used in this component during stabilize.
+- No inferred flags.
+- If `hasAlt === false`, alt must be empty and image is presentational.
+
+### DOM Shape
+
+~~~html
+<figure class="figure figure--{type}">
+  <div class="figure__media">
+    <img src="" alt="" />
+  </div>
+  <figcaption class="figure__caption"></figcaption> <!-- optional -->
+</figure>
+~~~
+
+---
+
+## Link Block
+
+include: `components/link-block.njk`
+
+### Inputs (`linkBlockParams`)
+
+- hasSecondary: boolean
+- primary:
+  - priority
+  - label
+  - URL
+  - link
+- secondary:
+  - priority
+  - label
+  - URL
+  - link
+
+### Rules
+
+- `primary` renders if present.
+- `secondary` renders only when `hasSecondary === true`.
+- YAML must not contain placeholder values.
+- No param reshaping into globals.
+
+### DOM Shape
+
+~~~html
+<div class="link-block">
+  <a|span class="link ..."></a|span>
+  <a|span class="link ..."></a|span <!-- optional -->
+</div>
+~~~
+
+---
+
+## Link
+
+include: `components/link.njk`
+
+### Inputs (`linkParams`)
+
+- priority: `"Primary" | "Secondary"`
+- label: string
+- URL: string
+- link: string
+
+### Rules
+
+- If `URL` exists → render `<a>`
+- If `URL` is absent → render disabled `<span>`
+- No defaults during stabilize.
+- Callers must provide explicit values.
+
+---
+
+## Debug Method
+
+When a mismatch occurs:
+
+1. Confirm YAML structure.
+2. Confirm executor passes correct param object.
+3. Confirm component renders expected markup.
+4. Confirm CSS selector matches rendered markup.
+5. Confirm CSS file is loaded.
+
+Each fix must:
+
+- Address exactly one failure.
+- Be committed independently.
+- Be logged in README.

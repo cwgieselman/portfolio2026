@@ -1,4 +1,4 @@
-{# layouts/content-cell.njk (component isolation switch) #}
+{# layouts/content-cell.njk — stabilized thin executor #}
 
 {% set wrapper = cell.wrapper %}
 
@@ -6,32 +6,7 @@
   {% if cell.includes and (cell.includes | length) %}
     {% for item in cell.includes %}
       {% if item.include %}
-
         {% set params = item.params or {} %}
-
-        {# Reset scoped vars to prevent leakage across cells/includes #}
-        {% set id = null %}
-        {% set level = null %}
-        {% set headline = null %}
-        {% set eyebrow = null %}
-        {% set showEyebrow = null %}
-        {% set subhead = null %}
-        {% set showSubhead = null %}
-        {% set body = null %}
-        {% set priority = null %}
-        {% set label = null %}
-        {% set URL = null %}
-        {% set link = null %}
-        {% set hasSecondary = null %}
-        {% set primary = null %}
-        {% set secondary = null %}
-        {% set type = null %}
-        {% set showCaption = null %}
-        {% set caption = null %}
-        {% set src = null %}
-        {% set hasAlt = null %}
-        {% set alt = null %}
-        {% set sizes = null %}
 
         {# Chapter label injection (Header) #}
         {% set id = params.id %}
@@ -44,48 +19,26 @@
           {% set id = sectionTitleId %}
         {% endif %}
 
-        {# Default behavior: hydrate globals for legacy components #}
-        {% if item.include != "components/figure.njk" and item.include != "components/text-block.njk" and item.include != "components/header.njk"   and item.include != "components/link-block.njk"%}          {% set level = params.level %}
-          {% set headline = params.headline %}
-          {% set eyebrow = params.eyebrow %}
-          {% set showEyebrow = params.showEyebrow %}
-          {% set subhead = params.subhead %}
-          {% set showSubhead = params.showSubhead %}
-          {% set body = params.body %}
-
-          {% set priority = params.priority %}
-          {% set label = params.label %}
-          {% set URL = params.URL %}
-          {% set link = params.link %}
-          {% set hasSecondary = params.hasSecondary %}
-          {% set primary = params.primary %}
-          {% set secondary = params.secondary %}
-
-          {% set type = params.type %}
-          {% set showCaption = params.showCaption %}
-          {% set caption = params.caption %}
-          {% set src = params.src %}
-          {% set hasAlt = params.hasAlt %}
-          {% set alt = params.alt %}
-          {% set sizes = params.sizes %}
-        {% endif %}
-
-        {# Single include switch #}
+        {# Single include switch (exactly once) #}
         {% if item.include == "components/figure.njk" %}
-            {% set figureParams = params %}
-            {% include item.include %}
-        {% elseif item.include == "components/link-block.njk" %}
-            {% set linkBlockParams = params %}
-            {% include item.include %}
+          {% set figureParams = params %}
+          {% include item.include %}
+
         {% elseif item.include == "components/text-block.njk" %}
-            {% set textBlockParams = params %}
-            {% include item.include %}
+          {% set textBlockParams = params %}
+          {% include item.include %}
+
         {% elseif item.include == "components/header.njk" %}
-            {% set headerParams = params %}
-            {% set headerParamsId = id %}
-            {% include item.include %}
+          {% set headerParams = params %}
+          {% set headerParamsId = id %}
+          {% include item.include %}
+
+        {% elseif item.include == "components/link-block.njk" %}
+          {% set linkBlockParams = params %}
+          {% include item.include %}
+
         {% else %}
-            {% include item.include %}
+          <!-- Unknown component include: {{ item.include }} -->
         {% endif %}
 
       {% endif %}
