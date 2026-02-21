@@ -146,3 +146,56 @@ Chapter labeling (template-driven):
   `id = "{{ section.sectionKey }}__title"`.
 - YAML must not set header `id` manually for chapter labeling.
 ---
+
+## Component: text-block
+
+Purpose  
+Renders a subhead (optional) and structured body content using deterministic YAML.  
+Paragraph structure is defined explicitly in data. Templates do not infer structure.
+
+Contract Rules
+
+- YAML defines full structure.
+- `body` must be an array of paragraph strings.
+- `showSubhead` must be explicitly defined.
+- `level` must be explicitly defined when a subhead is present.
+- No template inference is permitted.
+- No margin-based spacing inside the component.
+- Vertical rhythm is controlled via grid row-gap.
+- Typography values must be tokenized.
+- Line-height must be explicitly tokenized.
+- No global selector leakage.
+
+Rendering Rules
+
+- Subhead renders only when:
+  - `showSubhead === true`
+  - `subhead` is non-empty
+- Subhead renders as:
+  - `<h3>` when `level: "h3"`
+  - `<p>` when `level: "None"`
+- Body renders as:
+  - `<div class="text-block__body">`
+  - Each paragraph as a separate `<p>`
+- Paragraph strings may include inline semantic tags (e.g. `<em>`)
+
+### text-block — API
+
+include: components/text-block.njk
+
+Params:
+
+- level: "h3" | "None"
+- showSubhead: boolean
+- subhead: string
+- body: array[string]
+
+Example:
+
+params:
+  level: "h3"
+  showSubhead: true
+  subhead: "Consistency becomes a Requirement"
+  body:
+    - "Paragraph one..."
+    - "Paragraph two..."

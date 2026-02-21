@@ -156,7 +156,7 @@ Example:
 
 ## Link Component Contract
 
-### 1. `link.njk`
+### `link.njk`
 
 Input contract:
 - priority?: "Primary" | "Secondary"
@@ -171,7 +171,9 @@ Rendering contract:
 
 ---
 
-### 2. `link-block.njk`
+## Link Block Component Contract
+
+### `link-block.njk`
 
 Input contract:
 - hasSecondary?: boolean
@@ -185,6 +187,59 @@ Rules:
 - YAML must not contain placeholder values (e.g., "TODO:href").
 
 ---
+
+
+## Text Block  Component Contract
+### `text-block.njk`
+
+Canonical Data Shape
+
+params:
+  level: "h3" | "None"
+  showSubhead: boolean
+  subhead: string
+  body: array[string]
+
+Constraints
+
+- `body` MUST be an array.
+- Multi-paragraph strings are not permitted.
+- Template MUST NOT derive showSubhead.
+- Template MUST NOT split strings into paragraphs.
+- Template MUST NOT reshape data.
+- All structural decisions are defined in YAML.
+
+DOM Structure
+
+<div class="text-block">
+  <h3|p class="text-block__subhead"></h3|p>
+  <div class="text-block__body">
+    <p></p>
+    <p></p>
+  </div>
+</div>
+
+Styling Rules
+
+- `.text-block` uses grid for vertical rhythm.
+- Spacing via `row-gap` only.
+- No margin stacking.
+- Typography values sourced from tokens.
+- Line-height must be explicitly tokenized.
+- No global typography overrides allowed.
+
+Validation
+
+A text-block instance is valid when:
+
+- YAML matches canonical shape.
+- Rendered DOM matches contract.
+- Paragraph count equals body array length.
+- Subhead renders only when explicitly enabled.
+- No placeholder strings.
+
+
+
 
 ### Compiler Rule (Figma → YAML)
 
