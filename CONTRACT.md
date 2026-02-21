@@ -249,3 +249,26 @@ For link-block instances:
 - Map `link--secondary` to `secondary`
 - Emit `hasSecondary: true` only when secondary exists
 - Omit `URL` if not explicitly defined in Figma JSON
+
+
+### figure — API (Temporary Passthrough v1)
+
+include: components/figure.njk
+
+Params
+- type: "desktop" | "mobile" | "composite"
+- showCaption: boolean
+- caption: string
+- src: string (public path)
+- hasAlt: boolean
+- alt: string
+
+Example
+
+params:
+  type: "desktop"
+  showCaption: true
+  caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
+  src: "/assets/images/figure-placeholder.jpg"
+  hasAlt: true
+  alt: "Image description for assistive technology."

@@ -18,7 +18,6 @@ sections:
             includes:
               - include: "components/text-block.njk"
                 params:
-                  level: "None"
                   showSubhead: false
                   body:
                     - "BM Technologies (BMTx) provides digital banking services to higher education and enterprise institutions. Its Banking-as-a-Service (BaaS) platform enables customers to offer checking and savings accounts to their end users through a partner bank, without assuming direct regulatory responsibility."
@@ -28,7 +27,7 @@ sections:
             includes:
               - include: "components/text-block.njk"
                 params:
-                  level: "none"
+                  level: "None"
                   showSubhead: true
                   subhead: "Consistency becomes a Requirement"
                   body:
@@ -38,11 +37,12 @@ sections:
             includes:
               - include: "components/figure.njk"
                 params:
+                  type: "desktop"
+                  showCaption: true
                   caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
-                  src: "TODO:src"
-                  alt: 'Image description for assistive technology. If this is blank the image will be marked as  role="presentation".'
+                  src: "/assets/images/figure-placeholder.jpg"
                   hasAlt: true
-
+                  alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
   - sectionKey: "section-02"
     mode: "normal"
     pages:
@@ -61,10 +61,12 @@ sections:
             includes:
               - include: "components/figure.njk"
                 params:
+                  type: "desktop"
+                  showCaption: true
                   caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
-                  src: "TODO:src"
-                  alt: 'Image description for assistive technology. If this is blank the image will be marked as  role="presentation".'
+                  src: "/assets/images/figure-placeholder.jpg"
                   hasAlt: true
+                  alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
           - wrapper: "multi--bmtx-nextgen--p3--contentcell-2"
             includes:
               - include: "components/text-block.njk"
@@ -103,10 +105,12 @@ sections:
             includes:
               - include: "components/figure.njk"
                 params:
+                  type: "desktop"
+                  showCaption: true
                   caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
-                  src: "TODO:src"
-                  alt: 'Image description for assistive technology. If this is blank the image will be marked as  role="presentation".'
+                  src: "/assets/images/figure-placeholder.jpg"
                   hasAlt: true
+                  alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
           - wrapper: "text--bmtx-nextgen--p4--contentcell-2"
             includes:
               - include: "components/text-block.njk"

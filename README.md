@@ -199,3 +199,108 @@ params:
   body:
     - "Paragraph one..."
     - "Paragraph two..."
+
+
+
+## Component Rehab: figure — Temporary Image Rendering Fix (Passthrough v1)
+
+Status  
+Temporary stabilization applied to prevent blank renders caused by async image optimization.
+
+Scope  
+Applies only to:
+- `/portfolio/bmtx-nextgen/`
+- `components/figure.njk`
+
+Rationale  
+The previous `figure` implementation used the `image` Nunjucks async shortcode backed by `@11ty/eleventy-img`. In this environment the shortcode call can abort template output during render, resulting in a fully empty `.content-cell` despite valid YAML and include routing. This behavior blocks rehab progress and prevents DOM parity validation.
+
+Temporary Policy  
+During Rehab Phase, `figure` MUST render deterministically using passthrough assets only. No optimization pipeline is used.
+
+Source of Truth  
+Images are served from `src/assets/images/` via passthrough copy.
+
+- Source path: `src/assets/images/<file>`
+- Public path: `/assets/images/<file>`
+
+Contract Shape (Passthrough v1)
+
+include: components/figure.njk
+
+params:
+- type: "desktop" | "mobile" | "composite"
+- showCaption: boolean
+- caption: string
+- src: string (public URL path; required)
+- hasAlt: boolean
+- alt: string
+
+Constraints
+- `src` MUST be a public URL path beginning with `/assets/images/`.
+- `src` MUST NOT be a filesystem path.
+- `src` MUST NOT be a TODO token.
+- `hasAlt` MUST be explicitly defined.
+- `showCaption` MUST be explicitly defined.
+- Template MUST NOT infer `hasAlt` or `showCaption`.
+
+Rendering Rules
+- Image renders using native `<img>` only.
+- If `hasAlt === true`:
+  - render `alt="{{ alt }}"`
+- If `hasAlt === false`:
+  - render `alt=""` and `role="presentation"`
+- Caption renders only if:
+  - `showCaption === true` and `caption` is non-empty.
+  
+  
+  ### figure — API (Temporary Passthrough v1)
+  
+  include: components/figure.njk
+  
+  Params
+  - type: "desktop" | "mobile" | "composite"
+  - showCaption: boolean
+  - caption: string
+  - src: string (public path)
+  - hasAlt: boolean
+  - alt: string
+  
+  Example
+  
+  params:
+    type: "desktop"
+    showCaption: true
+    caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
+    src: "/assets/images/figure-placeholder.jpg"
+    hasAlt: true
+    alt: "Image description for assistive technology."
+    
+    
+    ## Image Rendering Issue Summary and Forward Plan
+    
+    Observed Behavior
+    - `cell.includes` contains a valid `components/figure.njk` include object.
+    - When `figure.njk` contains a `{% image ... %}` shortcode call, the rendered output for the include can collapse to an empty `.content-cell`.
+    - When the shortcode is replaced with a native `<img>` element, the include renders normally.
+    
+    Root Cause (Operational)
+    The `image` async shortcode uses `@11ty/eleventy-img`. In the current runtime configuration, the shortcode call can abort template output during render. This yields a silent failure pattern: no visible DOM output and no reliable terminal error surface during watch.
+    
+    Impact
+    - Figure cannot be validated against DOM output.
+    - Rehab progress is blocked due to non-deterministic rendering behavior.
+    
+    Temporary Resolution (Rehab-Compatible)
+    - Disable `@11ty/eleventy-img` usage in `figure.njk`.
+    - Render images via passthrough assets and native `<img>`.
+    - Use public asset paths `/assets/images/...` in YAML.
+    
+    Forward Plan (Post-Rehab / Stabilize Phase)
+    1. Maintain the passthrough figure as the stable baseline.
+    2. Create an optional optimized figure component (separate include) that uses `@11ty/eleventy-img`.
+    3. Introduce an explicit contract split:
+       - Passthrough v1 uses `src` (public path).
+       - Optimized v2 uses `srcFile` (filesystem path) and requires a verified `image` shortcode runtime.
+    4. Add a non-rendering validation mechanism for build-time visibility of image pipeline failures (e.g., consistent surfaced errors or build break) to prevent silent empty renders.
+    5. Re-enable optimized rendering only after the shortcode pipeline is proven deterministic on the target environment.
