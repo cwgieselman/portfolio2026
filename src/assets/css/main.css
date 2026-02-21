@@ -258,38 +258,29 @@ h2.header__headline {
 .figure {
   margin: 0;
   display: grid;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--space-2);
 }
 
 .figure__media {
-  /* keeps media block self-contained */
-}
-
-.figure__placeholder {
   width: 100%;
-  height: 100%;
-  background: #2f80ed; /* your classic blue square */
-}
-
-/* Desktop: locked aspect ratio (adjust to your chosen ratio) */
-.figure--desktop .figure__media > img,
-.figure--desktop .figure__media > picture {
-  width: 100%;
-}
-
-/* If your shortcode outputs <picture>, style wrapper instead */
-.figure--desktop .figure__media {
-  aspect-ratio: 16/9; /* TODO: set to actual desktop ratio token */
   overflow: hidden;
 }
 
-/* Mobile: locked aspect ratio (future) */
+.figure__media img,
+.figure__media picture {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.figure--desktop .figure__media {
+  aspect-ratio: var(--ratio-figure-desktop);
+}
+
 .figure--mobile .figure__media {
   aspect-ratio: 9/16; /* TODO: set to actual mobile ratio token */
-  overflow: hidden;
 }
 
-/* Composite: fills the cell naturally (no forced ratio) */
 .figure--composite .figure__media {
   aspect-ratio: auto;
 }
