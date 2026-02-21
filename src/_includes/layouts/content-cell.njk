@@ -45,8 +45,7 @@
         {% endif %}
 
         {# Default behavior: hydrate globals for legacy components #}
-        {% if item.include != "components/figure.njk" and item.include != "components/text-block.njk" %}
-          {% set level = params.level %}
+        {% if item.include != "components/figure.njk" and item.include != "components/text-block.njk" and item.include != "components/header.njk"%}          {% set level = params.level %}
           {% set headline = params.headline %}
           {% set eyebrow = params.eyebrow %}
           {% set showEyebrow = params.showEyebrow %}
@@ -71,16 +70,20 @@
           {% set sizes = params.sizes %}
         {% endif %}
 
-        {# Single include switch (exactly once) #}
-        {% if item.include == "components/figure.njk" %}
-          {% set figureParams = params %}
-          {% include item.include %}
-        {% elseif item.include == "components/text-block.njk" %}
-          {% set textBlockParams = params %}
-          {% include item.include %}
-        {% else %}
-          {% include item.include %}
-        {% endif %}
+        {# Single include switch #}
+{% if item.include == "components/figure.njk" %}
+  {% set figureParams = params %}
+  {% include item.include %}
+{% elseif item.include == "components/text-block.njk" %}
+  {% set textBlockParams = params %}
+  {% include item.include %}
+{% elseif item.include == "components/header.njk" %}
+  {% set headerParams = params %}
+  {% set headerParamsId = id %}
+  {% include item.include %}
+{% else %}
+  {% include item.include %}
+{% endif %}
 
       {% endif %}
     {% endfor %}

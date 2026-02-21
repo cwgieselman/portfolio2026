@@ -1,47 +1,38 @@
 {#
-  Header Component — top-level param API
+  Header — deterministic param API
 
-  Params:
-  - id (optional)
-  - level (optional): "h1" | "h2" (default "h1")
-  - headline (required)
-  - showEyebrow (optional): boolean (default false)
-  - eyebrow (optional)
-  - showSubhead (optional): boolean (default false)
-  - subhead (optional)
+  Expects (via headerParams):
+  - level: "h1" | "h2" | "h3"
+  - headline: string
+  - showEyebrow: boolean
+  - eyebrow: string
+  - showSubhead: boolean
+  - subhead: string
+
+  Chapter Semantics Rule:
+  - headerParamsId provides derived ID for the first header in a section.
+  - YAML must not define heading IDs.
 #}
 
-{% set hId = id %}
-{% set hLevel = level | default("h1") %}
+{% set p = headerParams %}
+{% set headingId = headerParamsId %}
 
-{# optional element gates: default false if not provided #}
-{% set showEyebrowResolved = (showEyebrow | default(false)) %}
-{% set showSubheadResolved = (showSubhead | default(false)) %}
-
-{# normalize strings #}
-{% set headlineText = (headline | default("") | trim) %}
-{% set eyebrowText = (eyebrow | default("") | trim) %}
-{% set subheadText  = (subhead  | default("") | trim) %}
-
-<div class="header">
-
-  {% if showEyebrowResolved and eyebrowText %}
-    <p class="header__eyebrow">{{ eyebrowText }}</p>
+<header class="header">
+  {% if p.showEyebrow and p.eyebrow %}
+    <p class="header__eyebrow">{{ p.eyebrow }}</p>
   {% endif %}
 
-  {% if headlineText %}
-    <{{ hLevel }}
-      class="header__headline"
-      {% if hId %}id="{{ hId }}"{% endif %}
-    >
-      {{ headlineText }}
-    </{{ hLevel }}>
+  {% if p.level == "h1" %}
+    <h1 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h1>
+  {% elseif p.level == "h2" %}
+    <h2 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h2>
+  {% elseif p.level == "h3" %}
+    <h3 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h3>
   {% else %}
-    <!-- HEADER ERROR: missing required param "headline" -->
+    <p class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</p>
   {% endif %}
 
-  {% if showSubheadResolved and subheadText %}
-    <p class="header__subhead">{{ subheadText }}</p>
+  {% if p.showSubhead and p.subhead %}
+    <p class="header__subhead">{{ p.subhead }}</p>
   {% endif %}
-
-</div>
+</header>
