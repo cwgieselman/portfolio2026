@@ -49,17 +49,16 @@ Build command:
 
 ---
 
-## Branch Naming Convention
+## Project Conventions
 
-Branches follow this format:
-  `<key>/<4-5-word-kebab-description>`
+- Only one rendering pipeline is active (compiled-page system).
+- Templates must not reach into global data implicitly.
+- Includes render only the object passed to them.
+- YAML is the single data contract between design intent and markup.
 
-Examples:
-- `stabilize/link-block-contract`
-- `build/inficon-case-layout`
-- `experiment/prototype-grid-variants`
+---
 
-### Branch Keys
+## Branch Naming
 
 | Key         | Purpose |
 |------------|---------|
@@ -73,15 +72,6 @@ Notes:
 - No spaces.
 - No long sentences.
 - Branch name should describe the structural intent, not the emotional state.
-
----
-
-## Project Conventions
-
-- Only one rendering pipeline is active (compiled-page system).
-- Templates must not reach into global data implicitly.
-- Includes render only the object passed to them.
-- YAML is the single data contract between design intent and markup.
 
 ---
 
@@ -102,7 +92,6 @@ Behavior:
 - If `URL` exists → clickable `<a>`
 - If `URL` missing/empty → disabled `<span>` with `aria-disabled="true"`
 - No placeholder strings are emitted
-
 
 ---
 
@@ -126,8 +115,34 @@ primary:
   link: "Descriptive link text"
   
 Rules:
-- link-block does not accept links: []
-- Links are role-based (primary, secondary), not array-based
 - Missing URL results in disabled rendering via link.njk
 
+---
+
+### `components/header.njk`
+
+Top-level params:
+
+| Param          | Required | Description |
+|----------------|----------|-------------|
+| `id`           | No       | Heading `id` attribute. Typically injected automatically for chapter labeling. |
+| `level`        | No       | `"h1"` or `"h2"` (default `"h1"`) |
+| `headline`     | Yes      | Main heading text |
+| `showEyebrow`  | No       | Boolean gate for eyebrow (default `false`) |
+| `eyebrow`      | No       | Eyebrow text (only rendered when `showEyebrow: true`) |
+| `showSubhead`  | No       | Boolean gate for subhead (default `false`) |
+| `subhead`      | No       | Subhead text (only rendered when `showSubhead: true`) |
+
+Behavior:
+- `headline` is required; if missing, component emits an HTML comment error and does not render a heading.
+- Eyebrow renders only when `showEyebrow: true` and `eyebrow` is non-empty.
+- Subhead renders only when `showSubhead: true` and `subhead` is non-empty.
+- No placeholder strings are emitted.
+- No inference: boolean gates default to `false` when missing.
+
+Chapter labeling (template-driven):
+- Each `layout__section` uses: `aria-labelledby="{{ section.sectionKey }}__title"`.
+- The first header in the first cell of the first page in a section receives:
+  `id = "{{ section.sectionKey }}__title"`.
+- YAML must not set header `id` manually for chapter labeling.
 ---
