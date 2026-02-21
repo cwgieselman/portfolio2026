@@ -1,28 +1,28 @@
 {#
-  Text-Block — param API (deterministic)
+  Text-Block — deterministic param API
 
-  Expects:
-  - level: "h3" | "None" (optional; defaults to "None" if omitted)
-  - showSubhead: boolean (required if subhead is provided)
-  - subhead: string (optional)
-  - body: array[string] (optional)
+  Expects (via textBlockParams):
+  - level: "h3" | "None"
+  - showSubhead: boolean
+  - subhead: string
+  - body: array[string]
 #}
 
-{% set levelResolved = level if level is not undefined else "None" %}
+{% set p = textBlockParams %}
 
 <div class="text-block">
 
-  {% if showSubhead and subhead %}
-    {% if levelResolved == "h3" %}
-      <h3 class="text-block__subhead">{{ subhead }}</h3>
+  {% if p.showSubhead and p.subhead %}
+    {% if p.level == "h3" %}
+      <h3 class="text-block__subhead">{{ p.subhead }}</h3>
     {% else %}
-      <p class="text-block__subhead">{{ subhead }}</p>
+      <p class="text-block__subhead">{{ p.subhead }}</p>
     {% endif %}
   {% endif %}
 
-  {% if body and (body | length) %}
+  {% if p.body and (p.body | length) %}
     <div class="text-block__body">
-      {% for paragraph in body %}
+      {% for paragraph in p.body %}
         <p>{{ paragraph | safe }}</p>
       {% endfor %}
     </div>

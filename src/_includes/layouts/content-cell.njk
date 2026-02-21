@@ -1,4 +1,4 @@
-{# layouts/content-cell.njk (figure isolation) #}
+{# layouts/content-cell.njk (component isolation switch) #}
 
 {% set wrapper = cell.wrapper %}
 
@@ -45,7 +45,7 @@
         {% endif %}
 
         {# Default behavior: hydrate globals for legacy components #}
-        {% if item.include != "components/figure.njk" %}
+        {% if item.include != "components/figure.njk" and item.include != "components/text-block.njk" %}
           {% set level = params.level %}
           {% set headline = params.headline %}
           {% set eyebrow = params.eyebrow %}
@@ -71,9 +71,12 @@
           {% set sizes = params.sizes %}
         {% endif %}
 
-        {# Figure isolation: provide params object for new-style figure template #}
+        {# Single include switch (exactly once) #}
         {% if item.include == "components/figure.njk" %}
           {% set figureParams = params %}
+          {% include item.include %}
+        {% elseif item.include == "components/text-block.njk" %}
+          {% set textBlockParams = params %}
           {% include item.include %}
         {% else %}
           {% include item.include %}
