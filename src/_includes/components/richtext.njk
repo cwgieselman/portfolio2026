@@ -8,7 +8,10 @@
 #}
 
 {% set p = richtextParams %}
-{% set kind = p.kind or "p" %}
+{% if not p.kind %}
+  <!-- CONTENT_ERROR: missing kind (richtext include) -->
+{% endif %}
+{% set kind = p.kind %}
 
 {% if kind == "p" %}
   <p class="richtext">{{ p.text | safe }}</p>

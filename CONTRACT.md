@@ -293,6 +293,36 @@ include: `components/figure.njk`
 </figure>
 ~~~
 
+### Future Optimized Figure (NOT ACTIVE during stabilize)
+
+A separate include will be introduced later:
+
+- `components/figure-optimized.njk`
+
+Contract split:
+- `src` → passthrough only (public `/assets/images/...`)
+- `srcFile` → optimized only (filesystem path, used exclusively by the optimized include)
+
+Optimization may only be reintroduced after deterministic verification.
+No mixed modes in a single include.
+
+### Figure Modes
+
+Baseline (ACTIVE):
+- components/figure.njk
+- Uses <img>
+- src must be public path under /assets/images/
+
+Optimized (NOT ACTIVE during stabilize):
+- components/figure-optimized.njk
+- Uses srcFile (filesystem path)
+- Uses @11ty/eleventy-img
+- Must not be mixed inside the same include
+
+Optimization will only be enabled after:
+- Deterministic verification passes
+- Executor remains thin
+
 ---
 
 ## Link Block

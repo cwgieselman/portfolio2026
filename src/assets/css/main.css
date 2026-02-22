@@ -86,8 +86,8 @@
   --web---sectionHeading: var(--scale-200); /* 32px */
   --web---subhead: var(--scale-150); /* 24px */
   --web---eyebrow: var(--scale-100); /* 16px */
-  --web--paragraph: var(--baseREM); /* 16px */
-  --web--text-link: var(--scale-100); /* 16px */
+  --web---paragraph: var(--baseREM); /* 16px */
+  --web---cta: var(--scale-100); /* 16px */
   --web---fineprint: var(--scale-75); /* 12px */
   --web---masthead: var(--scale-150); /* 24px */
   --web---strapline: var(--scale-100); /* 16px */
@@ -96,10 +96,10 @@
   /* line-height (grid-snapped) */
   --web---title--lh: var(--scale-400); /* 72px */
   --web---sectionHeading--lh: var(--scale-300); /* 48px */
-  --web---subhead--lh: calc(var(--web---lead-subheading) * 2); /* 32px */
+  --web---subhead--lh: calc(var(--web---subhead) * 2); /* 32px */
   --web---eyebrow--lh: calc(var(--web---eyebrow) * 2); /* 32px */
   --web---paragraph--lh: calc(var(--web---paragraph) * 1.75); /* 28px */
-  --web--text-link--lh: calc(var(--web---text-link) * 1.5); /* 24px */
+  --web--cta--lh: calc(var(--web---cta) * 1.5); /* 24px */
   /* letter-spacing */
   --web---eyebrow--ls: calc(var(--web---eyebrow) / 4); /* 4px */
   /* Radii */
@@ -238,7 +238,7 @@ p {
 
 .content-cell--stack {
   display: grid;
-  row-gap: var(--space-200);
+  row-gap: var(--scale-200);
 }
 
 .content-cell--stack :where(h1, h2, h3, p, ul, ol) {
@@ -255,40 +255,19 @@ p {
   font-family: var(--font-brand);
   font-size: var(--web---eyebrow);
   font-weight: var(--font-bold);
+  line-height: var(--web---eyebrow--lh);
+  color: var(--color-link-label);
   font-style: normal;
   text-transform: uppercase;
-  line-height: var(--web---lead-subheading--lh);
   letter-spacing: var(--web---eyebrow--ls);
-  color: var(--color-link-label);
-}
-
-.header__headline {
-  margin: 0;
-  font-family: var(--font-brand);
-  font-style: normal;
-  letter-spacing: 0;
-  color: var(--color-primary-base);
-}
-
-/* size by semantic element */
-h1.header__headline {
-  font-size: var(--web---title);
-  line-height: var(--web---title--lh);
-}
-
-h2.header__headline {
-  font-size: var(--web---sectionHeading);
-  line-height: var(--web---sectionHeading--lh);
 }
 
 .header__subhead {
   margin: 0;
   font-family: var(--font-plain);
-  font-size: var(--web---subheading);
+  font-size: var(--web---subhead);
   font-weight: var(--font-regular);
-  font-style: normal;
-  line-height: var(--web---subheading--lh);
-  letter-spacing: 0;
+  line-height: var(--web---subhead--lh);
   color: var(--color-text);
 }
 
@@ -365,12 +344,12 @@ a.link:hover {
 .link__label {
   display: flex;
   align-items: center;
-  gap: var(--scale--xs);
+  gap: var(--scale-50);
   font-family: var(--font-brand);
   font-weight: var(--font-bold);
-  font-size: var(--scale-75);
-  line-height: 1;
-  letter-spacing: 0.12em;
+  font-size: var(--web---eyebrow);
+  line-height: var(--web---eyebrow--lh);
+  letter-spacing: var(--web---eyebrow--ls);
   text-transform: uppercase;
   color: var(--color-link-label);
 }
@@ -383,8 +362,8 @@ a.link:hover {
   grid-area: text;
   font-family: var(--font-plain);
   font-weight: var(--font-bold);
-  font-size: var(--scale-100);
-  line-height: var(--scale-125);
+  font-size: var(--web--cta);
+  line-height: var(--web--cta--lh);
   color: currentColor;
 }
 
@@ -420,7 +399,7 @@ a.link:hover .link__icon {
 /* _includes/components/link-block.njk */
 .link-block {
   display: grid;
-  gap: var(--spacing-s, 12px);
+  gap: var(--spacing-s);
 }
 
 /* Generated placements (Codex) */

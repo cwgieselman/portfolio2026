@@ -4,7 +4,7 @@
 
 .content-cell--stack {
     display: grid;
-    row-gap: var(--space-200);
+    row-gap: var(--scale-200);
 }
 
 .content-cell--stack :where(h1, h2, h3, p, ul, ol) {

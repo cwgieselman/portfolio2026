@@ -1,4 +1,6 @@
 pageKey: "bmtx-nextgen"
+meta:
+  title: "BMTx NextGen Design System"
 sections:
   - sectionKey: "section-01"
     mode: "composite"

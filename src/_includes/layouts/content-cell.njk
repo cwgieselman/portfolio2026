@@ -6,7 +6,10 @@
   {% if cell.includes and (cell.includes | length) %}
     {% for item in cell.includes %}
       {% if item.include %}
-        {% set params = item.params or {} %}
+        {% if not item.params %}
+            <!-- EXECUTOR_ERROR: missing params for {{ item.include }} -->
+        {% endif %}
+      {% set params = item.params %}
 
         {# Chapter label injection (Header) #}
         {% set id = params.id %}
@@ -42,7 +45,13 @@
           {% include item.include %}
 
         {% else %}
-          <!-- Unknown component include: {{ item.include }} -->
+            <!-- UNKNOWN_INCLUDE:
+                include={{ item.include }}
+                route={{ page.url }}
+                section={{ sectionTitleId }}
+                pageIndex={{ pageItemIndex0 }}
+                cellIndex={{ cellIndex0 }}
+            -->
         {% endif %}
 
       {% endif %}

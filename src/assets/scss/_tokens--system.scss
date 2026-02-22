@@ -11,8 +11,8 @@
     --web---sectionHeading: var(--scale-200); /* 32px */
     --web---subhead: var(--scale-150); /* 24px */
     --web---eyebrow: var(--scale-100); /* 16px */
-    --web--paragraph: var(--baseREM); /* 16px */
-    --web--text-link: var(--scale-100); /* 16px */
+    --web---paragraph: var(--baseREM); /* 16px */
+    --web---cta: var(--scale-100); /* 16px */
 
     --web---fineprint: var(--scale-75); /* 12px */
     --web---masthead: var(--scale-150); /* 24px */
@@ -23,10 +23,10 @@
     /* line-height (grid-snapped) */
     --web---title--lh: var(--scale-400); /* 72px */
     --web---sectionHeading--lh: var(--scale-300); /* 48px */
-    --web---subhead--lh: calc(var(--web---lead-subheading) * 2); /* 32px */
+    --web---subhead--lh: calc(var(--web---subhead) * 2); /* 32px */
     --web---eyebrow--lh: calc(var(--web---eyebrow) * 2); /* 32px */
     --web---paragraph--lh: calc(var(--web---paragraph) * 1.75); /* 28px */
-    --web--text-link--lh: calc(var(--web---text-link) * 1.5); /* 24px */
+    --web--cta--lh: calc(var(--web---cta) * 1.5); /* 24px */
 
     /* letter-spacing */
     --web---eyebrow--ls: calc(var(--web---eyebrow) / 4); /* 4px */

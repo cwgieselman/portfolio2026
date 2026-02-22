@@ -9,38 +9,18 @@
     font-family: var(--font-brand);
     font-size: var(--web---eyebrow);
     font-weight: var(--font-bold);
+    line-height: var(--web---eyebrow--lh);
+    color: var(--color-link-label);
     font-style: normal;
     text-transform: uppercase;
-    line-height: var(--web---lead-subheading--lh);
     letter-spacing: var(--web---eyebrow--ls);
-    color: var(--color-link-label);
-}
-
-.header__headline {
-    margin: 0;
-    font-family: var(--font-brand);
-    font-style: normal;
-    letter-spacing: 0;
-    color: var(--color-primary-base);
-}
-
-/* size by semantic element */
-h1.header__headline {
-    font-size: var(--web---title);
-    line-height: var(--web---title--lh);
-}
-h2.header__headline {
-    font-size: var(--web---sectionHeading);
-    line-height: var(--web---sectionHeading--lh);
 }
 
 .header__subhead {
     margin: 0;
     font-family: var(--font-plain);
-    font-size: var(--web---subheading);
+    font-size: var(--web---subhead);
     font-weight: var(--font-regular);
-    font-style: normal;
-    line-height: var(--web---subheading--lh);
-    letter-spacing: 0;
+    line-height: var(--web---subhead--lh);
     color: var(--color-text);
 }
