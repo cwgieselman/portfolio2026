@@ -14,25 +14,35 @@ sections:
                   showEyebrow: false
                   showSubhead: true
                   subhead: "Design Foundations for a Regulated Financial Platform"
-          - wrapper: "text--bmtx-nextgen--p1--contentcell-2"
+
+          - wrapper: "content--bmtx-nextgen--p1--contentcell-2"
             includes:
-              - include: "components/text-block.njk"
+              - include: "components/richtext.njk"
                 params:
-                  showSubhead: false
-                  body:
-                    - "BM Technologies (BMTx) provides digital banking services to higher education and enterprise institutions. Its Banking-as-a-Service (BaaS) platform enables customers to offer checking and savings accounts to their end users through a partner bank, without assuming direct regulatory responsibility."
+                  kind: "p"
+                  text: "BM Technologies (BMTx) provides digital banking services to higher education and enterprise institutions. Its Banking-as-a-Service (BaaS) platform enables customers to offer checking and savings accounts to their end users through a partner bank, without assuming direct regulatory responsibility."
+
       - pageKey: "page-02"
         cells:
-          - wrapper: "text--bmtx-nextgen--p2--contentcell-1"
+          - wrapper: "content--bmtx-nextgen--p2--contentcell-1"
             includes:
-              - include: "components/text-block.njk"
+              - include: "components/header.njk"
                 params:
-                  level: "None"
-                  showSubhead: true
-                  subhead: "Consistency becomes a Requirement"
-                  body:
-                    - "Because growth strategy necessitated the ability to scale and customize instances rapidly, an initiative dubbed <em>NextGen</em> was planned to replace the legacy system with a modular web app."
-                    - "Existing UI and workflow artifacts conveyed design intent and were sufficient for designing individual features but needed to be normalized, then systemized to serve as build-ready design specifications for NextGen."
+                  level: "h2"
+                  headline: "Consistency becomes a Requirement"
+                  showEyebrow: false
+                  showSubhead: false
+
+              - include: "components/richtext.njk"
+                params:
+                  kind: "p"
+                  text: "Because growth strategy necessitated the ability to scale and customize instances rapidly, an initiative dubbed <em>NextGen</em> was planned to replace the legacy system with a modular web app."
+
+              - include: "components/richtext.njk"
+                params:
+                  kind: "p"
+                  text: "Existing UI and workflow artifacts conveyed design intent and were sufficient for designing individual features but needed to be normalized, then systemized to serve as build-ready design specifications for NextGen."
+
           - wrapper: "figure--bmtx-nextgen--p2--contentcell-2"
             includes:
               - include: "components/figure.njk"
@@ -43,6 +53,7 @@ sections:
                   src: "/assets/images/figure-placeholder.jpg"
                   hasAlt: true
                   alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
+
   - sectionKey: "section-02"
     mode: "normal"
     pages:
@@ -55,8 +66,9 @@ sections:
                   level: "h2"
                   headline: "Turning design intent into build-ready specification"
                   showEyebrow: true
-                  showSubhead: false
                   eyebrow: "BMTx Banking as a Service platform"
+                  showSubhead: false
+
           - wrapper: "figure--bmtx-nextgen--p3--contentcell-3"
             includes:
               - include: "components/figure.njk"
@@ -67,17 +79,27 @@ sections:
                   src: "/assets/images/figure-placeholder.jpg"
                   hasAlt: true
                   alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
-          - wrapper: "multi--bmtx-nextgen--p3--contentcell-2"
+
+          - wrapper: "content--bmtx-nextgen--p3--contentcell-2"
             includes:
-              - include: "components/text-block.njk"
+              - include: "components/richtext.njk"
                 params:
-                  showSubhead: false
-                  body:
-                    - "My role at this point was specific:"
+                  kind: "p"
+                  text: "My role at this point was specific:"
+
+              - include: "components/richtext.njk"
+                params:
+                  kind: "ul"
+                  items:
                     - "Consolidate, then normalize existing design intent."
                     - "Translate that intent into build-ready specs."
                     - "Use those specs to establish a component library."
-                    - "My near-term task was to create a Design System capable of allowing my teammates to reconstruct the platform artifacts in Figma."
+
+              - include: "components/richtext.njk"
+                params:
+                  kind: "p"
+                  text: "My near-term task was to create a Design System capable of allowing my teammates to reconstruct the platform artifacts in Figma."
+
               - include: "components/link-block.njk"
                 params:
                   hasSecondary: false
@@ -99,8 +121,9 @@ sections:
                   level: "h2"
                   headline: "Reaching system readiness"
                   showEyebrow: true
-                  showSubhead: false
                   eyebrow: "BMTx Banking as a Service platform"
+                  showSubhead: false
+
           - wrapper: "figure--bmtx-nextgen--p4--contentcell-3"
             includes:
               - include: "components/figure.njk"
@@ -111,15 +134,24 @@ sections:
                   src: "/assets/images/figure-placeholder.jpg"
                   hasAlt: true
                   alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
-          - wrapper: "text--bmtx-nextgen--p4--contentcell-2"
+
+          - wrapper: "content--bmtx-nextgen--p4--contentcell-2"
             includes:
-              - include: "components/text-block.njk"
+              - include: "components/richtext.njk"
                 params:
-                  showSubhead: false
-                  body:
-                    - "Once the foundation of the Library was established, a teammate migrated the platform’s ~200 screens to Figma in about a week using the defined variables and components."
-                    - "Use of the Library also eliminated most of the inconsistency present in the legacy artifacts, resulting in a tighter, more consistent interface."
-                    - "These gains demonstrated that the system had reached a level of completeness to warrant engineering handoff, even as it continued to evolve."
+                  kind: "p"
+                  text: "Once the foundation of the Library was established, a teammate migrated the platform’s ~200 screens to Figma in about a week using the defined variables and components."
+
+              - include: "components/richtext.njk"
+                params:
+                  kind: "p"
+                  text: "Use of the Library also eliminated most of the inconsistency present in the legacy artifacts, resulting in a tighter, more consistent interface."
+
+              - include: "components/richtext.njk"
+                params:
+                  kind: "p"
+                  text: "These gains demonstrated that the system had reached a level of completeness to warrant engineering handoff, even as it continued to evolve."
+
               - include: "components/link-block.njk"
                 params:
                   hasSecondary: false

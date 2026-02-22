@@ -11,8 +11,8 @@
     font-weight: var(--font-bold);
     font-style: normal;
     text-transform: uppercase;
-    line-height: calc(var(--web---eyebrow) * 2);
-    letter-spacing: calc(var(--web---eyebrow) / 4);
+    line-height: var(--web---lead-subheading--lh);
+    letter-spacing: var(--web---eyebrow--ls);
     color: var(--color-link-label);
 }
 
@@ -26,21 +26,21 @@
 
 /* size by semantic element */
 h1.header__headline {
-    font-size: var(--web---title-h1);
-    line-height: var(--web---title-h1--lh);
+    font-size: var(--web---title);
+    line-height: var(--web---title--lh);
 }
 h2.header__headline {
-    font-size: var(--web---section--heading-h2);
-    line-height: var(--web---section--heading-h2--lh);
+    font-size: var(--web---sectionHeading);
+    line-height: var(--web---sectionHeading--lh);
 }
 
 .header__subhead {
     margin: 0;
     font-family: var(--font-plain);
-    font-size: var(--web---lead-subheading);
+    font-size: var(--web---subheading);
     font-weight: var(--font-regular);
     font-style: normal;
-    line-height: calc(var(--web---lead-subheading) * 2);
+    line-height: var(--web---subheading--lh);
     letter-spacing: 0;
     color: var(--color-text);
 }

@@ -1,5 +1,5 @@
 :root {
-    /* Sizing References */
+    /* Sizing */
     --baseREM: 16px;
     /* Metric Scale */
     --scale-25: calc(var(--baseREM) * (25/100)); /* 4px */
@@ -15,7 +15,17 @@
     --scale-350: calc(var(--baseREM) * (350/100)); /* 56px */
     --scale-400: calc(var(--baseREM) * (400/100)); /* 72px */
 
-    /* Color References */
+    /* Typography Weight */
+    --font-regular: 400;
+    --font-semibold: 600;
+    --font-bold: 700;
+    --font-italic: italics;
+
+    /* Font Family */
+    --font-brand: "Raleway", sans-serif;
+    --font-plain: "PT Sans", sans-serif;
+
+    /* Colors */
     --primary---plus90: rgba(4, 23, 42, 1);
     --primary---plus80: rgba(4, 21, 38, 1);
     --primary---plus70: rgba(4, 23, 42, 1);
@@ -60,62 +70,4 @@
     --neutral---plus1: rgba(236, 236, 233, 1);
     --neutral---base: rgba(248, 248, 247, 1);
     --neutral---minus1: rgba(255, 255, 255, 1);
-
-    /* System Colors */
-    --color-primary-base: var(--primary---base);
-    --color-primary-plus40: var(--primary---plus40);
-    --color-bg: var(--neutral---base);
-    --color-text: var(--primary---plus40);
-    --color-link-label: var(--secondary---plus20);
-
-    /* Typography - Families */
-    --font-brand: "Raleway", sans-serif;
-    --font-plain: "PT Sans", sans-serif;
-
-    /* Typography - Weights */
-    --font-regular: 400;
-    --font-bold: 700;
-    --font-italic: italic;
-
-    /* TypographyText-size styles */
-    --web---title-h1: var(--scale-350);
-    --web---section--heading-h2: var(--scale-200);
-    --web---lead-subheading: var(--scale-150);
-    --web--paragraph: var(--scale-100);
-    --web--text-link: var(--scale-100);
-    --web---fineprint: var(--scale-75);
-    --web---masthead: var(--scale-150);
-    --web---strapline: var(--scale-100);
-    --web---button: var(--scale-100);
-    --web---button--small: var(--scale-75);
-    --web---eyebrow: var(--scale-100);
-
-    /* Display line-heights (grid-snapped) */
-    --web---title-h1--lh: var(--scale-400); /* 72px */
-    --web---section--heading-h2--lh: var(--scale-300); /* 48px */
-
-    /* Shape - Corner Radius */
-    --corner-none: 0;
-    --corner-xxs: var(--scale-25);
-    --corner-xs: var(--scale-50);
-    --corner-s: var(--scale-75);
-    --corner-m: var(--scale-100);
-    --corner-xl: var(--scale-150);
-    --corner-xxl: var(--scale-200);
-    --corner-full: 1000px;
-
-    /* Spacing */
-    --spacing-xxs: var(--scale-25);
-    --spacing-xs: var(--scale-50);
-    --spacing-s: var(--scale-75);
-    --spacing-m: var(--scale-100);
-    --spacing-l: var(--scale-125);
-    --spacing-xl: var(--scale-150);
-    --spacing-xxl: var(--scale-200);
-    --spacing-xxxl: var(--scale-250);
-
-    /* Effects <!-- TODO: make tokenize this --> */
-    --elevation---one: 0px 2px 12px rgba(6, 31, 56, 1);
-
-    --ff-field-width: 1896px;
 }

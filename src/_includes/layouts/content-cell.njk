@@ -1,8 +1,8 @@
 {# layouts/content-cell.njk — stabilized thin executor #}
 
 {% set wrapper = cell.wrapper %}
-
-<div class="content-cell" data-cell="{{ wrapper }}">
+{% set isStack = cell.includes and (cell.includes | length) > 1 %}
+<div class="content-cell{% if isStack %} content-cell--stack{% endif %}" data-cell="{{ wrapper }}">
   {% if cell.includes and (cell.includes | length) %}
     {% for item in cell.includes %}
       {% if item.include %}
@@ -35,6 +35,10 @@
 
         {% elseif item.include == "components/link-block.njk" %}
           {% set linkBlockParams = params %}
+          {% include item.include %}
+
+        {% elseif item.include == "components/richtext.njk" %}
+          {% set richtextParams = params %}
           {% include item.include %}
 
         {% else %}

@@ -2,7 +2,7 @@
   Header — deterministic param API
 
   Expects (via headerParams):
-  - level: "h1" | "h2" | "h3"
+  - level: "h1" | "h2"
   - headline: string
   - showEyebrow: boolean
   - eyebrow: string
@@ -26,8 +26,6 @@
     <h1 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h1>
   {% elseif p.level == "h2" %}
     <h2 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h2>
-  {% elseif p.level == "h3" %}
-    <h3 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h3>
   {% else %}
     <p class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</p>
   {% endif %}

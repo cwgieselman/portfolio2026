@@ -1,40 +1,65 @@
-h1,
-h2,
-h3 {
-    font-family: var(--font-brand);
-    font-weight: 700;
-    line-height: 1.2;
-}
+/* ----------------------------------
+ * h1 — Title
+ * ----------------------------------*/
 
 h1 {
-    font-size: var(--scale-350);
-    line-height: var(--scale-400);
-    color: var(--color-primary-base);
-    font-weight: 700;
-}
-
-h2 {
-    font-size: var(--scale-200);
-    line-height: var(--scale-300);
-    color: var(--color-primary-base);
-}
-
-h3 {
-    font-size: var(--scale-150);
-    line-height: var(--scale-250);
+    font-family: var(--font-brand);
+    font-size: var(--web---title);
+    font-weight: var(--font-bold);
+    line-height: var(--web---title--lh);
     color: var(--color-text);
 }
 
-p {
-    font-family: var(--font-plain);
-    font-size: 16px;
-    line-height: var(--scale-175);
-    letter-spacing: 0;
+/* ----------------------------------
+ * h2 — Section Header
+* ---------------------------------- */
+
+section :where(h2) {
+    font-family: var(--font-brand);
+    font-size: var(--web---sectionHeading);
+    font-weight: var(--font-semibold);
+    line-height: var(--web---sectionHeading--lh);
+    color: var(--color-text);
 }
 
-.subhead {
+/* ----------------------------------
+ * h2 — Section Header (Intro Variant)
+ * Rule:
+ * If a section contains the page-level h1,
+ * any h2 inside that section is treated as a
+ * framing heading (quieter visual role.
+ * ---------------------------------- */
+
+@supports selector(section:has(h1)) {
+    section:has(h1) :where(h2) {
+        font-family: var(--font-brand);
+        font-size: var(--web---subhead);
+        font-weight: var(--font-regular);
+        line-height: var(--web---subhead--lh);
+        color: var(--color-text);
+    }
+}
+
+/* ----------------------------------
+ * h3 — Subheading
+* ---------------------------------- */
+
+h3 {
     font-family: var(--font-brand);
-    font-size: var(--scale-150);
-    line-height: var(--scale-250);
-    font-weight: 400;
+    font-size: var(--web---subhead);
+    font-weight: var(--font-regular);
+    line-height: var(--web---subhead--lh);
+    color: var(--color-text);
+}
+
+/* ----------------------------------
+ * p — Body
+* ---------------------------------- */
+
+p {
+    font-family: var(--font-plain);
+    font-size: var(--web--paragraph);
+    font-weight: var(--font-regular);
+    line-height: var(--web---paragraph--lh);
+    color: var(--color-text);
 }
