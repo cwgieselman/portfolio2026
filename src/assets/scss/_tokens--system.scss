@@ -1,0 +1,58 @@
+:root {
+    /* Color */
+    --color-primary-base: var(--primary---base);
+    --color-primary-plus40: var(--primary---plus40);
+    --color-bg: var(--neutral---base);
+    --color-text: var(--primary---plus40);
+    --color-link-label: var(--secondary---plus20);
+
+    /* Typography Size */
+    --web---title: var(--scale-350); /* 56px */
+    --web---sectionHeading: var(--scale-200); /* 32px */
+    --web---subhead: var(--scale-150); /* 24px */
+    --web---eyebrow: var(--scale-100); /* 16px */
+    --web---paragraph: var(--baseREM); /* 16px */
+    --web---cta: var(--scale-100); /* 16px */
+
+    --web---fineprint: var(--scale-75); /* 12px */
+    --web---masthead: var(--scale-150); /* 24px */
+    --web---strapline: var(--scale-100); /* 16px */
+    --web---button: var(--scale-100); /* 16px */
+    --web---button--small: var(--scale-75); /* 12px */
+
+    /* line-height (grid-snapped) */
+    --web---title--lh: var(--scale-400); /* 72px */
+    --web---sectionHeading--lh: var(--scale-300); /* 48px */
+    --web---subhead--lh: calc(var(--web---subhead) * 2); /* 32px */
+    --web---eyebrow--lh: calc(var(--web---eyebrow) * 2); /* 32px */
+    --web---paragraph--lh: calc(var(--web---paragraph) * 1.75); /* 28px */
+    --web--cta--lh: calc(var(--web---cta) * 1.5); /* 24px */
+
+    /* letter-spacing */
+    --web---eyebrow--ls: calc(var(--web---eyebrow) / 4); /* 4px */
+
+    /* Radii */
+    --corner-none: 0;
+    --corner-xxs: var(--scale-25);
+    --corner-xs: var(--scale-50);
+    --corner-s: var(--scale-75);
+    --corner-m: var(--scale-100);
+    --corner-xl: var(--scale-150);
+    --corner-xxl: var(--scale-200);
+    --corner-full: 1000px;
+
+    /* Spacins */
+    --spacing-xxs: var(--scale-25);
+    --spacing-xs: var(--scale-50);
+    --spacing-s: var(--scale-75);
+    --spacing-m: var(--scale-100);
+    --spacing-l: var(--scale-125);
+    --spacing-xl: var(--scale-150);
+    --spacing-xxl: var(--scale-200);
+    --spacing-xxxl: var(--scale-250);
+
+    /* Effects <!-- TODO: make tokenize this --> */
+    --elevation---one: 0px 2px 12px rgba(6, 31, 56, 1);
+
+    --ff-field-width: 1896px;
+}

@@ -1,12 +1,15 @@
 {# layouts/content-cell.njk — stabilized thin executor #}
 
 {% set wrapper = cell.wrapper %}
-
-<div class="content-cell" data-cell="{{ wrapper }}">
+{% set isStack = cell.includes and (cell.includes | length) > 1 %}
+<div class="content-cell{% if isStack %} content-cell--stack{% endif %}" data-cell="{{ wrapper }}">
   {% if cell.includes and (cell.includes | length) %}
     {% for item in cell.includes %}
       {% if item.include %}
-        {% set params = item.params or {} %}
+        {% if not item.params %}
+            <!-- EXECUTOR_ERROR: missing params for {{ item.include }} -->
+        {% endif %}
+      {% set params = item.params %}
 
         {# Chapter label injection (Header) #}
         {% set id = params.id %}
@@ -24,10 +27,6 @@
           {% set figureParams = params %}
           {% include item.include %}
 
-        {% elseif item.include == "components/text-block.njk" %}
-          {% set textBlockParams = params %}
-          {% include item.include %}
-
         {% elseif item.include == "components/header.njk" %}
           {% set headerParams = params %}
           {% set headerParamsId = id %}
@@ -37,8 +36,18 @@
           {% set linkBlockParams = params %}
           {% include item.include %}
 
+        {% elseif item.include == "components/richtext.njk" %}
+          {% set richtextParams = params %}
+          {% include item.include %}
+
         {% else %}
-          <!-- Unknown component include: {{ item.include }} -->
+            <!-- UNKNOWN_INCLUDE:
+                include={{ item.include }}
+                route={{ page.url }}
+                section={{ sectionTitleId }}
+                pageIndex={{ pageItemIndex0 }}
+                cellIndex={{ cellIndex0 }}
+            -->
         {% endif %}
 
       {% endif %}

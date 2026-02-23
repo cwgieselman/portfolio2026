@@ -1,6 +1,12 @@
+@charset "UTF-8";
 /* src/assets/scss/main.scss */
+/* Components must not style raw elements globally (p, h2, a) unless scoped under the component root.
+ * Components may not introduce vertical spacing by stacking margins between internal children.
+ * No fallback values in var() (no silent drift).
+ * No magic numbers: any literal that affects spacing/typography/layout must be a token or a named variable that maps to a token.
+ * Any exception must be marked /* CONTRACT_EXCEPTION: reason */
 :root {
-  /* Sizing References */
+  /* Sizing */
   --baseREM: 16px;
   /* Metric Scale */
   --scale-25: calc(var(--baseREM) * (25/100)); /* 4px */
@@ -15,30 +21,34 @@
   --scale-300: calc(var(--baseREM) * (300/100)); /* 48px */
   --scale-350: calc(var(--baseREM) * (350/100)); /* 56px */
   --scale-400: calc(var(--baseREM) * (400/100)); /* 72px */
-  /* Color References */
-  --neutral---plus2: rgba(223, 223, 222, 1);
-  --neutral---plus1: rgba(236, 236, 233, 1);
-  --neutral---base: rgba(248, 248, 247, 1);
-  --neutral---minus1: rgba(255, 255, 255, 1);
-  --primary---minus90: rgba(231, 237, 244, 1);
-  --primary---minus80: rgba(207, 219, 232, 1);
-  --primary---minus60: rgba(159, 184, 209, 1);
-  --primary---minus50: rgba(135, 166, 198, 1);
-  --primary---minus20: rgba(62, 113, 163, 1);
-  --primary---base: rgba(14, 77, 140, 1);
-  --primary---plus40: rgba(8, 46, 84, 1);
-  --primary---plus60: rgba(6, 31, 56, 1);
+  /* Typography Weight */
+  --font-regular: 400;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-italic: italics;
+  /* Font Family */
+  --font-brand: "Raleway", sans-serif;
+  --font-plain: "PT Sans", sans-serif;
+  /* Colors */
   --primary---plus90: rgba(4, 23, 42, 1);
-  --secondary---base: rgba(255, 205, 0, 1);
-  --secondary---minus90: rgba(255, 250, 230, 1);
-  --secondary---minus80: rgba(255, 245, 204, 1);
-  --secondary---minus70: rgba(255, 240, 179, 1);
-  --secondary---minus60: rgba(255, 235, 153, 1);
-  --secondary---minus50: rgba(255, 230, 128, 1);
-  --secondary---minus40: rgba(255, 225, 102, 1);
-  --secondary---minus30: rgba(255, 220, 77, 1);
-  --secondary---minus20: rgba(255, 215, 51, 1);
-  --secondary---minus10: rgba(255, 210, 26, 1);
+  --primary---plus80: rgba(4, 21, 38, 1);
+  --primary---plus70: rgba(4, 23, 42, 1);
+  --primary---plus60: rgba(6, 31, 56, 1);
+  --primary---plus50: rgba(7, 39, 70, 1);
+  --primary---plus40: rgba(8, 46, 84, 1);
+  --primary---plus30: rgba(10, 54, 98, 1);
+  --primary---plus20: rgba(11, 62, 112, 1);
+  --primary---plus10: rgba(13, 69, 126, 1);
+  --primary---base: rgba(14, 77, 140, 1);
+  --primary---minus10: rgba(38, 95, 152, 1);
+  --primary---minus20: rgba(62, 113, 163, 1);
+  --primary---minus30: rgba(86, 130, 175, 1);
+  --primary---minus40: rgba(110, 148, 186, 1);
+  --primary---minus50: rgba(135, 166, 198, 1);
+  --primary---minus60: rgba(159, 184, 209, 1);
+  --primary---minus70: rgba(183, 202, 221, 1);
+  --primary---minus80: rgba(207, 219, 232, 1);
+  --primary---minus90: rgba(231, 237, 244, 1);
   --secondary---plus90: rgba(25, 20, 0, 1);
   --secondary---plus80: rgba(51, 41, 0, 1);
   --secondary---plus70: rgba(76, 61, 0, 1);
@@ -48,35 +58,51 @@
   --secondary---plus30: rgba(179, 144, 0, 1);
   --secondary---plus20: rgba(204, 164, 0, 1);
   --secondary---plus10: rgba(230, 185, 0, 1);
-  /* System Colors */
+  --secondary---base: rgba(255, 205, 0, 1);
+  --secondary---minus10: rgba(255, 210, 26, 1);
+  --secondary---minus20: rgba(255, 215, 51, 1);
+  --secondary---minus30: rgba(255, 220, 77, 1);
+  --secondary---minus40: rgba(255, 225, 102, 1);
+  --secondary---minus50: rgba(255, 230, 128, 1);
+  --secondary---minus60: rgba(255, 235, 153, 1);
+  --secondary---minus70: rgba(255, 240, 179, 1);
+  --secondary---minus80: rgba(255, 245, 204, 1);
+  --secondary---minus90: rgba(255, 250, 230, 1);
+  --neutral---plus2: rgba(223, 223, 222, 1);
+  --neutral---plus1: rgba(236, 236, 233, 1);
+  --neutral---base: rgba(248, 248, 247, 1);
+  --neutral---minus1: rgba(255, 255, 255, 1);
+}
+
+:root {
+  /* Color */
   --color-primary-base: var(--primary---base);
   --color-primary-plus40: var(--primary---plus40);
   --color-bg: var(--neutral---base);
   --color-text: var(--primary---plus40);
   --color-link-label: var(--secondary---plus20);
-  /* Typography - Families */
-  --font-brand: "Raleway", sans-serif;
-  --font-plain: "PT Sans", sans-serif;
-  /* Typography - Weights */
-  --font-regular: 400;
-  --font-bold: 700;
-  --font-italic: italic;
-  /* TypographyText-size styles */
-  --web---title-h1: var(--scale-350);
-  --web---section--heading-h2: var(--scale-200);
-  --web---lead-subheading: var(--scale-150);
-  --web--paragraph: var(--scale-100);
-  --web--text-link: var(--scale-100);
-  --web---fineprint: var(--scale-75);
-  --web---masthead: var(--scale-150);
-  --web---strapline: var(--scale-100);
-  --web---button: var(--scale-100);
-  --web---button--small: var(--scale-75);
-  --web---eyebrow: var(--scale-100);
-  /* Display line-heights (grid-snapped) */
-  --web---title-h1--lh: var(--scale-400); /* 72px */
-  --web---section--heading-h2--lh: var(--scale-300); /* 48px */
-  /* Shape - Corner Radius */
+  /* Typography Size */
+  --web---title: var(--scale-350); /* 56px */
+  --web---sectionHeading: var(--scale-200); /* 32px */
+  --web---subhead: var(--scale-150); /* 24px */
+  --web---eyebrow: var(--scale-100); /* 16px */
+  --web---paragraph: var(--baseREM); /* 16px */
+  --web---cta: var(--scale-100); /* 16px */
+  --web---fineprint: var(--scale-75); /* 12px */
+  --web---masthead: var(--scale-150); /* 24px */
+  --web---strapline: var(--scale-100); /* 16px */
+  --web---button: var(--scale-100); /* 16px */
+  --web---button--small: var(--scale-75); /* 12px */
+  /* line-height (grid-snapped) */
+  --web---title--lh: var(--scale-400); /* 72px */
+  --web---sectionHeading--lh: var(--scale-300); /* 48px */
+  --web---subhead--lh: calc(var(--web---subhead) * 2); /* 32px */
+  --web---eyebrow--lh: calc(var(--web---eyebrow) * 2); /* 32px */
+  --web---paragraph--lh: calc(var(--web---paragraph) * 1.75); /* 28px */
+  --web--cta--lh: calc(var(--web---cta) * 1.5); /* 24px */
+  /* letter-spacing */
+  --web---eyebrow--ls: calc(var(--web---eyebrow) / 4); /* 4px */
+  /* Radii */
   --corner-none: 0;
   --corner-xxs: var(--scale-25);
   --corner-xs: var(--scale-50);
@@ -85,7 +111,7 @@
   --corner-xl: var(--scale-150);
   --corner-xxl: var(--scale-200);
   --corner-full: 1000px;
-  /* Spacing */
+  /* Spacins */
   --spacing-xxs: var(--scale-25);
   --spacing-xs: var(--scale-50);
   --spacing-s: var(--scale-75);
@@ -118,45 +144,64 @@ body {
   line-height: 1.6;
 }
 
-h1,
-h2,
-h3 {
-  font-family: var(--font-brand);
-  font-weight: 700;
-  line-height: 1.2;
-}
-
+/* ----------------------------------
+ * h1 — Title
+ * ----------------------------------*/
 h1 {
-  font-size: var(--scale-350);
-  line-height: var(--scale-400);
-  color: var(--color-primary-base);
-  font-weight: 700;
-}
-
-h2 {
-  font-size: var(--scale-200);
-  line-height: var(--scale-300);
-  color: var(--color-primary-base);
-}
-
-h3 {
-  font-size: var(--scale-150);
-  line-height: var(--scale-250);
+  font-family: var(--font-brand);
+  font-size: var(--web---title);
+  font-weight: var(--font-bold);
+  line-height: var(--web---title--lh);
   color: var(--color-text);
 }
 
-p {
-  font-family: var(--font-plain);
-  font-size: 16px;
-  line-height: var(--scale-175);
-  letter-spacing: 0;
+/* ----------------------------------
+ * h2 — Section Header
+* ---------------------------------- */
+section :where(h2) {
+  font-family: var(--font-brand);
+  font-size: var(--web---sectionHeading);
+  font-weight: var(--font-semibold);
+  line-height: var(--web---sectionHeading--lh);
+  color: var(--color-text);
 }
 
-.subhead {
+/* ----------------------------------
+ * h2 — Section Header (Intro Variant)
+ * Rule:
+ * If a section contains the page-level h1,
+ * any h2 inside that section is treated as a
+ * framing heading (quieter visual role.
+ * ---------------------------------- */
+@supports selector(section:has(h1)) {
+  section:has(h1) :where(h2) {
+    font-family: var(--font-brand);
+    font-size: var(--web---subhead);
+    font-weight: var(--font-regular);
+    line-height: var(--web---subhead--lh);
+    color: var(--color-text);
+  }
+}
+/* ----------------------------------
+ * h3 — Subheading
+* ---------------------------------- */
+h3 {
   font-family: var(--font-brand);
-  font-size: var(--scale-150);
-  line-height: var(--scale-250);
-  font-weight: 400;
+  font-size: var(--web---subhead);
+  font-weight: var(--font-regular);
+  line-height: var(--web---subhead--lh);
+  color: var(--color-text);
+}
+
+/* ----------------------------------
+ * p — Body
+* ---------------------------------- */
+p {
+  font-family: var(--font-plain);
+  font-size: var(--web--paragraph);
+  font-weight: var(--font-regular);
+  line-height: var(--web---paragraph--lh);
+  color: var(--color-text);
 }
 
 /* 11ty _includes found in src/_includes/layouts */
@@ -191,6 +236,15 @@ p {
   /* no positioning rules */
 }
 
+.content-cell--stack {
+  display: grid;
+  row-gap: var(--scale-200);
+}
+
+.content-cell--stack :where(h1, h2, h3, p, ul, ol) {
+  margin: 0;
+}
+
 /* _includes/components/header.njk */
 .header {
   display: grid;
@@ -201,55 +255,34 @@ p {
   font-family: var(--font-brand);
   font-size: var(--web---eyebrow);
   font-weight: var(--font-bold);
+  line-height: var(--web---eyebrow--lh);
+  color: var(--color-link-label);
   font-style: normal;
   text-transform: uppercase;
-  line-height: calc(var(--web---eyebrow) * 2);
-  letter-spacing: calc(var(--web---eyebrow) / 4);
-  color: var(--color-link-label);
-}
-
-.header__headline {
-  margin: 0;
-  font-family: var(--font-brand);
-  font-style: normal;
-  letter-spacing: 0;
-  color: var(--color-primary-base);
-}
-
-/* size by semantic element */
-h1.header__headline {
-  font-size: var(--web---title-h1);
-  line-height: var(--web---title-h1--lh);
-}
-
-h2.header__headline {
-  font-size: var(--web---section--heading-h2);
-  line-height: var(--web---section--heading-h2--lh);
+  letter-spacing: var(--web---eyebrow--ls);
 }
 
 .header__subhead {
   margin: 0;
   font-family: var(--font-plain);
-  font-size: var(--web---lead-subheading);
+  font-size: var(--web---subhead);
   font-weight: var(--font-regular);
-  font-style: normal;
-  line-height: calc(var(--web---lead-subheading) * 2);
-  letter-spacing: 0;
+  line-height: var(--web---subhead--lh);
   color: var(--color-text);
 }
 
 .text-block {
   display: grid;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--spacing-xs);
 }
 .text-block__subhead {
   margin: 0;
   font-size: var(--web---lead-subheading);
-  color: var(--color-text-primary);
+  color: var(--color-text);
 }
 .text-block__body {
   display: grid;
-  row-gap: var(--space-stack-sm);
+  row-gap: var(--spacing-xs);
 }
 .text-block__body p {
   margin: 0;
@@ -258,7 +291,7 @@ h2.header__headline {
 .figure {
   margin: 0;
   display: grid;
-  gap: var(--space-2);
+  gap: var(--spacing-xs);
 }
 
 .figure__media {
@@ -274,11 +307,13 @@ h2.header__headline {
 }
 
 .figure--desktop .figure__media {
-  aspect-ratio: var(--ratio-figure-desktop);
+  /* TODO: define and set to var(--ratio-figure-desktop) */
+  aspect-ratio: 16/9;
 }
 
 .figure--mobile .figure__media {
-  aspect-ratio: 9/16; /* TODO: set to actual mobile ratio token */
+  /* TODO: define and set to var(--ratio-figure-mobile) */
+  aspect-ratio: 9/16;
 }
 
 .figure--composite .figure__media {
@@ -309,12 +344,12 @@ a.link:hover {
 .link__label {
   display: flex;
   align-items: center;
-  gap: var(--scale--50, 8px);
+  gap: var(--scale-50);
   font-family: var(--font-brand);
   font-weight: var(--font-bold);
-  font-size: var(--scale-75);
-  line-height: 1;
-  letter-spacing: 0.12em;
+  font-size: var(--web---eyebrow);
+  line-height: var(--web---eyebrow--lh);
+  letter-spacing: var(--web---eyebrow--ls);
   text-transform: uppercase;
   color: var(--color-link-label);
 }
@@ -327,8 +362,8 @@ a.link:hover {
   grid-area: text;
   font-family: var(--font-plain);
   font-weight: var(--font-bold);
-  font-size: var(--scale-100);
-  line-height: var(--scale-125);
+  font-size: var(--web--cta);
+  line-height: var(--web--cta--lh);
   color: currentColor;
 }
 
@@ -364,7 +399,7 @@ a.link:hover .link__icon {
 /* _includes/components/link-block.njk */
 .link-block {
   display: grid;
-  gap: var(--spacing-s, 12px);
+  gap: var(--spacing-s);
 }
 
 /* Generated placements (Codex) */
@@ -374,13 +409,13 @@ a.link:hover .link__icon {
   grid-row: 5/8;
 }
 
-.content-cell[data-cell=text--bmtx-nextgen--p1--contentcell-2] {
+.content-cell[data-cell=content--bmtx-nextgen--p1--contentcell-2] {
   grid-column: 5/8;
   grid-row: 9/13;
 }
 
 /* section-01 / page-02 */
-.content-cell[data-cell=text--bmtx-nextgen--p2--contentcell-1] {
+.content-cell[data-cell=content--bmtx-nextgen--p2--contentcell-1] {
   grid-column: 5/6;
   grid-row: 3/9;
 }
@@ -401,7 +436,7 @@ a.link:hover .link__icon {
   grid-row: 3/13;
 }
 
-.content-cell[data-cell=multi--bmtx-nextgen--p3--contentcell-2] {
+.content-cell[data-cell=content--bmtx-nextgen--p3--contentcell-2] {
   grid-column: 3/7;
   grid-row: 5/11;
 }
@@ -417,7 +452,7 @@ a.link:hover .link__icon {
   grid-row: 4/12;
 }
 
-.content-cell[data-cell=text--bmtx-nextgen--p4--contentcell-2] {
+.content-cell[data-cell=content--bmtx-nextgen--p4--contentcell-2] {
   grid-column: 3/6;
   grid-row: 4/12;
 }

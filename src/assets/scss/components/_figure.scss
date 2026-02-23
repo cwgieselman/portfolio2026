@@ -1,7 +1,7 @@
 .figure {
     margin: 0;
     display: grid;
-    gap: var(--space-2);
+    gap: var(--spacing-xs);
 }
 
 .figure__media {
@@ -17,13 +17,13 @@
 }
 
 .figure--desktop .figure__media {
-    aspect-ratio: var(--ratio-figure-desktop);
-    // aspect-ratio: 16 / 9; /* TODO: set to actual desktop ratio token */
+    /* TODO: define and set to var(--ratio-figure-desktop) */
+    aspect-ratio: 16 / 9;
 }
 
 .figure--mobile .figure__media {
-    //aspect-ratio: var(--ratio-figure-mobile);
-    aspect-ratio: 9 / 16; /* TODO: set to actual mobile ratio token */
+    /* TODO: define and set to var(--ratio-figure-mobile) */
+    aspect-ratio: 9 / 16;
 }
 
 .figure--composite .figure__media {

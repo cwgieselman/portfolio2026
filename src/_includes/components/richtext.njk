@@ -1,0 +1,32 @@
+{#
+  Richtext — deterministic param API
+
+  Expects (via richtextParams):
+  - kind: "p" | "ul" | "ol"
+  - text: string (for kind "p")
+  - items: array of strings (for kind "ul" or "ol")
+#}
+
+{% set p = richtextParams %}
+{% if not p.kind %}
+  <!-- CONTENT_ERROR: missing kind (richtext include) -->
+{% endif %}
+{% set kind = p.kind %}
+
+{% if kind == "p" %}
+  <p class="richtext">{{ p.text | safe }}</p>
+
+{% elseif kind == "ul" %}
+  <ul class="richtext richtext--list">
+    {% for li in p.items %}
+      <li>{{ li | safe }}</li>
+    {% endfor %}
+  </ul>
+
+{% elseif kind == "ol" %}
+  <ol class="richtext richtext--list">
+    {% for li in p.items %}
+      <li>{{ li | safe }}</li>
+    {% endfor %}
+  </ol>
+{% endif %}

@@ -18,21 +18,21 @@
 {% set headingId = headerParamsId %}
 
 <header class="header">
-  {% if p.showEyebrow and p.eyebrow %}
-    <p class="header__eyebrow">{{ p.eyebrow }}</p>
-  {% endif %}
+    {% if p.showEyebrow and p.eyebrow %}
+        <p class="header__eyebrow">{{ p.eyebrow }}</p>
+    {% endif %}
 
-  {% if p.level == "h1" %}
-    <h1 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h1>
-  {% elseif p.level == "h2" %}
-    <h2 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h2>
+    {% if p.level == "h1" %}
+        <h1 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h1>
+    {% elseif p.level == "h2" %}
+        <h2 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h2>
   {% elseif p.level == "h3" %}
-    <h3 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h3>
-  {% else %}
-    <p class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</p>
-  {% endif %}
+        <h3 class="header__headline"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h3>
+    {% else %}
+        <!-- HEADER_ERROR: invalid level -->
+    {% endif %}
 
-  {% if p.showSubhead and p.subhead %}
-    <p class="header__subhead">{{ p.subhead }}</p>
-  {% endif %}
+    {% if p.showSubhead and p.subhead %}
+        <p class="header__subhead">{{ p.subhead }}</p>
+    {% endif %}
 </header>

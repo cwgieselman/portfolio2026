@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title or "Craig Gieselman - Design Engineer" }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% set titleSuffix = "Portfolio of Craig W Gieselman, Senior UX & Design Systems Designer" %}
+    {% if not meta or not meta.title %}
+        <!-- BASE_ERROR: missing meta.title (required for <title>) -->
+    {% endif %}
+    <title>{{ title }} | {{ titleSuffix }}</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="/assets/css/main.css">
 </head>

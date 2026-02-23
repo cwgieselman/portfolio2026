@@ -1,16 +1,16 @@
 .text-block {
     display: grid;
-    gap: var(--space-2, 0.5rem);
+    gap: var(--spacing-xs);
 
     &__subhead {
         margin: 0;
         font-size: var(--web---lead-subheading);
-        color: var(--color-text-primary);
+        color: var(--color-text);
     }
 
     &__body {
         display: grid;
-        row-gap: var(--space-stack-sm);
+        row-gap: var(--spacing-xs);
 
         p {
             margin: 0;

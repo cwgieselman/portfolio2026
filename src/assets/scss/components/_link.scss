@@ -19,13 +19,13 @@ a.link:hover {
 .link__label {
     display: flex;
     align-items: center;
-    gap: var(--scale--50, 8px);
+    gap: var(--scale-50);
 
     font-family: var(--font-brand);
     font-weight: var(--font-bold);
-    font-size: var(--scale-75);
-    line-height: 1;
-    letter-spacing: 0.12em;
+    font-size: var(--web---eyebrow);
+    line-height: var(--web---eyebrow--lh);
+    letter-spacing: var(--web---eyebrow--ls);
     text-transform: uppercase;
     color: var(--color-link-label);
 
@@ -39,8 +39,8 @@ a.link:hover {
     grid-area: text;
     font-family: var(--font-plain);
     font-weight: var(--font-bold);
-    font-size: var(--scale-100);
-    line-height: var(--scale-125);
+    font-size: var(--web--cta);
+    line-height: var(--web--cta--lh);
     color: currentColor;
 }
 

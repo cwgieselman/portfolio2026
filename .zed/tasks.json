@@ -1,0 +1,44 @@
+[
+  {
+    "label": "Generate Docs: System Docs",
+    "command": "node",
+    "args": ["scripts/gen-system-docs.mjs"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+  {
+    "label": "Generate Docs: System Report",
+    "command": "node",
+    "args": ["scripts/gen-system-report.mjs"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+  {
+    "label": "Generate Docs: Status",
+    "command": "git",
+    "args": ["status", "--short", "_docs/generated"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+  {
+    "label": "Generate Docs: Diff",
+    "command": "git",
+    "args": ["diff", "--", "_docs/generated"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+  {
+    "label": "Generate Docs: Clean",
+    "command": "node",
+    "args": ["scripts/clean-generated-docs.mjs"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+  {
+    "label": "CI: Check (all)",
+    "command": "npm",
+    "args": ["run", "check:ci"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+]

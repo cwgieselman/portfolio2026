@@ -1,6 +1,14 @@
 /* src/assets/scss/main.scss */
+/* Components must not style raw elements globally (p, h2, a) unless scoped under the component root.
+ * Components may not introduce vertical spacing by stacking margins between internal children.
+ * No fallback values in var() (no silent drift).
+ * No magic numbers: any literal that affects spacing/typography/layout must be a token or a named variable that maps to a token.
+ * Any exception must be marked /* CONTRACT_EXCEPTION: reason */
 
-@use "tokens";
+@use "tokens--reference";
+@use "tokens--system";
+// reserved for component-level aliases (intentionally disabled for now)
+// @use "tokens--component";
 @use "base";
 @use "typography";
 
