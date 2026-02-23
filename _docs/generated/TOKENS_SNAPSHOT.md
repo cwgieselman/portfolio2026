@@ -2,7 +2,7 @@
 
 Snapshots of canonical token files for diffing.
 
-## src/assets/scss/_tokens--reference.scss
+## src/assets/scss/_tokens--primitive.scss
 
 ```scss
 :root {
@@ -81,7 +81,7 @@ Snapshots of canonical token files for diffing.
 
 ```
 
-## src/assets/scss/_tokens--system.scss
+## src/assets/scss/_tokens--semantic.scss
 
 ```scss
 :root {

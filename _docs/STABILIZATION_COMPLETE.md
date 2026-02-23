@@ -22,8 +22,8 @@
 
 ### Tokens
 - Canonical token files are established:
-  - `src/assets/scss/_tokens--reference.scss`
-  - `src/assets/scss/_tokens--system.scss`
+  - `src/assets/scss/_tokens--primitive.scss`
+  - `src/assets/scss/_tokens--semantic.scss`
 - Typography and token naming are aligned between contract and implementation (no drift).
 
 ### Docs & Generated Keepers

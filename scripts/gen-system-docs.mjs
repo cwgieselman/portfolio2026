@@ -12,14 +12,14 @@ const paths = {
     "src",
     "assets",
     "scss",
-    "_tokens--system.scss",
+    "_tokens--semantic.scss",
   ),
   tokensRef: path.join(
     ROOT,
     "src",
     "assets",
     "scss",
-    "_tokens--reference.scss",
+    "_tokens--primitive.scss",
   ),
 };
 
@@ -83,19 +83,19 @@ function genTokensSnapshot() {
   const ref = readFileSafe(paths.tokensRef);
   if (ref) {
     parts.push(
-      `## src/assets/scss/_tokens--reference.scss\n\n\`\`\`scss\n${ref}\n\`\`\``,
+      `## src/assets/scss/_tokens--primitive.scss\n\n\`\`\`scss\n${ref}\n\`\`\``,
     );
   } else {
-    parts.push(`## src/assets/scss/_tokens--reference.scss\n\nMissing file.`);
+    parts.push(`## src/assets/scss/_tokens--primitive.scss\n\nMissing file.`);
   }
 
   const sys = readFileSafe(paths.tokensSystem);
   if (sys) {
     parts.push(
-      `## src/assets/scss/_tokens--system.scss\n\n\`\`\`scss\n${sys}\n\`\`\``,
+      `## src/assets/scss/_tokens--semantic.scss\n\n\`\`\`scss\n${sys}\n\`\`\``,
     );
   } else {
-    parts.push(`## src/assets/scss/_tokens--system.scss\n\nMissing file.`);
+    parts.push(`## src/assets/scss/_tokens--semantic.scss\n\nMissing file.`);
   }
 
   const md = `
