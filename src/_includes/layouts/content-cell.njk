@@ -27,10 +27,6 @@
           {% set figureParams = params %}
           {% include item.include %}
 
-        {% elseif item.include == "components/text-block.njk" %}
-          {% set textBlockParams = params %}
-          {% include item.include %}
-
         {% elseif item.include == "components/header.njk" %}
           {% set headerParams = params %}
           {% set headerParamsId = id %}

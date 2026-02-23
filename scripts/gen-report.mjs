@@ -4,7 +4,7 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, "_docs", "generated");
-const OUT_FILE = path.join(OUT_DIR, REPORT.md");
+const OUT_FILE = path.join(OUT_DIR, "REPORT.md");
 
 const files = {
   executor: "src/_includes/layouts/content-cell.njk",

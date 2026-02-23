@@ -145,9 +145,21 @@ Templates must:
 - Fail visibly when required fields are missing.
 - Never silently omit required structure.
 
-If required component data is missing, render an HTML comment marker:
+### Error Marker Convention
 
-`<!-- missing <field> -->`
+If required component data is missing, templates MUST render a structured HTML comment marker in the format:
+
+`<!-- <SCOPE>_ERROR: <message> -->`
+
+Where `<SCOPE>` identifies the source of the failure (e.g., `FIGURE`, `CONTENT`, `EXECUTOR`).
+
+Examples:
+
+~~~html
+<!-- FIGURE_ERROR: missing src -->
+<!-- CONTENT_ERROR: missing kind (richtext include) -->
+<!-- EXECUTOR_ERROR: missing params -->
+~~~
 
 Silent failure is not permitted.
 
@@ -196,12 +208,12 @@ Display typography uses explicit grid-snapped line-height tokens.
 Rules:
 
 - Font-size uses semantic tokens:
-  - `--web---title-h1`
-  - `--web---section--heading-h2`
+  - `--web---title`
+  - `--web---sectionHeading`
 
 - Line-height uses explicit tokens:
-  - `--web---title-h1--lh`
-  - `--web---section--heading-h2--lh`
+  - `--web---title--lh`
+  - `--web---sectionHeading--lh`
 
 - Line-height must be snapped to the 4px metric scale.
 - Multiplier-based leading is not permitted.
@@ -210,8 +222,8 @@ Rules:
 Example:
 
 ```css
---web---title-h1: var(--scale-350);
---web---title-h1--lh: var(--scale-400);
+--web---title: var(--scale-350);
+--web---title--lh: var(--scale-400);
 
 ---
 
@@ -254,35 +266,57 @@ include: `components/header.njk`
 
 ---
 
-## Text Block
+## Richtext
 
-include: `components/text-block.njk`
+include: `components/richtext.njk`
 
-### Inputs (`textBlockParams`)
-
-- level: `"h3" | "None"`
-- showSubhead: boolean
-- subhead: string
-- body: array[string]
+### Inputs (`richtextParams`)
+- kind: `"p" | "ul" | "ol"` (required)
+- text: string — required when `kind == "p"`
+- items: array[string] — required when `kind == "ul" or kind == "ol"`
 
 ### Constraints
 
-- `body` MUST be an array.
-- Multi-paragraph strings are not permitted.
-- Template must not derive `showSubhead`.
-- Template must not split strings.
-- Template must not reshape data.
+- `kind` MUST be provided.
+- When `kind == "p"`, text MUST be provided.
+- When `kind == "ul"` or `"ol"`, items MUST be provided.
+- `items` MUST be an array of strings.
+- Template must not derive `kind`.
+- Template must not transform, split, or reshape `text` or `items`.
+- Template must not coerce between paragraph and list modes.
+
+### Error Behavior
+
+- Missing kind MUST emit:
+~~~html
+<!-- CONTENT_ERROR: missing kind (richtext include) -->
+~~~
+No other implicit fallbacks are permitted.
 
 ### DOM Shape
 
+Paragraph Mode
+
 ~~~html
-<div class="text-block">
-  <h3|p class="text-block__subhead"></h3|p> <!-- optional -->
-  <div class="text-block__body">
-    <p></p>
-    <p></p>
-  </div>
-</div>
+<p class="richtext"></p>
+~~~
+
+Unordered List Mode
+
+~~~html
+<ul class="richtext richtext--list">
+    <li></li>
+    <li></li>
+</ul>
+~~~
+
+Ordered List Mode
+
+~~~html
+<ol class="richtext richtext--list">
+    <li></li>
+    <li></li>
+</ol>
 ~~~
 
 ---
