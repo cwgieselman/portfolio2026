@@ -2,9 +2,13 @@
 
 ## P0 — Must Fix (Undefined Tokens / Naming Drift)
 
+Done
+
 ---
 
 ## P1 — Consolidation / Hygiene
+
+Done
 
 ---
 

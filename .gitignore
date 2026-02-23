@@ -144,9 +144,8 @@ vite.config.ts.timestamp-*
 # website compiled by 11ty (generated files, not source code)
 _site/
 
-# docs created by compiler (generated files, not source code)
-_docs/
-src/_figma-json/
+# Figma JSON for extracting yaml data
+src/_figma-json
 
 # Figma compiler local secrets
 .figma-token.json

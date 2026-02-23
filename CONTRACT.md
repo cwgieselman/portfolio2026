@@ -1,4 +1,29 @@
-# Deterministic Rendering Contract  
+# Portfolio2026 — Deterministic Render Contract
+A formal specification of the render model, routing behavior, component contracts, and system invariants governing Portfolio2026.
+
+Scope of this document:
+- Defines the deterministic render model: YAML → executor → component params → DOM.
+- Specifies routing behavior and include execution rules within `layouts/content-cell.njk`.
+- Establishes component boundaries, required params, and prohibition of implicit defaults or global hydration.
+- Governs image handling policy (passthrough baseline vs. future optimized mode) and prevents mixed render paths.
+- Protects architectural integrity by prohibiting inference, param reshaping, silent fallbacks, and undocumented behavior.
+
+This document is normative. Generated documentation in `_docs/generated/` is descriptive only.
+
+---
+
+## Relationship to Generated Docs
+
+The `_docs/generated/` folder contains snapshots of the current repository state.
+Those files are descriptive only and must not be manually edited.
+
+If generated output conflicts with this contract, either:
+- Update the code to match the contract, or
+- Intentionally revise the contract.
+
+---
+
+## Deterministic Rendering Contract  
 Figma → YAML → Eleventy → HTML → CSS  
 
 This file defines the non-negotiable structural and rendering rules for the active system.
