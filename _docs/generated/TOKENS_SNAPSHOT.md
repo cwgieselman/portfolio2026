@@ -1,0 +1,146 @@
+# TOKENS_SNAPSHOT (generated)
+
+Snapshots of canonical token files for diffing.
+
+## src/assets/scss/_tokens--reference.scss
+
+```scss
+:root {
+    /* Sizing */
+    --baseREM: 16px;
+    /* Metric Scale */
+    --scale-25: calc(var(--baseREM) * (25/100)); /* 4px */
+    --scale-50: calc(var(--baseREM) * (50/100)); /* 8px */
+    --scale-75: calc(var(--baseREM) * (75/100)); /* 12px */
+    --scale-100: calc(var(--baseREM) * (100/100)); /* 16 (base) */
+    --scale-125: calc(var(--baseREM) * (125/100)); /* 20px */
+    --scale-150: calc(var(--baseREM) * (150/100)); /* 24px */
+    --scale-175: calc(var(--baseREM) * (175/100)); /* 28px */
+    --scale-200: calc(var(--baseREM) * (200/100)); /* 32px */
+    --scale-250: calc(var(--baseREM) * (250/100)); /* 40px */
+    --scale-300: calc(var(--baseREM) * (300/100)); /* 48px */
+    --scale-350: calc(var(--baseREM) * (350/100)); /* 56px */
+    --scale-400: calc(var(--baseREM) * (400/100)); /* 72px */
+
+    /* Typography Weight */
+    --font-regular: 400;
+    --font-semibold: 600;
+    --font-bold: 700;
+    --font-italic: italics;
+
+    /* Font Family */
+    --font-brand: "Raleway", sans-serif;
+    --font-plain: "PT Sans", sans-serif;
+
+    /* Colors */
+    --primary---plus90: rgba(4, 23, 42, 1);
+    --primary---plus80: rgba(4, 21, 38, 1);
+    --primary---plus70: rgba(4, 23, 42, 1);
+    --primary---plus60: rgba(6, 31, 56, 1);
+    --primary---plus50: rgba(7, 39, 70, 1);
+    --primary---plus40: rgba(8, 46, 84, 1);
+    --primary---plus30: rgba(10, 54, 98, 1);
+    --primary---plus20: rgba(11, 62, 112, 1);
+    --primary---plus10: rgba(13, 69, 126, 1);
+    --primary---base: rgba(14, 77, 140, 1);
+    --primary---minus10: rgba(38, 95, 152, 1);
+    --primary---minus20: rgba(62, 113, 163, 1);
+    --primary---minus30: rgba(86, 130, 175, 1);
+    --primary---minus40: rgba(110, 148, 186, 1);
+    --primary---minus50: rgba(135, 166, 198, 1);
+    --primary---minus60: rgba(159, 184, 209, 1);
+    --primary---minus70: rgba(183, 202, 221, 1);
+    --primary---minus80: rgba(207, 219, 232, 1);
+    --primary---minus90: rgba(231, 237, 244, 1);
+
+    --secondary---plus90: rgba(25, 20, 0, 1);
+    --secondary---plus80: rgba(51, 41, 0, 1);
+    --secondary---plus70: rgba(76, 61, 0, 1);
+    --secondary---plus60: rgba(102, 82, 0, 1);
+    --secondary---plus50: rgba(128, 103, 0, 1);
+    --secondary---plus40: rgba(153, 123, 0, 1);
+    --secondary---plus30: rgba(179, 144, 0, 1);
+    --secondary---plus20: rgba(204, 164, 0, 1);
+    --secondary---plus10: rgba(230, 185, 0, 1);
+    --secondary---base: rgba(255, 205, 0, 1);
+    --secondary---minus10: rgba(255, 210, 26, 1);
+    --secondary---minus20: rgba(255, 215, 51, 1);
+    --secondary---minus30: rgba(255, 220, 77, 1);
+    --secondary---minus40: rgba(255, 225, 102, 1);
+    --secondary---minus50: rgba(255, 230, 128, 1);
+    --secondary---minus60: rgba(255, 235, 153, 1);
+    --secondary---minus70: rgba(255, 240, 179, 1);
+    --secondary---minus80: rgba(255, 245, 204, 1);
+    --secondary---minus90: rgba(255, 250, 230, 1);
+
+    --neutral---plus2: rgba(223, 223, 222, 1);
+    --neutral---plus1: rgba(236, 236, 233, 1);
+    --neutral---base: rgba(248, 248, 247, 1);
+    --neutral---minus1: rgba(255, 255, 255, 1);
+}
+
+```
+
+## src/assets/scss/_tokens--system.scss
+
+```scss
+:root {
+    /* Color */
+    --color-primary-base: var(--primary---base);
+    --color-primary-plus40: var(--primary---plus40);
+    --color-bg: var(--neutral---base);
+    --color-text: var(--primary---plus40);
+    --color-link-label: var(--secondary---plus20);
+
+    /* Typography Size */
+    --web---title: var(--scale-350); /* 56px */
+    --web---sectionHeading: var(--scale-200); /* 32px */
+    --web---subhead: var(--scale-150); /* 24px */
+    --web---eyebrow: var(--scale-100); /* 16px */
+    --web---paragraph: var(--baseREM); /* 16px */
+    --web---cta: var(--scale-100); /* 16px */
+
+    --web---fineprint: var(--scale-75); /* 12px */
+    --web---masthead: var(--scale-150); /* 24px */
+    --web---strapline: var(--scale-100); /* 16px */
+    --web---button: var(--scale-100); /* 16px */
+    --web---button--small: var(--scale-75); /* 12px */
+
+    /* line-height (grid-snapped) */
+    --web---title--lh: var(--scale-400); /* 72px */
+    --web---sectionHeading--lh: var(--scale-300); /* 48px */
+    --web---subhead--lh: calc(var(--web---subhead) * 2); /* 32px */
+    --web---eyebrow--lh: calc(var(--web---eyebrow) * 2); /* 32px */
+    --web---paragraph--lh: calc(var(--web---paragraph) * 1.75); /* 28px */
+    --web--cta--lh: calc(var(--web---cta) * 1.5); /* 24px */
+
+    /* letter-spacing */
+    --web---eyebrow--ls: calc(var(--web---eyebrow) / 4); /* 4px */
+
+    /* Radii */
+    --corner-none: 0;
+    --corner-xxs: var(--scale-25);
+    --corner-xs: var(--scale-50);
+    --corner-s: var(--scale-75);
+    --corner-m: var(--scale-100);
+    --corner-xl: var(--scale-150);
+    --corner-xxl: var(--scale-200);
+    --corner-full: 1000px;
+
+    /* Spacins */
+    --spacing-xxs: var(--scale-25);
+    --spacing-xs: var(--scale-50);
+    --spacing-s: var(--scale-75);
+    --spacing-m: var(--scale-100);
+    --spacing-l: var(--scale-125);
+    --spacing-xl: var(--scale-150);
+    --spacing-xxl: var(--scale-200);
+    --spacing-xxxl: var(--scale-250);
+
+    /* Effects <!-- TODO: make tokenize this --> */
+    --elevation---one: 0px 2px 12px rgba(6, 31, 56, 1);
+
+    --ff-field-width: 1896px;
+}
+
+```

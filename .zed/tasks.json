@@ -1,0 +1,30 @@
+[
+  {
+    "label": "Docs: Docs",
+    "command": "node",
+    "args": ["scripts/gen-docs.mjs"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+  {
+    "label": "Docs: Report",
+    "command": "node",
+    "args": ["scripts/gen-report.mjs"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+  {
+    "label": "Docs: Status (generated)",
+    "command": "git",
+    "args": ["status", "--short", "_docs/generated"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+  {
+    "label": "Docs: Clean (generated)",
+    "command": "node",
+    "args": ["scripts/clean-generated-docs.mjs"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+]
