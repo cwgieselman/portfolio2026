@@ -4,7 +4,7 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, "_docs", "generated");
-const OUT_FILE = path.join(OUT_DIR, "REPORT.md");
+const OUT_FILE = path.join(OUT_DIR, "SYSTEM_REPORT.md");
 
 const files = {
   executor: "src/_includes/layouts/content-cell.njk",
@@ -71,20 +71,20 @@ function main() {
       /UNKNOWN_INCLUDE/.test(ex) ? "" : "UNKNOWN_INCLUDE marker not found",
     );
 
-    // include item.include is allowed ONLY if it is whitelisted by comparisons
+    // include item.include is allowed ONLY if it is safelisted by comparisons
     const hasIncludeItem = /include\s+item\.include/.test(ex);
-    const hasWhitelist = /item\.include\s*==\s*["']components\//.test(ex);
+    const hasSafelist = /item\.include\s*==\s*["']components\//.test(ex);
     const hasUnknown = /UNKNOWN_INCLUDE/.test(ex);
 
-    if (hasIncludeItem && hasWhitelist && hasUnknown) {
+    if (hasIncludeItem && hasSafelist && hasUnknown) {
       add(
         "PASS",
-        "Executor: include dispatch is whitelisted (safe include item.include)",
+        "Executor: include dispatch is safelisted (safe include item.include)",
       );
     } else if (hasIncludeItem) {
       add(
         "FAIL",
-        "Executor: include item.include is unguarded (no whitelist detected)",
+        "Executor: include item.include is unguarded (no safelist detected)",
       );
     } else {
       add("PASS", "Executor: no include item.include usage");
@@ -213,7 +213,7 @@ function main() {
 
   const lines = [];
   lines.push(...gateText);
-  lines.push(`# Stabilization Report (Generated)`);
+  lines.push(`# System Report (Generated)`);
   lines.push(`Generated on: ${now}`);
   lines.push("");
   lines.push(`## Summary`);

@@ -53,12 +53,12 @@ function genRouterMap() {
   }
 
   // Extract include statements: {% include item.include %} is expected
-  // We want the whitelisted component paths referenced in comparisons:
+  // We want the safelisted component paths referenced in comparisons:
   // item.include == "components/foo.njk"
-  const whitelistRe = /item\.include\s*==\s*["']([^"']+)["']/g;
+  const safelistRe = /item\.include\s*==\s*["']([^"']+)["']/g;
   const includes = [];
   let m;
-  while ((m = whitelistRe.exec(src))) includes.push(m[1]);
+  while ((m = safelistRe.exec(src))) includes.push(m[1]);
 
   const unique = [...new Set(includes)].sort();
 
@@ -67,12 +67,12 @@ function genRouterMap() {
 
 Source: \`src/_includes/layouts/content-cell.njk\`
 
-## Whitelisted includes
+## Safelisted includes
 ${unique.length ? unique.map((p) => `- \`${p}\``).join("\n") : "- (none found)"}
 
 ## Notes
 - This file is generated. Edit the router, not this doc.
-- Whitelist is derived from comparisons of \`item.include == "…"\` inside the executor.
+- Safelist is derived from comparisons of \`item.include == "…"\` inside the executor.
 `;
   writeDoc("ROUTER_MAP.md", md);
 }

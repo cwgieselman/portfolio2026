@@ -1,8 +1,8 @@
 This report is generated from repository state.
 If any FAIL appears, code must be reconciled with CONTRACT.md before proceeding.
 
-# Stabilization Report (Generated)
-Generated on: 2026-02-23T02:04:46.011Z
+# System Report (Generated)
+Generated on: 2026-02-23T16:31:57.318Z
 
 ## Summary
 - FAIL: 0
@@ -14,7 +14,7 @@ Generated on: 2026-02-23T02:04:46.011Z
 - [PASS] Executor: no `or {}` param defaults
 - [PASS] Executor: missing params render EXECUTOR_ERROR comment
 - [PASS] Executor: unknown include renders visible comment
-- [PASS] Executor: include dispatch is whitelisted (safe include item.include)
+- [PASS] Executor: include dispatch is safelisted (safe include item.include)
 - [PASS] Richtext: no implicit defaults (`or "..."` or `| default()`)
 - [PASS] Figure: uses passthrough <img>
 - [PASS] Figure: no async image shortcode logic inside component
