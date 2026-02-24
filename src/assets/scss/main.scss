@@ -5,6 +5,9 @@
  * No magic numbers: any literal that affects spacing/typography/layout must be a token or a named variable that maps to a token.
  * Any exception must be marked /* CONTRACT_EXCEPTION: reason */
 
+// remove when Token Studio is fully online
+@use "tokens--legacy";
+
 @use "tokens--primitive";
 @use "tokens--semantic";
 // reserved for component-level aliases (intentionally disabled for now)
