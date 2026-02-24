@@ -9,7 +9,7 @@
  * ----------------------------------*/
 
 :root {
-  --baseREM: 16px;
-  --scale-25: calc(var(--baseREM) * .25);
-  --scale-50: calc(var(--baseREM) * .50);
+  --scale-25: calc(var(--scale-base) * 0.25);
+  --scale-50: calc(var(--scale-base) * 0.50);
+  --scale-base: 16px;
 }

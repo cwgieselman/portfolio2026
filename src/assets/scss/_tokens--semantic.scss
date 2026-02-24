@@ -9,9 +9,9 @@
  * ----------------------------------*/
 
 :root {
-  --corner-m: var(--baseREM);
+  --corner-m: var(--scale-base);
   --corner-xs: var(--scale-50);
   --corner-xxs: var(--scale-25);
-  --spacing-m: var(--baseREM);
-  --web---paragraph: var(--baseREM);
+  --spacing-m: var(--scale-base);
+  --web---paragraph: var(--scale-base);
 }
