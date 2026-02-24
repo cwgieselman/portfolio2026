@@ -5,6 +5,15 @@
  * No fallback values in var() (no silent drift).
  * No magic numbers: any literal that affects spacing/typography/layout must be a token or a named variable that maps to a token.
  * Any exception must be marked /* CONTRACT_EXCEPTION: reason */
+/* ----------------------------------
+ * _tokens--legacy.scss
+ * Contents of the old handwritten
+ * 'reference' and 'system' tokens
+ *
+ * Can be removed once Token Studio
+ * pipeline is stable and populated.
+ * ----------------------------------*/
+/* old _tokens--primitives.scss file */
 :root {
   /* Sizing */
   --baseREM: 16px;
@@ -72,9 +81,11 @@
   --neutral---plus1: rgba(236, 236, 233, 1);
   --neutral---base: rgba(248, 248, 247, 1);
   --neutral---minus1: rgba(255, 255, 255, 1);
-}
+  /* ----------------------------------
 
-:root {
+   * old _tokens--semantic.scss file
+
+   * --------------------------------*/
   /* Color */
   --color-primary-base: var(--primary---base);
   --color-primary-plus40: var(--primary---plus40);
@@ -125,6 +136,22 @@
   --ff-field-width: 1896px;
 }
 
+/* ----------------------------------
+ * _tokens--primitives.scss
+ * Primitives (a.k.a. Base / Core / Foundations)
+ * Raw values. No meaning. No intent.
+ *
+ * This is a generated file and
+ * should NOT Be manually edited
+ * ----------------------------------*/
+/* ----------------------------------
+ * _tokens--semantic.scss
+ * Semantic Tokens (a.k.a. Alias / System Tokens)
+ * Intent-based usage tokens.
+ *
+ * This is a generated file and
+ * should NOT Be manually edited
+ * ----------------------------------*/
 * {
   margin: 0;
   padding: 0;
