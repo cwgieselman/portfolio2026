@@ -1,17 +1,23 @@
 /* src/assets/scss/main.scss */
-/* Components must not style raw elements globally (p, h2, a) unless scoped under the component root.
+/* ---------------------------------
+ * Components must not style raw elements globally (p, h2, a) unless scoped under the component root.
  * Components may not introduce vertical spacing by stacking margins between internal children.
  * No fallback values in var() (no silent drift).
  * No magic numbers: any literal that affects spacing/typography/layout must be a token or a named variable that maps to a token.
- * Any exception must be marked /* CONTRACT_EXCEPTION: reason */
+ * Any exception must be marked /* CONTRACT_EXCEPTION: reason
+ * ----------------------------------*/
 
 // remove when Token Studio is fully online
 @use "tokens--legacy";
 
-@use "tokens--primitive";
+// generated output from Token Studio
+@use "tokens--primitives";
 @use "tokens--semantic";
-// reserved for component-level aliases (intentionally disabled for now)
-// @use "tokens--component";
+// @use "tokens--component"; (intentionally disabled for now)
+
+/* ---------------------------------
+ * Partials below this line emit css
+ * ----------------------------------*/
 @use "base";
 @use "typography";
 
