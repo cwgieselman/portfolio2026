@@ -3,16 +3,17 @@
   "version": "1.0.0",
   "description": "2026 Portfolio for Craig Gieselman - Product Designer (UX and Design Systems",
   "scripts": {
-    "start": "npm run sass:watch & eleventy --serve",
-    "build": "npm run sass:build && eleventy",
+    "start": "npm run tokens:build && npm run sass:watch & eleventy --serve",
+    "build": "npm run tokens:build && npm run eleventy",
     "clean": "rm -rf _site",
+    "check:ci": "npm run check:executor && npm run check:no-var-fallbacks && npm run check:system",
+    "check:executor": "node scripts/check-executor-invariants.mjs",
+    "check:no-var-fallbacks": "node scripts/check-no-css-var-fallbacks.mjs",
+    "check:system": "node scripts/gen-system-report.mjs",
+    "figma:fetch": "node scripts/figma-fetch-node.mjs",
     "sass:build": "sass src/assets/scss/main.scss:src/assets/css/main.css --no-source-map",
     "sass:watch": "sass src/assets/scss/main.scss:src/assets/css/main.css --watch",
-    "figma:fetch": "node scripts/figma-fetch-node.mjs",
-    "check:system": "node scripts/gen-system-report.mjs",
-    "check:no-var-fallbacks": "node scripts/check-no-css-var-fallbacks.mjs",
-    "check:executor": "node scripts/check-executor-invariants.mjs",
-    "check:ci": "npm run check:executor && npm run check:no-var-fallbacks && npm run check:system"
+    "tokens:build": "node scripts/build-tokens-scss.mjs"
   },
   "keywords": [
     "portfolio",
