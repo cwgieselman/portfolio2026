@@ -13,7 +13,10 @@
     "figma:fetch": "node scripts/figma-fetch-node.mjs",
     "sass:build": "sass src/assets/scss/main.scss:src/assets/css/main.css --no-source-map",
     "sass:watch": "sass src/assets/scss/main.scss:src/assets/css/main.css --watch",
-    "tokens:build": "node scripts/build-tokens-scss.mjs"
+    "tokens:build": "node scripts/build-tokens-scss.mjs",
+    "tokens:prune": "node scripts/prune-legacy-tokens.mjs",
+    "tokens:prune:apply": "node scripts/prune-legacy-tokens.mjs --write --in-place",
+    "tokens:prune:write": "node scripts/prune-legacy-tokens.mjs --write"
   },
   "keywords": [
     "portfolio",
