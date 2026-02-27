@@ -16,3 +16,10 @@ body {
     background-color: var(--color-bg);
     line-height: 1.6;
 }
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style-position: outside;
+}

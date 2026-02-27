@@ -5,6 +5,7 @@ import path from "node:path";
 const TOKENS_PATH = path.resolve("tokens/tokens.json");
 const OUT_PRIMITIVES = path.resolve("src/assets/scss/_tokens--primitives.scss");
 const OUT_SEMANTIC = path.resolve("src/assets/scss/_tokens--semantic.scss");
+const OUT_COMPONENT = path.resolve("src/assets/scss/_tokens--component.scss");
 
 const data = JSON.parse(fs.readFileSync(TOKENS_PATH, "utf8"));
 
@@ -12,13 +13,16 @@ const data = JSON.parse(fs.readFileSync(TOKENS_PATH, "utf8"));
  * Resolve token reference like {scale.baseRem} using tokenSetOrder:
  * - try primitives.<ref>
  * - then semantic.<ref>
+ * - then component.<ref>
  */
 function resolveRef(refPath) {
   const clean = refPath.replace(/^\{|\}$/g, ""); // remove { }
   const candidates =
-    clean.startsWith("primitives.") || clean.startsWith("semantic.")
+    clean.startsWith("primitives.") ||
+    clean.startsWith("semantic.") ||
+    clean.startsWith("component.")
       ? [clean]
-      : [`primitives.${clean}`, `semantic.${clean}`];
+      : [`primitives.${clean}`, `semantic.${clean}`, `component.${clean}`];
 
   for (const cand of candidates) {
     const node = getNodeByPath(data, cand);
@@ -72,19 +76,25 @@ function valueToCss(value, refToCssVar) {
 /**
  * Map token path → CSS variable name.
  * This is where we preserve your existing naming patterns.
- */
-function refToCssVar(fullPath) {
+ */ function refToCssVar(fullPath) {
   // fullPath like "primitives.scale.baseRem" or "semantic.space.m"
   const [setName, ...rest] = fullPath.split(".");
 
   // --- PRIMITIVES -------------------------------------------------
-  // primitives.scale.baseRem -> --baseREM (match your existing CSS)
-  if (setName === "primitives" && rest[0] === "scale" && rest[1] === "baseRem")
-    return "--baseREM";
+  // primitives.color.primary.10 -> --color-primary-10
+  if (setName === "primitives" && rest[0] === "color") {
+    return `--color-${rest[1]}-${rest[2]}`;
+  }
+
+  // primitives.scale.base -> --scale-base (or your preferred name)
+  if (setName === "primitives" && rest[0] === "scale" && rest[1] === "base") {
+    return "--scale-base";
+  }
 
   // primitives.scale.25 -> --scale-25
-  if (setName === "primitives" && rest[0] === "scale")
+  if (setName === "primitives" && rest[0] === "scale") {
     return `--scale-${rest[1]}`;
+  }
 
   // --- SEMANTIC ---------------------------------------------------
   // semantic.space.m -> --spacing-m
@@ -176,14 +186,17 @@ function renderRoot(vars, fileLabel, descriptionBlock) {
 // Collect variables
 let primitiveVars = collectVars(data.primitives, ["primitives"]);
 let semanticVars = collectVars(data.semantic, ["semantic"]);
+let componentVars = collectVars(data.component, ["component"]);
 
 // Sort for deterministic output
 primitiveVars.sort(([a], [b]) => a.localeCompare(b));
 semanticVars.sort(([a], [b]) => a.localeCompare(b));
+componentVars.sort(([a], [b]) => a.localeCompare(b));
 
 // Guard against collisions like --m being emitted twice
 assertNoDuplicateVars(primitiveVars, "primitives");
 assertNoDuplicateVars(semanticVars, "semantic");
+assertNoDuplicateVars(componentVars, "component");
 
 fs.writeFileSync(
   OUT_PRIMITIVES,
@@ -203,5 +216,15 @@ fs.writeFileSync(
   "utf8",
 );
 
+fs.writeFileSync(
+  OUT_COMPONENT,
+  renderRoot(componentVars, "_tokens--component.scss", {
+    title: "Component assignments",
+    subtitle: "Component-specific usage tokens.",
+  }),
+  "utf8",
+);
+
 console.log("Wrote:", OUT_PRIMITIVES);
 console.log("Wrote:", OUT_SEMANTIC);
+console.log("Wrote:", OUT_COMPONENT);
