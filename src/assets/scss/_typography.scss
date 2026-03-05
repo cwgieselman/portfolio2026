@@ -14,30 +14,12 @@ h1 {
  * h2 — Section Header
 * ---------------------------------- */
 
-section :where(h2) {
+h2 {
     font-family: var(--font-brand);
     font-size: var(--web---sectionHeading);
     font-weight: var(--font-semibold);
     line-height: var(--web---sectionHeading--lh);
     color: var(--color-text);
-}
-
-/* ----------------------------------
- * h2 — Section Header (Intro Variant)
- * Rule:
- * If a section contains the page-level h1,
- * any h2 inside that section is treated as a
- * framing heading (quieter visual role.
- * ---------------------------------- */
-
-@supports selector(section:has(h1)) {
-    section:has(h1) :where(h2) {
-        font-family: var(--font-brand);
-        font-size: var(--web---subhead);
-        font-weight: var(--font-regular);
-        line-height: var(--web---subhead--lh);
-        color: var(--color-text);
-    }
 }
 
 /* ----------------------------------

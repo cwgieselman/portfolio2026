@@ -5,6 +5,7 @@ import path from "node:path";
 const TOKENS_PATH = path.resolve("tokens/tokens.json");
 const OUT_PRIMITIVES = path.resolve("src/assets/scss/_tokens--primitives.scss");
 const OUT_SEMANTIC = path.resolve("src/assets/scss/_tokens--semantic.scss");
+const OUT_COMPONENT = path.resolve("src/assets/scss/_tokens--component.scss");
 
 const data = JSON.parse(fs.readFileSync(TOKENS_PATH, "utf8"));
 
@@ -16,9 +17,11 @@ const data = JSON.parse(fs.readFileSync(TOKENS_PATH, "utf8"));
 function resolveRef(refPath) {
   const clean = refPath.replace(/^\{|\}$/g, ""); // remove { }
   const candidates =
-    clean.startsWith("primitives.") || clean.startsWith("semantic.")
+    clean.startsWith("primitives.") ||
+    clean.startsWith("semantic.") ||
+    clean.startsWith("component.")
       ? [clean]
-      : [`primitives.${clean}`, `semantic.${clean}`];
+      : [`primitives.${clean}`, `semantic.${clean}`, `component.${clean}`];
 
   for (const cand of candidates) {
     const node = getNodeByPath(data, cand);
@@ -106,6 +109,15 @@ function refToCssVar(fullPath) {
     return "--web---paragraph";
   }
 
+  // --- COMPONENT --------------------------------------------------
+  // component.space.content-rhythm.block -> --content-rhythm--block
+  if (
+    setName === "component" &&
+    rest[0] === "space" &&
+    rest[1] === "content-rhythm"
+  )
+    return `--content-rhythm--${rest[2]}`;
+
   // Fallback: kebab-case the path
   return `--${rest.join("-")}`
     .replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)
@@ -176,14 +188,19 @@ function renderRoot(vars, fileLabel, descriptionBlock) {
 // Collect variables
 let primitiveVars = collectVars(data.primitives, ["primitives"]);
 let semanticVars = collectVars(data.semantic, ["semantic"]);
+let componentVars = data.component
+  ? collectVars(data.component, ["component"])
+  : [];
 
 // Sort for deterministic output
 primitiveVars.sort(([a], [b]) => a.localeCompare(b));
 semanticVars.sort(([a], [b]) => a.localeCompare(b));
+componentVars.sort(([a], [b]) => a.localeCompare(b));
 
 // Guard against collisions like --m being emitted twice
 assertNoDuplicateVars(primitiveVars, "primitives");
 assertNoDuplicateVars(semanticVars, "semantic");
+assertNoDuplicateVars(componentVars, "component");
 
 fs.writeFileSync(
   OUT_PRIMITIVES,
@@ -203,5 +220,15 @@ fs.writeFileSync(
   "utf8",
 );
 
+fs.writeFileSync(
+  OUT_COMPONENT,
+  renderRoot(componentVars, "_tokens--component.scss", {
+    title: "Component tokens (a.k.a. Scoped / Contextual)",
+    subtitle: "Tokens scoped to context INSIDE a specific component.",
+  }),
+  "utf8",
+);
+
 console.log("Wrote:", OUT_PRIMITIVES);
 console.log("Wrote:", OUT_SEMANTIC);
+console.log("Wrote:", OUT_COMPONENT);

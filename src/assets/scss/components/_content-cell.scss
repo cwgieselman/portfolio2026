@@ -1,12 +1,19 @@
 .content-cell {
-    /* no positioning rules */
-}
+    > * + * {
+        margin-top: var(--content-rhythm--block);
+    }
 
-.content-cell--stack {
-    display: grid;
-    row-gap: var(--scale-200);
-}
+    p + ul {
+        margin-top: var(--content-rhythm--continuation);
+    }
 
-.content-cell--stack :where(h1, h2, h3, p, ul, ol) {
-    margin: 0;
+    ul,
+    ol {
+        margin: 0;
+        padding-inline-start: var(--content-rhythm--list-indent);
+    }
+
+    li + li {
+        margin-top: var(--content-rhythm--continuation);
+    }
 }

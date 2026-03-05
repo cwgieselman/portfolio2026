@@ -13,7 +13,7 @@
 // generated output from Token Studio
 @use "tokens--primitives";
 @use "tokens--semantic";
-// @use "tokens--component"; (intentionally disabled for now)
+@use "tokens--component";
 
 /* ---------------------------------
  * Partials below this line emit css

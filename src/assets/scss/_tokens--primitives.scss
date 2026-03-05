@@ -9,7 +9,49 @@
  * ----------------------------------*/
 
 :root {
+  --color-neutral-10: #FFFFFF;
+  --color-neutral-20: #F8F8F7;
+  --color-neutral-50: #ECECE9;
+  --color-neutral-60: #DFDFDE;
+  --color-neutral-90: #000000;
+  --color-primary-10: #E7EDF4;
+  --color-primary-20: #CFDBE8;
+  --color-primary-30: #9FB8D1;
+  --color-primary-40: #87A6C6;
+  --color-primary-50: #3E71A3;
+  --color-primary-60: #0E4D8C;
+  --color-primary-70: #082E54;
+  --color-primary-80: #061F38;
+  --color-primary-90: #041526;
+  --color-secondary-10: #FFFAE6;
+  --color-secondary-20: #FFF0B3;
+  --color-secondary-30: #FFE166;
+  --color-secondary-40: #FFD733;
+  --color-secondary-50: #FFCD00;
+  --color-secondary-60: #CCA400;
+  --color-secondary-70: #997B00;
+  --color-secondary-80: #665200;
+  --color-secondary-90: #191400;
+  --font-case-allcaps: uppercase;
+  --font-family-brand: Raleway;
+  --font-family-plain: PT Sans;
+  --font-weight-bold: 700px;
+  --font-weight-regular: 400px;
+  --font-weight-semibold: 600px;
+  --scale-100: calc(var(--scale-base) * 1);
+  --scale-125: calc(var(--scale-base) * 1.25);
+  --scale-150: calc(var(--scale-base) * 1.5);
+  --scale-175: calc(var(--scale-base) * 1.75);
+  --scale-200: calc(var(--scale-base) * 2);
   --scale-25: calc(var(--scale-base) * 0.25);
+  --scale-250: calc(var(--scale-base) * 2.5);
+  --scale-300: calc(var(--scale-base) * 3);
+  --scale-350: calc(var(--scale-base) * 3.5);
+  --scale-400: calc(var(--scale-base) * 4);
   --scale-50: calc(var(--scale-base) * 0.50);
+  --scale-75: calc(var(--scale-base) * 0.75);
   --scale-base: 16px;
+  --text-tracking-loose: var(--scale-25);
+  --text-tracking-normal: 0px;
+  --text-tracking-snug: calc(var(--scale-25) * -1);
 }
