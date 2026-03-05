@@ -1,40 +1,36 @@
 # portfolio2026
-My UX, UI and Design System portfolio built with Figma, Codex and 11ty
+My UX, UI and Design System portfolio built with Figma, Claude, and 11ty
 
 ---
 
 ## Current Scope
 
-Only one page is in active development:
+One page is in active development:
 
 /portfolio/bmtx-nextgen/
 
 All other legacy pages and rendering experiments are quarantined and are not part of the active system.
 
-This repository is being stabilized incrementally.  
-The first commit represents a known broken baseline.
-
 ---
 
-## Stabilize Phase — Foundation Locked (BMTx NextGen)
+## Build Phase — Active
 
-### Status
+Stabilize phase is complete. The render pipeline, component execution model, and token system are locked. Active work is new feature development.
+
+### What Was Stabilized
 
 - Active route: `/portfolio/bmtx-nextgen/`
-- Render pipeline stabilized.
-- Component execution model stabilized.
-- All active components migrated to explicit param-object execution.
-- Global hydration and reset-based scoping removed from the active route.
+- Render pipeline: deterministic YAML → template → DOM
+- Component execution model: explicit param-object pattern, no scope leakage
+- Token system: `tokens/tokens.json` → generated SCSS → compiled CSS
 
-### Render Execution Model (Active Route)
+### Render Execution Model
 
 - Cells contain `includes[]`.
 - Each include provides `params` as a single object.
 - The cell executor does not map params into global variables.
 - Components must consume only their scoped param object.
-- No param reshaping.
-- No implicit defaults.
-- No scope leakage.
+- No param reshaping. No implicit defaults. No scope leakage.
 
 ### Chapter Semantics
 
@@ -55,16 +51,16 @@ YAML must not define heading IDs.
 
 ## Architecture Overview
 
-Figma JSON (design intent)  
-↓  
-Compiler (extracts required structure)  
-↓  
-YAML (implementation contract)  
-↓  
-Eleventy templates  
-↓  
-Rendered HTML  
-↓  
+Figma JSON (design intent)
+↓
+Compiler (extracts required structure)
+↓
+YAML (implementation contract)
+↓
+Eleventy templates
+↓
+Rendered HTML
+↓
 CSS (layout + styling)
 
 The YAML layer is the only data source consumed by templates.
@@ -73,11 +69,12 @@ The YAML layer is the only data source consumed by templates.
 
 ## Build Pipeline
 
-Eleventy input: `src/`  
+Eleventy input: `src/`
 Eleventy output: `_site/`
 
-Sass source: `src/assets/scss/`  
-Compiled CSS output: `src/assets/css/main.css`
+Sass source: `src/assets/scss/`
+Compiled CSS: processed natively by 11ty → `_site/assets/css/main.css`
+Token source: `tokens/tokens.json` → `src/assets/scss/_tokens--*.scss`
 
 ### Dev
 
@@ -99,8 +96,8 @@ npm run build
 - Templates must not reach into global data implicitly.
 - Includes render only the object passed to them.
 - YAML is the single contract between design intent and markup.
-- Structural fixes are committed independently.
-- One component per rehab/stabilize cycle.
+- Structural changes are committed independently.
+- One component per build cycle.
 
 ---
 
@@ -133,6 +130,7 @@ include: `components/header.njk`
 ### Params (`headerParams`)
 
 - level: `"h1" | "h2" | "h3"`
+- variant: `"quiet"` (optional — reduces visual weight without changing semantic level)
 - headline: string
 - showEyebrow: boolean
 - eyebrow: string
@@ -148,6 +146,7 @@ Rules:
 - No inferred flags
 - YAML must not define heading IDs
 - No placeholder strings
+- `variant: "quiet"` adds `header__headline--quiet` class; heading level is unchanged
 
 ---
 
@@ -228,13 +227,10 @@ Rules:
 
 - If `URL` exists → render `<a>`
 - If `URL` missing → render disabled `<span aria-disabled="true">`
-- No implicit defaults during stabilize
 
 ---
 
-## Figure — Temporary Passthrough v1
-
-Status: Stabilized baseline (async image optimization disabled)
+## Figure — Passthrough v1
 
 ### Params (`figureParams`)
 
@@ -268,36 +264,7 @@ params:
   type: "desktop"
   showCaption: true
   caption: "Example caption."
-  src: "/assets/images/figure-placeholder.jpg"
+  src: "/assets/images/example.png"
   hasAlt: true
   alt: "Accessible description."
 ~~~
-
----
-
-## Image Rendering Issue Summary
-
-### Observed Behavior
-
-- When using the async `{% image %}` shortcode, `figure` could render as an empty `.content-cell`.
-- No reliable error surfaced in watch mode.
-- Replacing with native `<img>` restored deterministic rendering.
-
-### Root Cause (Operational)
-
-The `@11ty/eleventy-img` async shortcode can abort template output during render in the current runtime configuration.
-
-### Temporary Resolution
-
-- Disable optimized image rendering.
-- Use passthrough assets only.
-- Serve images from `/assets/images/...`.
-
-### Forward Plan
-
-1. Keep passthrough figure as stable baseline.
-2. Introduce optional optimized figure include separately.
-3. Split contract:
-   - `src` → passthrough
-   - `srcFile` → optimized
-4. Re-enable optimization only after deterministic behavior is verified.

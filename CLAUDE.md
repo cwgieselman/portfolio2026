@@ -4,18 +4,14 @@ UX/Design Systems portfolio for Craig Gieselman. Built with 11ty (v3), Nunjucks,
 
 ## Commands
 
-- `npm start` — Build tokens, watch Sass, serve 11ty
+- `npm start` — Build tokens, serve 11ty (Sass compiled natively by 11ty)
 - `npm run build` — Full production build
-- `npm run check:ci` — Run all validation gates (executor invariants, no CSS var fallbacks, system report)
 - `npm run tokens:build` — Regenerate SCSS token files from `tokens/tokens.json`
-- `npm run sass:build` — One-shot Sass compile
-- `npm run figma:fetch -- "<FIGMA_URL>" <pageKey>` — Fetch Figma node JSON
 
 ## Validation (run before committing)
 
-- `npm run check:ci` must pass. Zero FAIL results.
-- Generated docs: run `node scripts/gen-system-report.mjs` and `node scripts/gen-system-docs.mjs` after structural changes.
-- Regenerated files go in `_docs/generated/`. These are descriptive snapshots, not normative.
+- No automated CI gates currently active. Validate visually in browser via `npm start`.
+- Run `npm run tokens:build` after editing `tokens/tokens.json`.
 
 ## Project Architecture
 
@@ -28,7 +24,7 @@ Eleventy templates (Nunjucks)
   ↓
 Rendered HTML
   ↓
-CSS (layout + styling via Sass)
+CSS (layout + styling via Sass, compiled natively by 11ty)
 ```
 
 Active rendering pipeline: `compiled-page.njk → page.njk → content-cell.njk → component includes`
@@ -55,7 +51,7 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 
 - Each include receives a single `params` object and renders only that object.
 - Safelisted includes only: `figure.njk`, `header.njk`, `link-block.njk`, `richtext.njk`
-- Adding a new include requires: (1) update executor safelist, (2) add CONTRACT.md section, (3) regenerate docs, (4) re-run system report.
+- Adding a new include requires: (1) update executor safelist, (2) add CONTRACT.md section, (3) regenerate docs.
 
 ### CSS / Layout Rules
 
@@ -81,16 +77,14 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 
 1. Read CONTRACT.md
 2. Make the smallest possible change
-3. Run `npm run check:ci`
-4. Regenerate docs if applicable
-5. Commit independently — one component per cycle
-6. Log change in README
+3. Verify visually in browser
+4. Commit independently — one component per cycle
+5. Log change in README
 
 ### For content/visual changes (copy updates, styling, non-structural tweaks):
 
-1. Run `npm run check:ci`
-2. Regenerate docs if needed
-3. Commit normally
+1. Verify visually in browser
+2. Commit normally
 
 ### Branch naming
 
@@ -102,15 +96,13 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 ## File Boundaries
 
 - **Safe to edit:** `src/`, `tokens/tokens.json`, `CONTRACT.md`, `README.md`, `scripts/`
-- **Generated — do not hand-edit:** `src/assets/scss/_tokens--*.scss`, `_docs/generated/*`, `src/assets/css/main.css`
+- **Generated — do not hand-edit:** `src/assets/scss/_tokens--*.scss`
+- **Build output — do not commit:** `_site/`, `src/assets/css/`
 
 ## Key Reference Files
 
 - `CONTRACT.md` — Normative render contract, component APIs, all invariants
 - `scripts/COMPILE_PROMPTS.md` — Full page compile prompt (Figma JSON → YAML + placements + report)
-- `scripts/SEED_SUMMARY_PROMPT.md` — Project status summary and phase rules
-- `_docs/QA_WORKFLOW.md` — Drift reconciliation process
-- `_docs/STABILIZATION_COMPLETE.md` — What was stabilized and exit criteria
 
 ## Terminology
 
@@ -125,7 +117,6 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 
 ## Image Handling
 
-- Currently using passthrough `<img>` only (`components/figure.njk`).
-- `@11ty/eleventy-img` async shortcode is disabled during stabilize phase.
+- Using passthrough `<img>` only (`components/figure.njk`).
 - `src` must be a public path under `/assets/images/`.
-- Optimized figure (`components/figure--optimized.njk`) is not active. Do not enable without deterministic verification.
+- `@11ty/eleventy-img` async shortcode is available but not yet wired in. Enable only after deterministic verification.
