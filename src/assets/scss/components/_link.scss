@@ -21,13 +21,13 @@ a.link:hover {
     align-items: center;
     gap: var(--scale-50);
 
-    font-family: var(--font-brand);
-    font-weight: var(--font-bold);
-    font-size: var(--web---eyebrow);
-    line-height: var(--web---eyebrow--lh);
-    letter-spacing: var(--web---eyebrow--ls);
+    font-family: var(--font-family-brand);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--type-eyebrow-size);
+    line-height: var(--type-eyebrow-lineHeight);
+    letter-spacing: var(--type-eyebrow-letterspacing);
     text-transform: uppercase;
-    color: var(--color-link-label);
+    color: var(--type-cta-color);
 
     .link__icon {
         transform: translateY(1px);
@@ -37,10 +37,10 @@ a.link:hover {
 
 .link__text {
     grid-area: text;
-    font-family: var(--font-plain);
-    font-weight: var(--font-bold);
-    font-size: var(--web--cta);
-    line-height: var(--web--cta--lh);
+    font-family: var(--font-family-plain);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--type-cta-size);
+    line-height: var(--type-cta-lineHeight);
     color: currentColor;
 }
 
@@ -57,11 +57,11 @@ a.link:hover .link__icon {
 }
 
 .link--primary {
-    color: var(--color-primary-base);
+    color: var(--color-primary-60);
 }
 
 .link--secondary {
-    color: var(--color-primary-plus40);
+    color: var(--color-primary-70);
 }
 
 .link--disabled {

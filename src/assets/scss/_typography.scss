@@ -3,45 +3,45 @@
  * ----------------------------------*/
 
 h1 {
-    font-family: var(--font-brand);
-    font-size: var(--web---title);
-    font-weight: var(--font-bold);
-    line-height: var(--web---title--lh);
+    font-family: var(--font-family-brand);
+    font-size: var(--type-pageTitle-size);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--type-pageTitle-lineHeight);
     color: var(--color-text);
 }
 
 /* ----------------------------------
- * h2 — Section Header
-* ---------------------------------- */
+ * h2 — Section Heading
+ * ---------------------------------- */
 
 h2 {
-    font-family: var(--font-brand);
-    font-size: var(--web---sectionHeading);
-    font-weight: var(--font-semibold);
-    line-height: var(--web---sectionHeading--lh);
+    font-family: var(--font-family-brand);
+    font-size: var(--type-sectionHeading-size);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--type-sectionHeading-lineHeight);
     color: var(--color-text);
 }
 
 /* ----------------------------------
  * h3 — Subheading
-* ---------------------------------- */
+ * ---------------------------------- */
 
 h3 {
-    font-family: var(--font-brand);
-    font-size: var(--web---subhead);
-    font-weight: var(--font-regular);
-    line-height: var(--web---subhead--lh);
+    font-family: var(--font-family-brand);
+    font-size: var(--type-subheading-size);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--type-subheading-lineHeight);
     color: var(--color-text);
 }
 
 /* ----------------------------------
  * p — Body
-* ---------------------------------- */
+ * ---------------------------------- */
 
 p {
-    font-family: var(--font-plain);
-    font-size: var(--web--paragraph);
-    font-weight: var(--font-regular);
-    line-height: var(--web---paragraph--lh);
+    font-family: var(--font-family-plain);
+    font-size: var(--type-paragraph-size);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--type-paragraph-lineHeight);
     color: var(--color-text);
 }

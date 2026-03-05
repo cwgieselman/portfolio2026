@@ -10,9 +10,6 @@ permalink: /assets/css/main.css
  * Any exception must be marked /* CONTRACT_EXCEPTION: reason
  * ----------------------------------*/
 
-// remove when Token Studio is fully online
-@use "tokens--legacy";
-
 // generated output from Token Studio
 @use "tokens--primitives";
 @use "tokens--semantic";

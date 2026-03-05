@@ -9,6 +9,9 @@
  * ----------------------------------*/
 
 :root {
+  --color-bg: var(--color-neutral-20);
+  --color-text: var(--color-primary-70);
+
   --corner-none: 0px;
   --corner-xxs: var(--scale-25);
   --corner-xs: var(--scale-50);
@@ -28,6 +31,7 @@
   --spacing-xxl: var(--scale-200);
   --spacing-xxxl: var(--scale-250);
 
+  --type-cta-color: var(--color-secondary-40);
   --type-cta-family: var(--font-family-brand);
   --type-cta-lineHeight: var(--scale-175);
   --type-cta-size: var(--scale-100);
