@@ -98,17 +98,6 @@ function refToCssVar(fullPath) {
   if (setName === "semantic" && rest[0] === "radius")
     return `--corner-${rest[1]}`;
 
-  // semantic.type.web.paragraph.size -> --web---paragraph
-  if (
-    setName === "semantic" &&
-    rest[0] === "type" &&
-    rest[1] === "web" &&
-    rest[2] === "paragraph" &&
-    rest[3] === "size"
-  ) {
-    return "--web---paragraph";
-  }
-
   // --- COMPONENT --------------------------------------------------
   // component.space.content-rhythm.block -> --content-rhythm--block
   if (
@@ -118,12 +107,8 @@ function refToCssVar(fullPath) {
   )
     return `--content-rhythm--${rest[2]}`;
 
-  // Fallback: kebab-case the path (treats acronym runs like CTA as a single word)
-  return `--${rest.join("-")}`
-    .replace(/([a-z])([A-Z])/g, "$1-$2")
-    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1-$2")
-    .toLowerCase()
-    .replace(/--+/g, "--");
+  // Fallback: join path segments with dashes, preserving Figma camelCase names
+  return `--${rest.join("-")}`.replace(/--+/g, "--");
 }
 
 function collectVars(node, prefixPath = []) {
@@ -201,10 +186,38 @@ let componentVars = data.component
   ? collectVars(data.component, ["component"])
   : [];
 
+// Sort helpers
+const TSHIRT_ORDER = ["none", "xxs", "xs", "s", "m", "l", "xl", "xxl", "xxxl", "full"];
+
+function scaleValue(varName) {
+  if (varName === "--scale-base") return 0;
+  const m = varName.match(/^--scale-(\d+)$/);
+  return m ? parseInt(m[1]) : null;
+}
+
+function tshirtValue(varName, prefix) {
+  const m = varName.match(new RegExp(`^--${prefix}-(.+)$`));
+  if (!m) return null;
+  const idx = TSHIRT_ORDER.indexOf(m[1]);
+  return idx === -1 ? null : idx;
+}
+
+function compareVars([a], [b]) {
+  const sa = scaleValue(a), sb = scaleValue(b);
+  if (sa !== null && sb !== null) return sa - sb;
+
+  for (const prefix of ["spacing", "corner"]) {
+    const ta = tshirtValue(a, prefix), tb = tshirtValue(b, prefix);
+    if (ta !== null && tb !== null) return ta - tb;
+  }
+
+  return a.localeCompare(b);
+}
+
 // Sort for deterministic output
-primitiveVars.sort(([a], [b]) => a.localeCompare(b));
-semanticVars.sort(([a], [b]) => a.localeCompare(b));
-componentVars.sort(([a], [b]) => a.localeCompare(b));
+primitiveVars.sort(compareVars);
+semanticVars.sort(compareVars);
+componentVars.sort(compareVars);
 
 // Guard against collisions like --m being emitted twice
 assertNoDuplicateVars(primitiveVars, "primitives");

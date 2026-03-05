@@ -44,19 +44,19 @@
   --font-weight-regular: 400px;
   --font-weight-semibold: 600px;
 
+  --scale-base: 16px;
+  --scale-25: calc(var(--scale-base) * 0.25);
+  --scale-50: calc(var(--scale-base) * 0.50);
+  --scale-75: calc(var(--scale-base) * 0.75);
   --scale-100: calc(var(--scale-base) * 1);
   --scale-125: calc(var(--scale-base) * 1.25);
   --scale-150: calc(var(--scale-base) * 1.5);
   --scale-175: calc(var(--scale-base) * 1.75);
   --scale-200: calc(var(--scale-base) * 2);
-  --scale-25: calc(var(--scale-base) * 0.25);
   --scale-250: calc(var(--scale-base) * 2.5);
   --scale-300: calc(var(--scale-base) * 3);
   --scale-350: calc(var(--scale-base) * 3.5);
   --scale-400: calc(var(--scale-base) * 4);
-  --scale-50: calc(var(--scale-base) * 0.50);
-  --scale-75: calc(var(--scale-base) * 0.75);
-  --scale-base: 16px;
 
   --text-tracking-loose: var(--scale-25);
   --text-tracking-normal: 0px;
