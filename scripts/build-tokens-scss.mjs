@@ -118,9 +118,11 @@ function refToCssVar(fullPath) {
   )
     return `--content-rhythm--${rest[2]}`;
 
-  // Fallback: kebab-case the path
+  // Fallback: kebab-case the path (treats acronym runs like CTA as a single word)
   return `--${rest.join("-")}`
-    .replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1-$2")
+    .toLowerCase()
     .replace(/--+/g, "--");
 }
 
@@ -132,6 +134,7 @@ function collectVars(node, prefixPath = []) {
     const nextPath = [...prefixPath, key];
 
     if (val && typeof val === "object" && "$value" in val) {
+      if (typeof val.$value === "object") continue; // composite tokens (typography etc.) can't map to a single CSS value
       const fullPath = nextPath.join(".");
       const cssVar = refToCssVar(fullPath);
       const cssVal = valueToCss(val.$value, refToCssVar);
@@ -178,7 +181,13 @@ function renderRoot(vars, fileLabel, descriptionBlock) {
   lines.push("");
 
   lines.push(":root {");
-  for (const [k, v] of vars) lines.push(`  ${k}: ${v};`);
+  let prevGroup = null;
+  for (const [k, v, sourcePath] of vars) {
+    const group = sourcePath.split(".").slice(0, -1).join(".");
+    if (prevGroup !== null && group !== prevGroup) lines.push("");
+    lines.push(`  ${k}: ${v};`);
+    prevGroup = group;
+  }
   lines.push("}");
   lines.push("");
 
