@@ -238,6 +238,7 @@ include: `components/header.njk`
 ### Inputs (`headerParams`)
 
 - level: `"h1" | "h2" | "h3"`
+- variant: `"quiet"` (optional — reduces visual weight without changing semantic level)
 - headline: string
 - showEyebrow: boolean
 - eyebrow: string
@@ -253,13 +254,15 @@ include: `components/header.njk`
 - No inferred flags.
 - YAML must not define heading IDs.
 - ID is applied only when `headerParamsId` is provided.
+- When `variant` is `"quiet"`, the heading element is unchanged (still `h2`) but receives an additional CSS class `header__headline--quiet` for reduced visual weight.
+- When `variant` is absent or not `"quiet"`, the heading renders with default visual treatment.
 
 ### DOM Shape
 
 ~~~html
 <header class="header">
   <p class="header__eyebrow"></p> <!-- optional -->
-  <h1|h2|h3 class="header__headline" id=""></h1|h2|h3>
+  <h1|h2|h3 class="header__headline [header__headline--quiet]" id=""></h1|h2|h3>
   <p class="header__subhead"></p> <!-- optional -->
 </header>
 ~~~

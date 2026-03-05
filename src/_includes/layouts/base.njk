@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% set titleSuffix = "Portfolio of Craig W Gieselman, Senior UX & Design Systems Designer" %}
-    {% if not meta or not meta.title %}
-        <!-- BASE_ERROR: missing meta.title (required for <title>) -->
+    {% if not title %}
+        <!-- BASE_ERROR: missing title (required for <title>) -->
     {% endif %}
     <title>{{ title }} | {{ titleSuffix }}</title>
 

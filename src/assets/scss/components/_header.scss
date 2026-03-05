@@ -4,6 +4,16 @@
     display: grid;
 }
 
+/* ----------------------------------
+ * Quiet variant — semantic h2, reduced visual weight
+ * ---------------------------------- */
+
+.header__headline--quiet {
+    font-size: var(--web---subhead);
+    font-weight: var(--font-regular);
+    line-height: var(--web---subhead--lh);
+}
+
 .header__eyebrow {
     margin: 0;
     font-family: var(--font-brand);

@@ -1,6 +1,4 @@
 pageKey: "bmtx-nextgen"
-meta:
-  title: "BMTx NextGen Design System"
 sections:
   - sectionKey: "section-01"
     mode: "composite"
@@ -31,14 +29,15 @@ sections:
               - include: "components/header.njk"
                 params:
                   level: "h2"
-                  headline: "Consistency becomes a Requirement"
+                  variant: "quiet"
+                  headline: "Consistency as a Requirement"
                   showEyebrow: false
                   showSubhead: false
 
               - include: "components/richtext.njk"
                 params:
                   kind: "p"
-                  text: "Because growth strategy necessitated the ability to scale and customize instances rapidly, an initiative dubbed <em>NextGen</em> was planned to replace the legacy system with a modular web app."
+                  text: "Because growth strategy necessitated the ability to scale and customize instances rapidly, an initiative dubbed NextGen was planned to replace the legacy system with a modular web app."
 
               - include: "components/richtext.njk"
                 params:
@@ -52,9 +51,8 @@ sections:
                   type: "desktop"
                   showCaption: true
                   caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
-                  src: "/assets/images/figure-placeholder.jpg"
-                  hasAlt: true
-                  alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
+                  src: "TODO:src"
+                  hasAlt: false
 
   - sectionKey: "section-02"
     mode: "normal"
@@ -75,12 +73,11 @@ sections:
             includes:
               - include: "components/figure.njk"
                 params:
-                  type: "desktop"
+                  type: "composite"
                   showCaption: true
-                  caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
-                  src: "/assets/images/figure-placeholder.jpg"
-                  hasAlt: true
-                  alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
+                  caption: "Mapping design intent extracted from Axure to Figma components. Brad Frost would be proud!"
+                  src: "TODO:src"
+                  hasAlt: false
 
           - wrapper: "content--bmtx-nextgen--p3--contentcell-2"
             includes:
@@ -130,19 +127,17 @@ sections:
             includes:
               - include: "components/figure.njk"
                 params:
-                  type: "desktop"
-                  showCaption: true
-                  caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
-                  src: "/assets/images/figure-placeholder.jpg"
-                  hasAlt: true
-                  alt: 'Image description for assistive technology. If this is blank the image will be marked as role="presentation".'
+                  type: "composite"
+                  showCaption: false
+                  src: "TODO:src"
+                  hasAlt: false
 
           - wrapper: "content--bmtx-nextgen--p4--contentcell-2"
             includes:
               - include: "components/richtext.njk"
                 params:
                   kind: "p"
-                  text: "Once the foundation of the Library was established, a teammate migrated the platform’s ~200 screens to Figma in about a week using the defined variables and components."
+                  text: "Once the foundation of the Library was established, a teammate migrated the platform's ~200 screens to Figma in about a week using the defined variables and components."
 
               - include: "components/richtext.njk"
                 params:
