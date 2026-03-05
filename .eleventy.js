@@ -1,13 +1,28 @@
-const Image = require("@11ty/eleventy-img");
 const path = require("path");
+const sass = require("sass");
 
 module.exports = function (eleventyConfig) {
-  // Pass through assets
-  eleventyConfig.addPassthroughCopy("src/assets");
+  // Compile SCSS natively — no intermediate output folder needed
+  eleventyConfig.addExtension(["scss", "sass"], {
+    outputFileExtension: "css",
+    key: "scss",
+    compile: function (inputContent, inputPath) {
+      return async (data) => {
+        if (path.basename(inputPath).startsWith("_")) return;
+        const result = await sass.compileStringAsync(inputContent, {
+          loadPaths: [path.dirname(inputPath)],
+        });
+        this.addDependencies(inputPath, result.loadedUrls);
+        return result.css;
+      };
+    },
+  });
 
-  // Watch CSS files for changes
-  eleventyConfig.addWatchTarget("src/assets/css/");
-  eleventyConfig.addWatchTarget("src/assets/scss/");
+  eleventyConfig.addTemplateFormats("scss");
+
+  // Pass through static assets (scss compiled above, css is build output)
+  eleventyConfig.addPassthroughCopy("src/assets/images");
+  eleventyConfig.addPassthroughCopy("src/assets/js");
 
   return {
     dir: {

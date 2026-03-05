@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "description": "2026 Portfolio for Craig Gieselman - Product Designer (UX and Design Systems",
   "scripts": {
-    "start": "npm run tokens:build && npm run sass:watch & eleventy --serve",
-    "build": "npm run tokens:build && npm run eleventy",
+    "start": "npm run tokens:build && eleventy --serve",
+    "build": "npm run tokens:build && eleventy",
     "clean": "rm -rf _site",
-    "sass:build": "sass src/assets/scss/main.scss:src/assets/css/main.css --no-source-map",
-    "sass:watch": "sass src/assets/scss/main.scss:src/assets/css/main.css --watch",
     "tokens:build": "node scripts/build-tokens-scss.mjs"
   },
   "keywords": [
