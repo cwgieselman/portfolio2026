@@ -9,6 +9,7 @@
  * ----------------------------------*/
 
 :root {
-  --space-content-block: var(--spacing-xxl);
-  --space-content-continuation: 0px;
+  --content-rhythm--block: var(--spacing-xxl);
+  --content-rhythm--continuation: 0px;
+  --content-rhythm--list-indent: var(--spacing-l);
 }
