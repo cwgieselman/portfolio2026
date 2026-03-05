@@ -1,0 +1,48 @@
+name: Build Tokens
+
+on:
+  push:
+    branches:
+      - tokens/sync
+    paths:
+      - tokens/tokens.json
+
+jobs:
+  build-tokens:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tokens/sync
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run tokens:build
+
+      - name: Commit generated SCSS
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/assets/scss/_tokens--*.scss
+          git diff --staged --quiet || git commit -m "chore: regenerate token SCSS from tokens.json"
+          git push
+
+      - name: Open or update PR to main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head tokens/sync \
+            --title "tokens: sync from Figma Token Studio" \
+            --body "Token Studio pushed changes to \`tokens/tokens.json\`. SCSS token files have been auto-regenerated. Review before merging." \
+          || echo "PR already exists — SCSS updated in place."

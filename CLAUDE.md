@@ -13,6 +13,20 @@ UX/Design Systems portfolio for Craig Gieselman. Built with 11ty (v3), Nunjucks,
 - No automated CI gates currently active. Validate visually in browser via `npm start`.
 - Run `npm run tokens:build` after editing `tokens/tokens.json`.
 
+## Token Sync Workflow (Figma → GitHub)
+
+1. Update tokens in Figma via the Token Studio plugin
+2. In Token Studio, push to the `tokens/sync` branch
+3. GitHub Action triggers automatically — runs `tokens:build`, commits the generated SCSS
+4. A PR from `tokens/sync` → `main` is opened (or updated if one is already open)
+5. Review and merge
+
+Token Studio sync settings (configure once in the plugin):
+- Repository: `cwgieselman/portfolio2026`
+- Branch: `tokens/sync`
+- File path: `tokens/tokens.json`
+- Auth: GitHub Personal Access Token (stored in plugin, not in repo)
+
 ## Project Architecture
 
 ```
