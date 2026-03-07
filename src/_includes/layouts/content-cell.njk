@@ -25,6 +25,7 @@
         {# Single include switch (exactly once) #}
         {% if item.include == "components/figure.njk" %}
           {% set figureParams = params %}
+          {% set figureWrapper = wrapper %}
           {% include item.include %}
 
         {% elseif item.include == "components/header.njk" %}
