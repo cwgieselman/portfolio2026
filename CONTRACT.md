@@ -458,3 +458,135 @@ Each fix must:
 - Address exactly one failure.
 - Be committed independently.
 - Be logged in README.
+
+---
+
+# Standalone Component Contracts
+
+Standalone components operate outside the executor pipeline. They are invoked directly via Nunjucks macro calls in page templates or test pages. The executor rules (single params object, safelist enforcement, chapter semantics) do not apply to standalone components.
+
+Standalone components may NOT be added to the executor safelist without a corresponding CONTRACT.md update.
+
+---
+
+## Bento Grid
+
+Template: `src/_includes/components/bento-grid.njk`  
+Styles: `src/assets/scss/components/_bento-grid.scss`  
+Theme tokens: `src/assets/scss/_tokens--bento.scss`  
+One-off overrides: `src/assets/scss/components/bento-cells/`
+
+### Purpose
+
+Editorial grid for process and discovery layouts inside case study pages. Not part of the compiled-page executor pipeline.
+
+### Invocation
+
+~~~njk
+{% from "components/bento-grid.njk" import bentoGrid %}
+{{ bentoGrid(bento) }}
+~~~
+
+Where `bento` is the top-level key from a YAML data file.
+
+### YAML Shape
+
+~~~yaml
+bento:
+  id: inficon--discovery       # drives CSS id and data-bento attribute
+  variant: full-width          # full-width | two-col
+  cols: 5                      # grid column count
+  rows: 5                      # grid row count
+  cells:
+    - id: box-00
+      type: stat               # stat | text | image | composite
+      theme: primary-dark      # named theme — see themes below
+      desktop:
+        col: "1 / 2"           # CSS grid-column value
+        row: "1 / 2"           # CSS grid-row value
+      mobile:
+        col: "1 / 2"
+        row: "1 / 2"
+      content:
+        # varies by type — see cell types below
+~~~
+
+### Named Themes
+
+Set via `theme:` on a cell. Omit for image-only cells (transparent bg, no border).
+
+| Theme | Background | Text | Border |
+|---|---|---|---|
+| `primary-dark` | primary/60 | primary/10 | primary/80 |
+| `primary-light` | primary/20 | primary/60 | primary/30 |
+| `secondary-dark` | secondary/50 | secondary/80 | secondary/60 |
+| `secondary-light` | secondary/20 | secondary/70 | secondary/30 |
+
+Theme definitions live in `_tokens--bento.scss`. Each theme sets `--cell-bg`, `--cell-color`, `--cell-border` on the cell element. Adding themes requires only a new class in that file — no template changes.
+
+### Cell Types
+
+**stat** — large display value + label. Uses Tienne Bold (`--font-family-display`).
+~~~yaml
+content:
+  value: "46"
+  label: "Dev-Ready Components"
+~~~
+
+**text** — prose content. `lede` and `body` are both optional.
+~~~yaml
+content:
+  lede: "Gather → Cluster → Prioritize"
+  body: "Discovery workshops provided context..."
+~~~
+
+**image** — full-bleed image. Falls back to `baconmockup.com` via `onerror` if `src` is absent or 404s.
+~~~yaml
+content:
+  src: "/assets/images/inficon--control-room.jpg"
+  alt: ""
+~~~
+
+**composite** — text above image. Image fallback applies as with `image` type.
+~~~yaml
+content:
+  body: "Each Workshop has its own Island..."
+  src: "/assets/images/inficon--workshop-interface.png"
+  alt: "Workshop island interface"
+~~~
+
+### Inline Typography Spans
+
+All text fields pass through `| safe`. Inline `<span class="bento-type--*">` works in any `value`, `label`, `lede`, or `body` field. Classes are scoped to `.bento-cell` and do not leak to the page.
+
+Sourced from CGDC-DS Figma node 2884-634:
+
+| Class | Family | Style | Size |
+|---|---|---|---|
+| `bento-type--paragraphLead` | Raleway | Regular | 24px |
+| `bento-type--paragraphLead-italic` | Raleway | Italic | 24px |
+| `bento-type--paragraph` | PT Sans | Regular | 16px |
+| `bento-type--paragraph-bold` | PT Sans | Bold | 16px |
+| `bento-type--eyebrow` | Raleway | Bold uppercase | 16px |
+
+### One-Off Cell Overrides
+
+For cells requiring custom layout or visual personality beyond the theme system:
+
+1. Create a SCSS partial in `src/assets/scss/components/bento-cells/`
+2. Target using `data-bento-cell="box-XX"` — present on every cell
+3. Uncomment (or add) the import in `main.scss`
+
+One-off partials are explicitly not part of this contract. They are the author’s responsibility.
+
+### Data File Naming Constraint
+
+Bento YAML files referenced directly in Nunjucks templates must use camelCase or single-hyphen filenames. Double-hyphen filenames (e.g. `inficon--discovery-bento.yml`) are parsed by Nunjucks as arithmetic and silently fail. Use a JS wrapper file to expose double-hyphen YAML, or use camelCase from the start.
+
+### Rules
+
+- Template renders exactly what YAML defines. No implicit defaults.
+- `theme:` is optional. Omitting it produces a transparent, borderless cell (correct for image cells).
+- Image fallbacks are a development aid only. Production cells must have real `src` values.
+- The bento grid is NOT permitted in the executor safelist.
+- Structural changes to the macro (new cell types, new keys) require a CONTRACT.md update.

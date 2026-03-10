@@ -59,6 +59,35 @@ Token Studio sync settings: repo `cwgieselman/portfolio2026`, branch `tokens/syn
 | `CONTRACT.md` | Normative render contract — component APIs, executor rules, all invariants |
 | `scripts/COMPILE_PROMPTS.md` | Figma JSON → YAML compile workflow |
 | `CLAUDE.md` | Claude Code instructions and project conventions |
+| `tokens/TOKEN-BACKLOG.md` | Candidate and deferred token additions |
+
+---
+
+## Components
+
+### Executor Pipeline (compiled pages)
+
+Routed through `layouts/content-cell.njk`. Safelisted includes only:
+
+| Component | Include |
+|---|---|
+| Header | `components/header.njk` |
+| Richtext | `components/richtext.njk` |
+| Figure | `components/figure.njk` |
+| Link Block | `components/link-block.njk` |
+| Link | `components/link.njk` |
+
+### Standalone Components (non-executor)
+
+Used directly in page templates or test pages outside the compiled-page pipeline.
+
+| Component | Template | Data Source |
+|---|---|---|
+| Bento Grid | `components/bento-grid.njk` | YAML via `src/_data/*.yml` |
+| Comparison Slider | `components/comparison-slider.njk` | Macro params |
+| Annotation Toggle | `components/annotation-toggle.njk` | Macro params |
+
+**Bento Grid** — editorial grid for process/discovery layouts. Four named themes (`primary-dark`, `primary-light`, `secondary-dark`, `secondary-light`). Five scoped typography span classes (`bento-type--*`). Stat cells use Tienne Bold display font. Full API in `bento-grid.njk` file header and `CLAUDE.md`.
 
 ---
 

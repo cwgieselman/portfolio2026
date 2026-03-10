@@ -134,3 +134,44 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 - Using passthrough `<img>` only (`components/figure.njk`).
 - `src` must be a public path under `/assets/images/`.
 - `@11ty/eleventy-img` async shortcode is available but not yet wired in. Enable only after deterministic verification.
+
+## Data File Naming
+
+Data files referenced directly in Nunjucks templates (via `{{ varName.property }}`) must use **camelCase or single-hyphen names**. Double-hyphen names (e.g. `inficon--discovery-bento.yml`) are parsed by Nunjucks as arithmetic and will silently fail.
+
+- Safe: `bentoDiscovery.yml`, `bento-discovery.yml`
+- Unsafe: `inficon--discovery-bento.yml` (double-hyphen breaks template access)
+
+The current `inficon--discovery-bento.yml` is accessed via the `bentoDiscovery.js` wrapper, which renames it. New bento YAML files should follow camelCase naming from the start.
+
+## Bento Grid System
+
+The bento grid is a standalone component for non-executor contexts (e.g. discovery/process layouts inside case study pages).
+
+**Files:**
+- Template: `src/_includes/components/bento-grid.njk` — full API docs in the file header
+- Styles: `src/assets/scss/components/_bento-grid.scss`
+- Themes: `src/assets/scss/_tokens--bento.scss` (hand-authored, safe to edit)
+- Retired: `src/assets/scss/components/_bento-backgrounds.scss` (tombstone only)
+- One-off overrides: `src/assets/scss/components/bento-cells/` — add partials here, uncomment import in `main.scss`
+
+**Four named themes** (set via `theme:` in YAML):
+- `primary-dark` — primary/60 bg, primary/10 text, primary/80 border
+- `primary-light` — primary/20 bg, primary/60 text, primary/30 border
+- `secondary-dark` — secondary/50 bg, secondary/80 text, secondary/60 border
+- `secondary-light` — secondary/20 bg, secondary/70 text, secondary/30 border
+
+**Typography spans** (inline in any text field, all pass through `| safe`):
+- `bento-type--paragraphLead` — Raleway Regular 24px
+- `bento-type--paragraphLead-italic` — Raleway Italic 24px
+- `bento-type--paragraph` — PT Sans Regular 16px
+- `bento-type--paragraph-bold` — PT Sans Bold 16px
+- `bento-type--eyebrow` — Raleway Bold 16px uppercase tracked
+
+**Stat cell display font:** Tienne Bold (loaded via Google Fonts). Font family token: `--font-family-display`.
+
+**Image fallbacks:** `image` and `composite` cells fall back to `baconmockup.com` via `onerror` if `src` is missing or 404s.
+
+**Token additions made manually** (pending Token Studio sync):
+- `scale.450` (72px), `font-family.display` (Tienne), `component.bento.theme.*`, `component.bento.type.*`
+- `--font-family-display` and `--scale-450` are declared in `_tokens--bento.scss` until the generated files catch up.
