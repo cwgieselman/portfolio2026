@@ -1,0 +1,88 @@
+{#
+  comparison-slider.njk
+  ─────────────────────────────────────────────────────────────────────────────
+  Drag-to-reveal before/after image comparison.
+  
+  Usage:
+    {% from "components/comparison-slider.njk" import comparisonSlider %}
+    
+    {{ comparisonSlider(
+      before = {
+        src: "/assets/images/bmtx--before-design-system.png",
+        alt: "BMTx interface before NextGen Design System"
+      },
+      after = {
+        src: "/assets/images/bmtx--after-design-system.png",
+        alt: "BMTx interface after NextGen Design System"
+      },
+      label = "before / after",
+      initialPosition = 40
+    ) }}
+
+  Params:
+    before.src          — path to "before" image (rendered on left, clipped by slider)
+    before.alt          — alt text (use "" if caption carries the meaning)
+    after.src           — path to "after" image (rendered underneath/right)
+    after.alt           — alt text (use "" if caption carries the meaning)
+    label               — optional visible label string, e.g. "before / after"
+    caption             — optional <figcaption> text
+    initialPosition     — initial slider position 0–100, default 40
+  ─────────────────────────────────────────────────────────────────────────────
+#}
+
+{% macro comparisonSlider(before, after, label = "", caption = "", initialPosition = 40) %}
+<figure class="comparison-slider" data-comparison-slider>
+  <div
+    class="comparison-slider__stage"
+    style="--comparison-pos: {{ initialPosition }}%"
+  >
+
+    {# After image — rendered first in DOM, sits beneath #}
+    <img
+      class="comparison-slider__img comparison-slider__img--after"
+      src="{{ after.src }}"
+      alt="{{ after.alt }}"
+      draggable="false"
+    />
+
+    {# Before image — clipped via clip-path driven by --comparison-pos #}
+    <img
+      class="comparison-slider__img comparison-slider__img--before"
+      src="{{ before.src }}"
+      alt="{{ before.alt }}"
+      draggable="false"
+    />
+
+    {# Drag handle — positioned by --comparison-pos #}
+    <div class="comparison-slider__handle" aria-hidden="true">
+      <svg class="comparison-slider__arrows" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 16L4 10M4 10L10 4M4 10H28M22 16L28 10M28 10L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 28L4 22M4 22L10 16M4 22H28M22 28L28 22M28 22L22 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    {# Range input — invisible, full-coverage interactive layer #}
+    <input
+      class="comparison-slider__input"
+      type="range"
+      min="0"
+      max="100"
+      value="{{ initialPosition }}"
+      aria-label="Drag to compare before and after"
+    />
+
+    {# Optional before/after labels #}
+    {% if label %}
+    <div class="comparison-slider__labels" aria-hidden="true">
+      <span class="comparison-slider__label comparison-slider__label--before">before</span>
+      <span class="comparison-slider__label comparison-slider__label--after">after</span>
+    </div>
+    {% endif %}
+
+  </div>
+
+  {% if caption %}
+  <figcaption class="comparison-slider__caption">{{ caption }}</figcaption>
+  {% endif %}
+</figure>
+{% endmacro %}

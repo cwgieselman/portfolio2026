@@ -1,0 +1,152 @@
+{#
+  bento-grid.njk
+  ─────────────────────────────────────────────────────────────────────────────
+  Renders a bento grid from YAML data.
+
+  Usage:
+    {% from "components/bento-grid.njk" import bentoGrid %}
+    {{ bentoGrid(bento) }}
+
+  YAML shape:
+    bento:
+      id: inficon--discovery         # drives CSS id and data attributes
+      variant: full-width            # full-width | two-col
+      cols: 5                        # grid column count (default 5)
+      rows: 5                        # grid row count (default 5)
+      cells:
+        - id: box-00
+          type: stat                 # stat | text | image | composite
+          theme: primary-dark        # named theme — see _tokens--bento.scss
+          desktop:
+            col: "1 / 2"             # CSS grid-column value
+            row: "1 / 2"             # CSS grid-row value
+          mobile:
+            col: "1 / 2"
+            row: "1 / 2"
+          content:
+            # varies by type — see per-type docs below
+
+  ── Themes ───────────────────────────────────────────────────────────────────
+  theme: primary-dark     → primary/60 bg, primary/10 text, primary/80 border
+  theme: primary-light    → primary/20 bg, primary/60 text, primary/30 border
+  theme: secondary-dark   → secondary/50 bg, secondary/80 text, secondary/60 border
+  theme: secondary-light  → secondary/20 bg, secondary/70 text, secondary/30 border
+  (omit theme for image-only cells — transparent bg, no border)
+
+  ── Cell types ───────────────────────────────────────────────────────────────
+  type: stat
+    content:
+      value: "46"                    # supports inline <span class="bento-type--*">
+      label: "Dev-Ready Components"
+
+  type: text
+    content:
+      lede: "Gather → Cluster → Prioritize"   # optional — Raleway, larger
+      body: "The Control Room had a huge..."   # optional — PT Sans body
+      # Both fields pass through | safe — inline spans work:
+      # body: 'The <span class="bento-type--paragraph-bold">FAB</span> aggregated...'
+
+  type: image
+    content:
+      src: "/assets/images/inficon--control-room.jpg"   # omit → bacon fallback
+      alt: ""    # usually "" — caption carries the meaning
+
+  type: composite
+    content:
+      body: "Each Workshop has its own Island..."        # | safe enabled
+      src: "/assets/images/inficon--workshop-interface.png"  # omit → bacon fallback
+      alt: "Workshop island interface"
+
+  ── Inline type spans ────────────────────────────────────────────────────────
+  Use inside any text/lede/body/value field. Scoped to .bento-cell.
+  Classes sourced from CGDC-DS Figma node 2884-634.
+
+    bento-type--paragraphLead        Raleway Regular 24px
+    bento-type--paragraphLead-italic Raleway Italic 24px
+    bento-type--paragraph            PT Sans Regular 16px
+    bento-type--paragraph-bold       PT Sans Bold 16px
+    bento-type--eyebrow              Raleway Bold 16px uppercase tracked
+
+  ── One-off cell overrides ───────────────────────────────────────────────────
+  For cells needing custom layout or personality beyond the system:
+    1. Add a SCSS partial to src/assets/scss/components/bento-cells/
+    2. Uncomment the import in main.scss
+    3. Target via data-bento-cell="box-XX"
+
+  ── Image fallbacks ──────────────────────────────────────────────────────────
+  image and composite cells fall back to baconmockup.com if src is missing
+  or returns a 404. data-placeholder="true" is set on the img element.
+
+  ─────────────────────────────────────────────────────────────────────────────
+#}
+
+{% macro bentoGrid(bento) %}
+<div
+  class="bento-grid bento-grid--{{ bento.variant | default('full-width') }}"
+  id="bento--{{ bento.id }}"
+  data-bento="{{ bento.id }}"
+  style="--bento-cols: {{ bento.cols | default(5) }}; --bento-rows: {{ bento.rows | default(5) }};"
+>
+  {% for cell in bento.cells %}
+
+  {# Build inline style for grid placement #}
+  {% set placementStyle %}
+    --cell-col: {{ cell.desktop.col }};
+    --cell-row: {{ cell.desktop.row }};
+    --cell-col-mobile: {{ cell.mobile.col }};
+    --cell-row-mobile: {{ cell.mobile.row }};
+  {% endset %}
+
+  <div
+    class="bento-cell bento-cell--{{ cell.type }}{% if cell.theme %} bento-cell--theme-{{ cell.theme }}{% endif %}"
+    id="bento-cell--{{ bento.id }}--{{ cell.id }}"
+    style="{{ placementStyle | trim }}"
+    data-bento-cell="{{ cell.id }}"
+  >
+    <div class="bento-cell__inner">
+
+      {# ── stat ────────────────────────────────────────────────── #}
+      {% if cell.type === "stat" %}
+        <span class="bento-cell__stat-value">{{ cell.content.value | safe }}</span>
+        <span class="bento-cell__stat-label">{{ cell.content.label | safe }}</span>
+
+      {# ── text ────────────────────────────────────────────────── #}
+      {% elif cell.type === "text" %}
+        {% if cell.content.lede %}
+          <p class="bento-cell__lede">{{ cell.content.lede | safe }}</p>
+        {% endif %}
+        {% if cell.content.body %}
+          <p class="bento-cell__text">{{ cell.content.body | safe }}</p>
+        {% endif %}
+
+      {# ── image ───────────────────────────────────────────────── #}
+      {% elif cell.type === "image" %}
+        <img
+          class="bento-cell__img"
+          src="{{ cell.content.src if cell.content.src else 'https://baconmockup.com/400/400' }}"
+          alt="{{ cell.content.alt | default('') }}"
+          onerror="this.onerror=null;this.src='https://baconmockup.com/400/400';this.dataset.placeholder='true';"
+          {% if not cell.content.src %}data-placeholder="true"{% endif %}
+        />
+
+      {# ── composite ───────────────────────────────────────────── #}
+      {% elif cell.type === "composite" %}
+        {% if cell.content.body %}
+          <p class="bento-cell__text">{{ cell.content.body | safe }}</p>
+        {% endif %}
+        <img
+          class="bento-cell__screenshot"
+          src="{{ cell.content.src if cell.content.src else 'https://baconmockup.com/600/400' }}"
+          alt="{{ cell.content.alt | default('') }}"
+          onerror="this.onerror=null;this.src='https://baconmockup.com/600/400';this.dataset.placeholder='true';"
+          {% if not cell.content.src %}data-placeholder="true"{% endif %}
+        />
+
+      {% endif %}
+
+    </div>
+  </div>
+
+  {% endfor %}
+</div>
+{% endmacro %}

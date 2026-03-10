@@ -1,0 +1,123 @@
+// _annotation-toggle.scss
+// ─────────────────────────────────────────────────────────────────────────────
+// Toggle between raw artifact and annotated version.
+// State lives on the <figure> as [data-active] — no class thrash, no IDs.
+// JS flips the attribute; CSS handles all visual state changes.
+// ─────────────────────────────────────────────────────────────────────────────
+
+.annotation-toggle {
+  margin: 0;
+  padding: 0;
+  container-type: inline-size;
+}
+
+// ── Stage ────────────────────────────────────────────────────────────────────
+
+.annotation-toggle__stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  // Match your screenshot aspect ratio.
+  // 16/10 for desktop UI, override per content-cell if needed.
+  aspect-ratio: 16 / 10;
+}
+
+// ── Images ───────────────────────────────────────────────────────────────────
+
+.annotation-toggle__img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.annotation-toggle__img--raw {
+  z-index: 1;
+  // Visible by default
+}
+
+.annotation-toggle__img--annotated {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 250ms ease;
+
+  // Active state — parent carries [data-active]
+  .annotation-toggle[data-active] & {
+    opacity: 1;
+  }
+
+  // Respect reduced motion
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// ── Controls ─────────────────────────────────────────────────────────────────
+
+.annotation-toggle__controls {
+  display: flex;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+// ── Button ───────────────────────────────────────────────────────────────────
+
+.annotation-toggle__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.85em;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-text, inherit);
+  font-size: var(--text-sm, 0.8125rem);
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+
+  &:hover {
+    background: var(--color-text, #000);
+    color: var(--color-bg, #fff);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-focus, #005fcc);
+    outline-offset: 2px;
+  }
+
+  // Active / pressed state
+  &[aria-pressed="true"] {
+    background: var(--color-text, #000);
+    color: var(--color-bg, #fff);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Icon — simple circle/dot that flips state
+.annotation-toggle__btn-icon {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+// ── Caption ──────────────────────────────────────────────────────────────────
+
+.annotation-toggle__caption {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--color-text-subtle);
+}
