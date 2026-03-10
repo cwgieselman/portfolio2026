@@ -17,13 +17,11 @@
 }
 
 .figure--desktop .figure__media {
-    /* TODO: define and set to var(--ratio-figure-desktop) */
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 10; /* matches Figma media component: 1600/1000 */
 }
 
 .figure--mobile .figure__media {
-    /* TODO: define and set to var(--ratio-figure-mobile) */
-    aspect-ratio: 9 / 16;
+    aspect-ratio: 9 / 19.5; /* matches Figma media component: 900/1950 */
 }
 
 .figure--composite .figure__media {

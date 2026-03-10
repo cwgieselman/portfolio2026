@@ -81,10 +81,6 @@ function refToCssVar(fullPath) {
   const [setName, ...rest] = fullPath.split(".");
 
   // --- PRIMITIVES -------------------------------------------------
-  // primitives.scale.baseRem -> --baseREM (match your existing CSS)
-  if (setName === "primitives" && rest[0] === "scale" && rest[1] === "baseRem")
-    return "--baseREM";
-
   // primitives.scale.25 -> --scale-25
   if (setName === "primitives" && rest[0] === "scale")
     return `--scale-${rest[1]}`;

@@ -10,13 +10,13 @@ permalink: /assets/css/main.css
  * Any exception must be marked /* CONTRACT_EXCEPTION: reason
  * ----------------------------------*/
 
-// remove when Token Studio is fully online
-@use "tokens--legacy";
-
 // generated output from Token Studio
 @use "tokens--primitives";
 @use "tokens--semantic";
 @use "tokens--component";
+
+// hand-authored component tokens (safe to edit)
+@use "tokens--bento";
 
 /* ---------------------------------
  * Partials below this line emit css
@@ -34,6 +34,13 @@ permalink: /assets/css/main.css
 @use "components/figure";
 @use "components/link";
 @use "components/link-block";
+@use "components/bento-grid";
+@use "components/bento-backgrounds";
+@use "components/comparison-slider";
+@use "components/annotation-toggle";
+
+/* One-off bento cell overrides — add per-cell partials here */
+// @use "components/bento-cells/box-01";
 
 /* Generated placements (Codex) */
 @use "placements/bmtx-nextgen";

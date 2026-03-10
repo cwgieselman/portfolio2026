@@ -152,3 +152,6 @@ src/_figma-json
 
 # Figma compiler local secrets
 .figma-token.json
+
+# Location to stage files for Claude Code to use.
+_staging/

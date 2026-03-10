@@ -1,0 +1,184 @@
+// _comparison-slider.scss
+// ─────────────────────────────────────────────────────────────────────────────
+// Drag-to-reveal before/after image comparison.
+// Mechanism: range input sits invisibly over the stage, full width/height.
+// Its value drives --comparison-pos via JS (one listener, no framework).
+// clip-path on the before image does all the visual work.
+// ─────────────────────────────────────────────────────────────────────────────
+
+.comparison-slider {
+  margin: 0;
+  padding: 0;
+  container-type: inline-size;
+}
+
+.comparison-slider__stage {
+  --comparison-pos: 40%;      // default; JS overrides per input value
+  --handle-size: 2.75rem;
+  --handle-line-width: 2px;
+  --handle-color: #fff;
+  --label-size: var(--text-sm, 0.75rem);
+
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+
+  // Aspect ratio guard — prevents CLS while images load.
+  // Override at the content-cell level if your screenshot dimensions differ.
+  aspect-ratio: 16 / 10;
+}
+
+// ── Images ──────────────────────────────────────────────────────────────────
+
+.comparison-slider__img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;  // screenshots anchor top-left
+  pointer-events: none;
+  draggable: false;
+}
+
+.comparison-slider__img--after {
+  z-index: 1;
+}
+
+.comparison-slider__img--before {
+  z-index: 2;
+  // Clip to the left of --comparison-pos; the after image shows to the right
+  clip-path: inset(0 calc(100% - var(--comparison-pos)) 0 0);
+  will-change: clip-path;
+}
+
+// ── Drag handle ─────────────────────────────────────────────────────────────
+
+.comparison-slider__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--comparison-pos);
+  z-index: 4;
+  transform: translateX(-50%);
+  pointer-events: none;
+  will-change: left;
+
+  // Vertical line
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--handle-line-width);
+    background: var(--handle-color);
+  }
+
+  // Circle pill housing the arrows
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--handle-size);
+    height: var(--handle-size);
+    border-radius: 50%;
+    background: var(--handle-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+}
+
+.comparison-slider__arrows {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #000;
+  pointer-events: none;
+}
+
+// ── Range input ─────────────────────────────────────────────────────────────
+// Full-coverage invisible interactive layer. The browser's native range
+// input handles all pointer/touch/keyboard interaction. No JS needed for
+// interaction model — just for syncing the value to --comparison-pos.
+
+.comparison-slider__input {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: col-resize;
+  margin: 0;
+  padding: 0;
+
+  // Keyboard focus — reveal the handle visually
+  &:focus-visible ~ .comparison-slider__handle {
+    &::after {
+      outline: 3px solid var(--color-focus, #005fcc);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ── Before / after labels ────────────────────────────────────────────────────
+
+.comparison-slider__labels {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+}
+
+.comparison-slider__label {
+  font-size: var(--label-size);
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.2em 0.5em;
+  border-radius: 2px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  &--before {
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+  }
+
+  &--after {
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+  }
+}
+
+// ── Caption ──────────────────────────────────────────────────────────────────
+
+.comparison-slider__caption {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--color-text-subtle);
+}
+
+// ── Reduced motion ───────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .comparison-slider__img--before {
+    transition: none;
+  }
+}
