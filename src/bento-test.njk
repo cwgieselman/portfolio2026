@@ -1,0 +1,9 @@
+---
+layout: layouts/base.njk
+title: Bento Grid Test — inficon--discovery
+---
+{% from "components/bento-grid.njk" import bentoGrid %}
+
+<div style="padding: var(--scale-300); max-width: 1240px; margin: 0 auto;">
+  {{ bentoGrid(bentoDiscovery.bento) }}
+</div>

@@ -5,8 +5,16 @@
   data-figure="{{ figureWrapper }}"
 >
   <div class="figure__media">
-    {% if not p.src or p.src == "TODO:src" %}
-      <!-- FIGURE_ERROR: missing or placeholder src | wrapper={{ figureWrapper }} -->
+    {% if not p.src or p.src == "TODO:src" or (p.src and p.src.indexOf("FPO") > -1) %}
+      <img
+        src="https://baconmockup.com/800/500"
+        alt=""
+        role="presentation"
+        data-placeholder="true"
+        data-figure-type="{{ p.type }}"
+        loading="lazy"
+        decoding="async"
+      />
     {% elif p.hasAlt %}
       <img
         src="{{ p.src }}"
