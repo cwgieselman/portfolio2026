@@ -1,0 +1,46 @@
+/* ----------------------------------
+ * _tokens--bento.scss
+ * Bento cell theme tokens.
+ * Hand-authored. Safe to edit.
+ *
+ * Four named themes sourced from CGDC-DS Figma file:
+ * figma.com/design/zOZ13bdI68LuugJklgohm2 node 2883-623
+ *
+ * Each theme sets three CSS custom properties on .bento-cell:
+ *   --cell-bg      background color
+ *   --cell-color   foreground / text color
+ *   --cell-border  border color
+ *
+ * Usage in YAML:  theme: primary-dark
+ * Renders as:     class="bento-cell--theme-primary-dark"
+ * ----------------------------------*/
+
+// ── Font family not yet in generated primitives — declared here until token sync
+:root {
+  --font-family-display: Tienne, serif;
+  --scale-450: calc(var(--scale-base) * 4.5);
+}
+
+.bento-cell--theme-primary-dark {
+  --cell-bg:     var(--color-primary-60);
+  --cell-color:  var(--color-primary-10);
+  --cell-border: var(--color-primary-80);
+}
+
+.bento-cell--theme-primary-light {
+  --cell-bg:     var(--color-primary-20);
+  --cell-color:  var(--color-primary-60);
+  --cell-border: var(--color-primary-30);
+}
+
+.bento-cell--theme-secondary-dark {
+  --cell-bg:     var(--color-secondary-50);
+  --cell-color:  var(--color-secondary-80);
+  --cell-border: var(--color-secondary-60);
+}
+
+.bento-cell--theme-secondary-light {
+  --cell-bg:     var(--color-secondary-20);
+  --cell-color:  var(--color-secondary-70);
+  --cell-border: var(--color-secondary-30);
+}
