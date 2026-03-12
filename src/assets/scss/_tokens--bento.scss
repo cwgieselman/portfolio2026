@@ -44,3 +44,9 @@
   --cell-color:  var(--color-secondary-70);
   --cell-border: var(--color-secondary-30);
 }
+
+.bento-cell--theme-white {
+  --cell-bg:     var(--color-neutral-00);
+  --cell-color:  var(--color-neutral-90);
+  --cell-border: var(--color-neutral-20);
+}

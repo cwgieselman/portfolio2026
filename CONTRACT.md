@@ -469,10 +469,10 @@ Standalone components may NOT be added to the executor safelist without a corres
 
 ---
 
-## Bento Grid
+## Bento Article
 
-Template: `src/_includes/components/bento-grid.njk`  
-Styles: `src/assets/scss/components/_bento-grid.scss`  
+Template: `src/_includes/components/bento-article.njk`  
+Styles: `src/assets/scss/components/_bento-article.scss`  
 Theme tokens: `src/assets/scss/_tokens--bento.scss`  
 One-off overrides: `src/assets/scss/components/bento-cells/`
 
@@ -483,7 +483,7 @@ Editorial grid for process and discovery layouts inside case study pages. Not pa
 ### Invocation
 
 ~~~njk
-{% from "components/bento-grid.njk" import bentoGrid %}
+{% from "components/bento-article.njk" import bentoGrid %}
 {{ bentoGrid(bento) }}
 ~~~
 
@@ -498,25 +498,25 @@ bento:
   cols: 5                      # grid column count
   rows: 5                      # grid row count
   cells:
-    - id: box-00
-      type: stat               # stat | text | image | composite
-      theme: primary-dark      # named theme — see themes below
+    - id: article-01
+      type: content            # content | image | custom
+      theme: primary-dark      # named theme — see themes below; omit for image cells
+      zIndex: 1                # derived by compiler from Figma layer order
       desktop:
         col: "1 / 2"           # CSS grid-column value
         row: "1 / 2"           # CSS grid-row value
-      mobile:
-        col: "1 / 2"
-        row: "1 / 2"
-      content:
-        # varies by type — see cell types below
+      content: |               # raw HTML from Figma Slot — rendered via | safe
+        <span class="bento-type--eyebrow">Week on-site</span>
+        <span class="bento-type--paragraphLead">at the pilot FAB in France</span>
 ~~~
 
 ### Named Themes
 
-Set via `theme:` on a cell. Omit for image-only cells (transparent bg, no border).
+Set via `theme:` on a cell. Defaults to `white` when omitted.
 
 | Theme | Background | Text | Border |
 |---|---|---|---|
+| `white` *(default)* | neutral/00 | neutral/90 | neutral/20 |
 | `primary-dark` | primary/60 | primary/10 | primary/80 |
 | `primary-light` | primary/20 | primary/60 | primary/30 |
 | `secondary-dark` | secondary/50 | secondary/80 | secondary/60 |
@@ -524,35 +524,28 @@ Set via `theme:` on a cell. Omit for image-only cells (transparent bg, no border
 
 Theme definitions live in `_tokens--bento.scss`. Each theme sets `--cell-bg`, `--cell-color`, `--cell-border` on the cell element. Adding themes requires only a new class in that file — no template changes.
 
+`white` is the default theme. When `theme` is omitted from YAML, the template applies `bento-cell--theme-white`. This ensures arrows always render against a defined background.
+
 ### Cell Types
 
-**stat** — large display value + label. Uses Tienne Bold (`--font-family-display`).
-~~~yaml
-content:
-  value: "46"
-  label: "Dev-Ready Components"
-~~~
+Type controls padding only — not content structure. Content is Slot-driven and renders as-is.
 
-**text** — prose content. `lede` and `body` are both optional.
-~~~yaml
-content:
-  lede: "Gather → Cluster → Prioritize"
-  body: "Discovery workshops provided context..."
-~~~
+**content** — cell has padding. Use for text, stats, mixed content.
 
-**image** — full-bleed image. Falls back to `baconmockup.com` via `onerror` if `src` is absent or 404s.
-~~~yaml
-content:
-  src: "/assets/images/inficon--control-room.jpg"
-  alt: ""
-~~~
+**image** — no padding; content bleeds to the cell edge. Use for full-bleed images.
 
-**composite** — text above image. Image fallback applies as with `image` type.
+**custom** — reserved for animated SVGs or other bespoke cells. No padding assumption. Author controls via one-off SCSS partial.
+
 ~~~yaml
-content:
-  body: "Each Workshop has its own Island..."
-  src: "/assets/images/inficon--workshop-interface.png"
-  alt: "Workshop island interface"
+cells:
+  - id: article-01
+    type: content
+    theme: primary-dark
+    ...
+  - id: article-02
+    type: image
+    # theme omitted — defaults to white
+    ...
 ~~~
 
 ### Inline Typography Spans

@@ -127,7 +127,15 @@ The Figma node tree has this hierarchy:
 
 **Key structural note:** `grid-tracks` and `content-cell-NN` are **siblings** — both are direct children of `page-NN`. The grid-tracks instance is a visual reference and grid definition source, not a parent container. It may have `hidden="true"` set. Content-cells are positioned by snapping to the grid-tracks lines in Figma.
 
-The first child of every content-cell is `content-cell--payload-wrapper`. Skip it and operate on its children. Each child instance's `name` determines the template include:
+**Payload resolution — Slot-first with fallback:**
+
+For each content-cell, resolve the payload using this priority order:
+
+1. **Slot (preferred):** Look for a direct child node with `name="Slot"` and type `SLOT`. If found, use its children as the ordered payload sequence.
+2. **Fallback:** If no `Slot` node is found, look for a child instance named `content-cell--payload-wrapper`. Use its children as the payload sequence.
+3. **Error:** If neither is found, log a `CONTENT_ERROR` in the extract report and emit `includes: []` for that cell.
+
+Each child node's `name` determines the template include:
 
 | Figma child name | Include |
 |------------------|---------|
@@ -273,6 +281,136 @@ Emit placements SCSS only (no inline styles).
 
 Global centering/clipping is already handled by `layout__section` + `layout__page`.
 Do not change global layout in this compile step. Only generate placements + data.
+
+---
+
+### G) Bento Article Compile Rules
+
+Bento grid frames are identified by their direct children being named `article-NN` (e.g. `article-01`, `article-02`). When the compiler encounters a frame whose children follow this naming pattern, apply the bento compile rules below instead of the standard content-cell rules.
+
+#### Bento Node Tree
+
+```
+<bentoKey> [FRAME]
+  grid-tracks [INSTANCE]     ← sibling; carries grid definition (same §D inference logic)
+  article-01 [INSTANCE]      ← ordered top-left to bottom-right (reading order)
+  article-02 [INSTANCE]
+  article-03 [INSTANCE]
+  ...
+```
+
+#### Article Naming and Markup Order
+
+Articles are named numerically from top-left to bottom-right in reading order. This naming order is canonical — it defines the semantic sequence in the HTML output and must not be derived from Figma layer order.
+
+Emit each article as:
+```html
+<article class="bento__cell bento__cell--NN" data-bento-cell="article-NN">
+```
+
+#### Z-Index from Figma Layer Order
+
+Figma layer order (document order in the node tree) represents back-to-front stacking. The compiler derives `z-index` values from this order automatically — no explicit YAML property required.
+
+**Rule:** For each `article-NN` sibling, read its index position in the Figma node tree (0-based). Emit `z-index` equal to that index + 1. Articles listed earlier in the tree (lower index) get lower z-index values; articles listed later (higher index) get higher z-index values and visually sit on top.
+
+Emit z-index in the placements SCSS only — never as an inline style.
+
+```scss
+.bento__cell[data-bento-cell="article-03"] {
+    grid-column: 1 / 4;
+    grid-row: 3 / 5;
+    z-index: 3;
+}
+```
+
+#### Semantic Relationships (Arrow Prop → aria-details)
+
+The article component has two props that drive accessibility relationships:
+
+| Figma prop | Values | Notes |
+|---|---|---|
+| `arrow` | `none \| top \| right \| bottom \| left` | Required. Always present. When not `none`, this article has a visible pointer and annotates another |
+| `points-to` | string (e.g. `article-06`) | Required when `arrow` is not `none`. The ID of the target article being annotated. Empty string when `arrow` is `none`. |
+
+**Rule:** When `arrow` is not `none`:
+- Add `bento__cell--arrow-<direction>` as a modifier class to the *annotating* article (drives CSS arrow rendering)
+- Add `id="<bentoKey>--<articleId>"` to the *target* article (the one named in `points-to`)
+- Add `aria-details="<bentoKey>--<pointsToValue>"` to the *annotating* article
+
+When `arrow` is `none` or absent, emit none of these.
+
+**Example:** Article-08 has `arrow: left` and `points-to: article-06`.
+- `article-06` emits: `id="inficon-discovery--article-06"`
+- `article-08` emits class `bento__cell--arrow-left` + `aria-details="inficon-discovery--article-06"`
+
+**Resulting markup:**
+```html
+<article class="bento__cell bento__cell--08" data-bento-cell="article-08">
+  ...
+</article>
+
+<article class="bento__cell bento__cell--08 bento__cell--arrow-left"
+         aria-details="inficon-discovery--article-06"
+         data-bento-cell="article-08">
+  ...
+</article>
+
+<article class="bento__cell bento__cell--06"
+         id="inficon-discovery--article-06"
+         data-bento-cell="article-06">
+  ...
+</article>
+```
+
+#### Bento Grid Placement
+
+Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, ±2px tolerance). The grid-tracks instance for a bento frame uses uniform square tracks with a common gutter — simpler than the master grid but the same algorithm applies.
+
+#### Bento YAML Shape
+
+```yaml
+bento:
+  id: inficon--discovery
+  cols: 5
+  rows: 5
+  cells:
+    - id: article-01
+      type: content              # content | image | custom
+      theme: primary-dark        # omit for image cells
+      zIndex: 1                  # derived from Figma layer order
+      desktop:
+        col: "1 / 2"
+        row: "1 / 2"
+      content: |                 # raw HTML from Figma Slot — rendered via | safe
+        <span class="bento-type--eyebrow">Week on-site</span>
+        <span class="bento-type--paragraphLead">at the pilot FAB in France</span>
+
+    - id: article-08
+      type: content
+      theme: secondary-light
+      zIndex: 8
+      ariaDetails: "inficon-discovery--article-06"   # only when points-to is set
+      desktop:
+        col: "4 / 6"
+        row: "3 / 4"
+      content: |
+        <span class="bento-type--paragraph">annotation text here</span>
+
+    - id: article-06
+      type: image
+      # theme omitted — defaults to white
+      zIndex: 6
+      desktop:
+        col: "3 / 6"
+        row: "2 / 4"
+      content: |
+        <img src="/assets/images/inficon--screen.png" alt="" />
+```
+
+**Content extraction from Slot:** Read the Slot node’s children. For each child, extract text content and node name. Map node names to `bento-type--*` span classes using the inline typography table in CONTRACT.md. Wrap each text node in the appropriate span. For image nodes (`rounded-rectangle` or similar), emit an `<img>` tag with `src: TODO:src` and `alt: ""`.
+
+If a Slot child is a `wrapper` frame, iterate its children and apply the same mapping — preserve document order.
 
 ---
 
