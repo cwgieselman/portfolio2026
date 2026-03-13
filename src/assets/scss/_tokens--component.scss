@@ -25,35 +25,13 @@
   --bento-theme-secondary-light-border: var(--color-secondary-30);
   --bento-theme-secondary-light-color: var(--color-secondary-70);
 
-  --bento-type-eyebrow-family: var(--font-family-brand);
-  --bento-type-eyebrow-letterSpacing: var(--scale-25);
-  --bento-type-eyebrow-lineHeight: var(--scale-200);
-  --bento-type-eyebrow-size: var(--scale-100);
-  --bento-type-eyebrow-weight: var(--font-weight-bold);
-
-  --bento-type-paragraph-family: var(--font-family-plain);
-  --bento-type-paragraph-lineHeight: var(--scale-175);
-  --bento-type-paragraph-size: var(--scale-100);
-  --bento-type-paragraph-weight: var(--font-weight-regular);
-
-  --bento-type-paragraphBold-family: var(--font-family-plain);
-  --bento-type-paragraphBold-lineHeight: var(--scale-175);
-  --bento-type-paragraphBold-size: var(--scale-100);
-  --bento-type-paragraphBold-weight: var(--font-weight-bold);
-
-  --bento-type-paragraphLead-family: var(--font-family-brand);
-  --bento-type-paragraphLead-lineHeight: var(--scale-300);
-  --bento-type-paragraphLead-size: var(--scale-150);
-  --bento-type-paragraphLead-weight: var(--font-weight-regular);
-
-  --bento-type-paragraphLeadItalic-family: var(--font-family-brand);
-  --bento-type-paragraphLeadItalic-lineHeight: var(--scale-300);
-  --bento-type-paragraphLeadItalic-size: var(--scale-150);
-  --bento-type-paragraphLeadItalic-weight: var(--font-weight-regular);
+  --bento-theme-white-bg: var(--color-neutral-10);
+  --bento-theme-white-border: var(--color-neutral-60);
+  --bento-theme-white-color: var(--color-primary-60);
 
   --bento-type-stat-family: var(--font-family-display);
   --bento-type-stat-lineHeight: var(--scale-450);
-  --bento-type-stat-size: var(--scale-400);
+  --bento-type-stat-size: var(--scale-450);
   --bento-type-stat-weight: var(--font-weight-bold);
 
   --content-rhythm--block: var(--spacing-xxl);
