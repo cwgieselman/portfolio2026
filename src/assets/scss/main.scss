@@ -1,6 +1,3 @@
----
-permalink: /assets/css/main.css
----
 /* src/assets/scss/main.scss */
 /* ---------------------------------
  * Components must not style raw elements globally (p, h2, a) unless scoped under the component root.
@@ -34,8 +31,7 @@ permalink: /assets/css/main.css
 @use "components/figure";
 @use "components/link";
 @use "components/link-block";
-@use "components/bento-article";
-@use "components/bento-backgrounds";
+@use "components/bento-grid";
 @use "components/comparison-slider";
 @use "components/annotation-toggle";
 
@@ -44,3 +40,4 @@ permalink: /assets/css/main.css
 
 /* Generated placements (Codex) */
 @use "placements/bmtx-nextgen";
+@use "placements/inficon-impact-manager";

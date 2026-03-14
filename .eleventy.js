@@ -12,9 +12,19 @@ module.exports = function (eleventyConfig) {
     compile: function (inputContent, inputPath) {
       return async (data) => {
         if (path.basename(inputPath).startsWith("_")) return;
-        const result = await sass.compileStringAsync(inputContent, {
-          loadPaths: [path.dirname(inputPath)],
-        });
+        let result;
+        try {
+          result = await sass.compileStringAsync(inputContent, {
+            loadPaths: [
+              path.dirname(inputPath),
+              path.join(path.dirname(inputPath), "components"),
+              path.join(path.dirname(inputPath), "placements"),
+            ],
+          });
+        } catch (e) {
+          console.error(`[SCSS ERROR] ${inputPath}:\n${e.message}`);
+          throw e;
+        }
         this.addDependencies(inputPath, result.loadedUrls);
         return result.css;
       };
@@ -74,13 +84,17 @@ module.exports = function (eleventyConfig) {
         return;
       }
 
-      // Build imageAttributes — role="presentation" if no meaningful alt
+      // Build imageAttributes — role="presentation" if no meaningful alt.
+      // width/height set to false to suppress intrinsic dimension attributes —
+      // those override CSS sizing and break object-fit: cover in bento cells.
       const imageAttributes = {
         alt,
         sizes,
         loading: "lazy",
         decoding: "async",
         ...(role ? { role } : {}),
+        width: false,
+        height: false,
       };
 
       // Generate the <picture> HTML string
