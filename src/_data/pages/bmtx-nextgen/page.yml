@@ -51,7 +51,7 @@ sections:
                   type: "desktop"
                   showCaption: true
                   caption: "The lack of systemization in the existing design artifacts, built in Axure, created inconsistent UI."
-                  src: "/assets/images/bmtx--axure-inconsistency.png"
+                  src: "/assets/images/bmtx--screen--nextGen-axure.png"
                   hasAlt: false
 
   - sectionKey: "section-02"
