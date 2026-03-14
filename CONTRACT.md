@@ -190,12 +190,12 @@ Margin stacking is not permitted inside structural components.
 
 `base.njk` must load:
 
-`/assets/css/main.css`
+`/assets/scss/main.css`
 
 If styling appears incorrect, verify in order:
 
-1. CSS file exists at expected path
-2. CSS file is loaded in browser
+1. CSS file exists at `_site/assets/scss/main.css`
+2. CSS file is loaded in browser (href must match)
 3. Class names match rendered DOM
 4. No later stylesheet overrides rules
 
@@ -469,10 +469,10 @@ Standalone components may NOT be added to the executor safelist without a corres
 
 ---
 
-## Bento Article
+## Bento Grid
 
-Template: `src/_includes/components/bento-article.njk`  
-Styles: `src/assets/scss/components/_bento-article.scss`  
+Template: `src/_includes/components/bento-grid.njk`  
+Styles: `src/assets/scss/components/_bento-grid.scss`  
 Theme tokens: `src/assets/scss/_tokens--bento.scss`  
 One-off overrides: `src/assets/scss/components/bento-cells/`
 
@@ -483,7 +483,7 @@ Editorial grid for process and discovery layouts inside case study pages. Not pa
 ### Invocation
 
 ~~~njk
-{% from "components/bento-article.njk" import bentoGrid %}
+{% from "components/bento-grid.njk" import bentoGrid %}
 {{ bentoGrid(bento) }}
 ~~~
 
@@ -516,7 +516,7 @@ Set via `theme:` on a cell. Defaults to `white` when omitted.
 
 | Theme | Background | Text | Border |
 |---|---|---|---|
-| `white` *(default)* | neutral/00 | neutral/90 | neutral/20 |
+| `white` *(default)* | neutral/10 | neutral/90 | neutral/20 |
 | `primary-dark` | primary/60 | primary/10 | primary/80 |
 | `primary-light` | primary/20 | primary/60 | primary/30 |
 | `secondary-dark` | secondary/50 | secondary/80 | secondary/60 |
@@ -550,17 +550,17 @@ cells:
 
 ### Inline Typography Spans
 
-All text fields pass through `| safe`. Inline `<span class="bento-type--*">` works in any `value`, `label`, `lede`, or `body` field. Classes are scoped to `.bento-cell` and do not leak to the page.
+All text fields pass through `| safe`. Inline `<span class="bento-*">` works in any content field. Classes are scoped to `.bento-cell` and do not leak to the page.
 
 Sourced from CGDC-DS Figma node 2884-634:
 
 | Class | Family | Style | Size |
 |---|---|---|---|
-| `bento-type--paragraphLead` | Raleway | Regular | 24px |
-| `bento-type--paragraphLead-italic` | Raleway | Italic | 24px |
-| `bento-type--paragraph` | PT Sans | Regular | 16px |
-| `bento-type--paragraph-bold` | PT Sans | Bold | 16px |
-| `bento-type--eyebrow` | Raleway | Bold uppercase | 16px |
+| `bento-stat` | Tienne | Bold | clamp(50px -> 72px) |
+| `bento-lead` | Raleway | Regular | clamp(19px -> 24px) |
+| `bento-lead-italic` | Raleway | Italic | clamp(19px -> 24px) |
+| `bento-body` | PT Sans | Regular | clamp(13px -> 16px) |
+| `bento-body-bold` | PT Sans | Bold | clamp(13px -> 16px) |
 
 ### One-Off Cell Overrides
 

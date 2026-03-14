@@ -1,0 +1,94 @@
+{#
+  bento-grid.njk
+  ─────────────────────────────────────────────────────────────────────────────
+  Renders a bento grid from compiled YAML data.
+
+  Usage (via content-cell.njk executor):
+    {% from "components/bento-article.njk" import bentoGrid %}
+    {{ bentoGrid(cell.bento) }}
+
+  YAML shape (compiled by COMPILE_PROMPTS.md §G):
+    bento:
+      id: inficon--im-research
+      cols: 5                        # reference only — drives placements SCSS
+      rows: 5                        # reference only — drives placements SCSS
+      cells:
+        - id: article-01
+          type: content              # content | image
+          theme: primary-dark        # omit for image cells
+          desktop:                   # reference only — drives placements SCSS
+            col: "1 / 2"
+            row: "1 / 2"
+          content: |                 # raw HTML block — rendered via | safe
+            <span class="bento-stat">1</span>
+            <span class="bento-body">Week on-site...</span>
+
+        - id: article-03
+          type: image                # image cells use media: block, not content:
+          desktop:                   # reference only — drives placements SCSS
+            col: "4 / 6"
+            row: "1 / 2"
+          media:
+            src: "/assets/images/inficon--photo--rocc-main.jpg"
+            hasAlt: true
+            alt: "Descriptive alt text for assistive technology"
+            sizes: "40vw"
+            cssClass: "bento-cell__img"
+
+  ── Themes ───────────────────────────────────────────────────────────────────
+  theme: primary-dark     → --cell-bg: primary/60, --cell-color: primary/10
+  theme: primary-light    → --cell-bg: primary/20, --cell-color: primary/60
+  theme: secondary-dark   → --cell-bg: secondary/50, --cell-color: secondary/80
+  theme: secondary-light  → --cell-bg: secondary/20, --cell-color: secondary/70
+  (omit theme for image-only cells — transparent bg, no border)
+
+  ── Inline type spans ────────────────────────────────────────────────────────
+  bento-stat           Tienne Bold, clamp 50px→72px
+  bento-lead           Raleway Regular, clamp 19px→24px
+  bento-lead-italic    Raleway Italic, clamp 19px→24px
+  bento-body           PT Sans Regular, clamp 13px→16px
+  bento-body-bold      PT Sans Bold, clamp 13px→16px
+
+  ── Render paths ─────────────────────────────────────────────────────────────
+  type: image + media: block → media.njk include (img, alt, optimization pipeline)
+  type: content              → {{ cell.content | safe }} (raw HTML block)
+
+  ── Placement ──────────────────────────────────────────────────────────────────
+  grid-column, grid-row, z-index: all in placements/_<pageKey>.scss
+  #bento--<id> drives --bento-cols / --bento-rows on the container.
+  .bento-cell[data-bento-cell="article-NN"] drives per-cell placement.
+  No inline styles. No CSS custom props on individual elements.
+  ─────────────────────────────────────────────────────────────────────────────
+#}
+
+{% macro bentoGrid(bento) %}
+<div
+  class="bento-grid"
+  id="bento--{{ bento.id }}"
+  data-bento="{{ bento.id }}"
+>
+  {% for cell in bento.cells %}
+
+  {# Class: type modifier + optional theme. Grid placement lives in placements SCSS. #}
+  {% set cellClasses = "bento-cell bento-cell--" + cell.type %}
+  {% if cell.theme %}
+    {% set cellClasses = cellClasses + " bento-cell--theme-" + cell.theme %}
+  {% endif %}
+
+  <article
+    class="{{ cellClasses }}"
+    data-bento-cell="{{ cell.id }}"
+  >
+    <div class="bento-cell__inner">
+      {% if cell.type == "image" and cell.media %}
+        {% set mediaParams = cell.media %}
+        {% include "components/media.njk" %}
+      {% else %}
+        {{ cell.content | safe }}
+      {% endif %}
+    </div>
+  </article>
+
+  {% endfor %}
+</div>
+{% endmacro %}

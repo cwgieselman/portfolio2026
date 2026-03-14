@@ -1,4 +1,10 @@
 .content-cell {
+    // Container context for child components (bento, figure, etc.)
+    // that need to respond to the content-cell's rendered width,
+    // not the viewport width.
+    container-type: inline-size;
+    container-name: content-cell;
+
     > * + * {
         margin-top: var(--content-rhythm--block);
     }

@@ -111,7 +111,7 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 
 - **Safe to edit:** `src/`, `tokens/tokens.json`, `CONTRACT.md`, `README.md`, `scripts/`
 - **Generated — do not hand-edit:** `src/assets/scss/_tokens--*.scss`
-- **Build output — do not commit:** `_site/`, `src/assets/css/`
+- **Build output — do not commit:** `_site/`
 
 ## Key Reference Files
 
@@ -152,7 +152,7 @@ The bento grid is a standalone component for non-executor contexts (e.g. discove
 - Template: `src/_includes/components/bento-grid.njk` — full API docs in the file header
 - Styles: `src/assets/scss/components/_bento-grid.scss`
 - Themes: `src/assets/scss/_tokens--bento.scss` (hand-authored, safe to edit)
-- Retired: `src/assets/scss/components/_bento-backgrounds.scss` (tombstone only)
+- Retired (git rm pending): `src/assets/scss/components/_bento-backgrounds.scss`, `src/_includes/components/bento-arrow.njk`, `src/_data/bentoDiscovery.js`, `src/_data/inficon--discovery-bento.yml`, `src/bento-test.njk`, `src/_includes/layouts/section.njk`
 - One-off overrides: `src/assets/scss/components/bento-cells/` — add partials here, uncomment import in `main.scss`
 
 **Four named themes** (set via `theme:` in YAML):

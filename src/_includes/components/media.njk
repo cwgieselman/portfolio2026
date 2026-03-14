@@ -1,0 +1,60 @@
+{#
+  media.njk
+  ─────────────────────────────────────────────────────────────────────────────
+  Renders a bare image with no caption wrapper.
+  Used by bento-article.njk for image-type cells.
+  Also usable standalone wherever a caption-free image is needed.
+
+  Usage (via include):
+    {% set mediaParams = cell.media %}
+    {% include "components/media.njk" %}
+
+  YAML shape:
+    media:
+      src: "/assets/images/inficon--photo--rocc-main.jpg"
+      hasAlt: true
+      alt: "Descriptive alt text for assistive technology"
+      sizes: "40vw"       # optional, defaults to 100vw
+      cssClass: "bento-cell__img"  # optional, injected as class on <img>
+
+  States:
+    - src missing or "TODO:src" → bacon placeholder, role="presentation"
+    - hasAlt: true              → alt text applied, optimization pipeline active
+    - hasAlt: false (default)   → alt="", role="presentation", optimization active
+  ─────────────────────────────────────────────────────────────────────────────
+#}
+
+{% set m = mediaParams %}
+
+{% if not m.src or m.src == "TODO:src" %}
+  <img
+    src="https://baconmockup.com/800/500"
+    alt=""
+    role="presentation"
+    {% if m.cssClass %}class="{{ m.cssClass }}"{% endif %}
+    data-placeholder="true"
+    loading="lazy"
+    decoding="async"
+  />
+{% elif m.hasAlt %}
+  <img
+    src="{{ m.src }}"
+    alt="{{ m.alt }}"
+    {% if m.cssClass %}class="{{ m.cssClass }}"{% endif %}
+    data-optimize
+    data-sizes="{{ m.sizes if m.sizes else '100vw' }}"
+    loading="lazy"
+    decoding="async"
+  />
+{% else %}
+  <img
+    src="{{ m.src }}"
+    alt=""
+    role="presentation"
+    {% if m.cssClass %}class="{{ m.cssClass }}"{% endif %}
+    data-optimize
+    data-sizes="{{ m.sizes if m.sizes else '100vw' }}"
+    loading="lazy"
+    decoding="async"
+  />
+{% endif %}

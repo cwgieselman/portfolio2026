@@ -284,7 +284,7 @@ Do not change global layout in this compile step. Only generate placements + dat
 
 ---
 
-### G) Bento Article Compile Rules
+### G) Bento Grid Compile Rules
 
 Bento grid frames are identified by their direct children being named `article-NN` (e.g. `article-01`, `article-02`). When the compiler encounters a frame whose children follow this naming pattern, apply the bento compile rules below instead of the standard content-cell rules.
 
@@ -299,73 +299,52 @@ Bento grid frames are identified by their direct children being named `article-N
   ...
 ```
 
-#### Article Naming and Markup Order
+#### Article Naming and HTML
 
-Articles are named numerically from top-left to bottom-right in reading order. This naming order is canonical — it defines the semantic sequence in the HTML output and must not be derived from Figma layer order.
+Articles are named numerically from top-left to bottom-right in reading order. This naming order is canonical — it defines the semantic sequence in the HTML output.
 
-Emit each article as:
+Each article emits only:
 ```html
-<article class="bento__cell bento__cell--NN" data-bento-cell="article-NN">
+<article class="bento-cell bento-cell--{type} [bento-cell--theme-{theme}]" data-bento-cell="article-NN">
 ```
+
+The `data-bento-cell` attribute is the CSS hook for per-cell placement. No numeric index class. No inline styles. No id attributes.
 
 #### Z-Index from Figma Layer Order
 
-Figma layer order (document order in the node tree) represents back-to-front stacking. The compiler derives `z-index` values from this order automatically — no explicit YAML property required.
+Figma layer order (document order in the node tree) represents back-to-front stacking. The compiler derives `z-index` values from this order automatically.
 
-**Rule:** For each `article-NN` sibling, read its index position in the Figma node tree (0-based). Emit `z-index` equal to that index + 1. Articles listed earlier in the tree (lower index) get lower z-index values; articles listed later (higher index) get higher z-index values and visually sit on top.
-
-Emit z-index in the placements SCSS only — never as an inline style.
-
-```scss
-.bento__cell[data-bento-cell="article-03"] {
-    grid-column: 1 / 4;
-    grid-row: 3 / 5;
-    z-index: 3;
-}
-```
-
-#### Semantic Relationships (Arrow Prop → aria-details)
-
-The article component has two props that drive accessibility relationships:
-
-| Figma prop | Values | Notes |
-|---|---|---|
-| `arrow` | `none \| top \| right \| bottom \| left` | Required. Always present. When not `none`, this article has a visible pointer and annotates another |
-| `points-to` | string (e.g. `article-06`) | Required when `arrow` is not `none`. The ID of the target article being annotated. Empty string when `arrow` is `none`. |
-
-**Rule:** When `arrow` is not `none`:
-- Add `bento__cell--arrow-<direction>` as a modifier class to the *annotating* article (drives CSS arrow rendering)
-- Add `id="<bentoKey>--<articleId>"` to the *target* article (the one named in `points-to`)
-- Add `aria-details="<bentoKey>--<pointsToValue>"` to the *annotating* article
-
-When `arrow` is `none` or absent, emit none of these.
-
-**Example:** Article-08 has `arrow: left` and `points-to: article-06`.
-- `article-06` emits: `id="inficon-discovery--article-06"`
-- `article-08` emits class `bento__cell--arrow-left` + `aria-details="inficon-discovery--article-06"`
-
-**Resulting markup:**
-```html
-<article class="bento__cell bento__cell--08" data-bento-cell="article-08">
-  ...
-</article>
-
-<article class="bento__cell bento__cell--08 bento__cell--arrow-left"
-         aria-details="inficon-discovery--article-06"
-         data-bento-cell="article-08">
-  ...
-</article>
-
-<article class="bento__cell bento__cell--06"
-         id="inficon-discovery--article-06"
-         data-bento-cell="article-06">
-  ...
-</article>
-```
+**Rule:** For each `article-NN` sibling, read its index position in the Figma node tree (0-based). Emit `z-index` equal to that index + 1. Emit in the placements SCSS only — never as a YAML field or inline style.
 
 #### Bento Grid Placement
 
 Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, ±2px tolerance). The grid-tracks instance for a bento frame uses uniform square tracks with a common gutter — simpler than the master grid but the same algorithm applies.
+
+All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`, in the same file as the content-cell placements. Structure:
+
+```scss
+/* ─── bento--<id> — grid dimensions ─── */
+
+#bento--<id> {
+    --bento-cols: N;
+    --bento-rows: N;
+}
+
+/* ─── bento--<id> — cell placements ─── */
+
+.bento-cell[data-bento-cell="article-01"] {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    z-index: 12;
+}
+.bento-cell[data-bento-cell="article-02"] {
+    grid-column: 2 / 4;
+    grid-row: 1 / 2;
+    z-index: 11;
+}
+```
+
+The `desktop.col` / `desktop.row` values in YAML are human-readable reference only — the template does not read them. The placements SCSS is the single source of truth for grid placement.
 
 #### Bento YAML Shape
 

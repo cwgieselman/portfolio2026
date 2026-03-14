@@ -1,0 +1,149 @@
+// _bento-grid.scss
+// -----------------------------------------------------------------------------
+// Self-contained bento grid system.
+// -----------------------------------------------------------------------------
+
+// -- Local named vars (not tokens — geometry specific to bento) ---------------
+// CONTRACT_EXCEPTION: bento cell geometry values are component-specific constants
+// not representable as semantic tokens. Named here for single-point control.
+// --bento-cell-size and --bento-gap are overridable via cascade from the grid container.
+
+.bento-grid {
+    /* defaults — overridden per-bento by #bento--<id> selector in placements SCSS */
+    --bento-cols: 5;
+    --bento-rows: 5;
+    /* geometry constants */
+    --bento-gap:          var(--spacing-xs);    /* 8px */
+    --bento-cell-size:    140px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma */
+    --bento-border-width: 2px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
+    --bento-radius:       var(--corner-xs);    /* 8px — Figma cell radius (scale-50) */
+    --bento-inner-radius: var(--corner-xxs);   /* 4px — inner element radius (scale-25) */
+
+    display: grid;
+    grid-template-columns: repeat(var(--bento-cols), var(--bento-cell-size));
+    grid-template-rows: repeat(var(--bento-rows), var(--bento-cell-size));
+    gap: var(--bento-gap);
+
+    width: fit-content;
+    margin-inline: auto;
+
+    container-type: inline-size;
+    container-name: bento;
+}
+
+// -- Cells --------------------------------------------------------------------
+
+.bento-cell {
+    background-color: var(--cell-bg);
+    color: var(--cell-color);
+    border: var(--bento-border-width) solid var(--cell-border);
+
+    container-type: inline-size;
+    container-name: bento-cell;
+
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--bento-radius);
+    min-height: 0;
+}
+
+.bento-cell__inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: var(--bento-gap);
+}
+
+.bento-cell--image .bento-cell__inner {
+    padding: 0;
+}
+
+.bento-cell--image picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.bento-cell__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.bento-cell--content .bento-cell__inner {
+    justify-content: center;
+    gap: var(--bento-gap);
+}
+
+.bento-cell--composite .bento-cell__inner {
+    justify-content: space-between;
+    gap: var(--bento-gap);
+}
+
+.bento-cell__screenshot {
+    display: block;
+    width: 100%;
+    border-radius: var(--bento-inner-radius);
+    border: 1px solid var(--color-neutral-50); /* CONTRACT_EXCEPTION: hairline decorative border */
+    flex-shrink: 0;
+}
+
+// -- Type styles --------------------------------------------------------------
+
+.bento-cell .bento-stat {
+    font-family: var(--font-family-display);
+    font-size: clamp(3.125rem, 36cqi, 4.5rem);
+    font-weight: 700;
+    line-height: 1;
+    color: inherit;
+    display: block;
+}
+
+.bento-cell .bento-lead {
+    font-family: var(--font-family-brand);
+    font-size: clamp(1.1875rem, 13.2cqi, 1.5rem);
+    font-weight: 400;
+    font-style: normal;
+    line-height: clamp(2.375rem, 25cqi, 3rem);
+    color: inherit;
+}
+
+.bento-cell .bento-lead-italic {
+    font-family: var(--font-family-brand);
+    font-size: clamp(1.1875rem, 13.2cqi, 1.5rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: clamp(2.375rem, 25cqi, 3rem);
+    color: inherit;
+}
+
+.bento-cell .bento-body {
+    font-family: var(--font-family-plain);
+    font-size: clamp(0.8125rem, 9.2cqi, 1rem);
+    font-weight: 400;
+    font-style: normal;
+    line-height: clamp(1.1875rem, 12.5cqi, 1.75rem);
+    color: inherit;
+}
+
+.bento-cell .bento-body-bold {
+    font-family: var(--font-family-plain);
+    font-size: clamp(0.8125rem, 9.2cqi, 1rem);
+    font-weight: 700;
+    font-style: normal;
+    line-height: clamp(1.1875rem, 12.5cqi, 1.75rem);
+    color: inherit;
+}
+
+// -- Reduced motion -----------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+    .bento-cell {
+        transition: none !important;
+        animation: none !important;
+    }
+}

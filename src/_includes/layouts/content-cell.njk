@@ -3,7 +3,14 @@
 {% set wrapper = cell.wrapper %}
 {% set isStack = cell.includes and (cell.includes | length) > 1 %}
 <div class="content-cell{% if isStack %} content-cell--stack{% endif %}" data-cell="{{ wrapper }}">
-  {% if cell.includes and (cell.includes | length) %}
+
+  {# ── Bento branch ──────────────────────────────────────────── #}
+  {% if cell.bento %}
+    {% from "components/bento-grid.njk" import bentoGrid %}
+    {{ bentoGrid(cell.bento) }}
+
+  {# ── Standard includes branch ──────────────────────────────── #}
+  {% elif cell.includes and (cell.includes | length) %}
     {% for item in cell.includes %}
       {% if item.include %}
         {% if not item.params %}
@@ -54,4 +61,5 @@
       {% endif %}
     {% endfor %}
   {% endif %}
+
 </div>

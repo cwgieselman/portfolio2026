@@ -15,11 +15,8 @@
  * Renders as:     class="bento-cell--theme-primary-dark"
  * ----------------------------------*/
 
-// ── Font family not yet in generated primitives — declared here until token sync
-:root {
-  --font-family-display: Tienne, serif;
-  --scale-450: calc(var(--scale-base) * 4.5);
-}
+// Note: --font-family-display and --scale-450 are now generated into _tokens--primitives.scss.
+// Previously declared here during token pipeline bootstrap. Removed to eliminate duplication.
 
 .bento-cell--theme-primary-dark {
   --cell-bg:     var(--color-primary-60);
@@ -46,7 +43,7 @@
 }
 
 .bento-cell--theme-white {
-  --cell-bg:     var(--color-neutral-00);
+  --cell-bg:     var(--color-neutral-10);
   --cell-color:  var(--color-neutral-90);
   --cell-border: var(--color-neutral-20);
 }
