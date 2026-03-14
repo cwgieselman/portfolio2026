@@ -1,0 +1,166 @@
+pageKey: "inficon-impact-manager"
+sections:
+  - sectionKey: "section-01"
+    mode: "normal"
+    pages:
+      - pageKey: "page-01"
+        cells:
+          - wrapper: "header--section-01--page-01--content-cell-01"
+            includes:
+              - include: "components/header.njk"
+                params:
+                  level: "h1"
+                  headline: "INFICON Impact Manager"
+                  showEyebrow: true
+                  eyebrow: "User Interface Design"
+                  showSubhead: false
+
+          - wrapper: "content--section-01--page-01--content-cell-02"
+            includes:
+              - include: "components/richtext.njk"
+                params:
+                  kind: "p"
+                  text: |
+                    The premise for Impact Manager was simple:
+                    Use deviations between historical and current data to anticipate production issues before they happen. This work was being done by hand by searching various data sources for indicators, then following documented 'Action Plans' to remedy them.
+              - include: "components/richtext.njk"
+                params:
+                  kind: "p"
+                  text: "A mechanical proof of concept existed, but, the goal was to create a coherent tool that process engineers and technicians could confidently use to keep the FAB running smoothly."
+
+          - wrapper: "content--section-01--page-01--content-cell-03"
+            bento:
+              id: "inficon--im-research"
+              cols: 5
+              rows: 5
+              cells:
+                - id: article-01
+                  type: content
+                  theme: primary-dark
+                  desktop:
+                    col: "1 / 2"
+                    row: "1 / 2"
+                  content: |
+                    <span class="bento-stat">1</span>
+                    <span class="bento-body">Week on-site at the pilot FAB in France:</span>
+
+                - id: article-02
+                  type: content
+                  theme: secondary-dark
+                  desktop:
+                    col: "2 / 4"
+                    row: "1 / 2"
+                  content: |
+                    <span class="bento-lead-italic">"How can we make THIS</span>
+                    <span class="bento-body">&lt;waves hand at the room as it is today&gt;</span>
+                    <span class="bento-lead-italic">more useful to you?"</span>
+
+                - id: article-03
+                  type: image
+                  desktop:
+                    col: "4 / 6"
+                    row: "1 / 2"
+                  media:
+                    src: "/assets/images/inficon--photo--rocc-main.jpg"
+                    hasAlt: true
+                    alt: "The ROCC central display at the pilot FAB in Crolles, France — a large monitor wall showing aggregated production data across the entire facility."
+                    sizes: "40vw"
+                    cssClass: "bento-cell__img"
+
+                - id: article-04
+                  type: content
+                  theme: primary-light
+                  desktop:
+                    col: "1 / 2"
+                    row: "2 / 3"
+                  content: |
+                    <span class="bento-body">The Control Room had a huge central display with data aggregated from the entire <span class="bento-body-bold">FAB</span>.</span>
+
+                - id: article-05
+                  type: image
+                  desktop:
+                    col: "2 / 4"
+                    row: "2 / 3"
+                  media:
+                    src: "/assets/images/inficon--photo--rocc-island.jpg"
+                    hasAlt: true
+                    alt: "A Workshop Island display showing localized production data for a specific area of the FAB, with individual Actor workstations surrounding it."
+                    sizes: "40vw"
+                    cssClass: "bento-cell__img"
+
+                - id: article-06
+                  type: content
+                  theme: primary-light
+                  desktop:
+                    col: "4 / 6"
+                    row: "2 / 4"
+                  content: |
+                    <span class="bento-body">Each <span class="bento-body-bold">Workshop</span> in the FAB has its own 'Island' with a central display of localized data and individual workstations for the <span class="bento-body-bold">Actors</span> assigned to that Workshop</span>
+                    <img class="bento-cell__screenshot" src="/assets/images/inficon--screen--anomaly-ui-st.png" alt="" role="presentation" />
+
+                - id: article-07
+                  type: image
+                  desktop:
+                    col: "1 / 4"
+                    row: "3 / 5"
+                  media:
+                    src: "/assets/images/inficon--screen--anomaly-app-figjam.png"
+                    hasAlt: true
+                    alt: "FigJam mapping of the legacy anomaly workstation interface — inputs, workflows, and display states documented in collaboration with Actors during discovery."
+                    sizes: "55vw"
+                    cssClass: "bento-cell__img"
+
+                - id: article-08
+                  type: content
+                  theme: primary-dark
+                  desktop:
+                    col: "4 / 6"
+                    row: "4 / 5"
+                  content: |
+                    <span class="bento-body">Replacing the workstation interface was the focus of v1. We worked with Actors to create a detailed mapping of all it's inputs, workflows and displays.</span>
+
+                - id: article-09
+                  type: content
+                  theme: secondary-light
+                  desktop:
+                    col: "1 / 3"
+                    row: "5 / 6"
+                  content: |
+                    <span class="bento-lead">Gather → Cluster → Prioritize</span>
+                    <span class="bento-body">Discovery Workshops with Users, managers and executives provided context and insight to the the observational and technical data.</span>
+
+                - id: article-10
+                  type: image
+                  desktop:
+                    col: "3 / 4"
+                    row: "5 / 6"
+                  media:
+                    src: "/assets/images/inficon--graphic--needs.png"
+                    hasAlt: true
+                    alt: "Needs clustering diagram mapping Actor pain points and goals identified during discovery workshops."
+                    sizes: "20vw"
+                    cssClass: "bento-cell__img"
+
+                - id: article-11
+                  type: image
+                  desktop:
+                    col: "4 / 5"
+                    row: "5 / 6"
+                  media:
+                    src: "/assets/images/inficon--graphic--clustering.png"
+                    hasAlt: true
+                    alt: "Affinity clustering output from discovery workshops, grouping insights by theme across user, manager, and executive sessions."
+                    sizes: "20vw"
+                    cssClass: "bento-cell__img"
+
+                - id: article-12
+                  type: image
+                  desktop:
+                    col: "5 / 6"
+                    row: "5 / 6"
+                  media:
+                    src: "/assets/images/inficon--graphic--bullseye.png"
+                    hasAlt: true
+                    alt: "Prioritization bullseye diagram distilling discovery findings into ranked opportunities for the Impact Manager v1 scope."
+                    sizes: "20vw"
+                    cssClass: "bento-cell__img"
