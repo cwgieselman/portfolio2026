@@ -39,11 +39,15 @@ function getNodeByPath(obj, dotPath) {
 
 /**
  * Convert a token value into a CSS var expression.
- * - numbers become `16px` (for our scale-ish world)
+ * - numbers become `16px` (for our scale-ish world) — EXCEPT unitless types
  * - references become `var(--...)`
  * - math expressions become `calc(...)`
+ *
+ * @param {string} value - raw token $value
+ * @param {Function} refToCssVar - path-to-var mapper
+ * @param {string} [type] - DTCG $type, used to suppress px for unitless values
  */
-function valueToCss(value, refToCssVar) {
+function valueToCss(value, refToCssVar, type) {
   if (typeof value !== "string") return String(value);
 
   // Replace token refs {foo.bar} with var(--something)
@@ -58,8 +62,12 @@ function valueToCss(value, refToCssVar) {
     return replaced.trim();
   }
 
+  // DTCG types that must remain unitless numbers in CSS
+  const UNITLESS_TYPES = new Set(["fontWeights", "opacity", "fontWeight"]);
+
   // If it looks like a pure number string: "16"
   if (/^\s*\d+(\.\d+)?\s*$/.test(replaced)) {
+    if (UNITLESS_TYPES.has(type)) return replaced.trim();
     return `${replaced.trim()}px`;
   }
 
@@ -118,7 +126,8 @@ function collectVars(node, prefixPath = []) {
       if (typeof val.$value === "object") continue; // composite tokens (typography etc.) can't map to a single CSS value
       const fullPath = nextPath.join(".");
       const cssVar = refToCssVar(fullPath);
-      const cssVal = valueToCss(val.$value, refToCssVar);
+      const tokenType = val.$type || null;
+      const cssVal = valueToCss(val.$value, refToCssVar, tokenType);
       vars.push([cssVar, cssVal, fullPath]);
     } else if (val && typeof val === "object") {
       vars.push(...collectVars(val, nextPath));
