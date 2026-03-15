@@ -1,27 +1,27 @@
 // _bento-grid.scss
 // -----------------------------------------------------------------------------
 // Self-contained bento grid system.
+// Responsive behavior: named CSS Grid areas, two layout modes (5-up / 2-up),
+// three size states (MIN=140px, MAX=208px), driven by @container queries.
 // -----------------------------------------------------------------------------
 
-// -- Local named vars (not tokens — geometry specific to bento) ---------------
+// -- Local named vars ---------------------------------------------------------
 // CONTRACT_EXCEPTION: bento cell geometry values are component-specific constants
 // not representable as semantic tokens. Named here for single-point control.
-// --bento-cell-size and --bento-gap are overridable via cascade from the grid container.
 
 .bento-grid {
-    /* defaults — overridden per-bento by #bento--<id> selector in placements SCSS */
-    --bento-cols: 5;
-    --bento-rows: 5;
-    /* geometry constants */
-    --bento-gap:          var(--spacing-xs);    /* 8px */
+    /* geometry — overridden per size state via @container */
     --bento-cell-size:    140px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma */
+    --bento-gap:          8px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
+    --bento-padding:      8px;                 /* CONTRACT_EXCEPTION: inner cell padding */
     --bento-border-width: 2px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
     --bento-radius:       var(--corner-xs);    /* 8px — Figma cell radius (scale-50) */
     --bento-inner-radius: var(--corner-xxs);   /* 4px — inner element radius (scale-25) */
 
+    /* grid-template-areas is set per-bento via #bento--<id> in placements SCSS.
+     * grid-template-columns and grid-template-rows derive from --bento-cell-size
+     * and --bento-gap, also set per-bento. This keeps geometry in one place. */
     display: grid;
-    grid-template-columns: repeat(var(--bento-cols), var(--bento-cell-size));
-    grid-template-rows: repeat(var(--bento-rows), var(--bento-cell-size));
     gap: var(--bento-gap);
 
     width: fit-content;
@@ -29,6 +29,32 @@
 
     container-type: inline-size;
     container-name: bento;
+}
+
+// -- MAX size state -----------------------------------------------------------
+// Fires when the content-cell container is wide enough for 1-col full-page context.
+// 5-up MAX = 208px cells + 16px gaps = 1104px. Threshold set at 900px
+// so the larger size kicks in before the bento reaches full MAX width.
+
+@container content-cell (min-width: 900px) {
+    .bento-grid {
+        --bento-cell-size: 208px;
+        --bento-gap:       16px;
+        --bento-padding:   16px;
+    }
+}
+
+// -- 2-up layout --------------------------------------------------------------
+// Fires when the content-cell container is narrower than the 5-up MIN (732px).
+// grid-template-areas for each bento is set per-bento in placements SCSS
+// inside a matching @container content-cell block.
+
+@container content-cell (max-width: 731px) {
+    .bento-grid {
+        /* 2-up: 2 equal columns, rows sized by content */
+        grid-template-columns: repeat(2, var(--bento-cell-size));
+        grid-template-rows: auto;
+    }
 }
 
 // -- Cells --------------------------------------------------------------------
@@ -45,6 +71,9 @@
     overflow: hidden;
     border-radius: var(--bento-radius);
     min-height: 0;
+
+    /* Minimum cell height ensures 1×1 cells don't collapse in auto-row 2-up */
+    min-height: var(--bento-cell-size);
 }
 
 .bento-cell__inner {
@@ -53,7 +82,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: var(--bento-gap);
+    padding: var(--bento-padding);
 }
 
 .bento-cell--image .bento-cell__inner {
@@ -137,38 +166,6 @@
     font-style: normal;
     line-height: clamp(1.1875rem, 12.5cqi, 1.75rem);
     color: inherit;
-}
-
-// -- Themes -------------------------------------------------------------------
-
-.bento-cell--theme-primary-dark {
-    --cell-bg:     var(--bento-theme-primary-dark-bg);
-    --cell-color:  var(--bento-theme-primary-dark-color);
-    --cell-border: var(--bento-theme-primary-dark-border);
-}
-
-.bento-cell--theme-primary-light {
-    --cell-bg:     var(--bento-theme-primary-light-bg);
-    --cell-color:  var(--bento-theme-primary-light-color);
-    --cell-border: var(--bento-theme-primary-light-border);
-}
-
-.bento-cell--theme-secondary-dark {
-    --cell-bg:     var(--bento-theme-secondary-dark-bg);
-    --cell-color:  var(--bento-theme-secondary-dark-color);
-    --cell-border: var(--bento-theme-secondary-dark-border);
-}
-
-.bento-cell--theme-secondary-light {
-    --cell-bg:     var(--bento-theme-secondary-light-bg);
-    --cell-color:  var(--bento-theme-secondary-light-color);
-    --cell-border: var(--bento-theme-secondary-light-border);
-}
-
-.bento-cell--theme-white {
-    --cell-bg:     var(--bento-theme-white-bg);
-    --cell-color:  var(--bento-theme-white-color);
-    --cell-border: var(--bento-theme-white-border);
 }
 
 // -- Reduced motion -----------------------------------------------------------

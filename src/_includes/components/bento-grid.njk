@@ -54,10 +54,10 @@
   type: content              → {{ cell.content | safe }} (raw HTML block)
 
   ── Placement ──────────────────────────────────────────────────────────────────
-  grid-column, grid-row, z-index: all in placements/_<pageKey>.scss
-  #bento--<id> drives --bento-cols / --bento-rows on the container.
-  .bento-cell[data-bento-cell="article-NN"] drives per-cell placement.
-  No inline styles. No CSS custom props on individual elements.
+  grid-template-columns, grid-template-rows, grid-template-areas: in placements/_<pageKey>.scss on #bento--<id>.
+  .bento-cell[data-bento-cell="article-NN"] drives per-cell grid-area via data attr in placements SCSS.
+  style="grid-area: aNN" is set inline on each <article> — derived from cell.id by the macro.
+  z-index: in placements SCSS only.
   ─────────────────────────────────────────────────────────────────────────────
 #}
 
@@ -75,9 +75,13 @@
     {% set cellClasses = cellClasses + " bento-cell--theme-" + cell.theme %}
   {% endif %}
 
+  {# Derive grid-area name: "article-01" → "a01", "article-12" → "a12" #}
+  {% set areaName = "a" + cell.id | replace("article-", "") %}
+
   <article
     class="{{ cellClasses }}"
     data-bento-cell="{{ cell.id }}"
+    style="grid-area: {{ areaName }}"
   >
     <div class="bento-cell__inner">
       {% if cell.type == "image" and cell.media %}
