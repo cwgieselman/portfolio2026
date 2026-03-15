@@ -85,6 +85,23 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 - Run `npm run tokens:build` after editing `tokens/tokens.json`.
 - Legacy tokens in `_tokens--legacy.scss` exist for backward compatibility until Token Studio pipeline is fully populated.
 
+## Development Workflow
+
+This project uses a two-phase workflow. Full details in `_docs/WORKFLOW.md`.
+
+**Phase 1 — Design & Build (Claude.ai chat session)**
+Architectural decisions, Figma reading, file edits, browser verification.
+Output: changed files on a feature branch + a PR summary document.
+
+**Phase 2 — Review & Commit (Claude Code in Zed)**
+Mechanical verification against contracts, build checks, tidiness review.
+Output: clean commit pushed to branch, ready to merge.
+
+No branch merges to `main` without a Claude Code review pass.
+See `_docs/WORKFLOW.md` for the PR summary template and review checklist format.
+
+---
+
 ## Workflow
 
 ### For structural changes (new components, executor routing, token schema, contract changes):

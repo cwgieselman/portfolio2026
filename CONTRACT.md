@@ -459,6 +459,12 @@ Each fix must:
 - Be committed independently.
 - Be logged in README.
 
+## Review Gate
+
+No branch merges to `main` without a Claude Code review pass.
+See `_docs/WORKFLOW.md` for the two-phase workflow, PR summary template,
+and what a correct review looks like.
+
 ---
 
 # Standalone Component Contracts
