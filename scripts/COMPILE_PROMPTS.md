@@ -116,16 +116,17 @@ The Figma node tree has this hierarchy:
 ```
 <pageKey> [FRAME]
   section-NN [FRAME]
-    page-NN [FRAME]
-      grid-tracks [INSTANCE]        ← sibling; carries grid definition (see §D)
-      content-cell-NN [INSTANCE]    ← sibling; positioned via snap to grid-tracks
-        content-cell--payload-wrapper [INSTANCE]
-          <child-1> [INSTANCE]  ← determines include type
-          <child-2> [INSTANCE]  ← additional include if stacked
-          ...
+    page-NN [INSTANCE]             ← live grid-tracks component instance
+      guides [FRAME]               ← hidden; contains COL-- and ROW-- guide instances
+      grid [SLOT]                  ← Slot where content-cells live
+        content-cell-NN [INSTANCE] ← positioned via snap to grid lines
+          Slot [SLOT]
+            <child-1> [INSTANCE]   ← determines include type
+            <child-2> [INSTANCE]   ← additional include if stacked
+            ...
 ```
 
-**Key structural note:** `grid-tracks` and `content-cell-NN` are **siblings** — both are direct children of `page-NN`. The grid-tracks instance is a visual reference and grid definition source, not a parent container. It may have `hidden="true"` set. Content-cells are positioned by snapping to the grid-tracks lines in Figma.
+**Key structural note:** The page frame is now a live instance of the grid-tracks component. Content-cells are placed inside the `grid` Slot — not as free siblings. The `guides` frame contains named COL-- and ROW-- guide instances whose x/y positions encode the grid line lookup table directly — read guide positions rather than computing from track sizes. The guides frame has `hidden="true"` and does not render.
 
 **Payload resolution — Slot-first with fallback:**
 
@@ -172,54 +173,49 @@ Content-cell grid positions are **inferred at compile time** from the grid-track
 
 #### Step 1: Build the Grid Line Lookup Table
 
-Read the `grid-tracks` sibling instance on any page. Extract its CSS Grid definition:
+The grid geometry is standardized across all pages — build the lookup table once and reuse it.
 
-- **Column tracks:** `grid-template-columns` (e.g. `228px 100px 32px 24px 360px 24px 360px 24px 360px 24px 32px 100px 228px`)
-- **Row tracks:** `grid-template-rows` (e.g. `20px 80px 144px 24px 116px 24px 84px 24px 116px 24px 144px 80px 20px`)
+**Columns:** 5 full IUs × 384px + 4 gutters × 24px = 2016px Field. Frame = IU2–IU4 (408px → 1608px).
 
-Compute cumulative pixel positions for each grid line (1-based CSS line numbering):
+| Column Line | px position | Named line |
+|-------------|-------------|------------|
+| 1 | 0 | field-start / iu1-start |
+| 2 | 384 | iu1-end |
+| 3 | 408 | iu2-start / frame-start |
+| 4 | 792 | iu2-end |
+| 5 | 816 | iu3-start |
+| 6 | 1200 | iu3-end |
+| 7 | 1224 | iu4-start |
+| 8 | 1608 | iu4-end / frame-end |
+| 9 | 1632 | iu5-start |
+| 10 | 2016 | iu5-end / field-end |
 
-| Column Line | px position |
-|-------------|-------------|
-| 1 | 0 |
-| 2 | 228 |
-| 3 | 328 |
-| 4 | 360 |
-| 5 | 384 |
-| 6 | 744 |
-| 7 | 768 |
-| 8 | 1128 |
-| 9 | 1152 |
-| 10 | 1512 |
-| 11 | 1536 |
-| 12 | 1568 |
-| 13 | 1668 |
-| 14 | 1896 |
+**Rows:** 3 Wide (240px) + 1 Split (390px) + 3 gutters (24px) = 1182px. Frame = 750px tall centered (frameTop=216, frameBottom=966).
 
-| Row Line | px position |
-|----------|-------------|
-| 1 | 0 |
-| 2 | 20 |
-| 3 | 100 |
-| 4 | 244 |
-| 5 | 268 |
-| 6 | 384 |
-| 7 | 408 |
-| 8 | 492 |
-| 9 | 516 |
-| 10 | 632 |
-| 11 | 656 |
-| 12 | 800 |
-| 13 | 880 |
-| 14 | 900 |
-
-The grid definition is standardized across all pages. Build the lookup table once and reuse it.
+| Row Line | px position | Named line |
+|----------|-------------|------------|
+| 1 | 0 | iu1-start |
+| 2 | 216 | frameTop |
+| 3 | 240 | iu1-wideEnd |
+| 4 | 264 | iu2-wideStart |
+| 5 | 390 | iu1-splitEnd |
+| 6 | 414 | iu2-splitStart |
+| 7 | 504 | iu2-wideEnd |
+| 8 | 528 | iu3-wideStart |
+| 9 | 654 | iu2-splitEnd |
+| 10 | 678 | iu3-splitStart |
+| 11 | 768 | iu3-wideEnd |
+| 12 | 792 | iu4-wideStart |
+| 13 | 918 | iu3-splitEnd |
+| 14 | 942 | iu4-splitStart |
+| 15 | 966 | frameBottom |
+| 16 | 1182 | iu4-end |
 
 #### Step 2: Note the Grid-Tracks Y Offset
 
-The `grid-tracks` instance is positioned within the page frame at a consistent y offset (typically `y=100`). Read this offset from the grid-tracks instance position. All content-cell y values must be adjusted by this offset before matching to row lines.
+The grid Slot starts at y=0 within each page frame. Content-cell coordinates are already relative to the page frame — no y offset adjustment needed.
 
-**Grid-relative y** = content-cell y − grid-tracks y offset
+**Grid-relative y** = content-cell y (no adjustment required)
 
 #### Step 3: Map Content-Cell Coordinates to Grid Lines
 
@@ -245,23 +241,21 @@ grid-column: [column-start-line] / [column-end-line];
 grid-row: [row-start-line] / [row-end-line];
 ```
 
-**Validation example 1 — wide multi-column cell** (BMTx section-02/page-01/content-cell-03):
-- Figma: `x=768, y=200, width=800, height=700`
-- Grid-tracks y offset: `100`
-- Grid-relative y: `200 − 100 = 100`
-- x=768 → column line 7, x+width=1568 → column line 12
-- y=100 → row line 3, y+height=800 → row line 12
-- **Result:** `grid-column: 7 / 12; grid-row: 3 / 12;`
+**Validation example 1 — full-frame figure cell** (BMTx section-02/page-01/content-cell-03):
+- Figma: `x=816, y=216, width=792, height=750`
+- Grid-relative y: `216` (no offset adjustment needed)
+- x=816 → column line 5, x+width=1608 → column line 8
+- y=216 → row line 2, y+height=966 → row line 15
+- **Result:** `grid-column: 5 / 8; grid-row: 2 / 15;`
 
-**Validation example 2 — narrow single-column cell** (BMTx section-01/page-01/content-cell-02):
-- Figma: `x=384, y=617, width=361, height=283`
-- Grid-tracks y offset: `100`
-- Grid-relative y: `617 − 100 = 517`
-- x=384 → column line 5, x+width=745 → nearest line is 6 (744px, 1px off, within tolerance)
-- y=517 → nearest line is 9 (516px, 1px off, within tolerance), y+height=800 → row line 12
-- **Result:** `grid-column: 5 / 6; grid-row: 9 / 12;`
+**Validation example 2 — header cell** (BMTx section-02/page-01/content-cell-01):
+- Figma: `x=408, y=264, width=1200, height=126`
+- Grid-relative y: `264` (no offset adjustment needed)
+- x=408 → column line 3, x+width=1608 → column line 8
+- y=264 → row line 4, y+height=390 → row line 5
+- **Result:** `grid-column: 3 / 8; grid-row: 4 / 5;`
 
-**COMMON ERROR:** Do not confuse column span count with column end line. The end value in `grid-column: start / end` is a **line number**, not a span. Always compute the end line from `x + width` matched to the lookup table. A 360px-wide cell starting at line 5 (384px) ends at line 6 (744px), NOT line 8.
+**COMMON ERROR:** Do not confuse column span count with column end line. The end value in `grid-column: start / end` is a **line number**, not a span. Always compute the end line from `x + width` matched to the lookup table. A 384px-wide cell starting at line 3 (408px) ends at line 4 (792px), NOT line 4 counting from the start.
 
 Numeric grid placement only. DO NOT use absolute positioning, transforms, negative margins, top/left, etc.
 Emit placements SCSS only (no inline styles).

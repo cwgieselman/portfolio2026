@@ -13,43 +13,68 @@
 }
 
 .layout__page {
+    /* CONTRACT_EXCEPTION: grid geometry constants — derived from IU math, not design tokens */
+    --gu:                1px;       /* grid unit — overridden below 1200px to scale the grid */
+    --layout-fieldWidth: calc(var(--gu) * 2016);  /* 5 IUs × 384 + 4 gutters × 24 */
+    --layout-pageHeight: calc(var(--gu) * 1182);  /* 3×240 + 1×390 + 3×24 */
+
     width: var(--layout-fieldWidth);
     margin: 0;
     display: grid;
     justify-self: center;
 
-    /* Columns: Built from Figma COL-- tracks, in order from left to right */
+    /* Columns: 5 full IUs × 384gu + 4 gutters × 24gu = 2016gu Field
+     * Frame (1200gu) = IU2 → IU4 (408gu → 1608gu)
+     * IU1 and IU5 are the bleed zone (408gu each side)
+     * Below 1200px: --gu scales so Frame = 100vw */
     grid-template-columns:
-        [field-start iu1-start] 228px /* 0 → 228: before page-start */
-        [page-start] 100px /* 228 → 328: page to frame */
-        [frame-start] 32px /* 328 → 360: frame to iu1-end */
-        [iu1-end] 24px /* 360 → 384: gutter */
-        [iu2-start] 360px /* 384 → 744: IU2 */
-        [iu2-end] 24px /* 744 → 768: gutter */
-        [iu3-start] 360px /* 768 → 1128: IU3 */
-        [iu3-end] 24px /* 1128 → 1152: gutter */
-        [iu4-start] 360px /* 1152 → 1512: IU4 */
-        [iu4-end] 24px /* 1512 → 1536: gutter */
-        [iu5-start] 32px /* 1536 → 1568: partial IU5 to frame-end */
-        [frame-end] 100px /* 1568 → 1668: frame to page */
-        [page-end] 228px /* 1668 → 1896: page to field-end */
+        [field-start iu1-start]  calc(var(--gu) * 384)  /* 0 → 384 */
+        [iu1-end]                calc(var(--gu) *  24)  /* 384 → 408: gutter */
+        [iu2-start frame-start]  calc(var(--gu) * 384)  /* 408 → 792 */
+        [iu2-end]                calc(var(--gu) *  24)  /* 792 → 816: gutter */
+        [iu3-start]              calc(var(--gu) * 384)  /* 816 → 1200 */
+        [iu3-end]                calc(var(--gu) *  24)  /* 1200 → 1224: gutter */
+        [iu4-start]              calc(var(--gu) * 384)  /* 1224 → 1608 */
+        [iu4-end frame-end]      calc(var(--gu) *  24)  /* 1608 → 1632: gutter */
+        [iu5-start]              calc(var(--gu) * 384)  /* 1632 → 2016 */
         [iu5-end field-end];
 
-    /* Rows: Built from Figma ROW-- tracks, in order from top to bottom
-     Total: 900px (y=100 to y=1000) */
+    /* Rows: 3 Wide + 1 Split, any arrangement. Total: 1182gu
+     * Wide IU: 240gu — Split IU: 390gu — Gutter: 24gu
+     * Frame: 750gu tall (1200 × 10/16) centered → frameTop=216 frameBottom=966
+     * Named lines encode all snap points across all 3W+1S permutations */
     grid-template-rows:
-        [page-start] 20px /* 100 → 120 */
-        [iu1-start] 80px /* 120 → 200 */
-        [frame-start] 144px /* 200 → 344 */
-        [iu1-endwide] 24px /* 344 → 368 */
-        [iu2-startwide] 116px /* 368 → 484 */
-        [iu1-endsplit] 24px /* 484 → 508 */
-        [iu2-startsplit] 84px /* 508 → 592 */
-        [iu2-endwide] 24px /* 592 → 616 */
-        [iu3-startwide] 116px /* 616 → 732 */
-        [iu2-endsplit] 24px /* 732 → 756 */
-        [iu3-startsplit] 144px /* 756 → 900 */
-        [frame-end] 80px /* 900 → 980 */
-        [iu3-end] 20px /* 980 → 1000 */
-        [page-end]; /* End at 1000 (900px total) */
+        [iu1-start]      calc(var(--gu) * 216)  /* 0 → 216 */
+        [frameTop]       calc(var(--gu) *  24)  /* 216 → 240 */
+        [iu1-wideEnd]    calc(var(--gu) *  24)  /* 240 → 264: gutter */
+        [iu2-wideStart]  calc(var(--gu) * 126)  /* 264 → 390 */
+        [iu1-splitEnd]   calc(var(--gu) *  24)  /* 390 → 414: gutter */
+        [iu2-splitStart] calc(var(--gu) *  90)  /* 414 → 504 */
+        [iu2-wideEnd]    calc(var(--gu) *  24)  /* 504 → 528: gutter */
+        [iu3-wideStart]  calc(var(--gu) * 126)  /* 528 → 654 */
+        [iu2-splitEnd]   calc(var(--gu) *  24)  /* 654 → 678: gutter */
+        [iu3-splitStart] calc(var(--gu) *  90)  /* 678 → 768 */
+        [iu3-wideEnd]    calc(var(--gu) *  24)  /* 768 → 792: gutter */
+        [iu4-wideStart]  calc(var(--gu) * 126)  /* 792 → 918 */
+        [iu3-splitEnd]   calc(var(--gu) *  24)  /* 918 → 942: gutter */
+        [iu4-splitStart] calc(var(--gu) *  24)  /* 942 → 966 */
+        [frameBottom]    calc(var(--gu) * 216)  /* 966 → 1182 */
+        [iu4-end];                               /* 1182 */
+}
+
+/* ── Responsive scaling ─────────────────────────────────────────────────────
+ * Below 1248px (= Frame width + 1 gutter each side), lock Frame to viewport.
+ * Fires one gutter-width (24px) before Frame would hit the viewport edge,
+ * ensuring at least 24px breathing room on each side at all viewport widths.
+ * --gu shrinks from 1px toward 0 as viewport narrows.
+ * All grid tracks scale proportionally. Text reflows inside scaled cells.
+ * Width overrides to fluid so the grid is wider than the viewport
+ * (Field = viewport × 1.68), keeping Frame edges flush with viewport edges. */
+@media (max-width: 1248px) {
+    .layout__page {
+        /* Frame = viewport - 48px (24px breathing room each side).
+         * --gu derived from (100vw - 48px) / 1200 so Frame tracks viewport minus margins. */
+        --gu: calc((100vw - 48px) / 1200);
+        width: calc(var(--gu) * 2016);
+    }
 }
