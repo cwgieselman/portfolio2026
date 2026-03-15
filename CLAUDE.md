@@ -203,7 +203,7 @@ The bento grid is a standalone component for non-executor contexts (e.g. discove
 **Files:**
 - Template: `src/_includes/components/bento-grid.njk` — full API docs in the file header
 - Styles: `src/assets/scss/components/_bento-grid.scss`
-- Themes: `src/assets/scss/_tokens--bento.scss` (hand-authored, safe to edit)
+- Themes: `src/assets/scss/components/_bento-grid.scss` (theme rulesets in the `// -- Themes` section)
 - Retired (git rm pending): `src/assets/scss/components/_bento-backgrounds.scss`, `src/_includes/components/bento-arrow.njk`, `src/_data/bentoDiscovery.js`, `src/_data/inficon--discovery-bento.yml`, `src/bento-test.njk`, `src/_includes/layouts/section.njk`
 - One-off overrides: `src/assets/scss/components/bento-cells/` — add partials here, uncomment import in `main.scss`
 
@@ -226,4 +226,4 @@ The bento grid is a standalone component for non-executor contexts (e.g. discove
 
 **Token additions made manually** (pending Token Studio sync):
 - `scale.450` (72px), `font-family.display` (Tienne), `component.bento.theme.*`, `component.bento.type.*`
-- `--font-family-display` and `--scale-450` are declared in `_tokens--bento.scss` until the generated files catch up.
+- `--font-family-display` and `--scale-450` are now generated into `_tokens--primitives.scss`.

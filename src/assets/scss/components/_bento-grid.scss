@@ -139,6 +139,38 @@
     color: inherit;
 }
 
+// -- Themes -------------------------------------------------------------------
+
+.bento-cell--theme-primary-dark {
+    --cell-bg:     var(--bento-theme-primary-dark-bg);
+    --cell-color:  var(--bento-theme-primary-dark-color);
+    --cell-border: var(--bento-theme-primary-dark-border);
+}
+
+.bento-cell--theme-primary-light {
+    --cell-bg:     var(--bento-theme-primary-light-bg);
+    --cell-color:  var(--bento-theme-primary-light-color);
+    --cell-border: var(--bento-theme-primary-light-border);
+}
+
+.bento-cell--theme-secondary-dark {
+    --cell-bg:     var(--bento-theme-secondary-dark-bg);
+    --cell-color:  var(--bento-theme-secondary-dark-color);
+    --cell-border: var(--bento-theme-secondary-dark-border);
+}
+
+.bento-cell--theme-secondary-light {
+    --cell-bg:     var(--bento-theme-secondary-light-bg);
+    --cell-color:  var(--bento-theme-secondary-light-color);
+    --cell-border: var(--bento-theme-secondary-light-border);
+}
+
+.bento-cell--theme-white {
+    --cell-bg:     var(--bento-theme-white-bg);
+    --cell-color:  var(--bento-theme-white-color);
+    --cell-border: var(--bento-theme-white-border);
+}
+
 // -- Reduced motion -----------------------------------------------------------
 
 @media (prefers-reduced-motion: reduce) {

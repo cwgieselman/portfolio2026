@@ -479,7 +479,7 @@ Standalone components may NOT be added to the executor safelist without a corres
 
 Template: `src/_includes/components/bento-grid.njk`  
 Styles: `src/assets/scss/components/_bento-grid.scss`  
-Theme tokens: `src/assets/scss/_tokens--bento.scss`  
+Theme tokens: `src/assets/scss/_tokens--component.scss` (generated); rulesets in `src/assets/scss/components/_bento-grid.scss`
 One-off overrides: `src/assets/scss/components/bento-cells/`
 
 ### Purpose
@@ -522,13 +522,13 @@ Set via `theme:` on a cell. Defaults to `white` when omitted.
 
 | Theme | Background | Text | Border |
 |---|---|---|---|
-| `white` *(default)* | neutral/10 | neutral/90 | neutral/20 |
+| `white` *(default)* | neutral/10 | primary/60 | neutral/60 |
 | `primary-dark` | primary/60 | primary/10 | primary/80 |
 | `primary-light` | primary/20 | primary/60 | primary/30 |
 | `secondary-dark` | secondary/50 | secondary/80 | secondary/60 |
 | `secondary-light` | secondary/20 | secondary/70 | secondary/30 |
 
-Theme definitions live in `_tokens--bento.scss`. Each theme sets `--cell-bg`, `--cell-color`, `--cell-border` on the cell element. Adding themes requires only a new class in that file — no template changes.
+Theme definitions live in the `// -- Themes` section of `_bento-grid.scss`. Each theme sets `--cell-bg`, `--cell-color`, `--cell-border` on the cell element via the corresponding `--bento-theme-*` variables from `_tokens--component.scss`. Adding themes requires a new entry in `tokens.json` (run `npm run tokens:build`) and a new ruleset in `_bento-grid.scss` — no template changes.
 
 `white` is the default theme. When `theme` is omitted from YAML, the template applies `bento-cell--theme-white`. This ensures arrows always render against a defined background.
 
