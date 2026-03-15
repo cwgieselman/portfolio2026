@@ -582,6 +582,15 @@ One-off partials are explicitly not part of this contract. They are the author�
 
 Bento YAML files referenced directly in Nunjucks templates must use camelCase or single-hyphen filenames. Double-hyphen filenames (e.g. `inficon--discovery-bento.yml`) are parsed by Nunjucks as arithmetic and silently fail. Use a JS wrapper file to expose double-hyphen YAML, or use camelCase from the start.
 
+### Placement Model
+
+Bento cell placement uses CSS Grid named areas. Each `<article>` element receives a `style="grid-area: aNN"` inline style derived from `cell.id` in the template (`article-01` → `a01`). The `grid-template-areas` map lives in the per-bento `#bento--<id>` selector in `placements/_<pageKey>.scss`.
+
+**Why inline style is permitted here (CONTRACT_EXCEPTION):**  
+`grid-area` is a name registration, not a placement value. It labels the element so the CSS area map can reference it. The actual placement — which row and column the named area occupies — is still exclusively in the placements SCSS. This is categorically different from inline `grid-column` / `grid-row` values, which would encode placement in the template. The inline style is deterministic (derived from `cell.id` by a fixed transform with no branching logic) and carries no design-intent data.
+
+The general prohibition on inline styles in Section 6 applies to layout placement. `grid-area` name registration is a template concern and is exempt.
+
 ### Rules
 
 - Template renders exactly what YAML defines. No implicit defaults.
@@ -589,3 +598,4 @@ Bento YAML files referenced directly in Nunjucks templates must use camelCase or
 - Image fallbacks are a development aid only. Production cells must have real `src` values.
 - The bento grid is NOT permitted in the executor safelist.
 - Structural changes to the macro (new cell types, new keys) require a CONTRACT.md update.
+- `grid-area` inline styles on bento cells are permitted and intentional — see Placement Model above.
