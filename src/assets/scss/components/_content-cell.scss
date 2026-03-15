@@ -5,6 +5,9 @@
     container-type: inline-size;
     container-name: content-cell;
 
+    // Required for z-index to take effect (stacking order from Figma layer order).
+    position: relative;
+
     > * + * {
         margin-top: var(--content-rhythm--block);
     }

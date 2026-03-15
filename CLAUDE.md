@@ -102,10 +102,16 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 
 ### Branch naming
 
-- `rehab/` — restore integrity, eliminate drift
-- `stabilize/` — contract alignment, systemic corrections
-- `build/` — new feature work
-- `experiment/` — prototypes and exploration
+Prefix signals intent; slug identifies subject. Format: `<prefix>/<short-slug>`
+
+| Prefix | Intent | Example |
+|---|---|---|
+| `rehab/` | Restore integrity, eliminate drift | `rehab/bento-grid-rename` |
+| `stabilize/` | Contract alignment, systemic corrections | `stabilize/executor-safelist` |
+| `build/` | New feature work | `build/inficon-impact-manager` |
+| `experiment/` | Prototypes and exploration | `experiment/grid-offset-layout` |
+
+`tokens/sync` is reserved for the Token Studio pipeline — do not use this prefix for manual branches.
 
 ## File Boundaries
 
@@ -143,6 +149,35 @@ Data files referenced directly in Nunjucks templates (via `{{ varName.property }
 - Unsafe: `inficon--discovery-bento.yml` (double-hyphen breaks template access)
 
 The current `inficon--discovery-bento.yml` is accessed via the `bentoDiscovery.js` wrapper, which renames it. New bento YAML files should follow camelCase naming from the start.
+
+## Layout Grid System
+
+The macro layout grid is defined in `src/assets/scss/_layout.scss`. All geometry is expressed as multiples of `--gu` (grid unit), which enables proportional scaling below the Frame breakpoint.
+
+**Grid geometry:**
+- IU Wide: 384 × 240px
+- IU Split: 384 × 390px
+- Gutter: 24px (horizontal and vertical, encoded as named-line gaps)
+- Field: 2016px (5 IUs + 4 gutters)
+- Frame: 1200px wide × 750px tall (3 IUs + 2 gutters; 16:10 aspect ratio)
+- Page height: 1182px (3 Wide + 1 Split + 3 gutters)
+- Breakpoint: 1248px — below this, `--gu = calc((100vw - 48px) / 1200)` and Field scales to `(100vw - 48px) × 1.68` (fires one gutter-width before Frame hits viewport edge, ensuring 24px minimum breathing room)
+
+**Column lines (10 lines, px positions):**
+`0, 384, 408, 792, 816, 1200, 1224, 1608, 1632, 2016`
+
+**Row lines (16 lines, px positions):**
+`0, 216, 240, 264, 390, 414, 504, 528, 654, 678, 768, 792, 918, 942, 966, 1182`
+
+**Key named lines:**
+- `frame-start` = col line 3 (408px)
+- `frame-end` = col line 8 (1608px)
+- `frameTop` = row line 2 (216px)
+- `frameBottom` = row line 15 (966px)
+
+**`--layout-fieldWidth`** is declared directly on `.layout__page` as a `CONTRACT_EXCEPTION` — it is grid geometry, not a design token, and must not be added to `tokens/tokens.json`.
+
+---
 
 ## Bento Grid System
 
