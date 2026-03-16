@@ -3,14 +3,6 @@ UX, UI, and Design Systems portfolio for Craig Gieselman. Built with Figma, Clau
 
 ---
 
-## Active Page
-
-`/portfolio/bmtx-nextgen/`
-
-All other legacy pages are quarantined and not part of the active system.
-
----
-
 ## Architecture
 
 ```
