@@ -1,8 +1,13 @@
 // _bento-grid.scss
 // -----------------------------------------------------------------------------
 // Self-contained bento grid system.
-// Responsive behavior: named CSS Grid areas, two layout modes (5-up / 2-up),
-// three size states (MIN=140px, MAX=208px), driven by @container queries.
+//
+// Responsive model:
+//   5-up: Fixed 740px wide (5 × 140px + 4 × 8px gap). Never scales.
+//         Positioned in its content-cell via alignment (left/center/right).
+//         Below ~748px viewport, swaps to 2-up via @media query.
+//   2-up: Fluid. Fills its container. Cell size scales between 140px–208px
+//         via @container query on the content-cell. Floor: 304px (2 × 140px + 8px gap).
 // -----------------------------------------------------------------------------
 
 // -- Local named vars ---------------------------------------------------------
@@ -10,33 +15,61 @@
 // not representable as semantic tokens. Named here for single-point control.
 
 .bento-grid {
-    /* geometry — overridden per size state via @container */
+    /* geometry defaults — 5-up fixed size */
     --bento-cell-size:    140px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma */
     --bento-gap:          8px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
     --bento-padding:      8px;                 /* CONTRACT_EXCEPTION: inner cell padding */
     --bento-border-width: 2px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
-    --bento-radius:       var(--corner-xs);    /* 8px — Figma cell radius (scale-50) */
-    --bento-inner-radius: var(--corner-xxs);   /* 4px — inner element radius (scale-25) */
+    --bento-radius:       var(--corner-xs);    /* 8px */
+    --bento-inner-radius: var(--corner-xxs);   /* 4px */
 
-    /* grid-template-areas is set per-bento via #bento--<id> in placements SCSS.
-     * grid-template-columns and grid-template-rows derive from --bento-cell-size
-     * and --bento-gap, also set per-bento. This keeps geometry in one place. */
     display: grid;
     gap: var(--bento-gap);
 
+    /* 5-up: fixed width, never overflows — positioned by alignment modifier */
     width: fit-content;
-    margin-inline: auto;
+    overflow: hidden;
 
     container-type: inline-size;
     container-name: bento;
 }
 
-// -- MAX size state -----------------------------------------------------------
-// Fires when the content-cell container is wide enough for 1-col full-page context.
-// 5-up MAX = 208px cells + 16px gaps = 1104px. Threshold set at 900px
-// so the larger size kicks in before the bento reaches full MAX width.
+// -- Alignment modifiers ------------------------------------------------------
+// Applied via YAML: align: center | start | end | left | right
+// Default (no modifier): start
 
-@container content-cell (min-width: 900px) {
+.bento-grid { margin-inline-start: 0; }                          /* default: left/start */
+.bento-grid--align-center { margin-inline: auto; }
+.bento-grid--align-end    { margin-inline-start: auto; margin-inline-end: 0; }
+
+// -- 2-up layout — viewport swap ----------------------------------------------
+// The bento (740px fixed) switches to 2-up when its content-cell shrinks
+// below 740px. The content-cell is 792 grid units wide. Below 1248px viewport
+// the macro grid scales: --gu = (100vw - 48px) / 1200.
+// content-cell width = 792 × --gu. At 740px content-cell: viewport ≈ 1169px.
+// Breakpoint set at 1170px to catch the crossover cleanly.
+// ID selectors own all grid-template-* properties in placements SCSS
+// to avoid specificity conflicts with class selectors.
+
+// The 5-up bento is 740px wide. Its content-cell track is 792 grid units.
+// Below 1248px viewport, --gu scales: track = 792 × (100vw - 48px) / 1200.
+// Track hits 740px at viewport 1169px — that's the swap threshold.
+// Pure @media query, no container queries involved.
+
+@media (max-width: 1169px) {
+    .bento-grid {
+        width: 100%;
+    }
+}
+
+// -- 2-up cell size scaling ---------------------------------------------------
+// In 2-up mode the bento fills its container.
+// As the viewport narrows below 1169px the bento track continues to shrink.
+// Track hits 432px (2-up MAX) at: 432 = 792 × (vw - 48) / 1200 → vw ≈ 703px
+// Track hits 304px (2-up MIN) at: 304 = 792 × (vw - 48) / 1200 → vw ≈ 508px
+// So: above 703px → MAX cells (208px). Below 703px → MIN cells (140px, default).
+
+@media (max-width: 1169px) and (min-width: 703px) {
     .bento-grid {
         --bento-cell-size: 208px;
         --bento-gap:       16px;
@@ -44,17 +77,38 @@
     }
 }
 
-// -- 2-up layout --------------------------------------------------------------
-// Fires when the content-cell container is narrower than the 5-up MIN (732px).
-// grid-template-areas for each bento is set per-bento in placements SCSS
-// inside a matching @container content-cell block.
+// -- Themes -------------------------------------------------------------------
+// Maps named theme classes to cell custom properties.
+// Source: CGDC-DS Figma node 2883-623 / tokens in _tokens--component.scss.
 
-@container content-cell (max-width: 731px) {
-    .bento-grid {
-        /* 2-up: 2 equal columns, rows sized by content */
-        grid-template-columns: repeat(2, var(--bento-cell-size));
-        grid-template-rows: auto;
-    }
+.bento-cell--theme-primary-dark {
+    --cell-bg:     var(--bento-theme-primary-dark-bg);
+    --cell-color:  var(--bento-theme-primary-dark-color);
+    --cell-border: var(--bento-theme-primary-dark-border);
+}
+
+.bento-cell--theme-primary-light {
+    --cell-bg:     var(--bento-theme-primary-light-bg);
+    --cell-color:  var(--bento-theme-primary-light-color);
+    --cell-border: var(--bento-theme-primary-light-border);
+}
+
+.bento-cell--theme-secondary-dark {
+    --cell-bg:     var(--bento-theme-secondary-dark-bg);
+    --cell-color:  var(--bento-theme-secondary-dark-color);
+    --cell-border: var(--bento-theme-secondary-dark-border);
+}
+
+.bento-cell--theme-secondary-light {
+    --cell-bg:     var(--bento-theme-secondary-light-bg);
+    --cell-color:  var(--bento-theme-secondary-light-color);
+    --cell-border: var(--bento-theme-secondary-light-border);
+}
+
+.bento-cell--theme-white {
+    --cell-bg:     var(--bento-theme-white-bg);
+    --cell-color:  var(--bento-theme-white-color);
+    --cell-border: var(--bento-theme-white-border);
 }
 
 // -- Cells --------------------------------------------------------------------
@@ -70,9 +124,8 @@
     position: relative;
     overflow: hidden;
     border-radius: var(--bento-radius);
-    min-height: 0;
 
-    /* Minimum cell height ensures 1×1 cells don't collapse in auto-row 2-up */
+    /* Minimum cell height — prevents 1×1 cells collapsing in auto-row 2-up */
     min-height: var(--bento-cell-size);
 }
 

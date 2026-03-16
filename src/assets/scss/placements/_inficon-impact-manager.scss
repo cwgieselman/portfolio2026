@@ -7,48 +7,45 @@
 
 /* ─── section-01 / page-01 ─── */
 
-// content-cell-01: x=408 y=264 w=1240 h=150
-// col: 408(line 3) → 1648 ≈ past iu5-start(1632), treat as line 10
-// row: 264(line 4/iu2-wideStart) → 414(line 6/iu2-splitStart)
+// content-cell-01: x=408 y=264 w=1240 h=150 → col 3/10, row 4/6
 .content-cell[data-cell="header--section-01--page-01--content-cell-01"] {
     grid-column: 3 / 10;
     grid-row: 4 / 6;
 }
 
-// content-cell-02: x=408 y=528 w=384 h=390
-// col: 408(line 3) → 792(line 4/iu2-end)
-// row: 528(line 8/iu3-wideStart) → 918(line 13/iu3-splitEnd)
+// content-cell-02: x=408 y=528 w=384 h=390 → col 3/4, row 8/13
 .content-cell[data-cell="content--section-01--page-01--content-cell-02"] {
     grid-column: 3 / 4;
     grid-row: 8 / 13;
 }
 
-// content-cell-03: x=816 y=414 w=792 h=750
-// col: 816(line 5/iu3-start) → 1608(line 8/frame-end)
-// row: 414(line 6/iu2-splitStart) → 1164 ≈ iu4-end(line 16)
+// content-cell-03: x=816 y=414 w=792 h=750 → col 5/8, row 6/16
 .content-cell[data-cell="content--section-01--page-01--content-cell-03"] {
-    grid-column: 5 / 9;
+    grid-column: 5 / 8;
     grid-row: 6 / 16;
 }
 
 /* ─── bento--inficon--im-research — 5-up grid ─── */
 
-#bento--inficon--im-research {
-    grid-template-columns: repeat(5, var(--bento-cell-size));
-    grid-template-rows:    repeat(5, var(--bento-cell-size));
-    grid-template-areas:
-        "a01 a02 a02 a03 a03"
-        "a04 a05 a05 a06 a06"
-        "a07 a07 a07 a06 a06"
-        "a07 a07 a07 a08 a08"
-        "a09 a09 a10 a11 a12";
+@media (min-width: 1170px) {
+    #bento--inficon--im-research {
+        grid-template-columns: repeat(5, var(--bento-cell-size));
+        grid-template-rows:    repeat(5, var(--bento-cell-size));
+        grid-template-areas:
+            "a01 a02 a02 a03 a03"
+            "a04 a05 a05 a06 a06"
+            "a07 a07 a07 a06 a06"
+            "a07 a07 a07 a08 a08"
+            "a09 a09 a10 a11 a12";
+    }
 }
 
 /* ─── bento--inficon--im-research — 2-up grid ─── */
 
-@container content-cell (max-width: 731px) {
+@media (max-width: 1169px) {
     #bento--inficon--im-research {
         grid-template-columns: repeat(2, var(--bento-cell-size));
+        grid-template-rows: auto;
         grid-template-areas:
             "a01 a04"
             "a05 a03"

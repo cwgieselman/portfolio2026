@@ -111,6 +111,18 @@ bisect if something breaks later.
 
 ---
 
+## PR Summary Lifecycle
+
+PR summary files in `_docs/` are handoff artifacts — they exist solely to communicate Phase 1 intent to Phase 2. Once Claude Code has reviewed, committed, and written the GitHub commit message, the PR file has served its purpose and must be deleted.
+
+The GitHub commit record is the permanent record. Do not maintain both.
+
+Naming convention: `PR--<branch-name>.md`  
+Location: `_docs/`  
+Lifetime: Phase 1 complete → Phase 2 review → merge → delete.
+
+---
+
 ## Why This Works
 
 Design decisions require context, memory, and reasoning — the chat session has all three.
