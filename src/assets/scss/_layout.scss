@@ -7,74 +7,128 @@
     width: 100%;
     max-width: 100vw;
     overflow-x: clip;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: block;
 }
+
+/* ── 01-LOAD: Block tier (< 640px) ───────────────────────────────────────────
+ * No grid. Content stacks in document order.
+ * 24px margins via padding on the page. */
 
 .layout__page {
-    /* CONTRACT_EXCEPTION: grid geometry constants — derived from IU math, not design tokens */
-    --gu:                1px;       /* grid unit — overridden below 1200px to scale the grid */
-    --layout-fieldWidth: calc(var(--gu) * 2016);  /* 5 IUs × 384 + 4 gutters × 24 */
-    --layout-pageHeight: calc(var(--gu) * 1182);  /* 3×240 + 1×390 + 3×24 */
-
-    width: var(--layout-fieldWidth);
-    margin: 0;
-    display: grid;
-    justify-self: center;
-
-    /* Columns: 5 full IUs × 384gu + 4 gutters × 24gu = 2016gu Field
-     * Frame (1200gu) = IU2 → IU4 (408gu → 1608gu)
-     * IU1 and IU5 are the bleed zone (408gu each side)
-     * Below 1200px: --gu scales so Frame = 100vw */
-    grid-template-columns:
-        [field-start iu1-start]  calc(var(--gu) * 384)  /* 0 → 384 */
-        [iu1-end]                calc(var(--gu) *  24)  /* 384 → 408: gutter */
-        [iu2-start frame-start]  calc(var(--gu) * 384)  /* 408 → 792 */
-        [iu2-end]                calc(var(--gu) *  24)  /* 792 → 816: gutter */
-        [iu3-start]              calc(var(--gu) * 384)  /* 816 → 1200 */
-        [iu3-end]                calc(var(--gu) *  24)  /* 1200 → 1224: gutter */
-        [iu4-start]              calc(var(--gu) * 384)  /* 1224 → 1608 */
-        [iu4-end frame-end]      calc(var(--gu) *  24)  /* 1608 → 1632: gutter */
-        [iu5-start]              calc(var(--gu) * 384)  /* 1632 → 2016 */
-        [iu5-end field-end];
-
-    /* Rows: 3 Wide + 1 Split, any arrangement. Total: 1182gu
-     * Wide IU: 240gu — Split IU: 390gu — Gutter: 24gu
-     * Frame: 750gu tall (1200 × 10/16) centered → frameTop=216 frameBottom=966
-     * Named lines encode all snap points across all 3W+1S permutations */
-    grid-template-rows:
-        [iu1-start]      calc(var(--gu) * 216)  /* 0 → 216 */
-        [frameTop]       calc(var(--gu) *  24)  /* 216 → 240 */
-        [iu1-wideEnd]    calc(var(--gu) *  24)  /* 240 → 264: gutter */
-        [iu2-wideStart]  calc(var(--gu) * 126)  /* 264 → 390 */
-        [iu1-splitEnd]   calc(var(--gu) *  24)  /* 390 → 414: gutter */
-        [iu2-splitStart] calc(var(--gu) *  90)  /* 414 → 504 */
-        [iu2-wideEnd]    calc(var(--gu) *  24)  /* 504 → 528: gutter */
-        [iu3-wideStart]  calc(var(--gu) * 126)  /* 528 → 654 */
-        [iu2-splitEnd]   calc(var(--gu) *  24)  /* 654 → 678: gutter */
-        [iu3-splitStart] calc(var(--gu) *  90)  /* 678 → 768 */
-        [iu3-wideEnd]    calc(var(--gu) *  24)  /* 768 → 792: gutter */
-        [iu4-wideStart]  calc(var(--gu) * 126)  /* 792 → 918 */
-        [iu3-splitEnd]   calc(var(--gu) *  24)  /* 918 → 942: gutter */
-        [iu4-splitStart] calc(var(--gu) *  24)  /* 942 → 966 */
-        [frameBottom]    calc(var(--gu) * 216)  /* 966 → 1182 */
-        [iu4-end];                               /* 1182 */
+    width: 100%;
+    padding-inline: 24px;
+    display: block;
 }
 
-/* ── Responsive scaling ─────────────────────────────────────────────────────
- * Below 1248px (= Frame width + 1 gutter each side), lock Frame to viewport.
- * Fires one gutter-width (24px) before Frame would hit the viewport edge,
- * ensuring at least 24px breathing room on each side at all viewport widths.
- * --gu shrinks from 1px toward 0 as viewport narrows.
- * All grid tracks scale proportionally. Text reflows inside scaled cells.
- * Width overrides to fluid so the grid is wider than the viewport
- * (Field = viewport × 1.68), keeping Frame edges flush with viewport edges. */
-@media (max-width: 1248px) {
+.content-cell {
+    width: 100%;
+    margin-block-end: var(--spacing-xxl);
+}
+
+/* ── 02-QUERY: 2-col Grid (640px – 1247px) ───────────────────────────────────
+ * Two-column asymmetric grid. Margins and gap in rem — scale with --scale-base.
+ * --scale-base overridden to 14px in this tier (down from 16px) so columns
+ * and type shrink together, buying room for the figure column.
+ *
+ * At 14px base: margins = 21px each, gap = 42px, text = 224px (14rem).
+ * Figure column takes all remaining space (1fr).
+ * Bento Grid 5-up threshold (732px figure col) fires at ~1052px viewport.
+ *
+ * Rows: auto — content determines height.
+ * Per-cell column assignments live in placements/_<pageKey>.scss. */
+
+@media (min-width: 640px) and (max-width: 1247px) {
+    :root {
+        --scale-base: 14px;
+    }
+
     .layout__page {
-        /* Frame = viewport - 48px (24px breathing room each side).
-         * --gu derived from (100vw - 48px) / 1200 so Frame tracks viewport minus margins. */
-        --gu: calc((100vw - 48px) / 1200);
-        width: calc(var(--gu) * 2016);
+        display: grid;
+        width: 100%;
+        padding-inline: 0;
+        grid-template-columns:
+            1.5rem
+            14rem
+            3rem
+            1fr
+            1.5rem;
+        grid-template-rows: auto;
+    }
+
+    .content-cell {
+        width: auto;
+        margin-block-end: 0;
+    }
+}
+
+/* ── 03-QUERY: FF Grid (≥ 1248px) ────────────────────────────────────────────
+ * Field and Frame Grid — full 5-IU macro layout.
+ * Fixed geometry. No scaling. Always 2016px wide.
+ *
+ * Centering: left: 50% + translateX(-50%) centers a fixed-width element
+ * regardless of container width — necessary because margin-inline: auto
+ * does not work when the element is wider than its container.
+ * CONTRACT_EXCEPTION: position: relative + transform used solely for
+ * centering a fixed-width block — not for offset positioning of content.
+ *
+ * CONTRACT_EXCEPTION: grid geometry constants — derived from IU math, not design tokens.
+ *
+ * Columns: 5 full IUs × 384px + 4 gutters × 24px = 2016px Field
+ *   Frame (1200px) = IU2 → IU4 (408px → 1608px)
+ *   IU1 and IU5 are the bleed zones (408px each side)
+ *
+ * Column lines (10 lines, px positions):
+ *   1=0  2=384  3=408  4=792  5=816  6=1200  7=1224  8=1608  9=1632  10=2016
+ *
+ * Rows: 3 Wide (240px) + 1 Split (390px) + 3 gutters (24px) = 1182px
+ *   Frame: 750px tall (1200 × 10/16) centered → frameTop=216 frameBottom=966
+ *
+ * Row lines (16 lines, px positions):
+ *   1=0   2=216  3=240  4=264  5=390  6=414  7=504  8=528
+ *   9=654  10=678  11=768  12=792  13=918  14=942  15=966  16=1182 */
+
+@media (min-width: 1248px) {
+    .layout__page {
+        display: grid;
+        width: 2016px;
+        padding-inline: 0;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+
+        grid-template-columns:
+            [field-start iu1-start]  384px   /* 0 → 384 */
+            [iu1-end]                 24px   /* 384 → 408: gutter */
+            [iu2-start frame-start]  384px   /* 408 → 792 */
+            [iu2-end]                 24px   /* 792 → 816: gutter */
+            [iu3-start]              384px   /* 816 → 1200 */
+            [iu3-end]                 24px   /* 1200 → 1224: gutter */
+            [iu4-start]              384px   /* 1224 → 1608 */
+            [iu4-end frame-end]       24px   /* 1608 → 1632: gutter */
+            [iu5-start]              384px   /* 1632 → 2016 */
+            [iu5-end field-end];
+
+        grid-template-rows:
+            [iu1-start]       216px   /* 0 → 216 */
+            [frameTop]         24px   /* 216 → 240 */
+            [iu1-wideEnd]      24px   /* 240 → 264: gutter */
+            [iu2-wideStart]   126px   /* 264 → 390 */
+            [iu1-splitEnd]     24px   /* 390 → 414: gutter */
+            [iu2-splitStart]   90px   /* 414 → 504 */
+            [iu2-wideEnd]      24px   /* 504 → 528: gutter */
+            [iu3-wideStart]   126px   /* 528 → 654 */
+            [iu2-splitEnd]     24px   /* 654 → 678: gutter */
+            [iu3-splitStart]   90px   /* 678 → 768 */
+            [iu3-wideEnd]      24px   /* 768 → 792: gutter */
+            [iu4-wideStart]   126px   /* 792 → 918 */
+            [iu3-splitEnd]     24px   /* 918 → 942: gutter */
+            [iu4-splitStart]   24px   /* 942 → 966 */
+            [frameBottom]     216px   /* 966 → 1182 */
+            [iu4-end];                /* 1182 */
+    }
+
+    .content-cell {
+        width: auto;
+        margin-block-end: 0;
     }
 }
