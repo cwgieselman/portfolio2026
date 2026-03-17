@@ -247,12 +247,16 @@
     overflow: hidden; // border-radius clip
 
     // Fade affordance on right edge — signals more content
+    // CONTRACT_EXCEPTION: position: absolute on ::after pseudo-element used solely
+    // as a decorative overlay — not for content placement. Parent has position: relative.
+    // TODO: revisit when scrollable bento-article affordance styles are added —
+    // may be superseded by a more complete scroll indicator treatment.
     &::after {
         content: "";
         position: absolute;
         inset-block: 0;
         inset-inline-end: 0;
-        width: 48px;
+        width: var(--scale-300);
         background: linear-gradient(to right, transparent, var(--color-neutral-10));
         pointer-events: none;
         z-index: 1;

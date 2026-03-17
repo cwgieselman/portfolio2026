@@ -16,7 +16,7 @@
 
 .layout__page {
     width: 100%;
-    padding-inline: 24px;
+    padding-inline: var(--spacing-xl);
     display: block;
 }
 
