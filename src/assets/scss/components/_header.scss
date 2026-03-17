@@ -5,7 +5,10 @@
 }
 
 /* ----------------------------------
- * Quiet variant — semantic h2, reduced visual weight
+ * Quiet variant — semantic h2, reduced visual weight.
+ * Used on sub-pages where an h2 is semantically required but the page
+ * doesn't warrant full section-heading visual weight (e.g. BMTx page-02).
+ * Visually matches h3 at all tiers.
  * ---------------------------------- */
 
 .header__headline--quiet {
@@ -14,11 +17,19 @@
     line-height: var(--type-subheading-lineHeight);
 }
 
+/* Block tier: matches h3 mobile sizing — 20px / 28px */
+@media (max-width: 639px) {
+    .header__headline--quiet {
+        font-size: var(--scale-125);
+        line-height: var(--scale-175);
+    }
+}
+
 .header__eyebrow {
     margin: 0;
     font-family: var(--font-family-brand);
     font-size: var(--type-eyebrow-size);
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-regular);
     line-height: var(--type-eyebrow-lineHeight);
     color: var(--type-eyebrow-color);
     font-style: normal;
