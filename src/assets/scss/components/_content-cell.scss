@@ -26,3 +26,27 @@
         margin-top: var(--content-rhythm--continuation);
     }
 }
+
+// -- Alignment utilities ------------------------------------------------------
+// Vertical: controls align-self within the macro grid (row axis).
+// Horizontal: controls justify-self within the macro grid (column axis).
+// Content alignment: controls how content sits inside the cell itself.
+// Applied as modifier classes in YAML or placements SCSS.
+
+// Vertical — grid row alignment
+.content-cell--align-start   { align-self: start; }
+.content-cell--align-center  { align-self: center; }
+.content-cell--align-end     { align-self: end; }
+.content-cell--align-stretch { align-self: stretch; } // default grid behavior
+
+// Horizontal — grid column alignment
+.content-cell--justify-start   { justify-self: start; }
+.content-cell--justify-center  { justify-self: center; }
+.content-cell--justify-end     { justify-self: end; }
+.content-cell--justify-stretch { justify-self: stretch; } // default grid behavior
+
+// Content alignment — how content sits inside the cell
+// Useful when cell is taller/wider than its content
+.content-cell--content-start  { display: flex; flex-direction: column; justify-content: flex-start; }
+.content-cell--content-center { display: flex; flex-direction: column; justify-content: center; }
+.content-cell--content-end    { display: flex; flex-direction: column; justify-content: flex-end; }
