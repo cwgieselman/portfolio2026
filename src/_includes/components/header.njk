@@ -4,7 +4,7 @@
   Expects (via headerParams):
   - level: "h1" | "h2" | "h3"
   - variant: "quiet" (optional — reduces visual weight without changing semantic level)
-  - headline: string
+  - headline: string — may contain inline HTML (e.g. <span class="nobr">...</span>)
   - showEyebrow: boolean
   - eyebrow: string
   - showSubhead: boolean
@@ -25,11 +25,11 @@
     {% endif %}
 
     {% if p.level == "h1" %}
-        <h1 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h1>
+        <h1 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline | safe }}</h1>
     {% elseif p.level == "h2" %}
-        <h2 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h2>
+        <h2 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline | safe }}</h2>
     {% elseif p.level == "h3" %}
-        <h3 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline }}</h3>
+        <h3 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline | safe }}</h3>
     {% else %}
         <!-- HEADER_ERROR: invalid level -->
     {% endif %}

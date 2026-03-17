@@ -35,6 +35,18 @@
             sizes: "40vw"
             cssClass: "bento-cell__img"
 
+        - id: article-04
+          type: image                # art-directed flavor: two crops, viewport-switched
+          artDirection: true         # triggers bento-cell--image-directed class + <picture> render
+          desktop:
+            col: "4 / 6"
+            row: "1 / 2"
+          media:
+            src: "/assets/images/photo--landscape.jpg"     # 5-up crop (>= 1052px)
+            mobileSrc: "/assets/images/photo--square.jpg"  # 2-up crop (< 1052px)
+            hasAlt: true
+            alt: "Descriptive alt text for assistive technology"
+
   ── Themes ───────────────────────────────────────────────────────────────────
   theme: primary-dark     → --cell-bg: primary/60, --cell-color: primary/10
   theme: primary-light    → --cell-bg: primary/20, --cell-color: primary/60
@@ -70,28 +82,91 @@
   {% for cell in bento.cells %}
 
   {# Class: type modifier + optional theme. Grid placement lives in placements SCSS. #}
-  {% set cellClasses = "bento-cell bento-cell--" + cell.type %}
-  {% if cell.theme %}
-    {% set cellClasses = cellClasses + " bento-cell--theme-" + cell.theme %}
-  {% endif %}
-
   {# Derive grid-area name: "article-01" → "a01", "article-12" → "a12" #}
   {% set areaName = "a" + cell.id | replace("article-", "") %}
 
-  <article
-    class="{{ cellClasses }}"
-    data-bento-cell="{{ cell.id }}"
-    style="grid-area: {{ areaName }}"
-  >
-    <div class="bento-cell__inner">
-      {% if cell.type == "image" and cell.media %}
+  {% if cell.type == "image" and cell.scrollable and cell.media %}
+
+    {#
+      Scrollable image cell — two sibling <article> elements sharing the same grid-area.
+      Desktop instance: normal image cell, shown in 5-up (content-cell ≥ 732px), hidden below.
+      Scrollable instance: 500px tall, overflow: auto both axes, no srcset, shown in 2-up only.
+      scrollSrc: is a dedicated image for the scroll context (no srcset processing).
+    #}
+
+    {# — Desktop instance — #}
+    <article
+      class="bento-cell bento-cell--image bento-cell--image-desktop"
+      data-bento-cell="{{ cell.id }}"
+      style="grid-area: {{ areaName }}"
+      aria-hidden="true"
+    >
+      <div class="bento-cell__inner">
         {% set mediaParams = cell.media %}
         {% include "components/media.njk" %}
-      {% else %}
-        {{ cell.content | safe }}
-      {% endif %}
-    </div>
-  </article>
+      </div>
+    </article>
+
+    {# — Scrollable instance — #}
+    <article
+      class="bento-cell bento-cell--image bento-cell--image-scrollable"
+      data-bento-cell="{{ cell.id }}-scroll"
+      style="grid-area: {{ areaName }}"
+      role="region"
+      aria-label="{{ cell.media.alt if cell.media.hasAlt else 'Process artifact' }}"
+    >
+      <div class="bento-cell__inner">
+        <img
+          src="{{ cell.media.scrollSrc }}"
+          {% if cell.media.hasAlt %}alt="{{ cell.media.alt }}"{% else %}alt="" role="presentation"{% endif %}
+          loading="lazy"
+        />
+      </div>
+    </article>
+
+  {% else %}
+
+    {# Standard cell render path #}
+    {# image-directed: opt-in art direction — <picture> with <source media> for 2-up vs 5-up crops. #}
+    {# graphic: illustration/diagram asset — object-fit: contain, padded, square in 2-up. #}
+    {% set typeClass = cell.type %}
+    {% if cell.type == "image" and cell.artDirection %}
+      {% set typeClass = "image-directed" %}
+    {% elif cell.type == "graphic" %}
+      {% set typeClass = "graphic" %}
+    {% endif %}
+    {% set cellClasses = "bento-cell bento-cell--" + typeClass %}
+    {% if cell.theme %}
+      {% set cellClasses = cellClasses + " bento-cell--theme-" + cell.theme %}
+    {% endif %}
+
+    <article
+      class="{{ cellClasses }}"
+      data-bento-cell="{{ cell.id }}"
+      style="grid-area: {{ areaName }}"
+    >
+      <div class="bento-cell__inner">
+        {% if cell.type == "image" and cell.artDirection and cell.media %}
+          <picture class="bento-cell__img">
+            <source media="(min-width: 1052px)" srcset="{{ cell.media.src }}">
+            <source media="(max-width: 1051px)" srcset="{{ cell.media.mobileSrc }}">
+            <img
+              src="{{ cell.media.mobileSrc }}"
+              {% if cell.media.hasAlt %}alt="{{ cell.media.alt }}"{% else %}alt="" role="presentation"{% endif %}
+              class="bento-cell__img"
+              loading="lazy"
+            />
+          </picture>
+        {% elif cell.type == "image" and cell.media or cell.type == "graphic" and cell.media %}
+          {% set mediaParams = cell.media %}
+          {% include "components/media.njk" %}
+        {% else %}
+          {{ cell.content | safe }}
+        {% endif %}
+      </div>
+    </article>
+
+  {% endif %}
 
   {% endfor %}
 </div>
