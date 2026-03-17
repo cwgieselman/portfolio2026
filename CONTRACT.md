@@ -23,6 +23,20 @@ If generated output conflicts with this contract, either:
 
 ---
 
+## Canonical Terminology
+
+**Layout grid names are canonical. Use these exactly — in code comments, SCSS, docs, and conversation. Do not invent synonyms.**
+
+| Canonical name | Abbreviation | What it is |
+|---|---|---|
+| **Field and Frame Grid** | **FF Grid** | The full 5-IU macro page grid in `_layout.scss`. Active at ≥ 1248px viewport. |
+| **2-col Grid** | — | The simplified two-column layout grid active at 640px–1247px. |
+| **Bento Grid** | — | The CSS Grid inside a `.bento-grid` component instance. Container-query driven. |
+
+Any use of "macro grid", "page grid", "5-col grid", "mid-tier grid", "responsive grid", "bento layout", or similar informal names is incorrect. Use the canonical names above.
+
+---
+
 ## Deterministic Rendering Contract  
 Figma → YAML → Eleventy → HTML → CSS  
 
@@ -75,6 +89,42 @@ Each include receives a single `params` object and renders only that object.
 ---
 
 ## 3. Layout Contract — content-cell Executor
+
+### `Vert` and `Horiz` positioning props on content-cells
+
+These props control **where a content-cell sits within its grid slot** when the cell's content is smaller than the slot. They are not a layout engine — they answer one question: when there is extra space in my grid area, where do I position myself?
+
+**Figma prop names are intentionally non-CSS.** They describe spatial intent, not implementation. The compile contract maps intent to the correct CSS mechanism depending on context.
+
+| Figma prop | Values | Axis |
+|---|---|---|
+| `Vert` | `Default` \| `Center` \| `End` | Vertical (block) |
+| `Horiz` | `Default` \| `Center` \| `End` | Horizontal (inline) |
+
+**`Default` means emit nothing.** The CSS default (`stretch`) governs. Only `Center` and `End` produce output.
+
+**Value mapping:**
+
+| Figma value | CSS output |
+|---|---|
+| `Default` | *(nothing emitted)* |
+| `Center` | `align-self: center` (Vert) / `justify-self: center` (Horiz) |
+| `End` | `align-self: end` (Vert) / `justify-self: end` (Horiz) |
+
+**Important:** `Horiz: Center` (`justify-self: center`) causes a grid item to shrink to its intrinsic width. Only use it on cells whose content has a defined width (e.g. a Bento Grid with `width: fit-content`). Do not use on cells containing block-level text content — those rely on `stretch` to fill the grid track.
+
+**Output target:** Placements SCSS only — in the same selector as `grid-column` and `grid-row`:
+
+```scss
+.content-cell[data-cell="content--section-01--page-01--content-cell-03"] {
+    grid-column: 5 / 8;
+    grid-row: 6 / 16;
+    align-self: center; /* Vert=Center */
+}
+```
+
+**Product note:** The `Vert`/`Horiz` naming is pragmatic for a portfolio build. If this system were ever developed into a product, the naming convention, prop vocabulary, and compile contract would need more rigorous design — particularly around `Horiz: Center` and its interaction with block-level content sizing.
+
 
 File  
 `src/_includes/layouts/content-cell.njk`
@@ -239,7 +289,7 @@ include: `components/header.njk`
 
 - level: `"h1" | "h2" | "h3"`
 - variant: `"quiet"` (optional — reduces visual weight without changing semantic level)
-- headline: string
+- headline: string — rendered via `| safe`. May contain inline HTML (e.g. `<span class="nobr">...</span>`)
 - showEyebrow: boolean
 - eyebrow: string
 - showSubhead: boolean
@@ -254,8 +304,9 @@ include: `components/header.njk`
 - No inferred flags.
 - YAML must not define heading IDs.
 - ID is applied only when `headerParamsId` is provided.
-- When `variant` is `"quiet"`, the heading element is unchanged (still `h2`) but receives an additional CSS class `header__headline--quiet` for reduced visual weight.
+- When `variant` is `"quiet"`, the heading element is unchanged (still `h2`) but receives an additional CSS class `header__headline--quiet` for reduced visual weight. Visual result matches `h3` sizing at all tiers.
 - When `variant` is absent or not `"quiet"`, the heading renders with default visual treatment.
+- Use `<span class="nobr">product name</span>` in `headline` to prevent proper names breaking across lines.
 
 ### DOM Shape
 
@@ -500,20 +551,18 @@ Where `bento` is the top-level key from a YAML data file.
 ~~~yaml
 bento:
   id: inficon--discovery       # drives CSS id and data-bento attribute
-  variant: full-width          # full-width | two-col
-  cols: 5                      # grid column count
-  rows: 5                      # grid row count
+  cols: 5                      # reference only — drives placements SCSS
+  rows: 5                      # reference only — drives placements SCSS
   cells:
     - id: article-01
       type: content            # content | image | custom
       theme: primary-dark      # named theme — see themes below; omit for image cells
-      zIndex: 1                # derived by compiler from Figma layer order
       desktop:
-        col: "1 / 2"           # CSS grid-column value
-        row: "1 / 2"           # CSS grid-row value
+        col: "1 / 2"           # reference only — drives placements SCSS
+        row: "1 / 2"           # reference only — drives placements SCSS
       content: |               # raw HTML from Figma Slot — rendered via | safe
-        <span class="bento-type--eyebrow">Week on-site</span>
-        <span class="bento-type--paragraphLead">at the pilot FAB in France</span>
+        <span class="bento-stat">1</span>
+        <span class="bento-body">Week on-site at the pilot FAB in France:</span>
 ~~~
 
 ### Named Themes
@@ -528,74 +577,42 @@ Set via `theme:` on a cell. Defaults to `white` when omitted.
 | `secondary-dark` | secondary/50 | secondary/80 | secondary/60 |
 | `secondary-light` | secondary/20 | secondary/70 | secondary/30 |
 
-Theme definitions live in the `// -- Themes` section of `_bento-grid.scss`. Each theme sets `--cell-bg`, `--cell-color`, `--cell-border` on the cell element via the corresponding `--bento-theme-*` variables from `_tokens--component.scss`. Adding themes requires a new entry in `tokens.json` (run `npm run tokens:build`) and a new ruleset in `_bento-grid.scss` — no template changes.
-
-`white` is the default theme. When `theme` is omitted from YAML, the template applies `bento-cell--theme-white`. This ensures arrows always render against a defined background.
-
 ### Cell Types
 
-Type controls padding only — not content structure. Content is Slot-driven and renders as-is.
-
-**content** — cell has padding. Use for text, stats, mixed content.
-
-**image** — no padding; content bleeds to the cell edge. Use for full-bleed images.
-
-**custom** — reserved for animated SVGs or other bespoke cells. No padding assumption. Author controls via one-off SCSS partial.
-
-~~~yaml
-cells:
-  - id: article-01
-    type: content
-    theme: primary-dark
-    ...
-  - id: article-02
-    type: image
-    # theme omitted — defaults to white
-    ...
-~~~
+**content** — cell has padding. Use for text, stats, mixed content.  
+**image** — no padding; content bleeds to cell edge.  
+**custom** — reserved escape hatch. No padding assumption.
 
 ### Inline Typography Spans
 
-All text fields pass through `| safe`. Inline `<span class="bento-*">` works in any content field. Classes are scoped to `.bento-cell` and do not leak to the page.
-
-Sourced from CGDC-DS Figma node 2884-634:
-
 | Class | Family | Style | Size |
 |---|---|---|---|
-| `bento-stat` | Tienne | Bold | clamp(50px -> 72px) |
-| `bento-lead` | Raleway | Regular | clamp(19px -> 24px) |
-| `bento-lead-italic` | Raleway | Italic | clamp(19px -> 24px) |
-| `bento-body` | PT Sans | Regular | clamp(13px -> 16px) |
-| `bento-body-bold` | PT Sans | Bold | clamp(13px -> 16px) |
+| `bento-stat` | Tienne | Bold | clamp(50px → 72px) |
+| `bento-lead` | Raleway | Regular | clamp(19px → 24px) |
+| `bento-lead-italic` | Raleway | Italic | clamp(19px → 24px) |
+| `bento-body` | PT Sans | Regular | clamp(13px → 16px) |
+| `bento-body-bold` | PT Sans | Bold | clamp(13px → 16px) |
 
-### One-Off Cell Overrides
+### Responsive Model — container-query driven, small → large
 
-For cells requiring custom layout or visual personality beyond the theme system:
+| Threshold | Layout | Cell size |
+|---|---|---|
+| Default (no query) | 2-up, `width: 100%` | 140px min |
+| `content-cell ≥ 500px` | 2-up, `width: 100%` | 208px max |
+| `content-cell ≥ 732px` | 5-up, `width: fit-content` | 140px min (reset) |
+| `content-cell ≥ 900px` | 5-up, `width: fit-content` | 208px max |
 
-1. Create a SCSS partial in `src/assets/scss/components/bento-cells/`
-2. Target using `data-bento-cell="box-XX"` — present on every cell
-3. Uncomment (or add) the import in `main.scss`
-
-One-off partials are explicitly not part of this contract. They are the author’s responsibility.
-
-### Data File Naming Constraint
-
-Bento YAML files referenced directly in Nunjucks templates must use camelCase or single-hyphen filenames. Double-hyphen filenames (e.g. `inficon--discovery-bento.yml`) are parsed by Nunjucks as arithmetic and silently fail. Use a JS wrapper file to expose double-hyphen YAML, or use camelCase from the start.
+5-up fires at ~1052px viewport in the 2-col Grid tier. Always 5-up in the FF Grid tier.
 
 ### Placement Model
 
-Bento cell placement uses CSS Grid named areas. Each `<article>` element receives a `style="grid-area: aNN"` inline style derived from `cell.id` in the template (`article-01` → `a01`). The `grid-template-areas` map lives in the per-bento `#bento--<id>` selector in `placements/_<pageKey>.scss`.
+Cell placement uses CSS Grid named areas. Each `<article>` element receives `style="grid-area: aNN"` inline (derived from `cell.id` by fixed transform — `article-01` → `a01`). The `grid-template-areas` maps live in `placements/_<pageKey>.scss` — default 2-up map as a bare selector, 5-up map inside `@container content-cell (min-width: 732px)`.
 
-**Why inline style is permitted here (CONTRACT_EXCEPTION):**  
-`grid-area` is a name registration, not a placement value. It labels the element so the CSS area map can reference it. The actual placement — which row and column the named area occupies — is still exclusively in the placements SCSS. This is categorically different from inline `grid-column` / `grid-row` values, which would encode placement in the template. The inline style is deterministic (derived from `cell.id` by a fixed transform with no branching logic) and carries no design-intent data.
-
-The general prohibition on inline styles in Section 6 applies to layout placement. `grid-area` name registration is a template concern and is exempt.
+`grid-area` inline styles are a CONTRACT_EXCEPTION — they register names for the CSS area map, not placement values. See full rationale in CLAUDE.md.
 
 ### Rules
 
 - Template renders exactly what YAML defines. No implicit defaults.
-- `theme:` is optional. Omitting it produces a transparent, borderless cell (correct for image cells).
-- Image fallbacks are a development aid only. Production cells must have real `src` values.
-- The bento grid is NOT permitted in the executor safelist.
-- Structural changes to the macro (new cell types, new keys) require a CONTRACT.md update.
-- `grid-area` inline styles on bento cells are permitted and intentional — see Placement Model above.
+- `theme:` is optional. Omitting produces transparent, borderless cell (correct for image cells).
+- The Bento Grid is NOT permitted in the executor safelist.
+- Structural changes require a CONTRACT.md update.

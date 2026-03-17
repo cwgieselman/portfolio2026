@@ -4,6 +4,16 @@
 
 You are a deterministic compiler. You MUST NOT invent copy, labels, alt text, captions, or URLs. Only use raw Figma text. When missing, emit explicit TODO tokens.
 
+## CANONICAL TERMINOLOGY
+
+Use these names exactly. Do not use synonyms.
+
+| Canonical name | What it is |
+|---|---|
+| **Field and Frame Grid** (abbrev: **FF Grid**) | The full 5-IU macro page grid. Active at ≥ 1248px viewport. |
+| **2-col Grid** | The simplified two-column layout grid. Active at 640px–1247px. |
+| **Bento Grid** | The CSS Grid inside a `.bento-grid` component instance. |
+
 ## INPUTS
 
 **Mode A (preferred):** Figma MCP — direct node access
@@ -173,7 +183,7 @@ Content-cell grid positions are **inferred at compile time** from the grid-track
 
 #### Step 1: Build the Grid Line Lookup Table
 
-The grid geometry is standardized across all pages — build the lookup table once and reuse it.
+The FF Grid geometry is standardized across all pages — build the lookup table once and reuse it.
 
 **Columns:** 5 full IUs × 384px + 4 gutters × 24px = 2016px Field. Frame = IU2–IU4 (408px → 1608px).
 
@@ -280,7 +290,7 @@ Do not change global layout in this compile step. Only generate placements + dat
 
 ### G) Bento Grid Compile Rules
 
-Bento grid frames are identified by their direct children being named `article-NN` (e.g. `article-01`, `article-02`). When the compiler encounters a frame whose children follow this naming pattern, apply the bento compile rules below instead of the standard content-cell rules.
+Bento Grid frames are identified by their direct children being named `article-NN` (e.g. `article-01`, `article-02`). When the compiler encounters a frame whose children follow this naming pattern, apply the Bento Grid compile rules below instead of the standard content-cell rules.
 
 #### Bento Node Tree
 
@@ -312,33 +322,38 @@ Figma layer order (document order in the node tree) represents back-to-front sta
 
 #### Bento Grid Placement
 
-Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, ±2px tolerance). The grid-tracks instance for a bento frame uses uniform square tracks with a common gutter — simpler than the master grid but the same algorithm applies.
+Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, ±2px tolerance). The grid-tracks instance for a Bento Grid frame uses uniform square tracks with a common gutter — simpler than the FF Grid but the same algorithm applies.
 
 All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`, in the same file as the content-cell placements. Structure:
 
 ```scss
-/* ─── bento--<id> — grid dimensions ─── */
+/* ─── bento--<id> — cell area map (default 2-up, no query) ─── */
 
 #bento--<id> {
-    --bento-cols: N;
-    --bento-rows: N;
+    grid-template-areas:
+        "a01 a04"
+        ...;
 }
 
-/* ─── bento--<id> — cell placements ─── */
+/* ─── bento--<id> — 5-up area map (content-cell ≥ 732px) ─── */
 
-.bento-cell[data-bento-cell="article-01"] {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-    z-index: 12;
+@container content-cell (min-width: 732px) {
+    #bento--<id> {
+        grid-template-columns: repeat(5, var(--bento-cell-size));
+        grid-template-rows:    repeat(5, var(--bento-cell-size));
+        grid-template-areas:
+            "a01 a02 a02 a03 a03"
+            ...;
+    }
 }
-.bento-cell[data-bento-cell="article-02"] {
-    grid-column: 2 / 4;
-    grid-row: 1 / 2;
-    z-index: 11;
-}
+
+/* ─── cell areas ─── */
+
+.bento-cell[data-bento-cell="article-01"] { grid-area: a01; z-index: 12; }
+.bento-cell[data-bento-cell="article-02"] { grid-area: a02; z-index: 11; }
 ```
 
-The `desktop.col` / `desktop.row` values in YAML are human-readable reference only — the template does not read them. The placements SCSS is the single source of truth for grid placement.
+The `desktop.col` / `desktop.row` values in YAML are human-readable reference only — the template does not read them. The placements SCSS is the single source of truth for Bento Grid placement.
 
 #### Bento YAML Shape
 
@@ -351,39 +366,62 @@ bento:
     - id: article-01
       type: content              # content | image | custom
       theme: primary-dark        # omit for image cells
-      zIndex: 1                  # derived from Figma layer order
       desktop:
         col: "1 / 2"
         row: "1 / 2"
-      content: |                 # raw HTML from Figma Slot — rendered via | safe
-        <span class="bento-type--eyebrow">Week on-site</span>
-        <span class="bento-type--paragraphLead">at the pilot FAB in France</span>
-
-    - id: article-08
-      type: content
-      theme: secondary-light
-      zIndex: 8
-      ariaDetails: "inficon-discovery--article-06"   # only when points-to is set
-      desktop:
-        col: "4 / 6"
-        row: "3 / 4"
       content: |
-        <span class="bento-type--paragraph">annotation text here</span>
+        <span class="bento-stat">1</span>
+        <span class="bento-body">Week on-site at the pilot FAB in France:</span>
 
     - id: article-06
       type: image
       # theme omitted — defaults to white
-      zIndex: 6
       desktop:
         col: "3 / 6"
         row: "2 / 4"
-      content: |
-        <img src="/assets/images/inficon--screen.png" alt="" />
+      media:
+        src: "TODO:src"
+        hasAlt: true
+        alt: "TODO:alt"
+        sizes: "40vw"
+        cssClass: "bento-cell__img"
 ```
 
-**Content extraction from Slot:** Read the Slot node’s children. For each child, extract text content and node name. Map node names to `bento-type--*` span classes using the inline typography table in CONTRACT.md. Wrap each text node in the appropriate span. For image nodes (`rounded-rectangle` or similar), emit an `<img>` tag with `src: TODO:src` and `alt: ""`.
+---
 
-If a Slot child is a `wrapper` frame, iterate its children and apply the same mapping — preserve document order.
+## CONTENT-CELL POSITIONING PROPS
+
+Each `content-cell-NN` instance carries two optional positioning props. Read them from Figma `componentProperties` on the content-cell instance itself (not its children).
+
+| Figma prop | Figma values | Axis |
+|-----------|--------------|------|
+| `Vert` (VARIANT) | `Default` \| `Center` \| `End` | Vertical |
+| `Horiz` (VARIANT) | `Default` \| `Center` \| `End` | Horizontal |
+
+**Purpose:** Where the cell sits within its grid slot when the cell is smaller than the slot. Not a layout engine — just spatial positioning within available space. Prop names are intentionally non-CSS.
+
+**Emit rule:** `Default` → emit nothing. `Center` and `End` only produce output. Do not emit to YAML. Do not emit as inline styles.
+
+**Value mapping:**
+
+| Prop | Figma value | CSS output |
+|------|------------|------------|
+| `Vert` | `Center` | `align-self: center;` |
+| `Vert` | `End` | `align-self: end;` |
+| `Horiz` | `Center` | `justify-self: center;` |
+| `Horiz` | `End` | `justify-self: end;` |
+
+**Warning:** `Horiz: Center` emits `justify-self: center` which shrinks the cell to its intrinsic width. Only safe on cells whose content has a defined width (e.g. a Bento Grid with `width: fit-content`). Never use on text/richtext cells.
+
+**Output target:** Placements SCSS only — in the same selector as `grid-column` and `grid-row`:
+
+```scss
+.content-cell[data-cell="content--section-01--page-01--content-cell-03"] {
+    grid-column: 5 / 8;
+    grid-row: 6 / 16;
+    align-self: center; /* Vert=Center */
+}
+```
 
 ---
 
@@ -553,18 +591,32 @@ Rules:
 
 File: `src/assets/scss/placements/_<pageKey>.scss`
 
-For each content-cell, emit a placement rule using the wrapper ID:
+For each content-cell, emit a placement rule using the wrapper ID.
+
+**FF Grid placements use `@media (min-width: 1248px)`.**
+**2-col Grid placements use `@media (min-width: 640px) and (max-width: 1247px)`.**
+**Bento Grid area maps use `@container content-cell` queries — see §G.**
 
 ```scss
-/* section-01 / page-01 */
-.content-cell[data-cell="header--section-01--page-01--content-cell-01"] {
-    grid-column: 3 / 12;
-    grid-row: 5 / 8;
+/* section-01 / page-01 — FF Grid */
+@media (min-width: 1248px) {
+    .content-cell[data-cell="header--section-01--page-01--content-cell-01"] {
+        grid-column: 3 / 12;
+        grid-row: 5 / 8;
+    }
+
+    .content-cell[data-cell="content--section-01--page-01--content-cell-02"] {
+        grid-column: 5 / 8;
+        grid-row: 9 / 13;
+    }
 }
 
-.content-cell[data-cell="content--section-01--page-01--content-cell-02"] {
-    grid-column: 5 / 8;
-    grid-row: 9 / 13;
+/* section-01 / page-01 — 2-col Grid */
+@media (min-width: 640px) and (max-width: 1247px) {
+    .content-cell[data-cell="header--section-01--page-01--content-cell-01"] {
+        grid-column: 2 / 5;
+        grid-row: 1;
+    }
 }
 ```
 
