@@ -10,7 +10,7 @@ sections:
               - include: "components/header.njk"
                 params:
                   level: "h1"
-                  headline: "INFICON Impact Manager"
+                  headline: 'INFICON <span class="nobr">Impact Manager</span>'
                   showEyebrow: true
                   eyebrow: "User Interface Design"
                   showSubhead: false
@@ -57,11 +57,13 @@ sections:
 
                 - id: article-03
                   type: image
+                  artDirection: true
                   desktop:
                     col: "4 / 6"
                     row: "1 / 2"
                   media:
                     src: "/assets/images/inficon--photo--rocc-main.jpg"
+                    mobileSrc: "/assets/images/inficon--photo--rocc-main--CROP.jpg"
                     hasAlt: true
                     alt: "The ROCC central display at the pilot FAB in Crolles, France — a large monitor wall showing aggregated production data across the entire facility."
                     sizes: "40vw"
@@ -78,11 +80,13 @@ sections:
 
                 - id: article-05
                   type: image
+                  artDirection: true
                   desktop:
                     col: "2 / 4"
                     row: "2 / 3"
                   media:
                     src: "/assets/images/inficon--photo--rocc-island.jpg"
+                    mobileSrc: "/assets/images/inficon--photo--rocc-island--CROP.jpg"
                     hasAlt: true
                     alt: "A Workshop Island display showing localized production data for a specific area of the FAB, with individual Actor workstations surrounding it."
                     sizes: "40vw"
@@ -100,11 +104,13 @@ sections:
 
                 - id: article-07
                   type: image
+                  scrollable: true
                   desktop:
                     col: "1 / 4"
                     row: "3 / 5"
                   media:
                     src: "/assets/images/inficon--screen--anomaly-app-figjam.png"
+                    scrollSrc: "/assets/images/inficon--screen--anomaly-app-figjam.png"
                     hasAlt: true
                     alt: "FigJam mapping of the legacy anomaly workstation interface — inputs, workflows, and display states documented in collaboration with Actors during discovery."
                     sizes: "55vw"
@@ -130,7 +136,7 @@ sections:
                     <span class="bento-body">Discovery Workshops with Users, managers and executives provided context and insight to the the observational and technical data.</span>
 
                 - id: article-10
-                  type: image
+                  type: graphic
                   desktop:
                     col: "3 / 4"
                     row: "5 / 6"
@@ -142,7 +148,7 @@ sections:
                     cssClass: "bento-cell__img"
 
                 - id: article-11
-                  type: image
+                  type: graphic
                   desktop:
                     col: "4 / 5"
                     row: "5 / 6"
@@ -154,7 +160,7 @@ sections:
                     cssClass: "bento-cell__img"
 
                 - id: article-12
-                  type: image
+                  type: graphic
                   desktop:
                     col: "5 / 6"
                     row: "5 / 6"
