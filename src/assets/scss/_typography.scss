@@ -1,4 +1,12 @@
 /* ----------------------------------
+ * _typography.scss
+ * Global type styles. All values via tokens.
+ * Responsive: --scale-base is overridden in the 2-col Grid tier (_layout.scss),
+ * which causes all rem-based type tokens to scale proportionally.
+ * Block tier overrides are explicit here where proportional scaling isn't right.
+ * ----------------------------------*/
+
+/* ----------------------------------
  * h1 — Title
  * ----------------------------------*/
 
@@ -8,6 +16,14 @@ h1 {
     font-weight: var(--font-weight-bold);
     line-height: var(--type-pageTitle-lineHeight);
     color: var(--color-text);
+}
+
+/* Block tier: 40px / 48px — scaled for phone column width */
+@media (max-width: 639px) {
+    h1 {
+        font-size: var(--scale-250);
+        line-height: var(--scale-300);
+    }
 }
 
 /* ----------------------------------
@@ -22,6 +38,14 @@ h2 {
     color: var(--color-text);
 }
 
+/* Block tier: 28px / 32px */
+@media (max-width: 639px) {
+    h2 {
+        font-size: var(--scale-175);
+        line-height: var(--scale-200);
+    }
+}
+
 /* ----------------------------------
  * h3 — Subheading
  * ---------------------------------- */
@@ -34,6 +58,14 @@ h3 {
     color: var(--color-text);
 }
 
+/* Block tier: 20px / 28px */
+@media (max-width: 639px) {
+    h3 {
+        font-size: var(--scale-125);
+        line-height: var(--scale-175);
+    }
+}
+
 /* ----------------------------------
  * p — Body
  * ---------------------------------- */
@@ -44,4 +76,14 @@ p {
     font-weight: var(--font-weight-regular);
     line-height: var(--type-paragraph-lineHeight);
     color: var(--color-text);
+}
+
+/* ----------------------------------
+ * Typographic utilities
+ * ----------------------------------*/
+
+/* Prevents a phrase from wrapping across lines — use on proper names,
+ * product names, or any string that loses meaning when broken. */
+.nobr {
+    white-space: nowrap;
 }
