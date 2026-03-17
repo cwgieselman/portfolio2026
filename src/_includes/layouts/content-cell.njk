@@ -2,7 +2,10 @@
 
 {% set wrapper = cell.wrapper %}
 {% set isStack = cell.includes and (cell.includes | length) > 1 %}
-<div class="content-cell{% if isStack %} content-cell--stack{% endif %}" data-cell="{{ wrapper }}">
+<div
+  class="content-cell{% if isStack %} content-cell--stack{% endif %}"
+  data-cell="{{ wrapper }}"
+>
 
   {# ── Bento branch ──────────────────────────────────────────── #}
   {% if cell.bento %}
