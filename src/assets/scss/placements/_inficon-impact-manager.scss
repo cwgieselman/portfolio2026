@@ -73,6 +73,10 @@
 //   row2: a02  .
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Beat-01 skeleton grid — CSS background pattern draws all 16 cell positions
+// as ghost outlines. Real cells sit above via z-index. Subsequent beats stack
+// on top and cover the skeleton as they arrive, so no interaction concerns.
+// Pattern: 2px border lines at 192px intervals (176px cell + 16px gap).
 #bento--inficon--im-beat-01 {
     grid-template-areas:
         ". a01 a01 a02"
@@ -125,7 +129,7 @@
         grid-template-columns: repeat(4, var(--bento-cell-size));
         grid-template-rows:    repeat(3, var(--bento-cell-size));
         grid-template-areas:
-            ".   .   a02 ."
+            ".   .   .   ."
             "a01 a01 a02 ."
             "a01 a01 a03 a03";
     }

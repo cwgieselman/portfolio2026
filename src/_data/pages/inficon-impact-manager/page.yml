@@ -3,7 +3,6 @@ sections:
   - sectionKey: "section-01"
     mode: "choreographed"
     pages:
-
       # ─────────────────────────────────────────────────────────────────────────
       # PAGE 01 — Header block
       # ─────────────────────────────────────────────────────────────────────────
@@ -82,7 +81,7 @@ sections:
                     col: "1 / 3"
                     row: "2 / 4"
                   media:
-                    src: "/assets/images/inficon--photo--rocc-main.jpg"
+                    src: "/assets/images/inficon--photo--rocc-rendering-full.jpg"
                     hasAlt: true
                     alt: "The ROCC central display at the pilot FAB — a large monitor wall showing aggregated production data across the entire facility."
                     sizes: "40vw"
