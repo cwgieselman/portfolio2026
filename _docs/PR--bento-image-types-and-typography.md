@@ -113,6 +113,28 @@ Cells containing a lead or stat center all child spans via inheritance. Body-onl
 
 ---
 
+## Playwright Visual Regression Testing
+
+Added as part of this PR. Both files are new:
+- `tests/visual.spec.js` — test suite
+- `playwright.config.js` — Playwright configuration
+
+New npm scripts:
+- `npm run test:visual` — run all tests, save screenshots
+- `npm run test:visual:check` — run tests, fail if anything changed
+- `npm run test:visual:report` — open HTML report
+
+New devDependency: `@playwright/test`
+
+Tests Chromium and WebKit at:
+- Four main viewports (390, 820, 1052, 1248)
+- Six crossover viewports (±1px around 1052 and 1248)
+- Overflow sweep every 50px from 375–1400px
+
+Screenshots gitignored. Dev server must be running before tests.
+
+---
+
 ## Known Gaps / Follow-up
 
 - Scroll affordance visual design needs Figma work — fade is wired, indicator treatment TBD

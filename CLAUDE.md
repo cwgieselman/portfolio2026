@@ -19,6 +19,29 @@ PR descriptions and commit suggestions live in `_docs/`. Claude Code should chec
 
 ---
 
+## Visual Regression Testing
+
+Playwright tests both Chromium and WebKit at every breakpoint before committing CSS changes. **Run this before and after any CSS change that touches layout, bento, or responsive behavior.**
+
+```bash
+npm run test:visual          # capture/update screenshots, assert metrics
+npm run test:visual:check    # assert only — fails if anything changed
+npm run test:visual:report   # open HTML report in browser
+```
+
+**What it tests:**
+- Full-page screenshots at all four main viewports (390, 820, 1052, 1248) in both browsers
+- Hard assertions at the six crossover viewports (±1px around 1052 and 1248)
+- Overflow sweep: bento `gridW <= contentCellW` assertion at every 50px from 375–1400px
+
+**The core invariant:** The bento grid must never exceed its content-cell width at any viewport in either browser. If this assertion fails the test output tells you the exact viewport, browser, gridW, and contentCellW.
+
+**Screenshots saved to** `tests/screenshots/{chromium|webkit}/inficon-impact-manager/` — gitignored, local only.
+
+**Dev server must be running** (`npm start`) before running tests.
+
+---
+
 ## Validation (run before committing)
 
 - No automated CI gates currently active. Validate visually in browser via `npm start`.
