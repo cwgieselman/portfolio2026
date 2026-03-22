@@ -2,41 +2,66 @@
 // -----------------------------------------------------------------------------
 // Self-contained bento grid system.
 //
+// Design intent: The content slot is the anchor. Gap and padding are the
+// shock absorbers. Cell size snaps at designed states; gap and padding flex
+// fluidly between them so the text column width is always predictable.
+//
+// Token system — unified unit for grid and macro layout:
+//   --bento-cell-size  snaps at three authored states (never fluid)
+//   --bento-gap        flexes via clamp() — absorbs mid-state fluidity
+//   --bento-padding    flexes via clamp() — absorbs mid-state fluidity
+//
+// Cell size states:
+//   MIN   144px   2× gap below MONEY; shared between 4-up and 2-up narrow
+//   MONEY 176px   Primary desktop state — divisible by 16, anchors all math
+//   MAX   208px   2× gap above MONEY; 2-up wide state only
+//
+// Gap — consistent 16px at all designed states, flexes between:
+//   --bento-gap: clamp(8px, 2cqi, 16px)
+//
+// Derived grid widths (at designed gap of 16px):
+//   4-up MONEY  4×176 + 3×16 = 752px   ← desktop target
+//   4-up MIN    4×144 + 3×16 = 624px   ← 4-up at narrower containers
+//   2-up MAX    2×208 + 1×16 = 432px   ← 2-up wide
+//   2-up MIN    2×144 + 1×16 = 304px   ← 2-up narrow / default
+//
+// Macro layout relationship (same unit system):
+//   Content column  2 cells wide  =  368px  (2×176 + 1×16)
+//   Content/bento gutter          =   80px  (5×16)
+//   Bento column    4 cells wide  =  752px  (4×176 + 3×16)
+//   Total content width           = 1200px  ✓
+//
 // Responsive model — small → large, container-query driven:
 //
-//   DEFAULT (no query): 2-up layout, MIN cells (140px), fluid width.
-//     The bento fills its content-cell. 2 × 140 + 8px gap = 288px minimum.
+//   DEFAULT (no query): 2-up layout, MIN cells (144px), fluid width.
+//     repeat(2, minmax(144px, 208px)) — cells grow to MAX in wide 2-up.
+//     Gap and padding flex via clamp().
 //
-//   @container content-cell (min-width: 500px): step up to MAX cells (208px).
-//     Still 2-up. The figure column is wide enough for larger cells.
-//
-//   @container content-cell (min-width: 732px): 5-up layout, MIN cells.
-//     732px is the true geometric minimum: 5 × 140 + 4 × 8 = 732px.
-//     The 2-col Grid columns are in rem and scale with --scale-base (14px in
-//     the 2-col tier), so the figure column is a continuous function of
-//     viewport width — no sub-pixel drift from --gu scaling to worry about.
-//     Bento becomes fit-content, centered in content-cell.
+//   @container content-cell (min-width: 624px): 4-up layout, MIN cells (144px).
+//     624px = 4×144 + 3×16. Bento becomes fit-content, centered in container.
 //     Per-bento grid-template-areas live in placements/_<pageKey>.scss.
 //
-//   @container content-cell (min-width: 900px): 5-up layout, MAX cells.
-//     Only fires in wide viewport where content-cell is genuinely large.
-//
-// The macro layout tiers (via @media in _layout.scss):
-//   < 640px    → block (no grid, content stacks, 24px inline padding)
-//   640–1247px → 2-col Grid (1.5rem | 15rem text | 3rem gap | 1fr fig | 1.5rem)
-//                --scale-base: 14px in this tier; all rem values scale down.
-//   ≥ 1248px   → FF Grid (full 5-IU Field and Frame, fixed 2016px)
+//   @container content-cell (min-width: 752px): 4-up layout, MONEY cells (176px).
+//     752px = 4×176 + 3×16. The designed desktop state.
 //
 // Container queries fire against content-cell (the bento's parent),
 // which has container-type: inline-size in _content-cell.scss.
 // The bento also declares container-type so bento-cell cqi units work.
+//
+// Note: The FF Grid macro layout is preserved in the codebase for special-case
+// page types but is no longer the default container for case study pages.
 // -----------------------------------------------------------------------------
 
 .bento-grid {
-    // Geometry defaults — 2-up, MIN size
-    --bento-cell-size:    140px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma */
-    --bento-gap:          8px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
-    --bento-padding:      8px;                 /* CONTRACT_EXCEPTION: inner cell padding */
+    // ── Content slot — snaps at designed states, never fluid ─────────────────
+    --bento-cell-size:    144px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma — MIN state */
+
+    // ── Air — fluid between designed states, consistent at 16px ──────────────
+    // clamp(min, preferred, max): hits 16px at designed states, compresses gracefully between.
+    --bento-gap:          clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: pixel geometry from Figma */
+    --bento-padding:      clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: inner cell padding — independent of gap */
+
+    // ── Fixed geometry ────────────────────────────────────────────────────────
     --bento-border-width: 2px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
     --bento-radius:       var(--corner-xs);    /* 8px */
     --bento-inner-radius: var(--corner-xxs);   /* 4px */
@@ -44,14 +69,13 @@
     display: grid;
     gap: var(--bento-gap);
 
-    // Default: 2-up, fluid — cells grow to fill available space up to MAX cell size.
-    // Uses minmax instead of min(1fr, 208px) to avoid circular dependency with
-    // container-type: inline-size on the grid itself.
-    grid-template-columns: repeat(2, minmax(140px, 208px));
+    // Default: 2-up, fluid — cells grow from MIN (144px) to MAX (208px).
+    // minmax avoids circular dependency with container-type: inline-size.
+    grid-template-columns: repeat(2, minmax(144px, 208px));
     width: 100%;
     margin-inline: auto;
 
-    // Own container so bento-cell cqi font sizing works
+    // Own container so bento-cell cqi font sizing works.
     container-type: inline-size;
     container-name: bento;
 
@@ -59,68 +83,74 @@
 }
 
 // -- Alignment modifiers ------------------------------------------------------
-// Only meaningful when bento is fit-content (5-up). Ignored in fluid 2-up.
+// Only meaningful when bento is fit-content (4-up). Ignored in fluid 2-up.
 
 .bento-grid--align-start { margin-inline-start: 0; margin-inline-end: auto; }
 .bento-grid--align-end   { margin-inline-start: auto; margin-inline-end: 0; }
 
-// -- Container query: MAX cells in 2-up (content-cell 500px–731px) -----------
-// Steps cells to 208px when the content-cell is wide enough for larger 2-up
-// cells, but ONLY below the 5-up threshold (732px).
-// Without the max-width bound this query fires in FF Grid (content-cell 792px)
-// and sets --bento-cell-size: 208px, making the 5-up grid 1104px wide —
-// blowing out of the 792px content-cell.
-
-// -- Container query: MAX cells in 2-up (content-cell 500px–731px) -----------
-// 2-up only. Bounded at 731px so it cannot fire once 5-up is active (732px+).
-
-@container content-cell (min-width: 500px) and (max-width: 731px) {
-    .bento-grid {
-        --bento-cell-size: 208px;
-        --bento-gap:       16px;
-        --bento-padding:   16px;
-    }
-}
-
-// -- Container query: 5-up layout (content-cell ≥ 732px) ---------------------
-// 732px is the true geometric minimum for 5-up: 5 × 140 + 4 × 8 = 732px.
-// In the 2-col Grid tier (rem-based columns, --scale-base: 14px), the figure
-// column is a clean 1fr value — no sub-pixel drift. The column hits 732px at
-// ~1026px viewport: 21 + 210 + 42 + 732 + 21 = 1026px ≈ 1024px target.
-// Resets to MIN cells at this threshold — 5-up lands in MIN state first.
+// -- Container query: 4-up layout, MIN cells (content-cell ≥ 624px) ----------
+// 624px = 4×144 + 3×16 — geometric minimum for 4-up at MIN cell size.
+// Bento becomes fit-content and centers in its content-cell.
 // grid-template-areas are authored per-bento in placements/_<pageKey>.scss.
+// Upper bound at 751px prevents MONEY query firing at the same time.
 
-@container content-cell (min-width: 732px) {
+@container content-cell (min-width: 624px) and (max-width: 751px) {
     .bento-grid {
-        --bento-cell-size: 140px;
-        --bento-gap:       8px;
-        --bento-padding:   8px;
+        --bento-cell-size: 144px;
 
-        grid-template-columns: repeat(5, var(--bento-cell-size));
-        grid-template-rows:    repeat(5, var(--bento-cell-size));
+        grid-template-columns: repeat(4, var(--bento-cell-size));
+        grid-template-rows:    repeat(4, var(--bento-cell-size));
 
         width: fit-content;
         margin-inline: auto;
     }
 
-    // 5-up: grid tracks define cell dimensions — unset any 2-up aspect-ratio constraints.
-    // Double-class selector raises specificity above the single-class base rules
-    // that appear later in the file, ensuring this wins regardless of cascade order.
+    // 4-up: grid tracks define cell dimensions — unset 2-up aspect-ratio constraints.
+    // Double-class selector raises specificity above single-class base rules,
+    // ensuring this wins regardless of cascade order.
     .bento-cell--image-directed.bento-cell--image-directed,
     .bento-cell--graphic.bento-cell--graphic {
         aspect-ratio: unset;
     }
 }
 
-// -- Container query: 5-up MAX cells — DISABLED -------------------------------
-// A 900px content-cell only exists in FF Grid (≥ 1248px viewport) where the
-// bento is always 5-up at 140px fixed cells. Bumping to 208px here makes the
-// 5-up grid 1104px wide — wider than the 792px content-cell. DO NOT re-enable
-// without a mechanism to prevent firing in FF Grid.
-//
-// @container content-cell (min-width: 900px) {
-//     .bento-grid { --bento-cell-size: 208px; ... }
-// }
+// -- Container query: 4-up layout, MONEY cells (content-cell ≥ 752px) --------
+// 752px = 4×176 + 3×16 — the primary desktop designed state.
+// This is the authored composition state — cell size locks to 176px (MONEY).
+
+@container content-cell (min-width: 752px) {
+    .bento-grid {
+        --bento-cell-size: 176px;              /* MONEY — the designed state */
+
+        grid-template-columns: repeat(4, var(--bento-cell-size));
+        grid-template-rows:    repeat(4, var(--bento-cell-size));
+
+        width: fit-content;
+        margin-inline: auto;
+    }
+
+    // 4-up: unset 2-up aspect-ratio constraints.
+    .bento-cell--image-directed.bento-cell--image-directed,
+    .bento-cell--graphic.bento-cell--graphic {
+        aspect-ratio: unset;
+    }
+}
+
+// -- Scrollable image cell visibility ----------------------------------------
+// Mirrors the 4-up threshold — desktop instance shows in 4-up, hides in 2-up.
+
+.bento-cell--image-desktop {
+    display: none; // hidden by default (2-up context)
+}
+
+@container content-cell (min-width: 624px) {
+    .bento-cell--image-desktop {
+        display: block; // shown in 4-up
+    }
+    .bento-cell--image-scrollable {
+        display: none; // hidden in 4-up
+    }
+}
 
 // -- Themes -------------------------------------------------------------------
 // Maps named theme classes to cell custom properties.
@@ -159,7 +189,7 @@
 // -- Cells --------------------------------------------------------------------
 // Architecture note: .bento-cell__inner is ALWAYS position: relative.
 // In 2-up, content drives row height via normal flow.
-// In 5-up, the grid track defines the cell height; __inner fills it via
+// In 4-up, the grid track defines the cell height; __inner fills it via
 // height: 100%. No position: absolute needed or used anywhere.
 
 .bento-cell {
@@ -188,8 +218,8 @@
 
 // -- 2-up cell type modifiers -------------------------------------------------
 // aspect-ratio rules that constrain specific cell types in 2-up.
-// ALL of these must appear BEFORE the 5-up container query so the
-// 5-up unset wins via cascade order at equal specificity.
+// ALL of these must appear BEFORE the 4-up container queries so the
+// 4-up unset wins via cascade order at equal specificity.
 
 // image-directed: portrait crop box in 2-up
 .bento-cell--image-directed {
@@ -214,48 +244,26 @@
     height: 100%;
 }
 
-// -- Scrollable image cell --------------------------------------------------
+// -- Scrollable image cell ----------------------------------------------------
 // Use for wide process artifacts (FigJam boards, journey maps, diagrams) where
 // the breadth of the content is editorially meaningful.
 //
 // Two sibling <article> elements are rendered from YAML when scrollable: true:
-//   .bento-cell--image-desktop  — shown in 5-up (content-cell ≥ 732px), hidden below
-//   .bento-cell--image-scrollable — shown in 2-up, hidden above
+//   .bento-cell--image-desktop    — shown in 4-up (≥ 624px), hidden in 2-up
+//   .bento-cell--image-scrollable — shown in 2-up, hidden in 4-up
 //
 // The scrollable instance uses a dedicated scrollSrc: image (no srcset),
-// 500px tall, overflow: auto on both axes. The desktop instance is a normal
-// image cell using the standard src:.
+// fixed height, overflow: auto on both axes.
 //
 // YAML: type: image + scrollable: true + media.scrollSrc: path-to-scroll-image
-//
-// TODO (future): consider a tap-to-fullscreen option.
-
-// Desktop instance — normal image cell, hidden in 2-up
-.bento-cell--image-desktop {
-    display: none; // hidden by default (2-up context)
-}
-
-@container content-cell (min-width: 732px) {
-    .bento-cell--image-desktop {
-        display: block; // shown in 5-up
-    }
-    .bento-cell--image-scrollable {
-        display: none; // hidden in 5-up
-    }
-}
 
 // Scrollable instance — 2-up only
 .bento-cell--image-scrollable {
-    // Explicit height keeps the article grid-consistent (square).
-    // The image is taller than this — __inner scrolls to reveal it.
     height: calc(var(--bento-cell-size) * 2 + var(--bento-gap));
     overflow: hidden; // border-radius clip
 
     // Fade affordance on right edge — signals more content
-    // CONTRACT_EXCEPTION: position: absolute on ::after pseudo-element used solely
-    // as a decorative overlay — not for content placement. Parent has position: relative.
-    // TODO: revisit when scrollable bento-article affordance styles are added —
-    // may be superseded by a more complete scroll indicator treatment.
+    // CONTRACT_EXCEPTION: position: absolute on ::after used solely as decorative overlay.
     &::after {
         content: "";
         position: absolute;
@@ -272,7 +280,7 @@
 .bento-cell--image-scrollable .bento-cell__inner {
     padding: 0;
     height: 100%;
-    overflow: auto;                    // 4-way scroll
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     flex-direction: row;
@@ -281,9 +289,9 @@
 
 .bento-cell--image-scrollable img {
     display: block;
-    width: auto;       // natural width
-    height: 500px;     // fixed — cell scrolls to reveal, article stays grid-sized
-    max-width: none;   // never constrain to container
+    width: auto;
+    height: 500px;     // fixed — cell scrolls to reveal
+    max-width: none;
     flex-shrink: 0;
 }
 
@@ -298,9 +306,9 @@
     object-position: center top;
 }
 
-// -- Graphic cell ------------------------------------------------------------
+// -- Graphic cell -------------------------------------------------------------
 // Square illustration/diagram assets. aspect-ratio: 1 declared above with
-// other 2-up modifiers. Unset in 5-up container query above.
+// other 2-up modifiers. Unset in 4-up container queries above.
 
 .bento-cell--graphic .bento-cell__inner {
     padding: var(--bento-padding);
