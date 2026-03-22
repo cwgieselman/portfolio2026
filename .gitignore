@@ -156,6 +156,9 @@ src/_figma-json
 # Location to stage files for Claude Code to use.
 _staging/
 
+# Personal convenience archive — not source, not deployed
+_archive/
+
 # Playwright test artifacts
 tests/screenshots/
 tests/report/
