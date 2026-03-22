@@ -1,0 +1,94 @@
+id: media
+name: media
+njk: components/media.njk
+desc: Bare image for bento cells — no caption wrapper
+tags:
+  - content
+  - media
+  - bento
+links:
+  figma: ~
+  netlify: ~
+
+variants:
+  - label: "default"
+    desc: "Standard bento image cell, decorative"
+    mediaParams:
+      src: "TODO:src"
+      hasAlt: false
+      cssClass: "bento-cell__img"
+
+  - label: "with alt text"
+    desc: "Bento image cell where image carries meaning"
+    mediaParams:
+      src: "TODO:src"
+      hasAlt: true
+      alt: "Descriptive alt text for this image."
+      cssClass: "bento-cell__img"
+      sizes: "40vw"
+
+  - label: "the FigJam scroll"
+    desc: "Article 07 in INFICON Impact Manager — scrollable cell, currently 1048x692. Nearly square. For a scrollable cell. The irony."
+    mediaParams:
+      src: "TODO:src"
+      hasAlt: false
+      cssClass: "bento-cell__img"
+      scrollSrc: "TODO:src"
+
+contract:
+  - field: "mediaParams.src"
+    type: string
+    required: true
+    desc: "Image path. TODO:src triggers bacon placeholder. Never use data-optimize on placeholders."
+  - field: "mediaParams.hasAlt"
+    type: boolean
+    required: true
+    desc: "true applies alt text and optimization pipeline. false sets alt='' and role=presentation."
+  - field: "mediaParams.alt"
+    type: string
+    required: false
+    desc: "Required when hasAlt: true."
+  - field: "mediaParams.cssClass"
+    type: string
+    required: false
+    desc: "Injected as class on the img element. Use bento-cell__img for bento context."
+  - field: "mediaParams.sizes"
+    type: string
+    required: false
+    desc: "Passed to data-sizes for srcset hints. Defaults to 100vw."
+  - field: "mediaParams.scrollSrc"
+    type: string
+    required: false
+    desc: "Wide-crop image for scrollable cells. 3:1 ratio or wider. Use --SCROLL suffix in filename."
+
+usage:
+  do:
+    - "Use media.njk inside bento cells, not figure.njk. The figure wrapper breaks bento cell grid placement."
+    - "Use --SCROLL suffix in scrollSrc filenames. It is a naming convention that future-you will appreciate."
+    - "Export scrollable images at 3:1 ratio or wider. A nearly-square scrollable cell is not a good experience."
+  dont:
+    - "Don't set scrollSrc without also having a wide-crop export ready. TODO:src is a valid placeholder but ship the real asset before launch."
+    - "Don't use data-optimize on baconmockup placeholder images."
+    - "Don't use media.njk where a caption is editorially required. Use figure.njk instead."
+  gotchas:
+    - "inficon--screen--anomaly-app-figjam.png is currently 1048x692. Nearly square. The scroll affordance will be underwhelming until the wide crop exists."
+    - "The scrollable cell visual affordance design (icon? label? animation?) is still undecided as of March 2026. The fade is wired. The indicator is not."
+    - "The two-sibling render pattern for scrollable cells means two DOM elements per cell. Account for this in grid placement."
+  a11y:
+    - attr: "alt=''"
+      desc: "Correct for decorative bento image cells. The surrounding content cell carries the meaning."
+    - attr: "role=presentation"
+      desc: "Auto-applied when hasAlt: false."
+    - attr: "aria-details"
+      desc: "Wired via arrow field on the related content cell. Points to this cell's ID."
+  related:
+    - figure
+    - bento-article
+
+changelog:
+  - ver: "0.2"
+    date: "Mar 2026"
+    note: "scrollSrc field documented. --SCROLL suffix naming convention established."
+  - ver: "0.1"
+    date: "Feb 2026"
+    note: "Forked from figure.njk. Caption wrapper removed. Six pure image articles in INFICON Impact Manager migrated to media blocks."

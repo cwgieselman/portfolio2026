@@ -30,8 +30,10 @@
 @use "components/link";
 @use "components/link-block";
 @use "components/bento-grid";
+@use "components/bento-arrow";
 @use "components/comparison-slider";
 @use "components/annotation-toggle";
+@use "components/design-system-hub";
 
 /* One-off bento cell overrides — add per-cell partials here */
 // @use "components/bento-cells/box-01";

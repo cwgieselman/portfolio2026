@@ -1,0 +1,649 @@
+---
+layout: layouts/base.njk
+title: "Design System"
+permalink: "/design-system/"
+pageKey: "design-system"
+mainClass: "layout--design-system"
+---
+
+<main class="layout {{ mainClass }}">
+  <div class="ds-hub">
+
+    <header class="ds-hub__header">
+      <h1 class="ds-hub__title">Design system</h1>
+      <p class="ds-hub__meta">portfolio2026 &middot; CGDC-DS &middot; tokens/tokens.json &middot; Nunjucks partials</p>
+    </header>
+
+    <nav class="ds-hub__top-nav" aria-label="Design system sections">
+      <button class="ds-hub__top-tab ds-hub__top-tab--active" onclick="dsSetTab('ds-tokens', this)">Tokens</button>
+      <button class="ds-hub__top-tab" onclick="dsSetTab('ds-components', this)">Components</button>
+    </nav>
+
+    <!-- TOKENS PANEL -->
+    <section class="ds-panel ds-panel--active" id="ds-tokens" aria-label="Design tokens">
+      <div class="ds-tokens__controls">
+        <div class="ds-tokens__tiers" id="t-tier-nav"></div>
+        <div class="ds-tokens__view-toggle">
+          <button class="ds-tokens__view-btn ds-tokens__view-btn--active" id="t-btn-list" onclick="tSetView('list')" aria-label="List view">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <rect x="1" y="2" width="12" height="1.5" rx=".75" fill="currentColor"/>
+              <rect x="1" y="6.25" width="12" height="1.5" rx=".75" fill="currentColor"/>
+              <rect x="1" y="10.5" width="12" height="1.5" rx=".75" fill="currentColor"/>
+            </svg>
+          </button>
+          <button class="ds-tokens__view-btn" id="t-btn-card" onclick="tSetView('card')" aria-label="Card view">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <rect x="1" y="1" width="5.5" height="5.5" rx="1" fill="currentColor"/>
+              <rect x="7.5" y="1" width="5.5" height="5.5" rx="1" fill="currentColor"/>
+              <rect x="1" y="7.5" width="5.5" height="5.5" rx="1" fill="currentColor"/>
+              <rect x="7.5" y="7.5" width="5.5" height="5.5" rx="1" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="ds-tokens__type-bar" id="t-type-bar"></div>
+      <div class="ds-tokens__output" id="t-output"></div>
+    </section>
+
+    <!-- COMPONENTS PANEL -->
+    <section class="ds-panel" id="ds-components" aria-label="Component gallery">
+      <div class="ds-comp__filter-bar" id="cg-filter-bar"></div>
+      <div class="ds-comp__gallery" id="cg-gallery"></div>
+      <div class="ds-comp__detail" id="cg-detail-panel"></div>
+    </section>
+
+  </div>
+</main>
+
+<script id="ds-component-docs-data" type="application/json">
+  {{ componentDocs | dump | safe }}
+</script>
+
+<script>
+/* ─────────────────────────────────────────────
+   HUB — top-level tab switcher
+───────────────────────────────────────────── */
+function dsSetTab(targetId, btn) {
+  document.querySelectorAll('.ds-hub__top-tab').forEach(b => b.classList.remove('ds-hub__top-tab--active'));
+  btn.classList.add('ds-hub__top-tab--active');
+  document.querySelectorAll('.ds-panel').forEach(p => p.classList.remove('ds-panel--active'));
+  document.getElementById(targetId).classList.add('ds-panel--active');
+}
+
+/* ─────────────────────────────────────────────
+   TOKEN DATA
+───────────────────────────────────────────── */
+const tokens = [
+  // ── PRIMITIVE · color · neutral ─────────────────────────────────
+  { tier:'primitive', group:'color · neutral', name:'--color-neutral-10', value:'#FFFFFF', type:'color', desc:'White · page bg · bento white theme bg' },
+  { tier:'primitive', group:'color · neutral', name:'--color-neutral-20', value:'#F8F8F7', type:'color', desc:'Page background' },
+  { tier:'primitive', group:'color · neutral', name:'--color-neutral-50', value:'#ECECE9', type:'color', desc:'Subtle surface · dividers' },
+  { tier:'primitive', group:'color · neutral', name:'--color-neutral-60', value:'#DFDFDE', type:'color', desc:'Bento white theme border' },
+  { tier:'primitive', group:'color · neutral', name:'--color-neutral-90', value:'#000000', type:'color', desc:'Pure black' },
+  // ── PRIMITIVE · color · primary ─────────────────────────────────
+  { tier:'primitive', group:'color · primary', name:'--color-primary-10', value:'#E7EDF4', type:'color', desc:'Lightest primary · bento primary-dark text' },
+  { tier:'primitive', group:'color · primary', name:'--color-primary-20', value:'#CFDBE8', type:'color', desc:'Light primary · bento primary-light bg' },
+  { tier:'primitive', group:'color · primary', name:'--color-primary-30', value:'#9FB8D1', type:'color', desc:'Primary border light' },
+  { tier:'primitive', group:'color · primary', name:'--color-primary-40', value:'#87A6C6', type:'color', desc:'Primary mid-light' },
+  { tier:'primitive', group:'color · primary', name:'--color-primary-50', value:'#3E71A3', type:'color', desc:'Page title color' },
+  { tier:'primitive', group:'color · primary', name:'--color-primary-60', value:'#0E4D8C', type:'color', desc:'Section heading · bento white text · bento primary-dark bg' },
+  { tier:'primitive', group:'color · primary', name:'--color-primary-70', value:'#082E54', type:'color', desc:'Body text · subheading color' },
+  { tier:'primitive', group:'color · primary', name:'--color-primary-80', value:'#061F38', type:'color', desc:'Bento primary-dark border' },
+  { tier:'primitive', group:'color · primary', name:'--color-primary-90', value:'#041526', type:'color', desc:'Darkest primary' },
+  // ── PRIMITIVE · color · secondary ───────────────────────────────
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-10', value:'#FFFAE6', type:'color', desc:'Lightest secondary' },
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-20', value:'#FFF0B3', type:'color', desc:'Bento secondary-light bg' },
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-30', value:'#FFE166', type:'color', desc:'Secondary border light' },
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-40', value:'#FFD733', type:'color', desc:'CTA color' },
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-50', value:'#FFCD00', type:'color', desc:'Bento secondary-dark bg' },
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-60', value:'#CCA400', type:'color', desc:'Secondary border dark' },
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-70', value:'#997B00', type:'color', desc:'Bento secondary-light text' },
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-80', value:'#665200', type:'color', desc:'Eyebrow color · bento secondary-dark text' },
+  { tier:'primitive', group:'color · secondary', name:'--color-secondary-90', value:'#191400', type:'color', desc:'Darkest secondary' },
+  // ── PRIMITIVE · scale ───────────────────────────────────────────
+  { tier:'primitive', group:'scale', name:'--scale-base', value:'16px', type:'dimension', desc:'Base unit. All scale tokens derive from this.', dimPreview:'16px' },
+  { tier:'primitive', group:'scale', name:'--scale-25', value:'calc(var(--scale-base) * 0.25)', type:'dimension', desc:'4px · micro spacing', px:4 },
+  { tier:'primitive', group:'scale', name:'--scale-50', value:'calc(var(--scale-base) * 0.50)', type:'dimension', desc:'8px', px:8 },
+  { tier:'primitive', group:'scale', name:'--scale-75', value:'calc(var(--scale-base) * 0.75)', type:'dimension', desc:'12px', px:12 },
+  { tier:'primitive', group:'scale', name:'--scale-100', value:'calc(var(--scale-base) * 1)', type:'dimension', desc:'16px · base', px:16 },
+  { tier:'primitive', group:'scale', name:'--scale-125', value:'calc(var(--scale-base) * 1.25)', type:'dimension', desc:'20px', px:20 },
+  { tier:'primitive', group:'scale', name:'--scale-150', value:'calc(var(--scale-base) * 1.5)', type:'dimension', desc:'24px', px:24 },
+  { tier:'primitive', group:'scale', name:'--scale-175', value:'calc(var(--scale-base) * 1.75)', type:'dimension', desc:'28px', px:28 },
+  { tier:'primitive', group:'scale', name:'--scale-200', value:'calc(var(--scale-base) * 2)', type:'dimension', desc:'32px', px:32 },
+  { tier:'primitive', group:'scale', name:'--scale-250', value:'calc(var(--scale-base) * 2.5)', type:'dimension', desc:'40px', px:40 },
+  { tier:'primitive', group:'scale', name:'--scale-300', value:'calc(var(--scale-base) * 3)', type:'dimension', desc:'48px', px:48 },
+  { tier:'primitive', group:'scale', name:'--scale-350', value:'calc(var(--scale-base) * 3.5)', type:'dimension', desc:'56px · page title size', px:56 },
+  { tier:'primitive', group:'scale', name:'--scale-400', value:'calc(var(--scale-base) * 4)', type:'dimension', desc:'64px · page title line-height', px:64 },
+  { tier:'primitive', group:'scale', name:'--scale-450', value:'calc(var(--scale-base) * 4.5)', type:'dimension', desc:'72px · bento stat size', px:72 },
+  // ── PRIMITIVE · typography ──────────────────────────────────────
+  { tier:'primitive', group:'typography · family', name:'--font-family-brand', value:'Raleway', type:'typography', desc:'Brand headings', fontFamily:'Raleway,sans-serif', preview:'fox' },
+  { tier:'primitive', group:'typography · family', name:'--font-family-plain', value:'PT Sans', type:'typography', desc:'Body copy · UI text', fontFamily:'"PT Sans",sans-serif', preview:'fox' },
+  { tier:'primitive', group:'typography · family', name:'--font-family-display', value:'Tienne', type:'typography', desc:'Bento stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'22px' },
+  { tier:'primitive', group:'typography · weight', name:'--font-weight-regular', value:'400', type:'typography', desc:'Default weight', fontFamily:'"PT Sans",sans-serif', preview:'fox' },
+  { tier:'primitive', group:'typography · weight', name:'--font-weight-semibold', value:'600', type:'typography', desc:'Headings · emphasis', fontFamily:'Raleway,sans-serif', preview:'fox' },
+  { tier:'primitive', group:'typography · weight', name:'--font-weight-bold', value:'700', type:'typography', desc:'Strong headings · CTA', fontFamily:'Raleway,sans-serif', preview:'fox' },
+  // ── SEMANTIC · color ────────────────────────────────────────────
+  { tier:'semantic', group:'color · surface', name:'--color-bg', value:'alias → neutral-20', type:'color', desc:'Page background', alias:true, resolvedColor:'#F8F8F7' },
+  { tier:'semantic', group:'color · text', name:'--color-text', value:'alias → primary-70', type:'color', desc:'Default body text', alias:true, resolvedColor:'#082E54' },
+  // ── SEMANTIC · spacing ──────────────────────────────────────────
+  { tier:'semantic', group:'spacing', name:'--spacing-xxs', value:'alias → scale-25', type:'spacing', desc:'4px · micro', alias:true, resolvedPx:4 },
+  { tier:'semantic', group:'spacing', name:'--spacing-xs', value:'alias → scale-50', type:'spacing', desc:'8px', alias:true, resolvedPx:8 },
+  { tier:'semantic', group:'spacing', name:'--spacing-s', value:'alias → scale-75', type:'spacing', desc:'12px', alias:true, resolvedPx:12 },
+  { tier:'semantic', group:'spacing', name:'--spacing-m', value:'alias → scale-100', type:'spacing', desc:'16px · base', alias:true, resolvedPx:16 },
+  { tier:'semantic', group:'spacing', name:'--spacing-l', value:'alias → scale-125', type:'spacing', desc:'20px', alias:true, resolvedPx:20 },
+  { tier:'semantic', group:'spacing', name:'--spacing-xl', value:'alias → scale-150', type:'spacing', desc:'24px', alias:true, resolvedPx:24 },
+  { tier:'semantic', group:'spacing', name:'--spacing-xxl', value:'alias → scale-200', type:'spacing', desc:'32px', alias:true, resolvedPx:32 },
+  { tier:'semantic', group:'spacing', name:'--spacing-xxxl', value:'alias → scale-250', type:'spacing', desc:'40px', alias:true, resolvedPx:40 },
+  // ── SEMANTIC · radius ───────────────────────────────────────────
+  { tier:'semantic', group:'radius', name:'--corner-none', value:'0px', type:'dimension', desc:'No radius', dimPreview:'0' },
+  { tier:'semantic', group:'radius', name:'--corner-xxs', value:'alias → scale-25', type:'dimension', desc:'4px', alias:true, resolvedPx:4 },
+  { tier:'semantic', group:'radius', name:'--corner-xs', value:'alias → scale-50', type:'dimension', desc:'8px', alias:true, resolvedPx:8 },
+  { tier:'semantic', group:'radius', name:'--corner-s', value:'alias → scale-75', type:'dimension', desc:'12px', alias:true, resolvedPx:12 },
+  { tier:'semantic', group:'radius', name:'--corner-m', value:'alias → scale-100', type:'dimension', desc:'16px', alias:true, resolvedPx:16 },
+  { tier:'semantic', group:'radius', name:'--corner-l', value:'alias → scale-125', type:'dimension', desc:'20px', alias:true, resolvedPx:20 },
+  { tier:'semantic', group:'radius', name:'--corner-xl', value:'alias → scale-150', type:'dimension', desc:'24px', alias:true, resolvedPx:24 },
+  { tier:'semantic', group:'radius', name:'--corner-xxl', value:'alias → scale-200', type:'dimension', desc:'32px', alias:true, resolvedPx:32 },
+  { tier:'semantic', group:'radius', name:'--corner-full', value:'1000px', type:'dimension', desc:'Pill / fully rounded', dimPreview:'∞' },
+  // ── SEMANTIC · typography ───────────────────────────────────────
+  { tier:'semantic', group:'typography · paragraph', name:'--type-paragraph-size', value:'alias → scale-100', type:'typography', desc:'16px body', fontFamily:'"PT Sans",sans-serif', preview:'fox', previewSize:'16px' },
+  { tier:'semantic', group:'typography · paragraph', name:'--type-paragraph-family', value:'alias → font-family-plain', type:'typography', desc:'PT Sans', fontFamily:'"PT Sans",sans-serif', preview:'fox' },
+  { tier:'semantic', group:'typography · headings', name:'--type-pageTitle-size', value:'alias → scale-350', type:'typography', desc:'56px · h1', fontFamily:'Raleway,sans-serif', preview:'aabb', previewSize:'20px' },
+  { tier:'semantic', group:'typography · headings', name:'--type-sectionHeading-size', value:'alias → scale-200', type:'typography', desc:'32px · h2', fontFamily:'Raleway,sans-serif', preview:'aabb', previewSize:'18px' },
+  { tier:'semantic', group:'typography · headings', name:'--type-subheading-size', value:'alias → scale-150', type:'typography', desc:'24px · h3', fontFamily:'Raleway,sans-serif', preview:'aabb', previewSize:'16px' },
+  { tier:'semantic', group:'typography · headings', name:'--type-fineprint-size', value:'alias → scale-75', type:'typography', desc:'12px · captions · labels', fontFamily:'"PT Sans",sans-serif', preview:'fox', previewSize:'12px' },
+  { tier:'semantic', group:'typography · headings', name:'--type-eyebrow-size', value:'alias → scale-100', type:'typography', desc:'16px allcaps · section labels', fontFamily:'Raleway,sans-serif', preview:'fox', previewSize:'11px' },
+  // ── COMPONENT · bento themes ────────────────────────────────────
+  { tier:'component', group:'bento · theme · white', name:'--bento-theme-white-bg', value:'alias → neutral-10', type:'color', desc:'White cell background', alias:true, resolvedColor:'#FFFFFF' },
+  { tier:'component', group:'bento · theme · white', name:'--bento-theme-white-color', value:'alias → primary-60', type:'color', desc:'White cell text', alias:true, resolvedColor:'#0E4D8C' },
+  { tier:'component', group:'bento · theme · white', name:'--bento-theme-white-border', value:'alias → neutral-60', type:'color', desc:'White cell border', alias:true, resolvedColor:'#DFDFDE' },
+  { tier:'component', group:'bento · theme · primary-dark', name:'--bento-theme-primary-dark-bg', value:'alias → primary-60', type:'color', desc:'Dark blue cell background', alias:true, resolvedColor:'#0E4D8C' },
+  { tier:'component', group:'bento · theme · primary-dark', name:'--bento-theme-primary-dark-color', value:'alias → primary-10', type:'color', desc:'Dark blue cell text', alias:true, resolvedColor:'#E7EDF4' },
+  { tier:'component', group:'bento · theme · primary-dark', name:'--bento-theme-primary-dark-border', value:'alias → primary-80', type:'color', desc:'Dark blue cell border', alias:true, resolvedColor:'#061F38' },
+  { tier:'component', group:'bento · theme · primary-light', name:'--bento-theme-primary-light-bg', value:'alias → primary-20', type:'color', desc:'Light blue cell background', alias:true, resolvedColor:'#CFDBE8' },
+  { tier:'component', group:'bento · theme · secondary-dark', name:'--bento-theme-secondary-dark-bg', value:'alias → secondary-50', type:'color', desc:'Gold cell background', alias:true, resolvedColor:'#FFCD00' },
+  { tier:'component', group:'bento · theme · secondary-light', name:'--bento-theme-secondary-light-bg', value:'alias → secondary-20', type:'color', desc:'Light gold cell background', alias:true, resolvedColor:'#FFF0B3' },
+  // ── COMPONENT · bento type ──────────────────────────────────────
+  { tier:'component', group:'bento · type', name:'--bento-type-stat-family', value:'alias → font-family-display', type:'typography', desc:'Tienne · stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'24px' },
+  { tier:'component', group:'bento · type', name:'--bento-type-stat-size', value:'alias → scale-450', type:'typography', desc:'72px · stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'20px' },
+  { tier:'component', group:'bento · type', name:'--bento-type-stat-weight', value:'alias → font-weight-bold', type:'typography', desc:'700', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'18px' },
+  // ── COMPONENT · content rhythm ──────────────────────────────────
+  { tier:'component', group:'content rhythm', name:'--content-rhythm--block', value:'alias → spacing-xxl', type:'spacing', desc:'32px · between content blocks', alias:true, resolvedPx:32 },
+  { tier:'component', group:'content rhythm', name:'--content-rhythm--continuation', value:'0px', type:'spacing', desc:'0 · continuation items stack tight', px:0 },
+  { tier:'component', group:'content rhythm', name:'--content-rhythm--list-indent', value:'alias → spacing-l', type:'spacing', desc:'20px · list indentation', alias:true, resolvedPx:20 },
+];
+
+const colorVals = [
+  '#FFFFFF','#F8F8F7','#ECECE9','#DFDFDE','#000000',
+  '#E7EDF4','#CFDBE8','#9FB8D1','#87A6C6','#3E71A3','#0E4D8C','#082E54','#061F38','#041526',
+  '#FFFAE6','#FFF0B3','#FFE166','#FFD733','#FFCD00','#CCA400','#997B00','#665200','#191400',
+];
+const tierDefs = [
+  { key:'primitive', label:'Primitive' },
+  { key:'semantic',  label:'Semantic' },
+  { key:'component', label:'Component' },
+];
+let tActiveTier = 'primitive', tActiveType = 'all', tViewMode = 'list';
+
+function tSetView(v) {
+  tViewMode = v;
+  document.getElementById('t-btn-list').classList.toggle('ds-tokens__view-btn--active', v === 'list');
+  document.getElementById('t-btn-card').classList.toggle('ds-tokens__view-btn--active', v === 'card');
+  tRender();
+}
+function tSetTier(t) { tActiveTier = t; tActiveType = 'all'; tRenderTierNav(); tRenderTypeBar(); tRender(); }
+function tSetType(t) { tActiveType = t; tRenderTypeBar(); tRender(); }
+
+function tRenderTierNav() {
+  document.getElementById('t-tier-nav').innerHTML = tierDefs.map(t =>
+    `<button class="ds-tokens__tier-btn${tActiveTier===t.key?' ds-tokens__tier-btn--active':''}" onclick="tSetTier('${t.key}')">${t.label}</button>`
+  ).join('');
+}
+function tRenderTypeBar() {
+  const tt = tokens.filter(t => t.tier === tActiveTier);
+  const types = [...new Set(tt.map(t => t.type))];
+  if (types.length <= 1) { document.getElementById('t-type-bar').innerHTML = ''; return; }
+  const btns = [['all','All'], ...types.map(t => [t, t.charAt(0).toUpperCase()+t.slice(1)])];
+  document.getElementById('t-type-bar').innerHTML = btns.map(([k,l]) =>
+    `<button class="ds-tokens__type-btn${tActiveType===k?' ds-tokens__type-btn--active':''}" onclick="tSetType('${k}')">${l}</button>`
+  ).join('');
+}
+
+function tSwatchColor(t) {
+  if (t.alias || t.type !== 'color') return null;
+  return colorVals.includes(t.value) ? t.value : null;
+}
+
+function tPreviewHTML(t, forCard) {
+  const color = tSwatchColor(t);
+  if (t.type === 'color' && color) {
+    const border = color === '#FFFFFF' ? 'border:0.5px solid #ddddd8;' : '';
+    if (forCard) return `<div class="ds-tokens__card-color" style="background:${color};${border}"></div>`;
+    return `<div class="ds-tokens__swatch" style="background:${color};${border}"></div>`;
+  }
+  if (t.type === 'color' && t.alias && t.resolvedColor) {
+    const chip = `<div class="ds-tokens__swatch ds-tokens__swatch--alias" style="background:${t.resolvedColor};"></div>`;
+    if (forCard) return `<div class="ds-tokens__card-preview">${chip}<span class="ds-tokens__alias-badge">alias</span></div>`;
+    return `<div class="ds-tokens__preview-alias">${chip}<span class="ds-tokens__alias-badge">alias</span></div>`;
+  }
+  if (t.type === 'spacing') {
+    const px = t.alias ? (t.resolvedPx || 8) : (t.px || 8);
+    const capped = Math.min(px, 80);
+    const bar = `<div class="ds-tokens__space-wrap"><div class="ds-tokens__space-bar" style="width:${capped}px;"></div><span class="ds-tokens__space-label">${px}px</span></div>`;
+    if (forCard) return `<div class="ds-tokens__card-preview ds-tokens__card-preview--left">${bar}${t.alias?`<span class="ds-tokens__alias-badge">alias</span>`:''}</div>`;
+    return t.alias ? `<div class="ds-tokens__preview-alias">${bar}<span class="ds-tokens__alias-badge">alias</span></div>` : bar;
+  }
+  if (t.type === 'typography' && t.fontFamily) {
+    if (t.preview === 'fox') {
+      const sz = t.previewSize || '11px';
+      const fox = `<span class="ds-tokens__preview-fox" style="font-family:${t.fontFamily};font-size:${sz};">The quick brown fox jumps over the lazy dog</span>`;
+      if (forCard) return `<div class="ds-tokens__card-preview ds-tokens__card-preview--top">${fox}</div>`;
+      return fox;
+    }
+    if (t.preview === 'aabb') {
+      const sz = t.previewSize || '18px';
+      const aabb = `<span class="ds-tokens__preview-aabb" style="font-family:${t.fontFamily};font-size:${sz};">AaBbCc 123</span>`;
+      if (forCard) return `<div class="ds-tokens__card-preview">${aabb}</div>`;
+      return aabb;
+    }
+  }
+  if (t.type === 'dimension' && t.dimPreview) {
+    if (forCard) return `<div class="ds-tokens__card-preview"><span class="ds-tokens__preview-dim">${t.dimPreview}</span></div>`;
+    return `<span class="ds-tokens__preview-dim">${t.dimPreview}</span>`;
+  }
+  if (forCard) return `<div class="ds-tokens__card-preview"><span class="ds-tokens__badge">${t.type}</span></div>`;
+  return `<div class="ds-tokens__preview-empty"></div>`;
+}
+
+function tRenderList(groups) {
+  return Object.entries(groups).map(([group, items]) => `
+    <div class="ds-tokens__group">
+      <p class="ds-tokens__group-label">${group}</p>
+      <table class="ds-tokens__table">
+        ${items.map(t => `
+          <tr>
+            <td class="ds-tokens__td-preview">${tPreviewHTML(t, false)}</td>
+            <td class="ds-tokens__td-name"><code>${t.name}</code></td>
+            <td class="ds-tokens__td-value"><code>${t.value}</code></td>
+            <td class="ds-tokens__td-desc">${t.desc}</td>
+            <td class="ds-tokens__td-badge"><span class="ds-tokens__badge">${t.type}</span></td>
+          </tr>`).join('')}
+      </table>
+    </div>`).join('');
+}
+
+function tRenderCards(groups) {
+  return Object.entries(groups).map(([group, items]) => `
+    <div class="ds-tokens__group">
+      <p class="ds-tokens__group-label">${group}</p>
+      <div class="ds-tokens__card-grid">
+        ${items.map(t => `
+          <div class="ds-tokens__card">
+            ${tPreviewHTML(t, true)}
+            <div class="ds-tokens__card-body">
+              <p class="ds-tokens__card-name"><code>${t.name}</code></p>
+              <p class="ds-tokens__card-value"><code>${t.value}</code></p>
+              <p class="ds-tokens__card-desc">${t.desc}</p>
+            </div>
+            <div class="ds-tokens__card-footer">
+              <span class="ds-tokens__badge">${t.type}</span>
+              ${t.alias ? `<span class="ds-tokens__alias-badge">alias</span>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function tRender() {
+  const filtered = tokens.filter(t => t.tier === tActiveTier && (tActiveType === 'all' || t.type === tActiveType));
+  const groups = {};
+  filtered.forEach(t => { if (!groups[t.group]) groups[t.group] = []; groups[t.group].push(t); });
+  document.getElementById('t-output').innerHTML = tViewMode === 'list' ? tRenderList(groups) : tRenderCards(groups);
+}
+
+/* ─────────────────────────────────────────────
+   COMPONENT DATA — sourced from src/_data/component-docs/*.yml
+   Eleventy injects componentDocs as a global at build time.
+   JS preview renderers below are the phase-1 approximation.
+   Phase 2: replace preview() with actual njk include calls.
+───────────────────────────────────────────── */
+const componentDocsData = (() => { try { return JSON.parse(document.getElementById('ds-component-docs-data').textContent); } catch(e) { console.warn('componentDocs failed to parse:', e.message); return {}; } })();
+
+const components = [
+  {
+    id:'bento-article',
+    get name() { return componentDocsData['bento-article'].name; },
+    get desc() { return componentDocsData['bento-article'].desc; },
+    get tags() { return componentDocsData['bento-article'].tags; },
+    links:{ figma:'https://figma.com', njk:'/src/_includes/components/bento-grid.njk', netlify:'https://cwgport26.netlify.app' },
+    thumb: () => `<div class="ds-thumb-bento">
+      <div class="ds-thumb-cell ds-thumb-cell--white" style="grid-column:1/3;grid-row:1/3;"><span class="ds-thumb-stat">3&times;</span></div>
+      <div class="ds-thumb-cell ds-thumb-cell--img" style="grid-column:3/6;"></div>
+      <div class="ds-thumb-cell ds-thumb-cell--white" style="grid-column:3/5;grid-row:2/3;"></div>
+      <div class="ds-thumb-cell ds-thumb-cell--white" style="grid-column:5/6;grid-row:2/3;"></div>
+    </div>`,
+    variants:[
+      {
+        label:'the arrow problem',
+        preview: (theme) => {
+          const t = theme || 'white';
+          return `<div class="bento-grid ds-bento-preview" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,80px);width:100%;max-width:480px;">
+            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
+              <div class="bento-cell__inner"><span class="bento-stat">3&times;</span><span class="bento-body">arrow attempts</span></div>
+            </article>
+            <article class="bento-cell bento-cell--image" style="grid-column:3/6;grid-row:1/2;background:var(--color-neutral-50);">
+              <div class="bento-cell__inner" style="align-items:center;justify-content:center;"><span class="bento-body" style="color:var(--color-neutral-60);">still no arrow</span></div>
+            </article>
+            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
+              <div class="bento-cell__inner"><span class="bento-body">SVG partial: raster</span></div>
+            </article>
+            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
+              <div class="bento-cell__inner"><span class="bento-body">::after: nope</span></div>
+            </article>
+          </div>`;
+        },
+        yaml:`<span class="yaml-comment"># bento-article--the-arrow-problem.yml</span>
+<span class="yaml-comment"># Last updated: a long day in March 2026</span>
+
+<span class="yaml-key">theme</span>: <span class="yaml-str">white</span>
+<span class="yaml-key">cols</span>: <span class="yaml-val">5</span>
+<span class="yaml-key">rows</span>: <span class="yaml-val">2</span>
+<span class="yaml-key">articles</span>:
+  - <span class="yaml-key">id</span>: <span class="yaml-str">content-cell-01</span>
+    <span class="yaml-key">type</span>: <span class="yaml-str">stat</span>
+    <span class="yaml-key">col</span>: <span class="yaml-val">1</span>
+    <span class="yaml-key">colSpan</span>: <span class="yaml-val">2</span>
+    <span class="yaml-key">row</span>: <span class="yaml-val">1</span>
+    <span class="yaml-key">rowSpan</span>: <span class="yaml-val">2</span>
+    <span class="yaml-key">stat</span>: <span class="yaml-str">"3x"</span>
+    <span class="yaml-key">label</span>: <span class="yaml-str">"arrow implementation attempts"</span>
+    <span class="yaml-key">arrow</span>: <span class="yaml-str">"content-cell-02"</span>
+    <span class="yaml-comment">    # arrow: field exists. Arrow does not.</span>
+  - <span class="yaml-key">id</span>: <span class="yaml-str">content-cell-02</span>
+    <span class="yaml-key">type</span>: <span class="yaml-str">image</span>
+    <span class="yaml-key">col</span>: <span class="yaml-val">3</span>
+    <span class="yaml-key">colSpan</span>: <span class="yaml-val">3</span>
+    <span class="yaml-key">row</span>: <span class="yaml-val">1</span>
+    <span class="yaml-key">media</span>:
+      <span class="yaml-key">src</span>: <span class="yaml-str">"bento-arrow.njk"</span>
+      <span class="yaml-comment">      # deleted. rip.</span>`,
+        get contract() { return componentDocsData['bento-article'].contract; },
+        get usage() {
+          const d = componentDocsData['bento-article'];
+          return { ...d.usage, changelog: d.changelog };
+        }
+      },
+      {
+        label:'the compile party',
+        preview: (theme) => {
+          const t = theme || 'primary-dark';
+          return `<div class="bento-grid ds-bento-preview" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,80px);width:100%;max-width:480px;">
+            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
+              <div class="bento-cell__inner"><span class="bento-stat">3</span><span class="bento-body">case studies queued</span></div>
+            </article>
+            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:3/6;grid-row:1/2;">
+              <div class="bento-cell__inner"><span class="bento-lead">BMTx &middot; INFICON IMS &middot; Impact Mgr</span></div>
+            </article>
+            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
+              <div class="bento-cell__inner"><span class="bento-body">slot-first contract</span></div>
+            </article>
+            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
+              <div class="bento-cell__inner"><span class="bento-body">TODO:src flagged</span></div>
+            </article>
+          </div>`;
+        },
+        yaml:`<span class="yaml-comment"># bento-article--compile-party.yml</span>
+<span class="yaml-comment"># Status: waiting on Craig to finish</span>
+<span class="yaml-comment"># the article component in Figma</span>
+
+<span class="yaml-key">theme</span>: <span class="yaml-str">dark</span>
+<span class="yaml-key">cols</span>: <span class="yaml-val">5</span>
+<span class="yaml-key">rows</span>: <span class="yaml-val">2</span>
+<span class="yaml-key">articles</span>:
+  - <span class="yaml-key">id</span>: <span class="yaml-str">content-cell-01</span>
+    <span class="yaml-key">type</span>: <span class="yaml-str">stat</span>
+    <span class="yaml-key">col</span>: <span class="yaml-val">1</span>
+    <span class="yaml-key">colSpan</span>: <span class="yaml-val">2</span>
+    <span class="yaml-key">row</span>: <span class="yaml-val">1</span>
+    <span class="yaml-key">rowSpan</span>: <span class="yaml-val">2</span>
+    <span class="yaml-key">stat</span>: <span class="yaml-str">"3"</span>
+    <span class="yaml-key">label</span>: <span class="yaml-str">"case studies in the compile party queue"</span>`,
+        contract: [],
+        usage: null
+      }
+    ]
+  },
+  {
+    id:'figure',
+    get name() { return componentDocsData['figure'].name; },
+    get desc() { return componentDocsData['figure'].desc; },
+    get tags() { return componentDocsData['figure'].tags; },
+    links:{ figma:'https://figma.com', njk:'/src/_includes/components/figure.njk', netlify:null },
+    thumb: () => `<div class="ds-thumb-figure">
+      <div class="ds-thumb-img-placeholder"></div>
+      <div class="ds-thumb-caption-bar"></div>
+    </div>`,
+    variants:[
+      {
+        label:'the hasAlt sermon',
+        preview: () => `<div class="ds-preview-figure">
+          <div class="ds-preview-img-block">
+            <code class="ds-preview-code-label">data-optimize</code>
+            <span class="ds-preview-code-sub">not on this one</span>
+          </div>
+          <p class="ds-preview-caption-text">hasAlt: false is correct &middot; this is not laziness</p>
+        </div>`,
+        yaml:`<span class="yaml-comment"># figure--the-hasalt-sermon.yml</span>
+
+<span class="yaml-key">figure</span>:
+  <span class="yaml-key">src</span>: <span class="yaml-str">"inficon--screen--anomaly-app.png"</span>
+  <span class="yaml-comment">  # real file. real project. $6M in licensing revenue.</span>
+  <span class="yaml-key">alt</span>: <span class="yaml-str">""</span>
+  <span class="yaml-comment">  # not lazy. intentional.</span>
+  <span class="yaml-key">hasAlt</span>: <span class="yaml-bool">false</span>
+  <span class="yaml-key">role</span>: <span class="yaml-str">"presentation"</span>
+  <span class="yaml-key">caption</span>: <span class="yaml-str">"Impact Manager anomaly detection, v1. First UX hire. One Craig."</span>`,
+        get contract() { return componentDocsData['figure'].contract; },
+        get usage() {
+          const d = componentDocsData['figure'];
+          return { ...d.usage, changelog: d.changelog };
+        }
+      }
+    ]
+  },
+  {
+    id:'media',
+    get name() { return componentDocsData['media'].name; },
+    get desc() { return componentDocsData['media'].desc; },
+    get tags() { return componentDocsData['media'].tags; },
+    links:{ figma:'https://figma.com', njk:'/src/_includes/components/media.njk', netlify:null },
+    thumb: () => `<div class="ds-thumb-media">
+      <code class="ds-thumb-media-label">no figure wrapper</code>
+    </div>`,
+    variants:[
+      {
+        label:'the FigJam scroll',
+        preview: () => `<div class="ds-preview-scroll">
+          <div class="ds-preview-scroll-inner">
+            <div class="ds-preview-scroll-dot"></div>
+            <div class="ds-preview-scroll-dot"></div>
+            <div class="ds-preview-scroll-dot"></div>
+            <div class="ds-preview-scroll-dot"></div>
+            <div class="ds-preview-scroll-dot ds-preview-scroll-dot--label">needs wider crop</div>
+          </div>
+          <div class="ds-preview-scroll-fade"></div>
+          <code class="ds-preview-scroll-hint">3:1+ needed</code>
+        </div>`,
+        yaml:`<span class="yaml-comment"># article 07 · currently 1048x692</span>
+<span class="yaml-comment"># nearly square. for a scrollable cell. ironic.</span>
+
+<span class="yaml-key">media</span>:
+  <span class="yaml-key">src</span>: <span class="yaml-str">"inficon--screen--anomaly-app-figjam.png"</span>
+  <span class="yaml-key">scrollable</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">scrollSrc</span>: <span class="yaml-str">"TODO:src"</span>
+  <span class="yaml-comment">  # re-export at 2000px+ wide, 3:1+ ratio</span>
+  <span class="yaml-comment">  # we built a token page instead tonight</span>
+  <span class="yaml-comment">  # no regrets</span>
+  <span class="yaml-key">cssClass</span>: <span class="yaml-str">"bento-cell__img"</span>`,
+        get contract() { return componentDocsData['media'].contract; },
+        get usage() {
+          const d = componentDocsData['media'];
+          return { ...d.usage, changelog: d.changelog };
+        }
+      }
+    ]
+  }
+];
+
+const allTags = [...new Set(components.flatMap(c => c.tags))];
+let cgActiveFilters = [], cgActiveComp = null, cgVariantState = {}, cgActiveTab = {};
+
+function cgToggleFilter(tag) {
+  cgActiveFilters = cgActiveFilters.includes(tag) ? cgActiveFilters.filter(t=>t!==tag) : [...cgActiveFilters,tag];
+  cgRenderFilterBar(); cgRenderGallery();
+}
+function cgFilteredComps() {
+  return cgActiveFilters.length ? components.filter(c=>cgActiveFilters.every(f=>c.tags.includes(f))) : components;
+}
+function cgOpenDetail(id) {
+  cgActiveComp = id;
+  if (!cgVariantState[id]) cgVariantState[id] = 0;
+  if (!cgActiveTab[id]) cgActiveTab[id] = 'yaml';
+  cgRenderGallery(); cgRenderDetail();
+  document.getElementById('cg-detail-panel').classList.add('ds-comp__detail--open');
+  setTimeout(() => document.getElementById('cg-detail-panel').scrollIntoView({behavior:'smooth',block:'nearest'}), 50);
+}
+function cgCloseDetail() {
+  cgActiveComp = null;
+  document.getElementById('cg-detail-panel').classList.remove('ds-comp__detail--open');
+  cgRenderGallery();
+}
+function cgSetVariant(id, idx) { cgVariantState[id]=idx; cgRenderDetail(); }
+function cgSetTab(id, tab) { cgActiveTab[id]=tab; cgRenderDetail(); }
+
+function cgRenderFilterBar() {
+  document.getElementById('cg-filter-bar').innerHTML =
+    `<button class="ds-comp__filter${!cgActiveFilters.length?' ds-comp__filter--active':''}" onclick="cgActiveFilters=[];cgRenderFilterBar();cgRenderGallery();">All</button>` +
+    allTags.map(t=>`<button class="ds-comp__filter${cgActiveFilters.includes(t)?' ds-comp__filter--active':''}" onclick="cgToggleFilter('${t}')">${t}</button>`).join('');
+}
+function cgRenderGallery() {
+  document.getElementById('cg-gallery').innerHTML = cgFilteredComps().map(c=>`
+    <div class="ds-comp__thumb${cgActiveComp&&cgActiveComp!==c.id?' ds-comp__thumb--dimmed':''}${cgActiveComp===c.id?' ds-comp__thumb--active':''}"
+         onclick="cgOpenDetail('${c.id}')">
+      <div class="ds-comp__thumb-preview">${c.thumb()}</div>
+      <div class="ds-comp__thumb-body">
+        <p class="ds-comp__thumb-name">${c.name}</p>
+        <div class="ds-comp__thumb-tags">${c.tags.map(t=>`<span class="ds-comp__thumb-tag">${t}</span>`).join('')}</div>
+      </div>
+    </div>`).join('');
+}
+function cgLinkPill(label, href) {
+  return href
+    ? `<a class="ds-comp__link-pill" href="${href}" target="_blank" rel="noopener">&#8599; ${label}</a>`
+    : `<span class="ds-comp__link-pill ds-comp__link-pill--disabled">&#8599; ${label}</span>`;
+}
+function cgRenderContract(contract) {
+  if (!contract||!contract.length) return `<p class="ds-comp__stub">Contract entries live on the canonical variant.</p>`;
+  return contract.map(row=>{
+    // Support both YAML shape (required: bool) and legacy JS shape (req: bool)
+    const isReq = row.required !== undefined ? row.required : row.req;
+    return `
+    <div class="ds-comp__contract-row">
+      <code class="ds-comp__contract-field">${row.field}</code>
+      <span class="ds-comp__badge">${row.type}</span>
+      <span class="ds-comp__badge ds-comp__badge--${isReq?'req':'opt'}">${isReq?'required':'optional'}</span>
+      <span class="ds-comp__contract-desc">${row.desc}</span>
+    </div>`;
+  }).join('');
+}
+function cgRenderUsage(usage) {
+  if (!usage) return `<p class="ds-comp__stub">Usage notes live on the canonical variant.</p>`;
+  const do_ = usage.do || [];
+  const dont = usage.dont || [];
+  const gotchas = usage.gotchas || [];
+  const a11y = usage.a11y || [];
+  const related = usage.related || [];
+  const changelog = usage.changelog || [];
+  // markup: in YAML lives on the njk file itself — omit from usage tab for now
+  // phase 2: read from actual .njk source via Eleventy filter
+  return `
+    <div class="ds-comp__usage-section">
+      <p class="ds-comp__usage-label">When to use &middot; when not to use</p>
+      <div class="ds-comp__do-dont">
+        <div class="ds-comp__do">
+          <p class="ds-comp__do-label">Use when</p>
+          ${do_.map(d=>`<p>${d}</p>`).join('')}
+        </div>
+        <div class="ds-comp__dont">
+          <p class="ds-comp__dont-label">Don't use when</p>
+          ${dont.map(d=>`<p>${d}</p>`).join('')}
+        </div>
+      </div>
+    </div>
+    ${gotchas.length ? `
+    <div class="ds-comp__usage-section">
+      <p class="ds-comp__usage-label">Known gotchas</p>
+      ${gotchas.map(g=>`<div class="ds-comp__gotcha"><span class="ds-comp__gotcha-bullet">&#9650;</span><span class="ds-comp__gotcha-text">${g}</span></div>`).join('')}
+    </div>` : ''}
+    ${a11y.length ? `
+    <div class="ds-comp__usage-section">
+      <p class="ds-comp__usage-label">Accessibility</p>
+      ${a11y.map(r=>`<div class="ds-comp__a11y-row"><code class="ds-comp__a11y-attr">${r.attr}</code><span class="ds-comp__a11y-desc">${r.desc}</span></div>`).join('')}
+    </div>` : ''}
+    ${related.length ? `
+    <div class="ds-comp__usage-section">
+      <p class="ds-comp__usage-label">Related components</p>
+      <div class="ds-comp__related">
+        ${related.map(r=>`<button class="ds-comp__related-chip" onclick="cgOpenDetail('${r}')">${r}</button>`).join('')}
+      </div>
+    </div>` : ''}
+    ${changelog.length ? `
+    <div class="ds-comp__usage-section">
+      <p class="ds-comp__usage-label">Changelog</p>
+      <table class="ds-comp__changelog">
+        ${changelog.map(c=>`
+          <tr>
+            <td class="ds-comp__changelog-ver">${c.ver}</td>
+            <td class="ds-comp__changelog-date">${c.date}</td>
+            <td class="ds-comp__changelog-note">${c.note}</td>
+          </tr>`).join('')}
+      </table>
+    </div>` : ''}`;
+}
+function cgRenderDetail() {
+  const comp = components.find(c=>c.id===cgActiveComp);
+  if (!comp) return;
+  const vIdx = cgVariantState[comp.id]||0;
+  const variant = comp.variants[vIdx];
+  const tab = cgActiveTab[comp.id]||'yaml';
+  document.getElementById('cg-detail-panel').innerHTML = `
+    <div class="ds-comp__detail-header">
+      <div>
+        <p class="ds-comp__detail-title">${comp.name}</p>
+        <p class="ds-comp__detail-desc">${comp.desc}</p>
+      </div>
+      <button class="ds-comp__close-btn" onclick="cgCloseDetail()">&#10005; close</button>
+    </div>
+    <div class="ds-comp__links-bar">
+      ${cgLinkPill('Figma',comp.links.figma)}
+      <span class="ds-comp__link-sep">&middot;</span>
+      ${cgLinkPill('.njk',comp.links.njk)}
+      <span class="ds-comp__link-sep">&middot;</span>
+      ${cgLinkPill('Netlify',comp.links.netlify)}
+    </div>
+    ${comp.variants.length>1?`<div class="ds-comp__variant-bar">${comp.variants.map((v,i)=>`<button class="ds-comp__variant-btn${i===vIdx?' ds-comp__variant-btn--active':''}" onclick="cgSetVariant('${comp.id}',${i})">${v.label}</button>`).join('')}</div>`:''}
+    <div class="ds-comp__preview">${variant.preview()}</div>
+    <div class="ds-comp__tabs">
+      <button class="ds-comp__tab${tab==='yaml'?' ds-comp__tab--active':''}" onclick="cgSetTab('${comp.id}','yaml')">YAML instance</button>
+      <button class="ds-comp__tab${tab==='contract'?' ds-comp__tab--active':''}" onclick="cgSetTab('${comp.id}','contract')">Data contract</button>
+      <button class="ds-comp__tab${tab==='usage'?' ds-comp__tab--active':''}" onclick="cgSetTab('${comp.id}','usage')">Usage</button>
+    </div>
+    <div class="ds-comp__tab-panel${tab==='yaml'?' ds-comp__tab-panel--active':''}"><pre>${variant.yaml}</pre></div>
+    <div class="ds-comp__tab-panel${tab==='contract'?' ds-comp__tab-panel--active':''}">${cgRenderContract(variant.contract)}</div>
+    <div class="ds-comp__tab-panel${tab==='usage'?' ds-comp__tab-panel--active':''}">${cgRenderUsage(variant.usage)}</div>
+  `;
+}
+
+/* ── INIT ──────────────────────────────────── */
+tRenderTierNav(); tRenderTypeBar(); tRender();
+cgRenderFilterBar(); cgRenderGallery();
+</script>

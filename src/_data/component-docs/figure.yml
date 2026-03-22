@@ -1,0 +1,110 @@
+id: figure
+name: figure
+njk: components/figure.njk
+desc: Editorial image with optional caption
+tags:
+  - content
+  - media
+  - a11y
+links:
+  figma: ~
+  netlify: ~
+
+variants:
+  - label: "the hasAlt sermon"
+    desc: "Desktop figure, decorative, with caption"
+    figureWrapper: "figure--ds-hasalt-sermon"
+    figureParams:
+      type: desktop
+      src: "TODO:src"
+      hasAlt: false
+      showCaption: true
+      caption: "Impact Manager anomaly detection surface, v1. First UX hire. International stakes. One Craig."
+
+  - label: "no caption"
+    desc: "Desktop figure, decorative, no caption"
+    figureWrapper: "figure--ds-no-caption"
+    figureParams:
+      type: desktop
+      src: "TODO:src"
+      hasAlt: false
+      showCaption: false
+
+  - label: "with alt text"
+    desc: "Desktop figure, meaningful image, screen-reader accessible"
+    figureWrapper: "figure--ds-with-alt"
+    figureParams:
+      type: desktop
+      src: "TODO:src"
+      hasAlt: true
+      alt: "Descriptive alt text describing the content and purpose of this image."
+      showCaption: true
+      caption: "When the image carries meaning the caption cannot fully convey, use hasAlt: true."
+
+contract:
+  - field: "figureWrapper"
+    type: string
+    required: true
+    desc: "Full wrapper ID. Format: figure--{section}--{page}--{cell}. Rendered on data-figure attribute."
+  - field: "figureParams.type"
+    type: string
+    required: true
+    desc: "desktop | mobile. Drives figure--{type} class and optimization width hints."
+  - field: "figureParams.src"
+    type: string
+    required: true
+    desc: "Image path. TODO:src or FPO in path triggers bacon placeholder. Never use data-optimize on placeholders."
+  - field: "figureParams.hasAlt"
+    type: boolean
+    required: true
+    desc: "true applies alt text and optimization pipeline. false sets alt='' and role=presentation."
+  - field: "figureParams.alt"
+    type: string
+    required: false
+    desc: "Required when hasAlt: true. Empty string is correct when hasAlt: false."
+  - field: "figureParams.showCaption"
+    type: boolean
+    required: false
+    desc: "true renders figcaption. Requires caption field."
+  - field: "figureParams.caption"
+    type: string
+    required: false
+    desc: "Caption text. Rendered inside figcaption. This is where editorial meaning lives for decorative figures."
+  - field: "figureParams.sizes"
+    type: string
+    required: false
+    desc: "Passed to data-sizes for srcset hints. Defaults to 100vw if omitted."
+
+usage:
+  do:
+    - "Use hasAlt: false for most portfolio figures. The caption carries editorial meaning — that is the correct and intentional pattern."
+    - "Use data-figure on the figure element to carry the full wrapper ID. Useful for YAML lookup from browser inspector at 11pm."
+    - "Use type: mobile for figures in narrow column contexts where a tighter srcset makes sense."
+  dont:
+    - "Don't put data-optimize on baconmockup placeholder images. The eleventy-img transform will attempt to fetch them and fail."
+    - "Don't use figure.njk inside bento cells. The figure wrapper breaks bento cell grid placement. Use media.njk instead."
+    - "Don't set hasAlt: true and leave alt empty. Either write real alt text or set hasAlt: false."
+  gotchas:
+    - "baconmockup.com + data-optimize = a build error that is confusing and dispiriting. The transform does not care about your intentions."
+    - "INFICON photography articles (03, 05 in Impact Manager page.yml) need alt text review from Craig before shipping."
+    - "hasAlt: false is not an accessibility violation when the caption carries the editorial meaning. It is documented. Stop second-guessing it."
+  a11y:
+    - attr: "alt=''"
+      desc: "Correct for decorative figures where the caption carries meaning. Paired with role=presentation."
+    - attr: "role=presentation"
+      desc: "Auto-applied when hasAlt: false."
+    - attr: "data-figure"
+      desc: "Carries full wrapper ID for YAML lookup from browser inspector. Not read by assistive technology."
+  related:
+    - media
+
+changelog:
+  - ver: "0.3"
+    date: "Feb 2026"
+    note: "data-figure attribute added for inspector-based YAML lookup."
+  - ver: "0.2"
+    date: "Jan 2026"
+    note: "hasAlt boolean added. role=presentation auto-applied when false. The sermon begins."
+  - ver: "0.1"
+    date: "Nov 2025"
+    note: "Initial build. No strong opinions yet."
