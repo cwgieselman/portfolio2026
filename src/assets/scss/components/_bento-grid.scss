@@ -44,9 +44,10 @@
     display: grid;
     gap: var(--bento-gap);
 
-    // Default: 2-up, fluid — cells grow to fill container, capped at MAX cell size.
-    // Rows are auto (content-driven) — __inner is relative flow in this state.
-    grid-template-columns: repeat(2, min(1fr, 208px));
+    // Default: 2-up, fluid — cells grow to fill available space up to MAX cell size.
+    // Uses minmax instead of min(1fr, 208px) to avoid circular dependency with
+    // container-type: inline-size on the grid itself.
+    grid-template-columns: repeat(2, minmax(140px, 208px));
     width: 100%;
     margin-inline: auto;
 
@@ -63,11 +64,17 @@
 .bento-grid--align-start { margin-inline-start: 0; margin-inline-end: auto; }
 .bento-grid--align-end   { margin-inline-start: auto; margin-inline-end: 0; }
 
-// -- Container query: MAX cells in 2-up (content-cell ≥ 500px) ---------------
-// In the 2-col Grid tier the figure column is 1fr of (viewport − 3×rem).
-// Step cells to 208px when there's room for larger cells.
+// -- Container query: MAX cells in 2-up (content-cell 500px–731px) -----------
+// Steps cells to 208px when the content-cell is wide enough for larger 2-up
+// cells, but ONLY below the 5-up threshold (732px).
+// Without the max-width bound this query fires in FF Grid (content-cell 792px)
+// and sets --bento-cell-size: 208px, making the 5-up grid 1104px wide —
+// blowing out of the 792px content-cell.
 
-@container content-cell (min-width: 500px) {
+// -- Container query: MAX cells in 2-up (content-cell 500px–731px) -----------
+// 2-up only. Bounded at 731px so it cannot fire once 5-up is active (732px+).
+
+@container content-cell (min-width: 500px) and (max-width: 731px) {
     .bento-grid {
         --bento-cell-size: 208px;
         --bento-gap:       16px;
@@ -93,6 +100,7 @@
         grid-template-rows:    repeat(5, var(--bento-cell-size));
 
         width: fit-content;
+        margin-inline: auto;
     }
 
     // 5-up: grid tracks define cell dimensions — unset any 2-up aspect-ratio constraints.
@@ -104,18 +112,15 @@
     }
 }
 
-// -- Container query: 5-up MAX cells (content-cell ≥ 900px) ------------------
-// Fires only in wide viewport tiers where the content-cell is genuinely large.
-// 5-up at MAX: 5 × 208 + 4 × 16 = 1,104px. Intentionally high threshold —
-// only applies to full-bleed or future wider content-cell configurations.
-
-@container content-cell (min-width: 900px) {
-    .bento-grid {
-        --bento-cell-size: 208px;
-        --bento-gap:       16px;
-        --bento-padding:   16px;
-    }
-}
+// -- Container query: 5-up MAX cells — DISABLED -------------------------------
+// A 900px content-cell only exists in FF Grid (≥ 1248px viewport) where the
+// bento is always 5-up at 140px fixed cells. Bumping to 208px here makes the
+// 5-up grid 1104px wide — wider than the 792px content-cell. DO NOT re-enable
+// without a mechanism to prevent firing in FF Grid.
+//
+// @container content-cell (min-width: 900px) {
+//     .bento-grid { --bento-cell-size: 208px; ... }
+// }
 
 // -- Themes -------------------------------------------------------------------
 // Maps named theme classes to cell custom properties.
