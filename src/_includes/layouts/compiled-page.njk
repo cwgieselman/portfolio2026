@@ -11,12 +11,18 @@
     <section class="layout__section layout__section--{{ sectionMode }}{% if sectionMode == 'composite' %} is-composite{% endif %}"
             data-section="{{ section.sectionKey }}"
             aria-labelledby="{{ sectionTitleId }}">
+        {% if sectionMode == "choreographed" %}
+        <div class="layout__chapter" data-pages="{{ section.pages | length }}">
+        {% endif %}
         {% for pageItem in section.pages %}
         {% set pageItemIndex0 = loop.index0 %}
         {% set pageId = pageItem.pageKey %}
         {% set cells = pageItem.cells %}
         {% include "layouts/page.njk" %}
         {% endfor %}
+        {% if sectionMode == "choreographed" %}
+        </div>
+        {% endif %}
     </section>
     {% endfor %}
 

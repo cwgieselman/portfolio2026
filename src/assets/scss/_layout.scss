@@ -49,6 +49,27 @@
  * Per-cell column assignments live in placements/_<pageKey>.scss. */
 
 @media (min-width: 640px) {
+
+    // Chapter wrapper — provides stacking context and scroll height.
+    // Beats stack at top: 0 via sticky, assembling into one composite grid.
+    // Height is set via JS in choreography.js based on beat count.
+    .layout__chapter {
+        position: relative;
+    }
+
+    // Each beat page is sticky at top: 0.
+    // As the user scrolls through the chapter height, beats accumulate.
+    // The bento column cells sit at the same grid origin — they compose.
+    .layout__section--choreographed .layout__page {
+        position: sticky;
+        top: 0;
+        // Ensure beats stack in order — later beats sit above earlier ones
+        z-index: 1;
+        &:nth-child(2) { z-index: 2; }
+        &:nth-child(3) { z-index: 3; }
+        &:nth-child(4) { z-index: 4; }
+    }
+
     .layout__section--choreographed .layout__page {
         display: grid;
         width: 100%;

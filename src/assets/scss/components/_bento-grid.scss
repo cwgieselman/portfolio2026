@@ -201,6 +201,7 @@
     container-name: bento-cell;
 
     position: relative;
+    z-index: 1;                        /* sits above skeleton cells (z-index: 0) */
     overflow: hidden;
     border-radius: var(--bento-radius);
 }
@@ -242,6 +243,18 @@
     display: block;
     width: 100%;
     height: 100%;
+}
+
+// Override intrinsic width/height attributes set by the image transform.
+// The transform adds width="N" height="N" to <img> for CLS prevention,
+// but inside bento cells these must yield to the CSS layout.
+.bento-cell--image .bento-cell__inner img,
+.bento-cell--image-directed .bento-cell__inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
 }
 
 // -- Scrollable image cell ----------------------------------------------------
@@ -396,11 +409,113 @@
     color: inherit;
 }
 
+// -- Choreography states ------------------------------------------------------
+// bento--pending: skeleton state. Cells show as ghost outlines.
+// bento--visible: normal rendered state.
+// JS in choreography.js drives the state transitions via IntersectionObserver.
+//
+// Skeleton articles (.bento-cell--skeleton) are injected by choreography.js
+// into the first beat only, filling unoccupied grid positions.
+// They share the same border-radius and border as real cells.
+// No content, no background — just the outlined article shape.
+
+.bento-cell--skeleton {
+    background-color: transparent;
+    border: var(--bento-border-width) solid var(--color-primary-30);
+    border-radius: var(--bento-radius);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bento-grid.bento--pending {
+    // Skeleton: cells become translucent ghost boxes
+    .bento-cell {
+        background-color: transparent;
+        border-color: var(--color-neutral-50);
+        // Suppress content — skeleton shows shape only
+        color: transparent;
+        img, picture { opacity: 0; }
+    }
+}
+
+.bento-grid.bento--visible {
+    // Animate in from slightly below
+    animation: bento-reveal 0.5s ease-out both;
+}
+
+@keyframes bento-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(var(--bento-gap)); /* one gap unit — entry offset */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// -- Scroll indicator ---------------------------------------------------------
+// CONTRACT_EXCEPTION: design placeholder — brand treatment deferred to Figma.
+// All pixel values, transforms, and non-token typography in this block are
+// intentionally provisional. Replace wholesale when Figma spec is ready.
+// Minimal, non-branded placeholder. Sits at the bottom of the viewport
+// on chapter load. Disappears on first scroll or after 6 seconds.
+
+.scroll-indicator {
+    position: fixed;
+    bottom: var(--spacing-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    opacity: 1;
+}
+
+.scroll-indicator--hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+}
+
+.scroll-indicator__label {
+    font-family: var(--font-family-brand);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary-60);
+    white-space: nowrap;
+}
+
+.scroll-indicator__chevron {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-right: 2px solid var(--color-primary-60);
+    border-bottom: 2px solid var(--color-primary-60);
+    transform: rotate(45deg);
+    animation: chevron-bob 1.2s ease-in-out infinite;
+}
+
+@keyframes chevron-bob {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50%       { transform: rotate(45deg) translateY(4px); }
+}
+
 // -- Reduced motion -----------------------------------------------------------
 
 @media (prefers-reduced-motion: reduce) {
     .bento-cell {
         transition: none !important;
         animation: none !important;
+    }
+    .bento-grid.bento--visible {
+        animation: none;
+    }
+    .scroll-indicator__chevron {
+        animation: none;
     }
 }
