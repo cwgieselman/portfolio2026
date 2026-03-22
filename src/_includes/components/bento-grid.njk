@@ -139,6 +139,9 @@
     {% if cell.theme %}
       {% set cellClasses = cellClasses + " bento-cell--theme-" + cell.theme %}
     {% endif %}
+    {% if cell.arrow %}
+      {% set cellClasses = cellClasses + " bento-cell--has-arrow" %}
+    {% endif %}
 
     <article
       class="{{ cellClasses }}"
@@ -164,6 +167,12 @@
           {{ cell.content | safe }}
         {% endif %}
       </div>
+
+      {# Arrow indicator — renders if cell.arrow is set in YAML #}
+      {% if cell.arrow %}
+        {% include "components/bento-arrow.njk" %}
+      {% endif %}
+
     </article>
 
   {% endif %}

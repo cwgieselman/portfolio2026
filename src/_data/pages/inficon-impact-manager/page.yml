@@ -37,6 +37,7 @@ sections:
                 - id: article-01
                   type: content
                   theme: primary-dark
+                  arrow: down
                   desktop:
                     col: "1 / 2"
                     row: "1 / 2"

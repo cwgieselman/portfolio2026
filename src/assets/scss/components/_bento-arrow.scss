@@ -1,0 +1,117 @@
+// _bento-arrow.scss
+// -----------------------------------------------------------------------------
+// Arrow indicator overlay for bento cells.
+//
+// The .bento-cell__arrow wrapper is position: absolute, sized to the cell
+// plus 20px bleed on all sides. The inline SVG fills it. Arrow stubs sit
+// flush with the cell edge at rest; the active stub is translated 20px
+// outward via data-arrow attribute targeting.
+//
+// The rect inside the SVG is display: none — it's a positioning reference
+// only, not a visible element. The cell itself provides the background.
+//
+// All arrow paths inherit fill: currentColor from the cell's --cell-color
+// token, giving correct contrast on all themes automatically.
+//
+// a11y: .bento-cell__arrow is aria-hidden="true" — purely decorative.
+// Semantic relationships between cells use aria-details on the cell element.
+//
+// Animation: not implemented yet. The translate is applied at render time
+// (no transition). Future: add transition: transform to the path elements
+// for enter animations, pulse, etc.
+// -----------------------------------------------------------------------------
+
+// .bento-cell--has-arrow: overflow stays hidden (same as all other cells).
+// The SVG arrow bleeds via its own overflow: visible — the cell does not
+// need to be overflow: visible for this to work.
+
+.bento-cell__arrow {
+    // Sits flush with the cell content box.
+    // The SVG viewBox has a 20px bleed zone built in — the arrow paths
+    // that protrude into the gap paint outside the SVG element bounds
+    // via SVG's default overflow: visible behaviour.
+    // The grid's overflow: hidden clips at the grid boundary (fine —
+    // arrows always point cell-to-cell, never outside the grid).
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+
+    svg {
+        // Natural size — do NOT scale to cell size.
+        // The 180×180 SVG is centered on the 140×140 cell;
+        // the 20px bleed on each side paints into the gap.
+        display: block;
+        position: absolute;
+        // Size = cell + 2×20px bleed, tracks --bento-cell-size at all thresholds
+        width:  calc(var(--bento-cell-size) + 40px);
+        height: calc(var(--bento-cell-size) + 40px);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        overflow: visible;
+    }
+
+    // Cell outline rect — hidden, SVG positioning reference only
+    #bento-article__container {
+        display: none;
+    }
+
+    // All arrow stub groups — hidden at rest.
+    [id^="bento-article__arrow-"] {
+        opacity: 0;
+        transform-box: fill-box;
+        transform-origin: center;
+
+        // Fill path — cell surface color, no stroke (base edge intentionally absent)
+        .arrow-fill {
+            fill: var(--cell-bg);
+            stroke: none;
+        }
+
+        // Stroke path — open path (two sides only), no fill
+        // Base edge is never drawn so arrow reads as extension of cell surface.
+        .arrow-stroke {
+            fill: none;
+            stroke: var(--cell-border);
+            stroke-width: var(--bento-border-width);
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    }
+}
+
+// -- Active arrow translations ------------------------------------------------
+// data-arrow value maps to the stub ID and translate direction.
+// 1×1 — single stub per side:
+
+.bento-cell__arrow[data-arrow="top"] {
+    #bento-article__arrow-top {
+        opacity: 1;
+        transform: translateY(-20px);
+    }
+}
+
+.bento-cell__arrow[data-arrow="right"] {
+    #bento-article__arrow-right {
+        opacity: 1;
+        transform: translateX(20px);
+    }
+}
+
+.bento-cell__arrow[data-arrow="down"] {
+    #bento-article__arrow-down {
+        opacity: 1;
+        transform: translateY(20px);
+    }
+}
+
+.bento-cell__arrow[data-arrow="left"] {
+    #bento-article__arrow-left {
+        opacity: 1;
+        transform: translateX(-20px);
+    }
+}
+
+// -- Spanned cells (multi-index) will be added here as SVG sprites are authored
+// Pattern: [data-arrow="bottom-2"] #bento-article__arrow-bottom-2 { ... }
