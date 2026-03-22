@@ -7,7 +7,8 @@
 
     {% for section in data.sections %}
     {% set sectionTitleId = section.sectionKey ~ "__title" %}
-    <section class="layout__section{% if section.mode == 'composite' %} is-composite{% endif %}"
+    {% set sectionMode = section.mode | default("choreographed") %}
+    <section class="layout__section layout__section--{{ sectionMode }}{% if sectionMode == 'composite' %} is-composite{% endif %}"
             data-section="{{ section.sectionKey }}"
             aria-labelledby="{{ sectionTitleId }}">
         {% for pageItem in section.pages %}
