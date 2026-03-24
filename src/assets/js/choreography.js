@@ -116,27 +116,63 @@
         );
         if (!bentos.length) return;
 
-        // Set chapter height - tall enough for all beats to arrive via scroll
+        // Set chapter height and normalise page wrapper heights.
+        //
+        // All .layout__page wrappers within a chapter must be the same height
+        // as the tallest bento in that chapter. Sticky release timing depends
+        // on wrapper height — a short wrapper releases too early.
+        //
+        // Chapter height = (tallest bento height x page count) + (n-1) x viewport height.
+        // The viewport-height scroll beats give the reader time to read each beat.
         const chapters = document.querySelectorAll('.layout__chapter');
+        const vh = window.innerHeight;
         chapters.forEach(chapter => {
-            const pages = chapter.querySelectorAll('.layout__page');
-            if (!pages.length) return;
-            const pageHeight = pages[0].getBoundingClientRect().height;
-            const bentoHeight = 752; // MONEY 4-up: 4x176 + 3x16
-            const totalHeight = (pageHeight * pages.length) + (bentoHeight * (pages.length - 1));
+            const chapterBentos = Array.from(chapter.querySelectorAll('.bento-grid'));
+            if (!chapterBentos.length) return;
+
+            // Find the tallest bento in this chapter
+            const tallest = chapterBentos.reduce((max, b) => {
+                const h = b.getBoundingClientRect().height;
+                return h > max ? h : max;
+            }, 0);
+
+            // Normalise every page wrapper to tallest bento + one gap (16px).
+            // The extra gap prevents a 1-row slip between sticky pages.
+            const pageH = tallest + 16;
+            const pages = chapter.querySelectorAll('.chapter__bento .layout__page');
+            pages.forEach(p => { p.style.height = pageH + 'px'; });
+
+            // Chapter height: pageH per page plus scroll beats between them
+            const scrollBeats = (chapterBentos.length - 1) * vh;
+            const totalHeight = (pageH * chapterBentos.length) + scrollBeats;
             chapter.style.height = totalHeight + 'px';
         });
 
-        // Beat-01: visible immediately, inject skeletons into empty positions
-        bentos[0].classList.add('bento--visible');
-        injectSkeletons(bentos[0]);
+        // Apply chapter overlap — read data-chapter-offset and set negative margin-top
+        // Cell size + gap = 176 + 16 = 192px per row
+        const cellSize = 176;
+        const gap = 16;
+        const rowUnit = cellSize + gap; // 192px
+        chapters.forEach(chapter => {
+            const offset = parseInt(chapter.dataset.chapterOffset || '0', 10);
+            if (offset > 0) {
+                chapter.style.marginTop = (-1 * offset * rowUnit) + 'px';
+            }
+        });
 
-        // All subsequent beats start hidden
-        for (let i = 1; i < bentos.length; i++) {
-            bentos[i].classList.add('bento--pending');
-        }
+        // Beat-01 of each chapter: visible immediately, inject skeletons
+        // Beat-02+ of each chapter: start hidden
+        chapters.forEach(chapter => {
+            const chapterBentos = chapter.querySelectorAll('.bento-grid');
+            if (!chapterBentos.length) return;
+            chapterBentos[0].classList.add('bento--visible');
+            injectSkeletons(chapterBentos[0]);
+            for (let i = 1; i < chapterBentos.length; i++) {
+                chapterBentos[i].classList.add('bento--pending');
+            }
+        });
 
-        // Observer: reveal beats as they scroll into view
+        // Observer: reveal pending beats as they scroll into view
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -153,9 +189,10 @@
             }
         );
 
-        for (let i = 1; i < bentos.length; i++) {
-            observer.observe(bentos[i]);
-        }
+        // Observe all pending bentos across all chapters
+        document.querySelectorAll(
+            '.layout__section--choreographed .bento-grid.bento--pending'
+        ).forEach(b => observer.observe(b));
     }
 
     // -- Init -----------------------------------------------------------------
