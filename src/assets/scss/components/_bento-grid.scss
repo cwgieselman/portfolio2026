@@ -409,6 +409,25 @@
     color: inherit;
 }
 
+// -- Skeleton underlay -------------------------------------------------------
+// Absolutely positioned within .layout__section--choreographed.
+// Sits below all content via z-index: 0 (set inline by JS).
+// Chapter-01 underlay visible on load. Chapter-02+ revealed by observer.
+
+.bento-skeleton-underlay {
+    // Override .bento-grid defaults that don't apply to the underlay
+    width: fit-content;
+    margin-inline: 0;
+}
+
+.bento-underlay--hidden {
+    visibility: hidden;
+}
+
+.bento-underlay--visible {
+    visibility: visible;
+}
+
 // -- Choreography states ------------------------------------------------------
 // bento--pending: skeleton state. Cells show as ghost outlines.
 // bento--visible: normal rendered state.
@@ -428,14 +447,9 @@
 }
 
 .bento-grid.bento--pending {
-    // Skeleton: cells become translucent ghost boxes
-    .bento-cell {
-        background-color: transparent;
-        border-color: var(--color-neutral-50);
-        // Suppress content — skeleton shows shape only
-        color: transparent;
-        img, picture { opacity: 0; }
-    }
+    // Hide entirely so the skeleton underlay beneath shows through.
+    // Revealed by JS observer when the beat scrolls into view.
+    visibility: hidden;
 }
 
 .bento-grid.bento--visible {

@@ -33,6 +33,7 @@
         data-chapter="{{ chapterKey }}"
         data-section="{{ sectionKey }}"
         data-chapter-offset="{{ chapterOffset }}"
+        {% if chapter.skeleton %}data-skeleton-areas="{{ chapter.skeleton | join('|') }}"{% endif %}
       >
 
         {# Left column — chapter content #}

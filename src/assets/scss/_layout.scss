@@ -1,9 +1,107 @@
 /* _layout.scss */
 
+// CONTRACT_EXCEPTION: all .page-chrome* values are provisional Figma constants.
+// Font sizes, spacing, colors, and pixel geometry will be replaced wholesale
+// when nav and page-header components are designed and tokenised.
+//
+// Architecture: navbar spans full width. Page header is left-column only
+// (sits alongside the bento, not above it). Bento column clears only the navbar.
+// R1C1 is permanently empty in all chapters — the header sits in that space.
+$chrome-navbar-height:  48px;
+$chrome-header-height: 194px;  // left-column only, from Figma node 2386:1085
+$chrome-content-gap:    16px;  // gap between navbar and content start
+// Sticky targets:
+//   bento pages:    top: $chrome-navbar-height           (48px)
+//   chapter text:   top: $chrome-navbar-height + gap     (64px)
+//   skeleton top:   48px (matches bento sticky)
+
+/* ── Page chrome (fixed) ──────────────────────────────────────────────────── */
+
+body {
+    padding-block-start: $chrome-navbar-height; // 48px — layout gap provides the remaining 16px
+}
+
+.page-chrome {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.page-chrome__navbar {
+    height: $chrome-navbar-height;
+    background-color: var(--color-secondary-90);
+}
+
+.page-chrome__header {
+    // Left-column only — sits alongside bento R1, not above it.
+    // Width covers left margin + content column + gutter.
+    // CONTRACT_EXCEPTION: position: absolute — sits inside .page-chrome which is
+    // position: fixed; absolute here is correct for the fixed-layer context.
+    // CONTRACT_EXCEPTION: width, height, rgba color, backdrop-filter — all
+    // provisional chrome values; replaced when header component is designed.
+    position: absolute;
+    top: $chrome-navbar-height;
+    left: 0;
+    width: 608px; // 156px left-margin + 368px content + 80px gutter + 4px snap
+    height: $chrome-header-height;
+    background-color: rgba(248, 248, 247, 0.92);
+    backdrop-filter: blur(4px);
+}
+
+.page-chrome__header-inner {
+    padding-inline: var(--spacing-xl);
+    padding-block-start: 28px; // from Figma: header component y=28 inside header frame
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.page-chrome__eyebrow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.page-chrome__chip {
+    font-family: var(--font-family-brand);
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-secondary-70);
+    background-color: var(--color-neutral-20);
+    border: 1px solid var(--color-neutral-50);
+    border-radius: var(--corner-xxs);
+    padding-inline: 8px;
+    white-space: nowrap;
+}
+
+.page-chrome__headline {
+    font-family: var(--font-family-brand);
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 2.75rem;
+    color: var(--color-primary-60);
+    margin: 0;
+}
+
+.page-chrome__subhead {
+    font-family: var(--font-family-plain);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.75rem;
+    color: var(--color-secondary-70);
+    margin: 0;
+}
+
 /* ── Base ────────────────────────────────────────────────────────────────────*/
 
 .layout {
     width: 100%;
+    padding-block-start: $chrome-content-gap; // 16px — gap below navbar
 }
 
 .layout__section {
@@ -93,7 +191,7 @@
         grid-column: content-start / content-end;
         padding-block-start: var(--spacing-xl);
         position: sticky;
-        top: 0;
+        top: $chrome-navbar-height + $chrome-content-gap; // 64px
         align-self: start;
         height: fit-content;
     }
@@ -109,7 +207,7 @@
 
     .chapter__bento .layout__page {
         position: sticky;
-        top: 0;
+        top: $chrome-navbar-height + $chrome-content-gap; // 64px — navbar + gap
         width: 100%;
         padding-inline: 0;
         z-index: 1;

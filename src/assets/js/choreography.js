@@ -44,68 +44,93 @@
         }, 6000);
     }
 
-    // -- Skeleton injection ---------------------------------------------------
-    // Calculates the full composite grid across ALL beats in the chapter,
-    // then injects skeleton articles into beat-01 for every grid position
-    // not covered by any beat's real cells.
-    // This gives the reader a complete picture of the assembled page on load.
+    // -- Skeleton underlays --------------------------------------------------
+    // One absolutely-positioned underlay per chapter, injected into the section.
+    // Sits below all content (z-index: 0). Never scrolls with chapter content.
+    //
+    // Each chapter's underlay covers only that chapter's own 4x4 grid.
+    // Occupied positions are derived from the chapter's own article cells.
+    // The chapter overlap (chapterOffset) is accounted for in top positioning.
+    //
+    // Chapter-01 underlay: visible on load.
+    // Chapter-02+ underlays: hidden on load, revealed by IntersectionObserver.
 
-    function injectSkeletons(firstBento) {
-        const chapter = firstBento.closest('.layout__chapter');
-        if (!chapter) return;
+    function buildSkeletonUnderlay(chapter, section) {
+        const allBentos = Array.from(chapter.querySelectorAll('.bento-grid'));
+        if (!allBentos.length) return null;
 
-        // Gather all bentos in this chapter
-        const allBentos = chapter.querySelectorAll('.bento-grid');
+        // Read skeleton area map from YAML-driven data attribute.
+        // Format: pipe-delimited rows, space-delimited cols. 's' = skeleton, '.' = empty.
+        const areasRaw = chapter.dataset.skeletonAreas;
+        if (!areasRaw) return null;
 
-        // Determine composite grid dimensions
-        // All bentos share the same col count. Max row count = composite height.
-        const cs0 = window.getComputedStyle(firstBento);
-        const colCount = cs0.gridTemplateColumns.split(' ').length;
-        let maxRows = 0;
-        allBentos.forEach(b => {
-            const cs = window.getComputedStyle(b);
-            const rows = cs.gridTemplateRows.split(' ').length;
-            if (rows > maxRows) maxRows = rows;
-        });
+        const rows = areasRaw.split('|').map(row => row.trim().split(/\s+/));
+        const rowCount = rows.length;
+        const colCount = rows[0].length;
 
-        // Build a set of all occupied [row,col] positions across all beats.
-        // Uses computed gridRowStart/End/ColumnStart/End from real cells only.
-        // This is reliable for both single-cell and spanning cells.
-        const occupied = new Set();
-        allBentos.forEach(bento => {
-            bento.querySelectorAll('.bento-cell:not(.bento-cell--skeleton)').forEach(cell => {
-                const cs2 = window.getComputedStyle(cell);
-                const rs = parseInt(cs2.gridRowStart);
-                const re = parseInt(cs2.gridRowEnd);
-                const cls = parseInt(cs2.gridColumnStart);
-                const cle = parseInt(cs2.gridColumnEnd);
-                if (!isNaN(rs) && !isNaN(re) && !isNaN(cls) && !isNaN(cle)) {
-                    for (let r = rs; r < re; r++) {
-                        for (let c = cls; c < cle; c++) {
-                            occupied.add(r + ',' + c);
-                        }
-                    }
+        // Build the underlay bento grid from the area map
+        const grid = document.createElement('div');
+        grid.className = 'bento-grid bento-skeleton-underlay';
+        grid.setAttribute('aria-hidden', 'true');
+        grid.dataset.underlayChapter = chapter.dataset.chapter;
+
+        rows.forEach((cols, rowIdx) => {
+            cols.forEach((cell, colIdx) => {
+                if (cell === 's') {
+                    const article = document.createElement('article');
+                    article.className = 'bento-cell bento-cell--skeleton';
+                    article.style.gridRow    = (rowIdx + 1) + ' / ' + (rowIdx + 2);
+                    article.style.gridColumn = (colIdx + 1) + ' / ' + (colIdx + 2);
+                    grid.appendChild(article);
                 }
             });
         });
 
-        // Inject a skeleton for every unoccupied position in the full composite grid
-        // These live on beat-01 which is always visible
-        // Expand beat-01's grid to the full composite size first
-        firstBento.style.gridTemplateRows = 'repeat(' + maxRows + ', var(--bento-cell-size))';
+        // Position the underlay fixed to the viewport.
+        // When a chapter's bento is sticky it locks to top:0 of the viewport.
+        // The underlay mirrors that exact position so it reads as the bento's underlay.
+        // left: bento column's left offset from viewport edge (measured at load).
+        // top:  0 — matches the sticky bento's resting position.
+        const bentoRect = allBentos[0].getBoundingClientRect();
 
-        for (let r = 1; r <= maxRows; r++) {
-            for (let c = 1; c <= colCount; c++) {
-                if (!occupied.has(r + ',' + c)) {
-                    const skeleton = document.createElement('article');
-                    skeleton.className = 'bento-cell bento-cell--skeleton';
-                    skeleton.setAttribute('aria-hidden', 'true');
-                    skeleton.style.gridRow = r + ' / ' + (r + 1);
-                    skeleton.style.gridColumn = c + ' / ' + (c + 1);
-                    firstBento.appendChild(skeleton);
-                }
-            }
+        // Set explicit grid geometry — bypasses container query system.
+        // Underlay always renders at MONEY state (176px cells, 16px gap).
+        grid.style.gridTemplateColumns = 'repeat(' + colCount + ', 176px)';
+        grid.style.gridTemplateRows    = 'repeat(' + rowCount + ', 176px)';
+        grid.style.gap                 = '16px';
+        grid.style.containerType       = 'normal'; // disable cqi inheritance
+
+        // top: chrome height — matches where sticky bentos come to rest.
+        // left: bento column's left offset from viewport edge (measured at load).
+        grid.style.position      = 'fixed';
+        grid.style.left          = Math.round(bentoRect.left) + 'px';
+        grid.style.top           = '64px'; // $chrome-navbar-height + $chrome-content-gap
+        grid.style.zIndex        = '0';
+        grid.style.pointerEvents = 'none';
+
+        return grid;
+    }
+
+    function injectSkeletonUnderlays(section, chapters) {
+        // Ensure section is a positioning context
+        if (window.getComputedStyle(section).position === 'static') {
+            section.style.position = 'relative';
         }
+
+        chapters.forEach((chapter, i) => {
+            const underlay = buildSkeletonUnderlay(chapter, section);
+            if (!underlay) return;
+
+            // Chapter-01 visible immediately; others hidden until observed
+            if (i === 0) {
+                underlay.classList.add('bento-underlay--visible');
+            } else {
+                underlay.classList.add('bento-underlay--hidden');
+            }
+
+            // Append to body — fixed positioning is relative to viewport, not any ancestor
+            document.body.appendChild(underlay);
+        });
     }
 
     // -- Bento choreography ---------------------------------------------------
@@ -130,10 +155,11 @@
             const chapterBentos = Array.from(chapter.querySelectorAll('.bento-grid'));
             if (!chapterBentos.length) return;
 
-            // Find the tallest bento in this chapter
+            // Find the tallest bento in this chapter.
+            // Use offsetHeight not getBoundingClientRect — sticky positioning
+            // causes getBoundingClientRect to return clipped heights.
             const tallest = chapterBentos.reduce((max, b) => {
-                const h = b.getBoundingClientRect().height;
-                return h > max ? h : max;
+                return b.offsetHeight > max ? b.offsetHeight : max;
             }, 0);
 
             // Normalise every page wrapper to tallest bento + one gap (16px).
@@ -142,9 +168,15 @@
             const pages = chapter.querySelectorAll('.chapter__bento .layout__page');
             pages.forEach(p => { p.style.height = pageH + 'px'; });
 
-            // Chapter height: pageH per page plus scroll beats between them
-            const scrollBeats = (chapterBentos.length - 1) * vh;
-            const totalHeight = (pageH * chapterBentos.length) + scrollBeats;
+            // Chapter height: pageH per page plus scroll beats between them.
+            // BEAT_MULTIPLIER controls dwell time between beats (1.0 = full viewport).
+            // Tune by feel — lower = snappier, higher = more dwell.
+            // Add chrome offset so the chapter holds long enough — sticky releases
+            // when chapter bottom passes top:204px, not top:0.
+            const BEAT_MULTIPLIER = 0.25;
+            const CHROME_OFFSET = 64; // $chrome-navbar-height + $chrome-content-gap
+            const scrollBeats = (chapterBentos.length - 1) * vh * BEAT_MULTIPLIER;
+            const totalHeight = (pageH * chapterBentos.length) + scrollBeats + CHROME_OFFSET;
             chapter.style.height = totalHeight + 'px';
         });
 
@@ -160,25 +192,44 @@
             }
         });
 
-        // Beat-01 of each chapter: visible immediately, inject skeletons
+        // Beat-01 of each chapter: visible immediately
         // Beat-02+ of each chapter: start hidden
         chapters.forEach(chapter => {
             const chapterBentos = chapter.querySelectorAll('.bento-grid');
             if (!chapterBentos.length) return;
             chapterBentos[0].classList.add('bento--visible');
-            injectSkeletons(chapterBentos[0]);
             for (let i = 1; i < chapterBentos.length; i++) {
                 chapterBentos[i].classList.add('bento--pending');
             }
         });
 
-        // Observer: reveal pending beats as they scroll into view
+        // Inject skeleton underlays after the browser has laid out the chapters.
+        // requestAnimationFrame ensures chapter heights and margins are painted
+        // before bounding rects are measured for occupancy detection.
+        const section = document.querySelector('.layout__section--choreographed');
+        requestAnimationFrame(() => {
+            injectSkeletonUnderlays(section, Array.from(chapters));
+        });
+
+        // Observer: reveal pending beats and chapter-02+ underlays on scroll
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         entry.target.classList.remove('bento--pending');
                         entry.target.classList.add('bento--visible');
+                        // Reveal the underlay for this beat's chapter
+                        const chapterKey = entry.target
+                            .closest('.layout__chapter')?.dataset.chapter;
+                        if (chapterKey) {
+                            const underlay = section.querySelector(
+                                '.bento-skeleton-underlay[data-underlay-chapter="' + chapterKey + '"]'
+                            );
+                            if (underlay) {
+                                underlay.classList.remove('bento-underlay--hidden');
+                                underlay.classList.add('bento-underlay--visible');
+                            }
+                        }
                         observer.unobserve(entry.target);
                     }
                 });

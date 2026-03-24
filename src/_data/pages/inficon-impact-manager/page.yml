@@ -13,23 +13,16 @@ sections:
   - sectionKey: "section-01"
     mode: "choreographed"
 
-    skeleton:
-      cols: 4
-      rows: 7
-      areas:
-        - ".  s  s  s"
-        - "s  s  s  s"
-        - "s  s  s  s"
-        - "s  s  s  s"
-        - ".  s  s  s"
-        - "s  s  s  s"
-        - "s  s  s  s"
-
     chapters:
 
       - chapterKey: "chapter-01"
         chapterOffset: 0
-        fieldTextRow: 1
+        fieldTextRow: 2
+        skeleton:
+          - ".  s  s  s"
+          - "s  s  s  s"
+          - "s  s  s  s"
+          - "s  s  .  ."
         fieldText: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
 
         pages:
@@ -137,6 +130,11 @@ sections:
       - chapterKey: "chapter-02"
         chapterOffset: 1
         fieldTextRow: 2
+        skeleton:
+          - ".  .  s  s"
+          - ".  s  s  s"
+          - "s  s  s  s"
+          - "s  s  s  s"
         fieldText: "The FAB was the brief. Before designing anything, I needed to understand how the people inside it actually worked — and what the tools they were using were failing to do."
 
         pages:
