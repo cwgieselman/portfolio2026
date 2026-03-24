@@ -35,9 +35,9 @@
         data-chapter-offset="{{ chapterOffset }}"
       >
 
-        {# Left column — field text #}
+        {# Left column — chapter content #}
         {% if chapter.fieldText %}
-        <div class="chapter__text" data-field-text-row="{{ chapter.fieldTextRow | default(1) }}">
+        <div class="chapter__content" data-content-row="{{ chapter.fieldTextRow | default(1) }}">
           <p class="field-text">{{ chapter.fieldText }}</p>
         </div>
         {% endif %}

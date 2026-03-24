@@ -34,7 +34,7 @@
  *   .layout__section--choreographed
  *     .layout__page--header          full width, above chapters
  *     .layout__chapter               text left | bento right
- *       .chapter__text               left column (content column)
+ *       .chapter__content            left column
  *       .chapter__bento              right column (bento column)
  *         .layout__page              one beat — sticky, stacks at origin
  *         .layout__page              ...
@@ -84,15 +84,14 @@
             [bento-start]    752px   /* 4 bento units */
             [bento-end];
         grid-template-rows: auto;
-        grid-template-areas: "text bento bento";
+        grid-template-areas: "content bento bento";
         position: relative;
     }
 
-    .chapter__text {
-        grid-area: text;
+    .chapter__content {
+        grid-area: content;
         grid-column: content-start / content-end;
         padding-block-start: var(--spacing-xl);
-        /* Sticky: text holds while bento pages scroll in */
         position: sticky;
         top: 0;
         align-self: start;
@@ -126,25 +125,25 @@
         margin-block-end: 0;
     }
 
-    /* ── Field text row offset ─────────────────────────────────────────── */
-    /* fieldTextRow: N shifts field text down by (N-1) rows of bento geometry  */
+    /* ── Content row offset ──────────────────────────────────────────────── */
+    /* data-content-row: N shifts content down by (N-1) rows of bento geometry */
     /* Row 1 = no offset (default). Row 2 = one cell + one gap. Etc.           */
 
-    // CONTRACT_EXCEPTION: fieldTextRow offsets use hard pixel values because
+    // CONTRACT_EXCEPTION: offsets use hard pixel values because
     // --bento-cell-size and --bento-gap are scoped to .bento-grid and do not
-    // inherit up the DOM tree to .chapter__text.
+    // inherit up the DOM tree to .chapter__content.
     // rowUnit = 176px (MONEY cell) + 16px (gap) = 192px.
     // Each rule = base padding (var(--spacing-xl)) + (N-1) × 192px.
 
-    .chapter__text[data-field-text-row="2"] {
+    .chapter__content[data-content-row="2"] {
         padding-block-start: calc(var(--spacing-xl) + 192px);
     }
 
-    .chapter__text[data-field-text-row="3"] {
+    .chapter__content[data-content-row="3"] {
         padding-block-start: calc(var(--spacing-xl) + 384px);
     }
 
-    .chapter__text[data-field-text-row="4"] {
+    .chapter__content[data-content-row="4"] {
         padding-block-start: calc(var(--spacing-xl) + 576px);
     }
 
@@ -152,7 +151,7 @@
     /* CONTRACT_EXCEPTION: font-size and line-height are provisional — no Figma
      * token assigned yet. Replace with design tokens once spec is finalised. */
 
-    .chapter__text .field-text {
+    .chapter__content .field-text {
         font-family: var(--font-family-brand);
         font-size: clamp(1rem, 1.5vw, 1.25rem);
         line-height: 1.6;

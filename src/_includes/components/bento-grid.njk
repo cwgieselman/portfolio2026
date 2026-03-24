@@ -98,7 +98,6 @@
     <article
       class="bento-cell bento-cell--image bento-cell--image-desktop"
       data-bento-cell="{{ cell.id }}"
-      style="grid-area: {{ areaName }}"
       aria-hidden="true"
     >
       <div class="bento-cell__inner">
@@ -111,7 +110,6 @@
     <article
       class="bento-cell bento-cell--image bento-cell--image-scrollable"
       data-bento-cell="{{ cell.id }}-scroll"
-      style="grid-area: {{ areaName }}"
       role="region"
       aria-label="{{ cell.media.alt if cell.media.hasAlt else 'Process artifact' }}"
     >
@@ -146,7 +144,6 @@
     <article
       class="{{ cellClasses }}"
       data-bento-cell="{{ cell.id }}"
-      style="grid-area: {{ areaName }}"
     >
       <div class="bento-cell__inner">
         {% if cell.type == "image" and cell.artDirection and cell.media %}
