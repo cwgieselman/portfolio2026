@@ -21,17 +21,6 @@
     {% endif %}
   >
 
-    {# ── Section header ─────────────────────────────────────────────────── #}
-    {% if section.header %}
-    <div class="layout__page layout__page--header" data-page="header">
-      <div class="content-cell" data-cell="header--{{ sectionKey }}--content-cell-01" id="{{ sectionTitleId }}">
-        {% set headerParams = section.header %}
-        {% set headerParamsId = sectionTitleId %}
-        {% include "components/header.njk" %}
-      </div>
-    </div>
-    {% endif %}
-
     {# ── Chapters ───────────────────────────────────────────────────────── #}
     {% if sectionMode == "choreographed" and section.chapters %}
 
@@ -58,7 +47,7 @@
           {% for pageItem in chapter.pages %}
           {% set pageItemIndex0 = loop.index0 %}
           {% set pageId = pageItem.pageKey %}
-          {% set cells = pageItem.cells %}
+          {% set cell = pageItem %}
           {% include "layouts/page.njk" %}
           {% endfor %}
         </div>

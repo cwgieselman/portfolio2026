@@ -180,10 +180,10 @@
     --cell-border: var(--bento-theme-secondary-light-border);
 }
 
-.bento-cell--theme-white {
-    --cell-bg:     var(--bento-theme-white-bg);
-    --cell-color:  var(--bento-theme-white-color);
-    --cell-border: var(--bento-theme-white-border);
+.bento-cell--theme-default {
+    --cell-bg:     var(--bento-theme-default-bg);
+    --cell-color:  var(--bento-theme-default-color);
+    --cell-border: var(--bento-theme-default-border);
 }
 
 // -- Cells --------------------------------------------------------------------

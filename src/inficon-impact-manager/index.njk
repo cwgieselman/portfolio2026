@@ -7,5 +7,15 @@ mainClass: "layout--case-study"
 ---
 
 <main class="layout {{ mainClass }}">
+  {% set data = pages[pageKey] %}
+  {% if data.header %}
+  <div class="layout__page layout__page--header">
+    <div class="content-cell" id="page-title">
+      {% set headerParams = data.header %}
+      {% set headerParamsId = "page-title" %}
+      {% include "components/header.njk" %}
+    </div>
+  </div>
+  {% endif %}
   {% include "layouts/compiled-page.njk" %}
 </main>

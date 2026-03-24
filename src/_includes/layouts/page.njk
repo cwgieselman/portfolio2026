@@ -1,7 +1,4 @@
 {# layouts/page.njk #}
-<div class="layout__page" data-page="{{ pageId }}" data-pagekey="{{ pageKey }}">
-{% for cell in cells %}
-  {% set cellIndex0 = loop.index0 %}
+<div class="layout__page" data-page="{{ pageId }}">
   {% include "layouts/content-cell.njk" %}
-{% endfor %}
 </div>

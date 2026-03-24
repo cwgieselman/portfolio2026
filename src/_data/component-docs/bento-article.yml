@@ -17,10 +17,10 @@ variants:
       id: ds-bento-arrow-problem
       cols: 5
       rows: 2
-      cells:
+      articles:
         - id: article-01
           type: content
-          theme: white
+          theme: default
           desktop:
             col: "1 / 3"
             row: "1 / 3"
@@ -29,6 +29,7 @@ variants:
             <span class="bento-body">arrow implementation attempts</span>
         - id: article-02
           type: image
+          theme: default
           desktop:
             col: "3 / 6"
             row: "1 / 2"
@@ -37,7 +38,7 @@ variants:
             hasAlt: false
         - id: article-03
           type: content
-          theme: white
+          theme: default
           desktop:
             col: "3 / 5"
             row: "2 / 3"
@@ -45,7 +46,7 @@ variants:
             <span class="bento-body">SVG partial: Figma returned raster</span>
         - id: article-04
           type: content
-          theme: white
+          theme: default
           desktop:
             col: "5 / 6"
             row: "2 / 3"
@@ -58,7 +59,7 @@ variants:
       id: ds-bento-compile-party
       cols: 5
       rows: 2
-      cells:
+      articles:
         - id: article-01
           type: content
           theme: primary-dark
@@ -106,35 +107,35 @@ contract:
     type: number
     required: true
     desc: "Row count. Reference only — actual grid tracks in placements SCSS."
-  - field: "bento.cells[]"
+  - field: "bento.articles[]"
     type: array
     required: true
     desc: "One entry per cell. Order matches visual reading order."
-  - field: "bento.cells[].id"
+  - field: "bento.articles[].id"
     type: string
     required: true
     desc: "article-NN format. Drives grid-area name (article-01 to a01)."
-  - field: "bento.cells[].type"
+  - field: "bento.articles[].type"
     type: string
     required: true
     desc: "content | image | graphic. Drives bento-cell--{type} class."
-  - field: "bento.cells[].theme"
+  - field: "bento.articles[].theme"
     type: string
     required: false
-    desc: "white | primary-dark | primary-light | secondary-dark | secondary-light. Omit for image cells."
-  - field: "bento.cells[].content"
+    desc: "default | primary-dark | primary-light | secondary-dark | secondary-light. Required on all article types."
+  - field: "bento.articles[].content"
     type: string
     required: false
     desc: "Raw HTML block rendered via | safe. Use bento-stat, bento-lead, bento-body spans."
-  - field: "bento.cells[].media"
+  - field: "bento.articles[].media"
     type: object
     required: false
     desc: "Image cell data. Passed to media.njk include."
-  - field: "bento.cells[].artDirection"
+  - field: "bento.articles[].artDirection"
     type: boolean
     required: false
     desc: "true triggers picture element with src (5-up) + mobileSrc (2-up) crops."
-  - field: "bento.cells[].scrollable"
+  - field: "bento.articles[].scrollable"
     type: boolean
     required: false
     desc: "true triggers two-sibling render. Requires media.scrollSrc."
@@ -163,6 +164,9 @@ usage:
     - media
 
 changelog:
+  - ver: "0.6"
+    date: "Mar 2026"
+    note: "bento.cells renamed to bento.articles. theme: white renamed to theme: default. theme required on all article types."
   - ver: "0.5"
     date: "Mar 2026"
     note: "bento-arrow.njk deleted. isCustom escape hatch documented."
