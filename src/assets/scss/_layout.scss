@@ -29,48 +29,49 @@
 }
 
 /* ── Choreographed section (≥ 640px) ────────────────────────────────────────
- * Field text + bento, repeating. The default case study layout.
- * Grid is derived from the bento unit system — everything shares one token.
+ * Layout hierarchy:
  *
- * Content column:  2 bento units  = 368px  (2×176 + 1×16)
- * Gutter:          5 bento gaps   =  80px  (5×16)
- * Bento column:    4 bento units  = 752px  (4×176 + 3×16)
- * Total:                          1200px
+ *   .layout__section--choreographed
+ *     .layout__page--header          full width, above chapters
+ *     .layout__chapter               text left | bento right
+ *       .chapter__text               left column (content column)
+ *       .chapter__bento              right column (bento column)
+ *         .layout__page              one beat — sticky, stacks at origin
+ *         .layout__page              ...
  *
- * The grid is centered via max-width + margin-inline: auto on layout__page.
- * No fixed-width positioning hacks needed — the content is 1200px max,
- * the viewport clips naturally on smaller screens.
+ * Column system — derived from bento unit math (everything shares one token):
+ *   Content column:  2 bento units  = 368px  (2×176 + 1×16)
+ *   Gutter:          5 bento gaps   =  80px  (5×16)
+ *   Bento column:    4 bento units  = 752px  (4×176 + 3×16)
+ *   Total:                          1200px
  *
- * Content-cell placements:
- *   field text  → grid-column: content-col
- *   bento       → grid-column: bento-col
- *   header      → grid-column: content-col / bento-end (full width)
- *
- * Per-cell column assignments live in placements/_<pageKey>.scss. */
+ * Chapter offset: chapters can overlap by N rows via data-chapter-offset.
+ * JS in choreography.js reads this attribute and sets negative margin-top.
+ * ─────────────────────────────────────────────────────────────────────────── */
 
 @media (min-width: 640px) {
 
-    // Chapter wrapper — provides stacking context and scroll height.
-    // Beats stack at top: 0 via sticky, assembling into one composite grid.
-    // Height is set via JS in choreography.js based on beat count.
+    /* ── Section header ──────────────────────────────────────────────────── */
+
+    .layout__page--header {
+        display: block;
+        width: 100%;
+        max-width: 1200px;
+        margin-inline: auto;
+        padding-inline: var(--spacing-xl);
+        box-sizing: border-box;
+    }
+
+    .layout__page--header .content-cell {
+        width: auto;
+        margin-block-end: 0;
+    }
+
+    /* ── Chapter layout ──────────────────────────────────────────────────── */
+    /* Two-column layout: text left, bento right.
+     * Columns use named lines so placements SCSS can reference by name. */
+
     .layout__chapter {
-        position: relative;
-    }
-
-    // Each beat page is sticky at top: 0.
-    // As the user scrolls through the chapter height, beats accumulate.
-    // The bento column cells sit at the same grid origin — they compose.
-    .layout__section--choreographed .layout__page {
-        position: sticky;
-        top: 0;
-        // Ensure beats stack in order — later beats sit above earlier ones
-        z-index: 1;
-        &:nth-child(2) { z-index: 2; }
-        &:nth-child(3) { z-index: 3; }
-        &:nth-child(4) { z-index: 4; }
-    }
-
-    .layout__section--choreographed .layout__page {
         display: grid;
         width: 100%;
         max-width: 1200px;
@@ -83,13 +84,82 @@
             [bento-start]    752px   /* 4 bento units */
             [bento-end];
         grid-template-rows: auto;
-        row-gap: var(--spacing-xl);
+        grid-template-areas: "text bento bento";
+        position: relative;
     }
 
-    .layout__section--choreographed .content-cell {
+    .chapter__text {
+        grid-area: text;
+        grid-column: content-start / content-end;
+        padding-block-start: var(--spacing-xl);
+        /* Sticky: text holds while bento pages scroll in */
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: fit-content;
+    }
+
+    .chapter__bento {
+        grid-column: bento-start / bento-end;
+        position: relative;
+        /* Height set by JS in choreography.js based on page count */
+    }
+
+    /* ── Bento pages — sticky within chapter__bento ──────────────────────── */
+    /* Each page stacks at the same origin. Later pages sit above earlier ones. */
+
+    .chapter__bento .layout__page {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        padding-inline: 0;
+        z-index: 1;
+
+        &:nth-child(2) { z-index: 2; }
+        &:nth-child(3) { z-index: 3; }
+        &:nth-child(4) { z-index: 4; }
+        &:nth-child(5) { z-index: 5; }
+    }
+
+    .chapter__bento .layout__page .content-cell {
         width: auto;
         margin-block-end: 0;
     }
+
+    /* ── Field text row offset ─────────────────────────────────────────── */
+    /* fieldTextRow: N shifts field text down by (N-1) rows of bento geometry  */
+    /* Row 1 = no offset (default). Row 2 = one cell + one gap. Etc.           */
+
+    // CONTRACT_EXCEPTION: fieldTextRow offsets use hard pixel values because
+    // --bento-cell-size and --bento-gap are scoped to .bento-grid and do not
+    // inherit up the DOM tree to .chapter__text.
+    // rowUnit = 176px (MONEY cell) + 16px (gap) = 192px.
+    // Each rule = base padding (var(--spacing-xl)) + (N-1) × 192px.
+
+    .chapter__text[data-field-text-row="2"] {
+        padding-block-start: calc(var(--spacing-xl) + 192px);
+    }
+
+    .chapter__text[data-field-text-row="3"] {
+        padding-block-start: calc(var(--spacing-xl) + 384px);
+    }
+
+    .chapter__text[data-field-text-row="4"] {
+        padding-block-start: calc(var(--spacing-xl) + 576px);
+    }
+
+    /* ── Field text style ────────────────────────────────────────────────── */
+    /* CONTRACT_EXCEPTION: font-size and line-height are provisional — no Figma
+     * token assigned yet. Replace with design tokens once spec is finalised. */
+
+    .chapter__text .field-text {
+        font-family: var(--font-family-brand);
+        font-size: clamp(1rem, 1.5vw, 1.25rem);
+        line-height: 1.6;
+        color: var(--color-primary-70);
+        margin: 0;
+    }
+
 }
 
 /* ── Designed section (≥ 1248px) ────────────────────────────────────────────

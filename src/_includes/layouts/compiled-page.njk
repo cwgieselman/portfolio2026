@@ -5,25 +5,82 @@
   <pre>Missing compiled data for pageKey="{{ pageKey }}"</pre>
 {% else %}
 
-    {% for section in data.sections %}
-    {% set sectionTitleId = section.sectionKey ~ "__title" %}
-    {% set sectionMode = section.mode | default("choreographed") %}
-    <section class="layout__section layout__section--{{ sectionMode }}{% if sectionMode == 'composite' %} is-composite{% endif %}"
-            data-section="{{ section.sectionKey }}"
-            aria-labelledby="{{ sectionTitleId }}">
-        {% if sectionMode == "choreographed" %}
-        <div class="layout__chapter" data-pages="{{ section.pages | length }}">
+  {% for section in data.sections %}
+  {% set sectionKey = section.sectionKey %}
+  {% set sectionTitleId = sectionKey ~ "__title" %}
+  {% set sectionMode = section.mode | default("choreographed") %}
+
+  <section
+    class="layout__section layout__section--{{ sectionMode }}"
+    data-section="{{ sectionKey }}"
+    aria-labelledby="{{ sectionTitleId }}"
+    {% if section.skeleton %}
+      data-skeleton-cols="{{ section.skeleton.cols }}"
+      data-skeleton-rows="{{ section.skeleton.rows }}"
+      data-skeleton-areas="{{ section.skeleton.areas | join('|') }}"
+    {% endif %}
+  >
+
+    {# ── Section header ─────────────────────────────────────────────────── #}
+    {% if section.header %}
+    <div class="layout__page layout__page--header" data-page="header">
+      <div class="content-cell" data-cell="header--{{ sectionKey }}--content-cell-01" id="{{ sectionTitleId }}">
+        {% set headerParams = section.header %}
+        {% set headerParamsId = sectionTitleId %}
+        {% include "components/header.njk" %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# ── Chapters ───────────────────────────────────────────────────────── #}
+    {% if sectionMode == "choreographed" and section.chapters %}
+
+      {% for chapter in section.chapters %}
+      {% set chapterKey = chapter.chapterKey %}
+      {% set chapterOffset = chapter.chapterOffset | default(0) %}
+
+      <div
+        class="layout__chapter"
+        data-chapter="{{ chapterKey }}"
+        data-section="{{ sectionKey }}"
+        data-chapter-offset="{{ chapterOffset }}"
+      >
+
+        {# Left column — field text #}
+        {% if chapter.fieldText %}
+        <div class="chapter__text" data-field-text-row="{{ chapter.fieldTextRow | default(1) }}">
+          <p class="field-text">{{ chapter.fieldText }}</p>
+        </div>
         {% endif %}
+
+        {# Right column — bento pages, stacked at same origin #}
+        <div class="chapter__bento">
+          {% for pageItem in chapter.pages %}
+          {% set pageItemIndex0 = loop.index0 %}
+          {% set pageId = pageItem.pageKey %}
+          {% set cells = pageItem.cells %}
+          {% include "layouts/page.njk" %}
+          {% endfor %}
+        </div>
+
+      </div>
+      {% endfor %}
+
+    {# ── Legacy: flat pages (non-choreographed or old structure) ────────── #}
+    {% elif section.pages %}
+
+      <div class="layout__chapter" data-pages="{{ section.pages | length }}">
         {% for pageItem in section.pages %}
         {% set pageItemIndex0 = loop.index0 %}
         {% set pageId = pageItem.pageKey %}
         {% set cells = pageItem.cells %}
         {% include "layouts/page.njk" %}
         {% endfor %}
-        {% if sectionMode == "choreographed" %}
-        </div>
-        {% endif %}
-    </section>
-    {% endfor %}
+      </div>
+
+    {% endif %}
+
+  </section>
+  {% endfor %}
 
 {% endif %}
