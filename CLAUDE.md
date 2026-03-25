@@ -10,7 +10,7 @@ UX/Design Systems portfolio for Craig Gieselman. Built with 11ty (v3), Nunjucks,
 
 ## PR Documents
 
-PR descriptions and commit suggestions live in `_docs/`. Claude Code should check there before committing — each PR doc includes a commit breakdown and known gaps.
+PR descriptions and commit suggestions live in `_docs/`. When given a PR filename to review, also read `_docs/session-state.md` for broader context on why the work was done and what problems it is solving. The PR doc carries commit-specific detail; `session-state.md` carries the why.
 
 | File | Branch / Topic |
 |------|----------------|

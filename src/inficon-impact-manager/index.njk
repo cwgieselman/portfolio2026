@@ -6,30 +6,12 @@ pageKey: "inficon-impact-manager"
 mainClass: "layout--case-study"
 ---
 
-{# Fixed page chrome: navbar + condensed page header #}
 {% set data = pages[pageKey] %}
-<div class="page-chrome" aria-hidden="true">
-  <div class="page-chrome__navbar"></div>
-  {% if data.header %}
-  <div class="page-chrome__header">
-    <div class="page-chrome__header-inner">
-      <div class="page-chrome__eyebrow">
-        {% if data.header.showEyebrow %}
-          {% set chips = data.header.eyebrow.split(' · ') %}
-          {% for chip in chips %}
-            <span class="page-chrome__chip">{{ chip }}</span>
-          {% endfor %}
-        {% endif %}
-      </div>
-      <p class="page-chrome__headline">{{ data.header.headline }}</p>
-      {% if data.header.showSubhead %}
-      <p class="page-chrome__subhead">{{ data.header.subhead }}</p>
-      {% endif %}
-    </div>
-  </div>
-  {% endif %}
-</div>
 
 <main class="layout {{ mainClass }}">
+  {# Page-level h1 header — fixed, grid-column-informed, scoped to this page #}
+  {% include "layouts/page-header.njk" %}
+
+  {# Scrolling case study content — sections > chapters > pages #}
   {% include "layouts/compiled-page.njk" %}
 </main>
