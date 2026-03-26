@@ -333,27 +333,25 @@ body {
         margin-block-end: 0;
     }
 
-    /* ── Content row offset ──────────────────────────────────────────────── */
-    /* data-content-row: N shifts content down by (N-1) rows of bento geometry */
-    /* Row 1 = no offset (default). Row 2 = one cell + one gap. Etc.           */
-
-    // CONTRACT_EXCEPTION: offsets use hard pixel values because
-    // --bento-cell-size and --bento-gap are scoped to .bento-grid and do not
-    // inherit up the DOM tree to .chapter__content.
+    /* ── Content row placement ─────────────────────────────────────────────── */
+    // data-row-start: N — top of content aligns to bento row N
+    // data-row-span:  N — content cell spans N bento rows
+    //
+    // CONTRACT_EXCEPTION: pixel values because --bento-cell-size and
+    // --bento-gap are scoped to .bento-grid and do not inherit up the DOM.
     // rowUnit = 176px (MONEY cell) + 16px (gap) = 192px.
-    // Each rule = base padding (var(--spacing-xl)) + (N-1) × 192px.
+    // padding-block-start = base padding + (rowStart - 1) x 192px
+    // min-height = rowSpan x 192px - 16px (subtract trailing gap)
 
-    .chapter__content[data-content-row="2"] {
-        padding-block-start: calc(var(--spacing-xl) + 192px);
-    }
+    .chapter__content[data-row-start="1"] { padding-block-start: var(--spacing-xl); }
+    .chapter__content[data-row-start="2"] { padding-block-start: calc(var(--spacing-xl) + 192px); }
+    .chapter__content[data-row-start="3"] { padding-block-start: calc(var(--spacing-xl) + 384px); }
+    .chapter__content[data-row-start="4"] { padding-block-start: calc(var(--spacing-xl) + 576px); }
 
-    .chapter__content[data-content-row="3"] {
-        padding-block-start: calc(var(--spacing-xl) + 384px);
-    }
-
-    .chapter__content[data-content-row="4"] {
-        padding-block-start: calc(var(--spacing-xl) + 576px);
-    }
+    .chapter__content[data-row-span="1"] { min-height: 176px; }
+    .chapter__content[data-row-span="2"] { min-height: 368px; }
+    .chapter__content[data-row-span="3"] { min-height: 560px; }
+    .chapter__content[data-row-span="4"] { min-height: 752px; }
 
     /* ── Field text style ────────────────────────────────────────────────── */
     /* CONTRACT_EXCEPTION: font-size and line-height are provisional — no Figma

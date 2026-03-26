@@ -38,8 +38,13 @@
 
         {# Left column — chapter content #}
         {% if chapter.fieldText %}
-        <div class="chapter__content" data-content-row="{{ chapter.fieldTextRow | default(1) }}">
-          <p class="field-text">{{ chapter.fieldText }}</p>
+        <div
+          class="chapter__content"
+          data-beat-index="{{ chapter.fieldText.beatIndex | default(1) }}"
+          data-row-start="{{ chapter.fieldText.rowStart | default(1) }}"
+          data-row-span="{{ chapter.fieldText.rowSpan | default(1) }}"
+        >
+          {{ chapter.fieldText.content | safe }}
         </div>
         {% endif %}
 

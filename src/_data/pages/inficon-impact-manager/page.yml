@@ -23,7 +23,12 @@ sections:
           - "s  s  s  s"
           - "s  s  s  s"
           - "s  s  .  ."
-        fieldText: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
+        fieldText:
+          beatIndex: 2
+          rowStart: 2
+          rowSpan: 2
+          content: |
+            <p class="field-text">Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like.</p>
 
         pages:
 
@@ -135,7 +140,12 @@ sections:
           - ".  s  s  s"
           - "s  s  s  s"
           - "s  s  s  s"
-        fieldText: "The FAB was the brief. Before designing anything, I needed to understand how the people inside it actually worked — and what the tools they were using were failing to do."
+        fieldText:
+          beatIndex: 1
+          rowStart: 1
+          rowSpan: 2
+          content: |
+            <p class="field-text">The FAB was the brief. Before designing anything, I needed to understand how the people inside it actually worked — and what the tools they were using were failing to do.</p>
 
         pages:
 

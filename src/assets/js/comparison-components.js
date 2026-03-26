@@ -14,16 +14,16 @@
 // This script only syncs input.value → CSS custom property --comparison-pos.
 
 function initComparisonSliders() {
-  document.querySelectorAll('[data-comparison-slider]').forEach((figure) => {
-    const stage = figure.querySelector('.comparison-slider__stage');
-    const input = figure.querySelector('.comparison-slider__input');
-    const handle = figure.querySelector('.comparison-slider__handle');
+  document.querySelectorAll("[data-comparison-slider]").forEach((figure) => {
+    const stage = figure.querySelector(".comparison-slider__stage");
+    const input = figure.querySelector(".comparison-slider__input");
+    const handle = figure.querySelector(".comparison-slider__handle");
 
     if (!stage || !input) return;
 
     function updatePosition(value) {
-      const pos = value + '%';
-      stage.style.setProperty('--comparison-pos', pos);
+      const pos = value + "%";
+      stage.style.setProperty("--comparison-pos", pos);
       if (handle) handle.style.left = pos;
     }
 
@@ -31,7 +31,7 @@ function initComparisonSliders() {
     updatePosition(input.value);
 
     // Sync on every input event (covers mouse drag, touch, and keyboard)
-    input.addEventListener('input', () => {
+    input.addEventListener("input", () => {
       updatePosition(input.value);
     });
   });
@@ -41,31 +41,33 @@ function initComparisonSliders() {
 // Flips [data-active] on the figure and updates aria-pressed + button text.
 
 function initAnnotationToggles() {
-  document.querySelectorAll('[data-annotation-toggle]').forEach((figure) => {
-    const btn = figure.querySelector('.annotation-toggle__btn');
-    const annotatedImg = figure.querySelector('.annotation-toggle__img--annotated');
+  document.querySelectorAll("[data-annotation-toggle]").forEach((figure) => {
+    const btn = figure.querySelector(".annotation-toggle__btn");
+    const annotatedImg = figure.querySelector(
+      ".annotation-toggle__img--annotated",
+    );
 
     if (!btn) return;
 
-    const labelDefault = btn.dataset.labelDefault || 'Show annotations';
-    const labelActive  = btn.dataset.labelActive  || 'Hide annotations';
-    const btnText      = btn.querySelector('.annotation-toggle__btn-text');
+    const labelDefault = btn.dataset.labelDefault || "Show annotations";
+    const labelActive = btn.dataset.labelActive || "Hide annotations";
+    const btnText = btn.querySelector(".annotation-toggle__btn-text");
 
-    btn.addEventListener('click', () => {
-      const isActive = figure.hasAttribute('data-active');
+    btn.addEventListener("click", () => {
+      const isActive = figure.hasAttribute("data-active");
 
       if (isActive) {
-        figure.removeAttribute('data-active');
-        btn.setAttribute('aria-pressed', 'false');
+        figure.removeAttribute("data-active");
+        btn.setAttribute("aria-pressed", "false");
         if (btnText) btnText.textContent = labelDefault;
         // Restore aria-hidden on annotated image
-        if (annotatedImg) annotatedImg.setAttribute('aria-hidden', 'true');
+        if (annotatedImg) annotatedImg.setAttribute("aria-hidden", "true");
       } else {
-        figure.setAttribute('data-active', '');
-        btn.setAttribute('aria-pressed', 'true');
+        figure.setAttribute("data-active", "");
+        btn.setAttribute("aria-pressed", "true");
         if (btnText) btnText.textContent = labelActive;
         // Expose annotated image to screen readers
-        if (annotatedImg) annotatedImg.removeAttribute('aria-hidden');
+        if (annotatedImg) annotatedImg.removeAttribute("aria-hidden");
       }
     });
   });
@@ -73,8 +75,8 @@ function initAnnotationToggles() {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
     initComparisonSliders();
     initAnnotationToggles();
   });

@@ -13,6 +13,8 @@
 ## Branch
 `build/inficon-bento-series` — `cwgieselman/portfolio2026`
 
+> **Commit ready** — see `_docs/PR--choreography-fixes.md`. Next branch: `build/subgrid-chapter-layout`.
+
 ---
 
 ## Where We Are
@@ -45,10 +47,20 @@ Reference: Figma wireframe node `2554:1203` (file: `LTePGo8Q1Lbapffom2X0W5`).
 
 ## Open Priorities
 
-### 1. Pages not stacking to build composite bento (PRIORITY 1)
-Pre-existing. Pages translate in from below correctly but don't lock — they scroll away instead of accumulating.
+### 1. chapter__content subgrid refactor (PRIORITY 1 — next session)
+The field text column needs to participate in the chapter layout grid via CSS subgrid, not JS translation. Current approach (translateY on a sticky element) is unreliable — the sticky position in document flow means the translate fires at wrong scroll positions.
 
-`.chapter__bento` is `position: relative`. Pages inside are positioned/translated by `choreography.js`. The stacking is broken — incoming pages appear below P01 instead of on top of it. Measure actual rendered positions before changing anything.
+**Agreed approach:**
+- `layout__chapter` defines both column AND row tracks (192px row units, same as bento geometry)
+- `chapter__content` and `chapter__bento` both participate in those rows via `grid-row` placement
+- `chapter__bento` uses `grid-template-rows: subgrid` to inherit parent rows
+- Field text vertical alignment is CSS (`grid-row` from `rowStart`/`rowSpan` YAML values) — no JS geometry
+- JS handles opacity only for field text — fade in with its assigned beat, no translateY
+- Chapter height: JS reads computed row heights from the grid instead of computing from bentoH
+
+**YAML shape is already updated** — `fieldText` is now an object with `beatIndex`, `rowStart`, `rowSpan`, `content`.
+**`compiled-page.njk`** — field text renders via `{{ chapter.fieldText.content | safe }}`.
+**`choreography.js`** — content beat wiring exists but translateY approach is wrong. Keep beat/opacity logic, remove translateY on content.
 
 ### 2. Page header — audit `content-header.njk` rename (PRIORITY 2)
 `header.njk` was renamed to `content-header.njk` this session. Any templates still referencing `{% include "components/header.njk" %}` will fail on build. Audit all templates before next deploy.
@@ -67,6 +79,8 @@ Pre-existing. Pages translate in from below correctly but don't lock — they sc
 - Container queries — unaffected, `.chapter__bento` still spans `bento-start / bento-end` as one element ✓
 - Scroll-driven choreography — `BEAT_PX = 300`, `OVERLAP = 0.5`, `CHROME_TOP = 64` (from March 24)
 - Skeletons disabled (`SHOW_SKELETON = false`) — code preserved
+- `page.style.overflow` removed from `choreography.js` entirely — no clipping on `.layout__page`, no ill effects observed
+- `addWatchTarget('src/assets/js/')` added to `.eleventy.js` — JS changes now trigger rebuild and copy correctly
 
 ---
 
