@@ -1,112 +1,256 @@
 // Placements — inficon-impact-manager
-// FF Grid column lines: 1=0  2=384  3=408  4=792  5=816  6=1200  7=1224  8=1608  9=1632  10=2016
-// FF Grid row lines:    1=0  2=216  3=240  4=264  5=390  6=414   7=504   8=528
-//                       9=654  10=678  11=768  12=792  13=918  14=942  15=966  16=1182
-
 // ─────────────────────────────────────────────────────────────────────────────
-// MACRO LAYOUT — content-cell placements
-// FF Grid placements use @media (min-width: 1248px).
-// 2-col Grid placements use @media (min-width: 640px) and (max-width: 1247px).
-// ─────────────────────────────────────────────────────────────────────────────
-
-/* ─── section-01 / page-01 — FF Grid (≥ 1248px) ─── */
-
-@media (min-width: 1248px) {
-
-    .content-cell[data-cell="header--section-01--page-01--content-cell-01"] {
-        grid-column: 3 / 10;
-        grid-row: 4 / 6;
-        align-self: center;
-    }
-
-    .content-cell[data-cell="content--section-01--page-01--content-cell-02"] {
-        grid-column: 3 / 4;
-        grid-row: 8 / 13;
-    }
-
-    .content-cell[data-cell="content--section-01--page-01--content-cell-03"] {
-        grid-column: 5 / 8;
-        grid-row: 6 / 16;
-        align-self: start;
-    }
-
-}
-
-/* ─── section-01 / page-01 — 2-col Grid (640px – 1247px) ─── */
-// Columns: 1.5rem | 14rem text | 3rem gap | 1fr figure | 1.5rem
-// Header spans full content width (col 2→5).
-// Text in left column (col 2→3). Bento/figure in right column (col 4→5).
-
-@media (min-width: 640px) and (max-width: 1247px) {
-
-    .content-cell[data-cell="header--section-01--page-01--content-cell-01"] {
-        grid-column: 2 / 5;
-        grid-row: 1;
-    }
-
-    .content-cell[data-cell="content--section-01--page-01--content-cell-02"] {
-        grid-column: 2 / 3;
-        grid-row: 2;
-    }
-
-    .content-cell[data-cell="content--section-01--page-01--content-cell-03"] {
-        grid-column: 4 / 5;
-        grid-row: 2;
-    }
-
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// BENTO — bento--inficon--im-research
-// Container-query driven — responds to content-cell width, not viewport.
-// content-cell has container-type: inline-size in _content-cell.scss.
+// Bento geometry reference (MONEY state, gap at 16px):
+//   Cell:  176px
+//   Gap:   16px
+//   1-unit span: 176px
+//   2-unit span: 176 + 16 + 176 = 368px
+//   3-unit span: 368 + 16 + 176 = 560px
+//   4-unit span: 560 + 16 + 176 = 752px
+//
+// Grid line reference (MONEY, 4 cols × 4 rows):
+//   Col lines: 1=0  2=192  3=384  4=576  5=752
+//   Row lines: 1=0  2=192  3=384  4=576  5=752
+//
+// Macro layout (≥ 1200px content width):
+//   Content column: 2 units = 368px  (left)
+//   Gutter:         5 gaps  =  80px
+//   Bento column:   4 units = 752px  (right)
+//   Total:                   1200px
 // ─────────────────────────────────────────────────────────────────────────────
 
-/* ─── 2-up authored area map (default, no query) ─── */
+// ─────────────────────────────────────────────────────────────────────────────
+// MACRO LAYOUT — inficon-impact-manager
+// Chapter layout handles text/bento column placement via _layout.scss.
+// The .layout__chapter grid provides content-start / bento-start named lines.
+// Bento content-cells within .chapter__bento fill their container.
+// Per-bento area maps below handle cell placement within each bento grid.
+// ─────────────────────────────────────────────────────────────────────────────
 
-#bento--inficon--im-research {
+// ─────────────────────────────────────────────────────────────────────────────
+// S01 C01 P01 — inficon--im--s01-c01-p01
+// Section 01, Chapter 01, Page 01.
+// 4 cols × 2 rows. Alps photo (2×1), cleanroom full (1×2).
+// Col 1 rows 1-2 intentionally empty — reserved for future cell or whitespace.
+//
+// 4-up area map:
+//   col:  1    2    3    4
+//   row1: .    a01  a01  a02
+//   row2: .    .    .    a02
+//
+// 2-up area map:
+//   col:  1    2
+//   row1: a01  a01
+//   row2: a02  .
+// ─────────────────────────────────────────────────────────────────────────────
+
+#bento--inficon--im--s01-c01-p01 {
     grid-template-areas:
-        "a01 a04"
-        "a05 a03"
-        "a06 a06"
-        "a06 a06"
-        "a08 a08"
-        "a07 a07"
-        "a07 a07"
-        "a09 a09"
-        "a10 a11"
-        "a02 a02"
-        "a12 .  ";
+        ". a01 a01 a02"
+        ". .   .   a02";
 }
 
-/* ─── 5-up authored area map (content-cell ≥ 732px) ─── */
-// Matches @container content-cell (min-width: 732px) in _bento-grid.scss.
-// Fires at ~1052px viewport in the 2-col Grid tier.
-
-@container content-cell (min-width: 732px) {
-    #bento--inficon--im-research {
-        grid-template-columns: repeat(5, var(--bento-cell-size));
-        grid-template-rows:    repeat(5, var(--bento-cell-size));
+@container content-cell (min-width: 624px) {
+    #bento--inficon--im--s01-c01-p01 {
+        grid-template-columns: repeat(4, var(--bento-cell-size));
+        grid-template-rows:    repeat(2, var(--bento-cell-size));
         grid-template-areas:
-            "a01 a02 a02 a03 a03"
-            "a04 a05 a05 a06 a06"
-            "a07 a07 a07 a06 a06"
-            "a07 a07 a07 a08 a08"
-            "a09 a09 a10 a11 a12";
+            ". a01 a01 a02"
+            ". .   .   a02";
     }
 }
 
 /* ─── cell areas ─── */
+#bento--inficon--im--s01-c01-p01 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
+#bento--inficon--im--s01-c01-p01 .bento-cell[data-bento-cell="article-02"] { grid-area: a02; }
 
-.bento-cell[data-bento-cell="article-01"] { grid-area: a01; z-index: 12; }
-.bento-cell[data-bento-cell="article-02"] { grid-area: a02; z-index: 11; }
-.bento-cell[data-bento-cell="article-03"] { grid-area: a03; z-index: 9;  }
-.bento-cell[data-bento-cell="article-04"] { grid-area: a04; z-index: 8;  }
-.bento-cell[data-bento-cell="article-05"] { grid-area: a05; z-index: 7;  }
-.bento-cell[data-bento-cell="article-06"] { grid-area: a06; z-index: 10; }
-.bento-cell[data-bento-cell="article-07"] { grid-area: a07; z-index: 5;  }
-.bento-cell[data-bento-cell="article-08"] { grid-area: a08; z-index: 6;  }
-.bento-cell[data-bento-cell="article-09"] { grid-area: a09; z-index: 4;  }
-.bento-cell[data-bento-cell="article-10"] { grid-area: a10; z-index: 3;  }
-.bento-cell[data-bento-cell="article-11"] { grid-area: a11; z-index: 2;  }
-.bento-cell[data-bento-cell="article-12"] { grid-area: a12; z-index: 1;  }
+// ─────────────────────────────────────────────────────────────────────────────
+// S01 C01 P02 — inficon--im--s01-c01-p02
+// Section 01, Chapter 01, Page 02.
+// 4 cols × 3 rows. ROCC rendering (2×2), stat (1×1), island photo (2×1).
+//
+// 4-up area map:
+//   col:  1    2    3    4
+//   row1: .    .    .    .
+//   row2: a01  a01  a02  .
+//   row3: a01  a01  a03  a03
+//
+// 2-up area map:
+//   col:  1    2
+//   row1: a01  a01
+//   row2: a01  a01
+//   row3: a02  a03
+// ─────────────────────────────────────────────────────────────────────────────
+
+#bento--inficon--im--s01-c01-p02 {
+    grid-template-areas:
+        "a01 a01"
+        "a01 a01"
+        "a02 a03";
+}
+
+@container content-cell (min-width: 624px) {
+    #bento--inficon--im--s01-c01-p02 {
+        grid-template-columns: repeat(4, var(--bento-cell-size));
+        grid-template-rows:    repeat(3, var(--bento-cell-size));
+        grid-template-areas:
+            ".   .   .   ."
+            "a01 a01 a02 ."
+            "a01 a01 a03 a03";
+    }
+}
+
+/* ─── cell areas ─── */
+#bento--inficon--im--s01-c01-p02 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
+#bento--inficon--im--s01-c01-p02 .bento-cell[data-bento-cell="article-02"] { grid-area: a02; }
+#bento--inficon--im--s01-c01-p02 .bento-cell[data-bento-cell="article-03"] { grid-area: a03; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// S01 C01 P03 — inficon--im--s01-c01-p03
+// Section 01, Chapter 01, Page 03.
+// 4 cols × 4 rows. Quote cell (2×1) at row 4.
+// Selfie is a ::before pseudo-element on the quote cell — no DOM node.
+//
+// 4-up area map:
+//   col:  1    2    3    4
+//   row1: .    .    .    .
+//   row2: .    .    .    .
+//   row3: .    .    .    .
+//   row4: a01  a01  .    .
+//
+// 2-up area map:
+//   col:  1    2
+//   row4: a01  a01
+// ─────────────────────────────────────────────────────────────────────────────
+
+#bento--inficon--im--s01-c01-p03 {
+    grid-template-areas:
+        "a01 a01";
+}
+
+@container content-cell (min-width: 624px) {
+    #bento--inficon--im--s01-c01-p03 {
+        grid-template-columns: repeat(4, var(--bento-cell-size));
+        grid-template-rows:    repeat(4, var(--bento-cell-size));
+        grid-template-areas:
+            ".   .   .   ."
+            ".   .   .   ."
+            ".   .   .   ."
+            "a01 a01 .   .";
+    }
+}
+
+/* ─── cell areas ─── */
+#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
+
+// ─── Selfie pseudo-element ───────────────────────────────────────────────────
+// Decorative — no semantic content, no DOM node, no alt text required.
+// Anchored to quote cell via position: absolute on ::before.
+// Desktop: hangs left of the quote cell.
+// Mobile:  drops below the quote cell, centered.
+// Image optimization does not apply — background-image on pseudo-element.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// CONTRACT_EXCEPTION: overflow: visible required on both the bento grid and the
+// quote cell so the selfie ::before pseudo-element can escape the bento bounds.
+// The bento grid has overflow: hidden by default for border-radius clipping.
+#bento--inficon--im--s01-c01-p03 { overflow: visible; }
+#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"] { overflow: visible; }
+
+#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"]::before {
+    content: "";
+    position: absolute; /* CONTRACT_EXCEPTION: decorative pseudo-element — no DOM node, no alt text required */
+    width: var(--bento-cell-size);
+    height: var(--bento-cell-size);
+    background-image: url('/assets/images/inficon--photo--craig-cleanroom-selfie.jpg');
+    background-size: cover;
+    background-position: center top;
+    border-radius: var(--bento-radius);
+
+    // Default (2-up): below the quote cell, centered
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%); /* CONTRACT_EXCEPTION: centering a pseudo-element below its anchor cell */
+    margin-top: var(--bento-gap);
+}
+
+@container content-cell (min-width: 624px) {
+    #bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"]::before {
+        // 4-up: left of the quote cell, offset 44px upward per Figma (bridges rows 3-4)
+        top: -44px; /* CONTRACT_EXCEPTION: pixel geometry from Figma — selfie bridges rows 3-4 */
+        left: auto;
+        right: 100%;
+        transform: none;
+        margin-top: 0;
+        margin-right: var(--bento-gap);
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// S01 C02 P01 — inficon--im--s01-c02-p01
+// Section 01, Chapter 02, Page 01.
+// 4 cols x 2 rows. Workshop text+UI composite (2x2) in cols 3-4, rows 1-2.
+//
+// 4-up area map:
+//   col:  1    2    3    4
+//   row1: .    .    a01  a01
+//   row2: .    .    a01  a01
+// ─────────────────────────────────────────────────────────────────────────────
+
+#bento--inficon--im--s01-c02-p01 {
+    grid-template-areas:
+        ". . a01 a01"
+        ". . a01 a01";
+}
+
+@container content-cell (min-width: 624px) {
+    #bento--inficon--im--s01-c02-p01 {
+        grid-template-columns: repeat(4, var(--bento-cell-size));
+        grid-template-rows:    repeat(2, var(--bento-cell-size));
+        grid-template-areas:
+            ".   .   a01 a01"
+            ".   .   a01 a01";
+    }
+}
+
+/* ─── cell areas ─── */
+#bento--inficon--im--s01-c02-p01 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// S01 C02 P02 — inficon--im--s01-c02-p02
+// Section 01, Chapter 02, Page 02.
+// 4 cols x 4 rows. FigJam (3x2) + text cells.
+//
+// 4-up area map:
+//   col:  1    2    3    4
+//   row1: .    .    .    .
+//   row2: .    a01  .    .
+//   row3: a02  a02  a02  a03
+//   row4: a02  a02  a02  a04
+// ─────────────────────────────────────────────────────────────────────────────
+
+#bento--inficon--im--s01-c02-p02 {
+    grid-template-areas:
+        "a01 ."
+        "a02 a02"
+        "a02 a02"
+        "a03 a04";
+}
+
+@container content-cell (min-width: 624px) {
+    #bento--inficon--im--s01-c02-p02 {
+        grid-template-columns: repeat(4, var(--bento-cell-size));
+        grid-template-rows:    repeat(4, var(--bento-cell-size));
+        grid-template-areas:
+            ".   .   .   ."
+            ".   a01 .   ."
+            "a02 a02 a02 a03"
+            "a02 a02 a02 a04";
+    }
+}
+
+/* ─── cell areas ─── */
+#bento--inficon--im--s01-c02-p02 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
+#bento--inficon--im--s01-c02-p02 .bento-cell[data-bento-cell="article-02"] { grid-area: a02; }
+#bento--inficon--im--s01-c02-p02 .bento-cell[data-bento-cell="article-03"] { grid-area: a03; }
+#bento--inficon--im--s01-c02-p02 .bento-cell[data-bento-cell="article-04"] { grid-area: a04; }

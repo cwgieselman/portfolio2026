@@ -1,8 +1,11 @@
 {#
-  Header — deterministic param API
+  content-header — in-flow section/chapter headers (h2, h3 only)
+
+  Renamed from header.njk. h1 is now exclusively handled by
+  page-header.njk (the fixed page-level title with frosting).
 
   Expects (via headerParams):
-  - level: "h1" | "h2" | "h3"
+  - level: "h2" | "h3"
   - variant: "quiet" (optional — reduces visual weight without changing semantic level)
   - headline: string — may contain inline HTML (e.g. <span class="nobr">...</span>)
   - showEyebrow: boolean
@@ -24,14 +27,12 @@
         <p class="header__eyebrow">{{ p.eyebrow }}</p>
     {% endif %}
 
-    {% if p.level == "h1" %}
-        <h1 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline | safe }}</h1>
-    {% elseif p.level == "h2" %}
+    {% if p.level == "h2" %}
         <h2 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline | safe }}</h2>
     {% elseif p.level == "h3" %}
         <h3 class="header__headline{{ variantClass }}"{% if headingId %} id="{{ headingId }}"{% endif %}>{{ p.headline | safe }}</h3>
     {% else %}
-        <!-- HEADER_ERROR: invalid level -->
+        <!-- CONTENT_HEADER_ERROR: invalid level (h1 not permitted — use page-header.njk) -->
     {% endif %}
 
     {% if p.showSubhead and p.subhead %}

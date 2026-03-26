@@ -27,7 +27,7 @@
           and pageItemIndex0 == 0
           and cellIndex0 == 0
           and loop.index0 == 0
-          and item.include == "components/header.njk"
+          and (item.include == "components/header.njk" or item.include == "components/content-header.njk")
         %}
           {% set id = sectionTitleId %}
         {% endif %}
@@ -38,10 +38,10 @@
           {% set figureWrapper = wrapper %}
           {% include item.include %}
 
-        {% elseif item.include == "components/header.njk" %}
+        {% elseif item.include == "components/header.njk" or item.include == "components/content-header.njk" %}
           {% set headerParams = params %}
           {% set headerParamsId = id %}
-          {% include item.include %}
+          {% include "components/content-header.njk" %}
 
         {% elseif item.include == "components/link-block.njk" %}
           {% set linkBlockParams = params %}

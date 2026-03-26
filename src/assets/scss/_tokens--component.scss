@@ -9,6 +9,10 @@
  * ----------------------------------*/
 
 :root {
+  --bento-theme-default-bg: var(--color-neutral-10);
+  --bento-theme-default-border: var(--color-neutral-60);
+  --bento-theme-default-color: var(--color-primary-60);
+
   --bento-theme-primary-dark-bg: var(--color-primary-60);
   --bento-theme-primary-dark-border: var(--color-primary-80);
   --bento-theme-primary-dark-color: var(--color-primary-10);
@@ -24,10 +28,6 @@
   --bento-theme-secondary-light-bg: var(--color-secondary-20);
   --bento-theme-secondary-light-border: var(--color-secondary-30);
   --bento-theme-secondary-light-color: var(--color-secondary-70);
-
-  --bento-theme-white-bg: var(--color-neutral-10);
-  --bento-theme-white-border: var(--color-neutral-60);
-  --bento-theme-white-color: var(--color-primary-60);
 
   --bento-type-stat-family: var(--font-family-display);
   --bento-type-stat-lineHeight: var(--scale-450);

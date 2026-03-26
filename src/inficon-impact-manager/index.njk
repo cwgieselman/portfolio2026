@@ -6,6 +6,12 @@ pageKey: "inficon-impact-manager"
 mainClass: "layout--case-study"
 ---
 
+{% set data = pages[pageKey] %}
+
 <main class="layout {{ mainClass }}">
+  {# Page-level h1 header — fixed, grid-column-informed, scoped to this page #}
+  {% include "layouts/page-header.njk" %}
+
+  {# Scrolling case study content — sections > chapters > pages #}
   {% include "layouts/compiled-page.njk" %}
 </main>

@@ -115,6 +115,7 @@ module.exports = function (eleventyConfig) {
   // Pass through static assets (scss compiled above, css is build output)
   eleventyConfig.addPassthroughCopy("src/assets/images");
   eleventyConfig.addPassthroughCopy("src/assets/js");
+  eleventyConfig.addWatchTarget("src/assets/js/");
 
   return {
     dir: {

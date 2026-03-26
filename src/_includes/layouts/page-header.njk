@@ -1,0 +1,40 @@
+{#
+  page-header — fixed page-level h1 header
+
+  Scope: one per page, always h1, always fixed position.
+  Sibling to .layout__section inside <main class="layout">.
+
+  Carries .layout__chapter so it shares identical column tracks,
+  padding, and named lines with the scrolling content below.
+
+  Visual treatment (frosted glass) applied directly to .page-header
+  via grid-column: content-start / header-end. No frosting div needed.
+
+  Expects (via data.header):
+  - eyebrow: string (· separated, split into chips)
+  - showEyebrow: boolean
+  - headline: string — the page h1
+  - subhead: string
+  - showSubhead: boolean
+#}
+
+{% set h = data.header %}
+
+{% if h %}
+<header class="page-header layout__chapter" aria-label="Page header">
+  <div class="page-header__inner">
+    {% if h.showEyebrow and h.eyebrow %}
+    <div class="page-header__eyebrow">
+      {% set chips = h.eyebrow.split(' · ') %}
+      {% for chip in chips %}
+        <span class="page-header__chip">{{ chip }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <h1 class="page-header__headline">{{ h.headline }}</h1>
+    {% if h.showSubhead and h.subhead %}
+    <p class="page-header__subhead">{{ h.subhead }}</p>
+    {% endif %}
+  </div>
+</header>
+{% endif %}
