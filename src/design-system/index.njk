@@ -11,7 +11,7 @@ mainClass: "layout--design-system"
 
     <header class="ds-hub__header">
       <h1 class="ds-hub__title">Design system</h1>
-      <p class="ds-hub__meta">portfolio2026 &middot; CGDC-DS &middot; tokens/tokens.json &middot; Nunjucks partials</p>
+      <p class="ds-hub__meta">portfolio2026 &middot; CGDC-DS &middot; tokens/tokens.json &rarr; tokenDocs.js &middot; Eleventy data pipeline</p>
     </header>
 
     <nav class="ds-hub__top-nav" aria-label="Design system sections">
@@ -60,6 +60,10 @@ mainClass: "layout--design-system"
   {{ componentDocs | dump | safe }}
 </script>
 
+<script id="ds-token-data" type="application/json">
+  {{ tokenDocs | dump | safe }}
+</script>
+
 <script>
 /* ─────────────────────────────────────────────
    HUB — top-level tab switcher
@@ -72,112 +76,12 @@ function dsSetTab(targetId, btn) {
 }
 
 /* ─────────────────────────────────────────────
-   TOKEN DATA
+   TOKEN DATA — sourced from tokens/tokens.json
+   via src/_data/tokenDocs.js (Eleventy data transform).
+   Do NOT edit manually — update tokens.json and rebuild.
 ───────────────────────────────────────────── */
-const tokens = [
-  // ── PRIMITIVE · color · neutral ─────────────────────────────────
-  { tier:'primitive', group:'color · neutral', name:'--color-neutral-10', value:'#FFFFFF', type:'color', desc:'White · page bg · bento white theme bg' },
-  { tier:'primitive', group:'color · neutral', name:'--color-neutral-20', value:'#F8F8F7', type:'color', desc:'Page background' },
-  { tier:'primitive', group:'color · neutral', name:'--color-neutral-50', value:'#ECECE9', type:'color', desc:'Subtle surface · dividers' },
-  { tier:'primitive', group:'color · neutral', name:'--color-neutral-60', value:'#DFDFDE', type:'color', desc:'Bento white theme border' },
-  { tier:'primitive', group:'color · neutral', name:'--color-neutral-90', value:'#000000', type:'color', desc:'Pure black' },
-  // ── PRIMITIVE · color · primary ─────────────────────────────────
-  { tier:'primitive', group:'color · primary', name:'--color-primary-10', value:'#E7EDF4', type:'color', desc:'Lightest primary · bento primary-dark text' },
-  { tier:'primitive', group:'color · primary', name:'--color-primary-20', value:'#CFDBE8', type:'color', desc:'Light primary · bento primary-light bg' },
-  { tier:'primitive', group:'color · primary', name:'--color-primary-30', value:'#9FB8D1', type:'color', desc:'Primary border light' },
-  { tier:'primitive', group:'color · primary', name:'--color-primary-40', value:'#87A6C6', type:'color', desc:'Primary mid-light' },
-  { tier:'primitive', group:'color · primary', name:'--color-primary-50', value:'#3E71A3', type:'color', desc:'Page title color' },
-  { tier:'primitive', group:'color · primary', name:'--color-primary-60', value:'#0E4D8C', type:'color', desc:'Section heading · bento white text · bento primary-dark bg' },
-  { tier:'primitive', group:'color · primary', name:'--color-primary-70', value:'#082E54', type:'color', desc:'Body text · subheading color' },
-  { tier:'primitive', group:'color · primary', name:'--color-primary-80', value:'#061F38', type:'color', desc:'Bento primary-dark border' },
-  { tier:'primitive', group:'color · primary', name:'--color-primary-90', value:'#041526', type:'color', desc:'Darkest primary' },
-  // ── PRIMITIVE · color · secondary ───────────────────────────────
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-10', value:'#FFFAE6', type:'color', desc:'Lightest secondary' },
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-20', value:'#FFF0B3', type:'color', desc:'Bento secondary-light bg' },
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-30', value:'#FFE166', type:'color', desc:'Secondary border light' },
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-40', value:'#FFD733', type:'color', desc:'CTA color' },
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-50', value:'#FFCD00', type:'color', desc:'Bento secondary-dark bg' },
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-60', value:'#CCA400', type:'color', desc:'Secondary border dark' },
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-70', value:'#997B00', type:'color', desc:'Bento secondary-light text' },
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-80', value:'#665200', type:'color', desc:'Eyebrow color · bento secondary-dark text' },
-  { tier:'primitive', group:'color · secondary', name:'--color-secondary-90', value:'#191400', type:'color', desc:'Darkest secondary' },
-  // ── PRIMITIVE · scale ───────────────────────────────────────────
-  { tier:'primitive', group:'scale', name:'--scale-base', value:'16px', type:'dimension', desc:'Base unit. All scale tokens derive from this.', dimPreview:'16px' },
-  { tier:'primitive', group:'scale', name:'--scale-25', value:'calc(var(--scale-base) * 0.25)', type:'dimension', desc:'4px · micro spacing', px:4 },
-  { tier:'primitive', group:'scale', name:'--scale-50', value:'calc(var(--scale-base) * 0.50)', type:'dimension', desc:'8px', px:8 },
-  { tier:'primitive', group:'scale', name:'--scale-75', value:'calc(var(--scale-base) * 0.75)', type:'dimension', desc:'12px', px:12 },
-  { tier:'primitive', group:'scale', name:'--scale-100', value:'calc(var(--scale-base) * 1)', type:'dimension', desc:'16px · base', px:16 },
-  { tier:'primitive', group:'scale', name:'--scale-125', value:'calc(var(--scale-base) * 1.25)', type:'dimension', desc:'20px', px:20 },
-  { tier:'primitive', group:'scale', name:'--scale-150', value:'calc(var(--scale-base) * 1.5)', type:'dimension', desc:'24px', px:24 },
-  { tier:'primitive', group:'scale', name:'--scale-175', value:'calc(var(--scale-base) * 1.75)', type:'dimension', desc:'28px', px:28 },
-  { tier:'primitive', group:'scale', name:'--scale-200', value:'calc(var(--scale-base) * 2)', type:'dimension', desc:'32px', px:32 },
-  { tier:'primitive', group:'scale', name:'--scale-250', value:'calc(var(--scale-base) * 2.5)', type:'dimension', desc:'40px', px:40 },
-  { tier:'primitive', group:'scale', name:'--scale-300', value:'calc(var(--scale-base) * 3)', type:'dimension', desc:'48px', px:48 },
-  { tier:'primitive', group:'scale', name:'--scale-350', value:'calc(var(--scale-base) * 3.5)', type:'dimension', desc:'56px · page title size', px:56 },
-  { tier:'primitive', group:'scale', name:'--scale-400', value:'calc(var(--scale-base) * 4)', type:'dimension', desc:'64px · page title line-height', px:64 },
-  { tier:'primitive', group:'scale', name:'--scale-450', value:'calc(var(--scale-base) * 4.5)', type:'dimension', desc:'72px · bento stat size', px:72 },
-  // ── PRIMITIVE · typography ──────────────────────────────────────
-  { tier:'primitive', group:'typography · family', name:'--font-family-brand', value:'Raleway', type:'typography', desc:'Brand headings', fontFamily:'Raleway,sans-serif', preview:'fox' },
-  { tier:'primitive', group:'typography · family', name:'--font-family-plain', value:'PT Sans', type:'typography', desc:'Body copy · UI text', fontFamily:'"PT Sans",sans-serif', preview:'fox' },
-  { tier:'primitive', group:'typography · family', name:'--font-family-display', value:'Tienne', type:'typography', desc:'Bento stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'22px' },
-  { tier:'primitive', group:'typography · weight', name:'--font-weight-regular', value:'400', type:'typography', desc:'Default weight', fontFamily:'"PT Sans",sans-serif', preview:'fox' },
-  { tier:'primitive', group:'typography · weight', name:'--font-weight-semibold', value:'600', type:'typography', desc:'Headings · emphasis', fontFamily:'Raleway,sans-serif', preview:'fox' },
-  { tier:'primitive', group:'typography · weight', name:'--font-weight-bold', value:'700', type:'typography', desc:'Strong headings · CTA', fontFamily:'Raleway,sans-serif', preview:'fox' },
-  // ── SEMANTIC · color ────────────────────────────────────────────
-  { tier:'semantic', group:'color · surface', name:'--color-bg', value:'alias → neutral-20', type:'color', desc:'Page background', alias:true, resolvedColor:'#F8F8F7' },
-  { tier:'semantic', group:'color · text', name:'--color-text', value:'alias → primary-70', type:'color', desc:'Default body text', alias:true, resolvedColor:'#082E54' },
-  // ── SEMANTIC · spacing ──────────────────────────────────────────
-  { tier:'semantic', group:'spacing', name:'--spacing-xxs', value:'alias → scale-25', type:'spacing', desc:'4px · micro', alias:true, resolvedPx:4 },
-  { tier:'semantic', group:'spacing', name:'--spacing-xs', value:'alias → scale-50', type:'spacing', desc:'8px', alias:true, resolvedPx:8 },
-  { tier:'semantic', group:'spacing', name:'--spacing-s', value:'alias → scale-75', type:'spacing', desc:'12px', alias:true, resolvedPx:12 },
-  { tier:'semantic', group:'spacing', name:'--spacing-m', value:'alias → scale-100', type:'spacing', desc:'16px · base', alias:true, resolvedPx:16 },
-  { tier:'semantic', group:'spacing', name:'--spacing-l', value:'alias → scale-125', type:'spacing', desc:'20px', alias:true, resolvedPx:20 },
-  { tier:'semantic', group:'spacing', name:'--spacing-xl', value:'alias → scale-150', type:'spacing', desc:'24px', alias:true, resolvedPx:24 },
-  { tier:'semantic', group:'spacing', name:'--spacing-xxl', value:'alias → scale-200', type:'spacing', desc:'32px', alias:true, resolvedPx:32 },
-  { tier:'semantic', group:'spacing', name:'--spacing-xxxl', value:'alias → scale-250', type:'spacing', desc:'40px', alias:true, resolvedPx:40 },
-  // ── SEMANTIC · radius ───────────────────────────────────────────
-  { tier:'semantic', group:'radius', name:'--corner-none', value:'0px', type:'dimension', desc:'No radius', dimPreview:'0' },
-  { tier:'semantic', group:'radius', name:'--corner-xxs', value:'alias → scale-25', type:'dimension', desc:'4px', alias:true, resolvedPx:4 },
-  { tier:'semantic', group:'radius', name:'--corner-xs', value:'alias → scale-50', type:'dimension', desc:'8px', alias:true, resolvedPx:8 },
-  { tier:'semantic', group:'radius', name:'--corner-s', value:'alias → scale-75', type:'dimension', desc:'12px', alias:true, resolvedPx:12 },
-  { tier:'semantic', group:'radius', name:'--corner-m', value:'alias → scale-100', type:'dimension', desc:'16px', alias:true, resolvedPx:16 },
-  { tier:'semantic', group:'radius', name:'--corner-l', value:'alias → scale-125', type:'dimension', desc:'20px', alias:true, resolvedPx:20 },
-  { tier:'semantic', group:'radius', name:'--corner-xl', value:'alias → scale-150', type:'dimension', desc:'24px', alias:true, resolvedPx:24 },
-  { tier:'semantic', group:'radius', name:'--corner-xxl', value:'alias → scale-200', type:'dimension', desc:'32px', alias:true, resolvedPx:32 },
-  { tier:'semantic', group:'radius', name:'--corner-full', value:'1000px', type:'dimension', desc:'Pill / fully rounded', dimPreview:'∞' },
-  // ── SEMANTIC · typography ───────────────────────────────────────
-  { tier:'semantic', group:'typography · paragraph', name:'--type-paragraph-size', value:'alias → scale-100', type:'typography', desc:'16px body', fontFamily:'"PT Sans",sans-serif', preview:'fox', previewSize:'16px' },
-  { tier:'semantic', group:'typography · paragraph', name:'--type-paragraph-family', value:'alias → font-family-plain', type:'typography', desc:'PT Sans', fontFamily:'"PT Sans",sans-serif', preview:'fox' },
-  { tier:'semantic', group:'typography · headings', name:'--type-pageTitle-size', value:'alias → scale-350', type:'typography', desc:'56px · h1', fontFamily:'Raleway,sans-serif', preview:'aabb', previewSize:'20px' },
-  { tier:'semantic', group:'typography · headings', name:'--type-sectionHeading-size', value:'alias → scale-200', type:'typography', desc:'32px · h2', fontFamily:'Raleway,sans-serif', preview:'aabb', previewSize:'18px' },
-  { tier:'semantic', group:'typography · headings', name:'--type-subheading-size', value:'alias → scale-150', type:'typography', desc:'24px · h3', fontFamily:'Raleway,sans-serif', preview:'aabb', previewSize:'16px' },
-  { tier:'semantic', group:'typography · headings', name:'--type-fineprint-size', value:'alias → scale-75', type:'typography', desc:'12px · captions · labels', fontFamily:'"PT Sans",sans-serif', preview:'fox', previewSize:'12px' },
-  { tier:'semantic', group:'typography · headings', name:'--type-eyebrow-size', value:'alias → scale-100', type:'typography', desc:'16px allcaps · section labels', fontFamily:'Raleway,sans-serif', preview:'fox', previewSize:'11px' },
-  // ── COMPONENT · mosaic themes ────────────────────────────────────
-  { tier:'component', group:'mosaic · theme · white', name:'--mosaic-theme-white-bg', value:'alias → neutral-10', type:'color', desc:'White cell background', alias:true, resolvedColor:'#FFFFFF' },
-  { tier:'component', group:'mosaic · theme · white', name:'--mosaic-theme-white-color', value:'alias → primary-60', type:'color', desc:'White cell text', alias:true, resolvedColor:'#0E4D8C' },
-  { tier:'component', group:'mosaic · theme · white', name:'--mosaic-theme-white-border', value:'alias → neutral-60', type:'color', desc:'White cell border', alias:true, resolvedColor:'#DFDFDE' },
-  { tier:'component', group:'mosaic · theme · primary-dark', name:'--mosaic-theme-primary-dark-bg', value:'alias → primary-60', type:'color', desc:'Dark blue cell background', alias:true, resolvedColor:'#0E4D8C' },
-  { tier:'component', group:'mosaic · theme · primary-dark', name:'--mosaic-theme-primary-dark-color', value:'alias → primary-10', type:'color', desc:'Dark blue cell text', alias:true, resolvedColor:'#E7EDF4' },
-  { tier:'component', group:'mosaic · theme · primary-dark', name:'--mosaic-theme-primary-dark-border', value:'alias → primary-80', type:'color', desc:'Dark blue cell border', alias:true, resolvedColor:'#061F38' },
-  { tier:'component', group:'mosaic · theme · primary-light', name:'--mosaic-theme-primary-light-bg', value:'alias → primary-20', type:'color', desc:'Light blue cell background', alias:true, resolvedColor:'#CFDBE8' },
-  { tier:'component', group:'mosaic · theme · secondary-dark', name:'--mosaic-theme-secondary-dark-bg', value:'alias → secondary-50', type:'color', desc:'Gold cell background', alias:true, resolvedColor:'#FFCD00' },
-  { tier:'component', group:'mosaic · theme · secondary-light', name:'--mosaic-theme-secondary-light-bg', value:'alias → secondary-20', type:'color', desc:'Light gold cell background', alias:true, resolvedColor:'#FFF0B3' },
-  // ── COMPONENT · mosaic type ──────────────────────────────────────
-  { tier:'component', group:'mosaic · type', name:'--mosaic-type-stat-family', value:'alias → font-family-display', type:'typography', desc:'Tienne · stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'24px' },
-  { tier:'component', group:'mosaic · type', name:'--mosaic-type-stat-size', value:'alias → scale-450', type:'typography', desc:'72px · stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'20px' },
-  { tier:'component', group:'mosaic · type', name:'--mosaic-type-stat-weight', value:'alias → font-weight-bold', type:'typography', desc:'700', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'18px' },
-  // ── COMPONENT · content rhythm ──────────────────────────────────
-  { tier:'component', group:'content rhythm', name:'--content-rhythm--block', value:'alias → spacing-xxl', type:'spacing', desc:'32px · between content blocks', alias:true, resolvedPx:32 },
-  { tier:'component', group:'content rhythm', name:'--content-rhythm--continuation', value:'0px', type:'spacing', desc:'0 · continuation items stack tight', px:0 },
-  { tier:'component', group:'content rhythm', name:'--content-rhythm--list-indent', value:'alias → spacing-l', type:'spacing', desc:'20px · list indentation', alias:true, resolvedPx:20 },
-];
+const tokens = JSON.parse(document.getElementById('ds-token-data').textContent);
 
-const colorVals = [
-  '#FFFFFF','#F8F8F7','#ECECE9','#DFDFDE','#000000',
-  '#E7EDF4','#CFDBE8','#9FB8D1','#87A6C6','#3E71A3','#0E4D8C','#082E54','#061F38','#041526',
-  '#FFFAE6','#FFF0B3','#FFE166','#FFD733','#FFCD00','#CCA400','#997B00','#665200','#191400',
-];
 const tierDefs = [
   { key:'primitive', label:'Primitive' },
   { key:'semantic',  label:'Semantic' },
@@ -210,19 +114,21 @@ function tRenderTypeBar() {
 }
 
 function tSwatchColor(t) {
-  if (t.alias || t.type !== 'color') return null;
-  return colorVals.includes(t.value) ? t.value : null;
+  if (t.type !== 'color') return null;
+  if (!t.alias && t.value && t.value.startsWith('#')) return t.value;
+  if (t.alias && t.resolvedColor) return t.resolvedColor;
+  return null;
 }
 
 function tPreviewHTML(t, forCard) {
   const color = tSwatchColor(t);
   if (t.type === 'color' && color) {
-    const border = color === '#FFFFFF' ? 'border:0.5px solid #ddddd8;' : '';
+    const border = (color === '#FFFFFF' || color === '#ffffff') ? 'border:0.5px solid #ddddd8;' : '';
     if (forCard) return `<div class="ds-tokens__card-color" style="background:${color};${border}"></div>`;
-    return `<div class="ds-tokens__swatch" style="background:${color};${border}"></div>`;
+    return `<div class="ds-tokens__swatch${t.alias?' ds-tokens__swatch--alias':''}" style="background:${color};${border}"></div>`;
   }
-  if (t.type === 'color' && t.alias && t.resolvedColor) {
-    const chip = `<div class="ds-tokens__swatch ds-tokens__swatch--alias" style="background:${t.resolvedColor};"></div>`;
+  if (t.type === 'color' && t.alias) {
+    const chip = `<div class="ds-tokens__swatch ds-tokens__swatch--alias" style="background:#eee;"></div>`;
     if (forCard) return `<div class="ds-tokens__card-preview">${chip}<span class="ds-tokens__alias-badge">alias</span></div>`;
     return `<div class="ds-tokens__preview-alias">${chip}<span class="ds-tokens__alias-badge">alias</span></div>`;
   }
@@ -251,6 +157,11 @@ function tPreviewHTML(t, forCard) {
     if (forCard) return `<div class="ds-tokens__card-preview"><span class="ds-tokens__preview-dim">${t.dimPreview}</span></div>`;
     return `<span class="ds-tokens__preview-dim">${t.dimPreview}</span>`;
   }
+  if (t.alias) {
+    const aliasLabel = `<span class="ds-tokens__alias-badge">alias</span>`;
+    if (forCard) return `<div class="ds-tokens__card-preview">${aliasLabel}</div>`;
+    return `<div class="ds-tokens__preview-alias">${aliasLabel}</div>`;
+  }
   if (forCard) return `<div class="ds-tokens__card-preview"><span class="ds-tokens__badge">${t.type}</span></div>`;
   return `<div class="ds-tokens__preview-empty"></div>`;
 }
@@ -265,7 +176,7 @@ function tRenderList(groups) {
             <td class="ds-tokens__td-preview">${tPreviewHTML(t, false)}</td>
             <td class="ds-tokens__td-name"><code>${t.name}</code></td>
             <td class="ds-tokens__td-value"><code>${t.value}</code></td>
-            <td class="ds-tokens__td-desc">${t.desc}</td>
+            <td class="ds-tokens__td-desc">${t.desc || ''}</td>
             <td class="ds-tokens__td-badge"><span class="ds-tokens__badge">${t.type}</span></td>
           </tr>`).join('')}
       </table>
@@ -283,7 +194,7 @@ function tRenderCards(groups) {
             <div class="ds-tokens__card-body">
               <p class="ds-tokens__card-name"><code>${t.name}</code></p>
               <p class="ds-tokens__card-value"><code>${t.value}</code></p>
-              <p class="ds-tokens__card-desc">${t.desc}</p>
+              <p class="ds-tokens__card-desc">${t.desc || ''}</p>
             </div>
             <div class="ds-tokens__card-footer">
               <span class="ds-tokens__badge">${t.type}</span>
@@ -545,7 +456,6 @@ function cgLinkPill(label, href) {
 function cgRenderContract(contract) {
   if (!contract||!contract.length) return `<p class="ds-comp__stub">Contract entries live on the canonical variant.</p>`;
   return contract.map(row=>{
-    // Support both YAML shape (required: bool) and legacy JS shape (req: bool)
     const isReq = row.required !== undefined ? row.required : row.req;
     return `
     <div class="ds-comp__contract-row">
@@ -564,8 +474,6 @@ function cgRenderUsage(usage) {
   const a11y = usage.a11y || [];
   const related = usage.related || [];
   const changelog = usage.changelog || [];
-  // markup: in YAML lives on the njk file itself — omit from usage tab for now
-  // phase 2: read from actual .njk source via Eleventy filter
   return `
     <div class="ds-comp__usage-section">
       <p class="ds-comp__usage-label">When to use &middot; when not to use</p>
@@ -646,5 +554,5 @@ function cgRenderDetail() {
 
 /* ── INIT ──────────────────────────────────── */
 tRenderTierNav(); tRenderTypeBar(); tRender();
-cgRenderFilterBar(); cgRenderGallery();
+if (document.getElementById('cg-filter-bar')) { cgRenderFilterBar(); cgRenderGallery(); }
 </script>

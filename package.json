@@ -7,6 +7,7 @@
     "build": "npm run tokens:build && eleventy",
     "clean": "rm -rf _site",
     "tokens:build": "node scripts/build-tokens-scss.mjs",
+    "tokens:pull": "node scripts/figma-pull.mjs",
     "test:visual": "playwright test --update-snapshots",
     "test:visual:check": "playwright test",
     "test:visual:report": "playwright show-report tests/report"

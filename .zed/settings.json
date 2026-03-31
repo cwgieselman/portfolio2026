@@ -1,0 +1,9 @@
+{
+  "lsp": {
+    "design-tokens-language-server": {
+      "initialization_options": {
+        "configPath": "tokens/tokens.json"
+      }
+    }
+  }
+}
