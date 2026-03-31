@@ -1,4 +1,7 @@
-/* _includes/components/header.njk */
+/* _includes/components/content-header.njk */
+// In-flow section/chapter headers — h2 and h3 only.
+// h1 is exclusively handled by page-header.njk (the fixed sticky page title).
+// Renamed from header.njk when page-header.njk was introduced as a separate include.
 
 .header {
     display: grid;

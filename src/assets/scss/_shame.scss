@@ -1,0 +1,24 @@
+// _shame.scss
+// ─────────────────────────────────────────────────────────────────────────────
+// Provisional Sass variables pending Token Studio promotion.
+//
+// TODO: These will be deleted when the navbar and page-header components are
+// formally designed in Figma and pushed through the Token Studio pipeline.
+// Each value should become a token in tokens.json → _tokens--component.scss.
+//
+// Do not add variables here unless they are genuinely temporary.
+// Do not use these variables in new code — use tokens instead.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Chrome geometry — provisional Figma constants.
+// Used by _layout.scss (navbar, .layout, .layout__narrative) and
+// _page-header.scss (.page-header, .page-header__frosting, .page-header__inner).
+
+$chrome-navbar-height:  48px;   // global navbar, always fixed
+$chrome-header-height: 192px;   // page header: 16px top pad + 176px content area
+$chrome-content-gap:    16px;   // one bento gutter — gap between header and bento row 1
+
+// Sticky offset reference (for JS parity — see choreography.js CHROME_TOP):
+//   page header:    top: $chrome-navbar-height                                      = 48px
+//   bento/skeleton: top: $chrome-navbar-height + $chrome-content-gap               = 64px (CHROME_TOP)
+//   chapter text:   top: $chrome-navbar-height + $chrome-header-height + $chrome-content-gap = 258px

@@ -585,6 +585,14 @@ Set via `theme:` on a cell. Defaults to `white` when omitted.
 **skeleton** — bare outline cell for P00 underlay. No content, no theme.
 **custom** — extended behavior cell. Requires `variant:` string. See below.
 
+#### Arrow Indicators (planned, not yet implemented)
+
+Directional arrow indicators between bento cells are a planned feature. When implemented, they will be keyed by `cell.arrow` in YAML (e.g. `arrow: "right"`). The template, SCSS, and SVG sprite were removed in `rehab/codebase-audit` — the prior implementation never worked correctly and will be rebuilt from Figma when needed.
+
+#### Annotation Toggle (removed, to be replaced)
+
+A macro-based component (`annotation-toggle.njk`) for toggling between a raw artifact image and an annotated version via a button. Removed in `rehab/codebase-audit` — the implementation was functional but will be replaced with a more semantic and accessible annotation widget designed specifically for the BMTx case study. A design thread with pseudo-code and examples exists in Claude.ai. Files removed: `annotation-toggle.njk`, `_annotation-toggle.scss`. JS was bundled in `comparison-components.js` (still present). Rebuild from the new design when the BMTx page work begins.
+
 #### Custom Cell Contract
 
 A `custom` cell has two Figma boolean/text props that must be read from the article's `componentProperties`:

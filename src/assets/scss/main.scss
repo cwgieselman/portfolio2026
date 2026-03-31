@@ -12,6 +12,8 @@
 @use "tokens--semantic";
 @use "tokens--component";
 
+// Provisional Sass variables pending Token Studio promotion — see _shame.scss
+@use "shame" as *;
 
 /* ---------------------------------
  * Partials below this line emit css
@@ -24,20 +26,17 @@
 
 /* 11ty _includes found in src/_includes/components */
 @use "components/content-cell";
-@use "components/header";
-@use "components/text-block";
+@use "components/content-header";
+@use "components/page-header";
 @use "components/figure";
 @use "components/link";
 @use "components/link-block";
 @use "components/bento-grid";
-@use "components/bento-arrow";
 @use "components/comparison-slider";
-@use "components/annotation-toggle";
 @use "components/design-system-hub";
 
 /* One-off bento cell overrides — add per-cell partials here */
 // @use "components/bento-cells/box-01";
 
 /* Generated placements (Codex) */
-@use "placements/bmtx-nextgen";
 @use "placements/inficon-impact-manager";

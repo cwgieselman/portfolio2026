@@ -37,7 +37,7 @@ Top-level keys.
 
 ## Header
 
-Consumed by `components/header.njk`. Rendered in `index.njk` above the compiled-page include.
+Consumed by `components/content-header.njk`. Rendered in `index.njk` above the compiled-page include.
 
 | Key | Type | Notes |
 |-----|------|-------|
@@ -79,13 +79,10 @@ One left-column narrative unit. Owns a slice of the section's bento composite.
 |-----|------|----------|-------|
 | `chapterKey` | string | yes | e.g. `"chapter-01"` |
 | `chapterOffset` | integer | yes | Rows of overlap with the previous chapter. `0` = no overlap |
-| `fieldTextRow` | integer | yes | Bento row the field text aligns to. `1` = top of chapter |
 | `fieldText` | string | yes | Left-column narrative paragraph |
 | `pages` | array | yes | One or more page objects |
 
 **`chapterOffset`** drives a negative `margin-top` in JS: `offset × 192px` (one cell + one gap at MONEY state).
-
-**`fieldTextRow`** drives a `padding-block-start` offset in `_layout.scss` using hard pixel values. `--bento-cell-size` and `--bento-gap` are scoped to `.bento-grid` and do not inherit up to `.chapter__text`.
 
 ---
 
@@ -161,7 +158,7 @@ Component built. Not yet wired to any page YAML. Reference: `components/comparis
 
 ### `type: annotation`
 
-Component built. Not yet wired to any page YAML. Reference: `components/annotation-toggle.njk`.
+Removed in `rehab/codebase-audit`. Will be replaced by a new semantic annotation widget when BMTx page work begins. See CONTRACT.md breadcrumb.
 
 ### `type: custom`
 

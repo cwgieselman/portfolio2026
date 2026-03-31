@@ -1,0 +1,115 @@
+/* _includes/layouts/page-header.njk */
+// Fixed sticky page-level h1 header. One per case study page.
+// Sibling to .layout__narrative and .page-header__frosting inside <main>.
+// Carries .layout__chapter so it shares identical column tracks and named
+// grid lines with the scrolling content below.
+//
+// Visual treatment (frosted glass) lives in .page-header__frosting —
+// a fixed sibling div in the page template (index.njk), toggled by JS.
+
+@use "../shame" as *;
+
+/* ── Page header ─────────────────────────────────────────────────────────────*/
+
+.page-header {
+    // Sticky position — starts detached in normal flow, scrolls up to stick
+    // flush below the navbar.
+    //
+    // Load position: header top edge at 224px from viewport top.
+    //   body padding: 48px (navbar)
+    //   layout padding: 16px (content gap)
+    //   margin-block-start: 176px (pushes to designed load position)
+    //   = 240px total
+    //
+    // Height: 192px = 16px top pad + 176px content area (one bento article).
+    // The 16px top pad aligns header content with bento row 1.
+    //
+    // On load the header is transparent — only the text is visible.
+    position: sticky;
+    top: $chrome-navbar-height + $chrome-content-gap;      // 64px — flush with bento sticky top
+    margin-block-start: $chrome-header-height - $chrome-content-gap; // 176px — load position offset
+    left: 0;
+    right: 0;
+    height: $chrome-header-height;  // 192px = 16px pad + 176px content
+    z-index: 90;                    // below navbar (100), above content
+}
+
+// Visual treatment on __inner, not on .page-header itself.
+// .page-header has left:0/right:0 — it spans the full viewport.
+// __inner is a grid item constrained to content-start / header-end (624px).
+
+.page-header__frosting {
+    // Decorative frosted glass layer — fixed, behind header content.
+    // Flush under navbar (top: 48px), height covers full header area.
+    // opacity: 0 on load, transitions to 1 when JS adds .is-frosted.
+    position: fixed;
+    top: $chrome-navbar-height;  // 48px — flush under navbar, no gap
+    left: var(--grid-margin);
+    width: 624px;  // CONTRACT_EXCEPTION: content-start / header-end = 624px
+    height: $chrome-header-height;  // 192px
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(4px);
+    border-radius: 0 0 var(--corner-xs) var(--corner-xs);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    z-index: 88;  // behind header (90) and its children
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+
+    &.is-frosted {
+        opacity: 1;
+    }
+}
+
+.page-header__inner {
+    // Grid item spanning content-start / header-end = 624px.
+    // Pure layout/content container — no visual treatment here.
+    grid-column: content-start / header-end;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    height: 100%;
+    padding-block: $chrome-content-gap;  // 16px — aligns content with bento row 1
+    padding-inline-start: var(--spacing-xl);
+    position: relative;  // sits above __frosting via z-index from .page-header z-index: 90
+}
+
+.page-header__eyebrow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.page-header__chip {
+    font-family: var(--font-family-brand);
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-secondary-70);
+    background-color: var(--color-neutral-20);
+    border: 1px solid var(--color-neutral-50);
+    border-radius: var(--corner-xxs);
+    padding-inline: 8px;
+    white-space: nowrap;
+}
+
+.page-header__headline {
+    font-family: var(--font-family-brand);
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 2.75rem;
+    color: var(--color-primary-60);
+    margin: 0;
+}
+
+.page-header__subhead {
+    font-family: var(--font-family-plain);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.75rem;
+    color: var(--color-secondary-70);
+    margin: 0;
+}

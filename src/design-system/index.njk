@@ -16,7 +16,8 @@ mainClass: "layout--design-system"
 
     <nav class="ds-hub__top-nav" aria-label="Design system sections">
       <button class="ds-hub__top-tab ds-hub__top-tab--active" onclick="dsSetTab('ds-tokens', this)">Tokens</button>
-      <button class="ds-hub__top-tab" onclick="dsSetTab('ds-components', this)">Components</button>
+      {# Component gallery tab — deferred. Uncomment when gallery is ready. #}
+      {# <button class="ds-hub__top-tab" onclick="dsSetTab('ds-components', this)">Components</button> #}
     </nav>
 
     <!-- TOKENS PANEL -->
@@ -45,12 +46,12 @@ mainClass: "layout--design-system"
       <div class="ds-tokens__output" id="t-output"></div>
     </section>
 
-    <!-- COMPONENTS PANEL -->
-    <section class="ds-panel" id="ds-components" aria-label="Component gallery">
+    {# COMPONENTS PANEL — deferred. Uncomment when gallery is ready. #}
+    {# <section class="ds-panel" id="ds-components" aria-label="Component gallery">
       <div class="ds-comp__filter-bar" id="cg-filter-bar"></div>
       <div class="ds-comp__gallery" id="cg-gallery"></div>
       <div class="ds-comp__detail" id="cg-detail-panel"></div>
-    </section>
+    </section> #}
 
   </div>
 </main>
