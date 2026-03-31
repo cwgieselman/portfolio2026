@@ -579,9 +579,51 @@ Set via `theme:` on a cell. Defaults to `white` when omitted.
 
 ### Cell Types
 
-**content** — cell has padding. Use for text, stats, mixed content.  
-**image** — no padding; content bleeds to cell edge.  
-**custom** — reserved escape hatch. No padding assumption.
+**content** — cell has padding. Use for text, stats, mixed content.
+**image** — no padding; content bleeds to cell edge.
+**graphic** — square illustration/diagram. `object-fit: contain`, padded, `aspect-ratio: 1` in 2-up.
+**skeleton** — bare outline cell for P00 underlay. No content, no theme.
+**custom** — extended behavior cell. Requires `variant:` string. See below.
+
+#### Custom Cell Contract
+
+A `custom` cell has two Figma boolean/text props that must be read from the article's `componentProperties`:
+
+| Figma prop | Type | YAML key |
+|---|---|---|
+| `custom` | boolean | `type: custom` |
+| `variant` | text | `variant: "<string>"` |
+
+The `variant` string is the canonical key for all extended behavior tied to that cell. The template emits it as `data-bento-variant` on the `<article>` element — this is the CSS and JS hook.
+
+**Template output (bento-grid.njk):**
+```html
+<article class="bento-cell bento-cell--custom [bento-cell--theme-*]"
+         data-bento-cell="article-NN"
+         data-bento-variant="<variant>">
+```
+
+**CSS hook** (in placements SCSS):
+```scss
+[data-bento-variant="<variant>"] { ... }
+```
+
+**JS hook** (in choreography.js or a dedicated script):
+```js
+document.querySelector('[data-bento-variant="<variant>"]')
+```
+
+**Compile scaffolding rule:** When a `custom` cell is encountered during compilation, emit the YAML and then output a scaffolding block in the compile report:
+
+```
+CUSTOM CELL SCAFFOLD — variant: <variant>
+  SCSS: add ruleset for [data-bento-variant="<variant>"] in placements/_<pageKey>.scss
+  JS:   add behavior keyed to document.querySelector('[data-bento-variant="<variant>"]')
+        in choreography.js or a dedicated <variant>.js partial
+  Note: <describe the intended visual/interactive behavior from Figma>
+```
+
+Content in `content:` renders via `| safe` as with `content` cells. Padding is not assumed — add via the variant's SCSS ruleset if needed.
 
 ### Inline Typography Spans
 

@@ -312,7 +312,14 @@ Each article emits only:
 <article class="bento-cell bento-cell--{type} [bento-cell--theme-{theme}]" data-bento-cell="article-NN">
 ```
 
-The `data-bento-cell` attribute is the CSS hook for per-cell placement. No numeric index class. No inline styles. No id attributes.
+For `custom` cells, also emit `data-bento-variant`:
+```html
+<article class="bento-cell bento-cell--custom [bento-cell--theme-{theme}]"
+         data-bento-cell="article-NN"
+         data-bento-variant="{variant}">
+```
+
+The `data-bento-cell` attribute is the CSS hook for per-cell placement. `data-bento-variant` is the hook for extended CSS and JS behavior. No numeric index class. No inline styles. No id attributes.
 
 #### Z-Index from Figma Layer Order
 
@@ -385,7 +392,29 @@ bento:
         alt: "TODO:alt"
         sizes: "40vw"
         cssClass: "bento-cell__img"
+
+    - id: article-07
+      type: custom
+      variant: "selfie"          # Figma: custom=true, variant="selfie"
+      theme: primary-dark        # omit if no theme
+      desktop:
+        col: "1 / 3"
+        row: "4 / 5"
+      content: |
+        <span class="bento-lead-italic">TODO:quote</span>
 ```
+
+**Custom cell scaffolding rule:** When a `custom` cell is encountered, emit the YAML above and then append a scaffolding block to the compile report:
+
+```
+CUSTOM CELL SCAFFOLD — variant: selfie
+  SCSS: add ruleset for [data-bento-variant="selfie"] in placements/_<pageKey>.scss
+  JS:   add behavior keyed to document.querySelector('[data-bento-variant="selfie"]')
+        in choreography.js or a dedicated selfie.js partial
+  Note: <describe the intended visual/interactive behavior from Figma>
+```
+
+Do not attempt to author the extended CSS or JS — output the scaffold block and move on.
 
 ---
 
