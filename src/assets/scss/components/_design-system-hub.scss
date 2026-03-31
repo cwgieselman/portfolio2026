@@ -3,6 +3,11 @@
  * Design system hub: token page + component gallery.
  * Route: /design-system/
  * Static first — wire to 11ty data pipeline later.
+ *
+ * TOKEN_DEBT: This file predates the token system and contains ~100+ bare hex
+ * colors, sub-pixel borders, and magic numbers throughout. Exempt from the
+ * token audit until the component gallery UI is formally redesigned in Figma.
+ * Do not attempt to retrofit tokens here — fix at rebuild time.
  * ----------------------------------*/
 
 /* ── Layout shell ─────────────────────────── */
