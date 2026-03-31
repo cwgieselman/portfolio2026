@@ -10,18 +10,18 @@
 
 ---
 
-## Branch
-`build/subgrid-chapter-layout` — `cwgieselman/portfolio2026`
+## Branches
 
-> **Commit-ready.** PR doc at `_docs/PR--markup-choreography-cleanup.md`.
+`rehab/markup-choreography-cleanup` — committed, pushed. PR ready.
+`stabilize/custom-variant-contract` — committed, pushed. PR ready.
 
 ---
 
 ## Where We Are
 
-Chapter 01 choreography is working correctly. Frosting appears on scroll. Markup is significantly cleaner than last session. A structural cleanup pass was completed before any new feature work — good hygiene before moving forward.
+Both branches from this session are committed and pushed. The rehab pass is complete — markup is clean, choreography is working, contracts are updated.
 
-The next priority is the micro-alignment issues inside the bento and the chapter gap between C01 and C02.
+Next session should open on a new feature branch targeting micro-alignment inside bento cells and the chapter gap between C01 and C02.
 
 ---
 
@@ -39,8 +39,9 @@ The next priority is the micro-alignment issues inside the bento and the chapter
 - `CHROME_TOP = 64` — bento sticks correctly just below navbar ✓
 - Frosting bottom / bento row 1 bottom are flush ✓
 - Chapter 01 beat choreography — `BEAT_PX = 300`, `OVERLAP = 0.5` ✓
-- Skeletons disabled (`SHOW_SKELETON = false`) — code preserved ✓
 - `addWatchTarget('src/assets/js/')` in `.eleventy.js` — JS changes trigger rebuild ✓
+- `data-bento-variant` attribute emitted by `bento-grid.njk` for custom cells ✓
+- Custom cell contract documented in `CONTRACT.md` and `COMPILE_PROMPTS.md` ✓
 
 ---
 
@@ -80,15 +81,18 @@ Any template still referencing `{% include "components/header.njk" %}` will fail
 
 | File | State |
 |------|-------|
-| `src/assets/js/choreography.js` | `CHROME_TOP=64`, `initFrosting()`, no subgrid, `layout__narrative` selectors |
+| `src/assets/js/choreography.js` | `CHROME_TOP=64`, `initFrosting()`, no subgrid, `layout__narrative` selectors, selfie via `data-bento-variant` |
 | `src/assets/scss/_layout.scss` | `layout__narrative`, `page-header__frosting`, no subgrid, `layout__page` is container host |
-| `src/assets/scss/components/_bento-grid.scss` | Unchanged |
+| `src/assets/scss/components/_bento-grid.scss` | Skeleton comment corrected — YAML-driven, not JS-injected |
 | `src/_includes/layouts/compiled-page.njk` | `<div>` not `<section>`, `layout__narrative`, chapters loop directly |
 | `src/_includes/layouts/page.njk` | `bento-grid` direct child, no `content-cell` |
-| `src/_includes/layouts/page-header.njk` | No frosting div — moved to index.njk |
+| `src/_includes/layouts/page-header.njk` | No frosting div — moved to index.njk, doc comment corrected |
+| `src/_includes/layouts/content-cell.njk` | Dead heading-injection block removed, stale error vars removed |
+| `src/_includes/components/bento-grid.njk` | `data-bento-variant` emitted for custom cells |
 | `src/inficon-impact-manager/index.njk` | `page-header__frosting` as first child of `<main>` |
-| `src/_includes/layouts/content-cell.njk` | Dead heading-injection block removed |
-| `_docs/PR--markup-choreography-cleanup.md` | Commit-ready |
+| `src/_data/pages/inficon-impact-manager/page.yml` | `fieldTextRow` removed, skeleton maps preserved |
+| `CONTRACT.md` | Custom cell contract, `data-bento-variant` hook, scaffold rule, graphic/skeleton added to type inventory |
+| `scripts/COMPILE_PROMPTS.md` | Custom cell HTML output spec, YAML example, scaffold block rule |
 
 ---
 
@@ -116,3 +120,4 @@ Key nodes: full page `2350:1027` · section 01 `2492:14630` · page header `2386
 - `padding-inline` on a grid container shifts all track origins — put viewport-edge protection inside columns, not on the container.
 - Frosting is a page-type concern, not a header-internal concern — lives in the page template, not in the header include.
 - `layout__page` is the container query host for bento. `container-name: content-cell` kept so placements SCSS fires without changes.
+- Custom bento article behavior is keyed via `data-bento-variant` — never hardcode bento IDs or article IDs in JS.
