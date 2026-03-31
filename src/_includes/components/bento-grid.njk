@@ -80,9 +80,6 @@
   {% for cell in bento.articles %}
 
   {# Class: type modifier + optional theme. Grid placement lives in placements SCSS. #}
-  {# Derive grid-area name: "article-01" → "a01", "article-12" → "a12" #}
-  {% set areaName = "a" + cell.id | replace("article-", "") %}
-
   {% if cell.type == "skeleton" %}
 
     {# Skeleton cell — bare article, no content, no theme. #}

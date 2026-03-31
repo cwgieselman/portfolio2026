@@ -7,15 +7,16 @@
 
   {% for section in data.sections %}
   {% set sectionKey = section.sectionKey %}
-  {% set sectionMode = section.mode | default("choreographed") %}
 
-  <div class="layout__narrative layout__narrative--{{ sectionMode }}">
+  {% if not section.mode %}<!-- SECTION_ERROR: mode required on {{ sectionKey }} -->{% endif %}
+  <div class="layout__narrative layout__narrative--{{ section.mode }}">
 
     {% for chapter in section.chapters %}
     {% set chapterKey = chapter.chapterKey %}
-    {% set chapterOffset = chapter.chapterOffset | default(0) %}
 
-    <div class="layout__chapter" data-chapter-offset="{{ chapterOffset }}">
+    {% if chapter.chapterOffset is not defined %}<!-- CHAPTER_ERROR: chapterOffset required on {{ chapterKey }} -->{% endif %}
+
+    <div class="layout__chapter" data-chapter-offset="{{ chapter.chapterOffset }}">
 
       {# Left column — field text, animated in/out by choreography.js #}
       {% if chapter.fieldText %}
