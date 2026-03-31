@@ -1,4 +1,10 @@
 {# layouts/page.njk #}
+{#
+  layout__page is always a bento beat container.
+  bento-grid renders directly here — no content-cell wrapper.
+  layout__page carries container-type so bento container queries fire correctly.
+#}
 <div class="layout__page" data-page="{{ pageId }}">
-  {% include "layouts/content-cell.njk" %}
+  {% from "components/bento-grid.njk" import bentoGrid %}
+  {{ bentoGrid(cell.bento) }}
 </div>

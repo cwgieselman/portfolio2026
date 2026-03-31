@@ -51,13 +51,13 @@
 // Architecture: navbar spans full width. Page header is left-column only
 // (sits alongside the bento, not above it). Bento column clears only the navbar.
 // R1C1 is permanently empty in all chapters — the header sits in that space.
-$chrome-navbar-height:  48px;
-$chrome-header-height: 194px;  // left-column only, from Figma node 2386:1085
-$chrome-content-gap:    16px;  // gap between navbar and content start
+$chrome-navbar-height:  48px;   // global navbar, always fixed
+$chrome-header-height: 192px;   // page header: 16px top pad + 176px content area
+$chrome-content-gap:    16px;   // one bento gutter — gap between header and bento row 1
 // Sticky targets:
-//   bento pages:    top: $chrome-navbar-height           (48px)
-//   chapter text:   top: $chrome-navbar-height + gap     (64px)
-//   skeleton top:   48px (matches bento sticky)
+//   page header:    top: $chrome-navbar-height                              = 48px
+//   bento/skeleton: top: $chrome-navbar-height + $chrome-content-gap       = 64px (CHROME_TOP)
+//   chapter text:   top: $chrome-navbar-height + $chrome-header-height + $chrome-content-gap = 258px
 
 /* ── Navbar (global, fixed) ───────────────────────────────────────────────── */
 // Global site navigation. Fixed at top:0, full viewport width.
@@ -80,33 +80,38 @@ body {
 
 /* ── Page header (fixed, page-scoped) ─────────────────────────────────────── */
 // The page-level h1 header. One per case study page.
-// Sibling to .layout__section inside <main class="layout">.
+// Sibling to .layout__narrative and .page-header__frosting inside <main>.
 //
 // Carries .layout__chapter so it shares identical column tracks, padding,
 // and named grid lines with the scrolling content below — no transposition
 // math needed. Elements in the content column land at the same x-position
-// as content column items in .layout__section.
+// as content column items in .layout__narrative.
 //
 // Fixed positioning removes it from document flow. The scrolling content
 // below clears it via padding-block-start on .layout (= navbar + header height).
 
 .page-header {
-    // Fixed position — persists across all sections.
-    // Carries .layout__chapter so it shares the same grid column tracks
-    // as the scrolling content below. No transposition math needed.
+    // Sticky position — starts detached in normal flow, scrolls up to stick
+    // flush below the navbar. Frosting appears when .page-header--stuck is
+    // added by JS.
     //
-    // Visual treatment applied directly here via grid-column spanning
-    // content-start to header-end (624px). No frosting child element needed.
+    // Load position: header top edge at 224px from viewport top.
+    //   body padding: 48px (navbar)
+    //   layout padding: 16px (content gap)
+    //   margin-block-start: 160px (pushes to designed load position)
+    //   = 224px total
     //
-    // Extends $chrome-content-gap downward to bridge the gap between
-    // header bottom and content start.
-    position: fixed;
-    top: $chrome-navbar-height;      // flush below navbar
+    // Height: 192px = 16px top pad + 176px content area (one bento article).
+    // The 16px top pad aligns header content with bento row 1 cols 2-4.
+    //
+    // On load the header is transparent — only the text is visible.
+    position: sticky;
+    top: $chrome-navbar-height + $chrome-content-gap;       // 64px — flush with bento sticky top
+    margin-block-start: $chrome-header-height - $chrome-content-gap;  // 176px — load position offset
     left: 0;
     right: 0;
-    height: $chrome-header-height;   // 194px from Figma node 2386:1085
+    height: $chrome-header-height;   // 192px = 16px pad + 176px content
     z-index: 90;                     // below navbar (100), above content
-
 }
 
 // Visual treatment on __inner, not on .page-header itself.
@@ -114,23 +119,41 @@ body {
 // viewport. __inner is a grid item correctly constrained to
 // content-start / header-end (624px), so the frosted glass lives there.
 
+.page-header__frosting {
+    // Decorative frosted glass layer — fixed, behind header content.
+    // Flush under navbar (top: 48px), height covers full header area.
+    // opacity: 0 on load, transitions to 1 when JS adds .is-frosted.
+    position: fixed;
+    top: $chrome-navbar-height;  // 48px — flush under navbar, no gap
+    left: var(--grid-margin);
+    width: 624px;  // CONTRACT_EXCEPTION: content-start / header-end = 624px
+    height: $chrome-header-height;  // 192px
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(4px);
+    border-radius: 0 0 var(--corner-xs) var(--corner-xs);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    z-index: 88;  // behind header (90) and its children
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+
+    &.is-frosted {
+        opacity: 1;
+    }
+}
+
 .page-header__inner {
     // Grid item spanning content-start / header-end = 624px.
-    // Frosted glass treatment lives here because this is the element
-    // whose width is correctly constrained by the grid named lines.
-    // .page-header itself is left:0/right:0 (full viewport) for fixed positioning.
+    // Pure layout/content container — no visual treatment here.
     grid-column: content-start / header-end;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 4px;
     height: 100%;
-    padding-block: 16px;
+    padding-block: $chrome-content-gap;  // 16px — aligns content with bento row 1
     padding-inline-start: var(--spacing-xl);
-    background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(4px);
-    border-radius: 0 0 var(--corner-xs) var(--corner-xs);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+    position: relative;  // sits above __frosting via z-index from .page-header z-index: 90
 }
 
 .page-header__eyebrow {
@@ -179,7 +202,7 @@ body {
     padding-block-start: $chrome-content-gap; // 16px — gap below navbar
 }
 
-.layout__section {
+.layout__narrative {
     width: 100%;
     max-width: 100vw;
     overflow-x: clip;
@@ -204,7 +227,7 @@ body {
 /* ── Choreographed section (≥ 640px) ────────────────────────────────────────
  * Layout hierarchy:
  *
- *   .layout__section--choreographed
+ *   .layout__narrative--choreographed
  *     .layout__page--header          full width, above chapters
  *     .layout__chapter               text left | bento right
  *       .chapter__content            left column
@@ -281,41 +304,74 @@ body {
         // No grid-template-areas — the gutter column has no area name, which
         // causes browsers to collapse it. All placement uses named lines
         // (content-start/content-end, bento-start/bento-end) directly.
-        grid-template-rows: auto;
+        // Row tracks — 4 rows at MONEY cell height (176px) with 16px gaps between.
+        // Maximum chapter depth is 4 rows — content requiring more should be refactored.
+        // CONTRACT_EXCEPTION: pixel values from bento MONEY cell (176px) and gap (16px).
+        grid-template-rows:
+            [row-1-start] 176px [row-1-end]
+            16px
+            [row-2-start] 176px [row-2-end]
+            16px
+            [row-3-start] 176px [row-3-end]
+            16px
+            [row-4-start] 176px [row-4-end];
     }
 
     // position: relative is required for skeleton underlay (position:absolute
     // within .chapter__bento) but must NOT apply to .page-header.layout__chapter
-    // since that element needs position: fixed. Scoped to sections only.
-    .layout__section .layout__chapter {
+    // since that element needs position: fixed. Scoped to narratives only.
+    .layout__narrative .layout__chapter {
         position: relative;
     }
 
-    // Reinforce fixed positioning on page-header in case cascade order ever
-    // shifts. The double-class selector raises specificity above single-class.
+    // Pull choreographed sections up to overlap the sticky header vertically.
+    // The header is 192px tall and sticky in normal flow above the section.
+    // This negative margin pulls the section up so bento row 1 aligns with
+    // the header's content area (which starts 16px into the header).
+    .layout__narrative--choreographed {
+        margin-block-start: -$chrome-header-height;
+    }
+
+    // page-header is sticky at top: navbar-height.
+    // The double-class selector raises specificity above single-class.
     .page-header.layout__chapter {
-        position: fixed;
+        position: sticky;
         top: $chrome-navbar-height;
     }
 
     .chapter__content {
-        grid-area: content;
         grid-column: content-start / content-end;
-        padding-block-start: var(--spacing-xl);
-        // Viewport-edge protection: keeps text off the edge at fluid widths.
-        // Applied here, not on .layout__chapter, so column track geometry is
-        // unaffected. The bento column needs no equivalent — its internal
-        // --bento-padding handles spacing within cells.
         padding-inline-start: var(--spacing-xl);
         position: sticky;
-        top: $chrome-navbar-height + $chrome-content-gap; // 64px
+        top: $chrome-navbar-height + $chrome-header-height + $chrome-content-gap; // 258px
         align-self: start;
         height: fit-content;
+
+        // Animation states — driven by choreography.js class toggling.
+        // Default: hidden below, ready to animate in.
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        pointer-events: none;
+
+        // Visible — slides up and fades in.
+        &.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        // Exiting — slides up and fades out.
+        &.is-exiting {
+            opacity: 0;
+            transform: translateY(-24px);
+            pointer-events: none;
+        }
     }
 
     .chapter__bento {
         grid-column: bento-start / bento-end;
-        position: relative; // required: skeleton underlay is position:absolute within this
+        position: relative; // required: pages are position:absolute within this
         /* Height set by JS in choreography.js based on page count */
     }
 
@@ -326,32 +382,16 @@ body {
         // Position and z-index set by choreography.js
         width: 100%;
         padding-inline: 0;
+        // Container query host — bento-grid fires container queries against this element.
+        // name matches the former content-cell container so placements SCSS needs no changes.
+        container-type: inline-size;
+        container-name: content-cell;
     }
 
-    .chapter__bento .layout__page .content-cell {
-        width: auto;
-        margin-block-end: 0;
-    }
+    // .chapter__bento .layout__page .content-cell removed — bento-grid is now
+    // a direct child of layout__page, no content-cell wrapper in the bento path.
 
-    /* ── Content row placement ─────────────────────────────────────────────── */
-    // data-row-start: N — top of content aligns to bento row N
-    // data-row-span:  N — content cell spans N bento rows
-    //
-    // CONTRACT_EXCEPTION: pixel values because --bento-cell-size and
-    // --bento-gap are scoped to .bento-grid and do not inherit up the DOM.
-    // rowUnit = 176px (MONEY cell) + 16px (gap) = 192px.
-    // padding-block-start = base padding + (rowStart - 1) x 192px
-    // min-height = rowSpan x 192px - 16px (subtract trailing gap)
 
-    .chapter__content[data-row-start="1"] { padding-block-start: var(--spacing-xl); }
-    .chapter__content[data-row-start="2"] { padding-block-start: calc(var(--spacing-xl) + 192px); }
-    .chapter__content[data-row-start="3"] { padding-block-start: calc(var(--spacing-xl) + 384px); }
-    .chapter__content[data-row-start="4"] { padding-block-start: calc(var(--spacing-xl) + 576px); }
-
-    .chapter__content[data-row-span="1"] { min-height: 176px; }
-    .chapter__content[data-row-span="2"] { min-height: 368px; }
-    .chapter__content[data-row-span="3"] { min-height: 560px; }
-    .chapter__content[data-row-span="4"] { min-height: 752px; }
 
     /* ── Field text style ────────────────────────────────────────────────── */
     /* CONTRACT_EXCEPTION: font-size and line-height are provisional — no Figma
@@ -382,7 +422,7 @@ body {
  *   9=654  10=678  11=768  12=792  13=918  14=942  15=966  16=1182 */
 
 @media (min-width: 1248px) {
-    .layout__section--designed .layout__page {
+    .layout__narrative--designed .layout__page {
         display: grid;
         width: 2016px;
         padding-inline: 0;
@@ -421,7 +461,7 @@ body {
             [iu4-end];
     }
 
-    .layout__section--designed .content-cell {
+    .layout__narrative--designed .content-cell {
         width: auto;
         margin-block-end: 0;
     }

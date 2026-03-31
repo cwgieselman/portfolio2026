@@ -409,33 +409,15 @@
     color: inherit;
 }
 
-// -- Skeleton underlay -------------------------------------------------------
-// Absolutely positioned within .layout__section--choreographed.
-// Sits below all content via z-index: 0 (set inline by JS).
-// Chapter-01 underlay visible on load. Chapter-02+ revealed by observer.
-
-.bento-skeleton-underlay {
-    // Override .bento-grid defaults that don't apply to the underlay
-    width: fit-content;
-    margin-inline: 0;
-}
-
-.bento-underlay--hidden {
-    visibility: hidden;
-}
-
-.bento-underlay--visible {
-    visibility: visible;
-}
+// Skeleton cells are P00 in the chapter page stack — defined in YAML,
+// rendered by bento-grid.njk (type: skeleton branch), permanent underlay at z-index 0.
 
 // -- Choreography states ------------------------------------------------------
 // bento--pending: skeleton state. Cells show as ghost outlines.
 // bento--visible: normal rendered state.
 // JS in choreography.js drives the state transitions via IntersectionObserver.
 //
-// Skeleton articles (.bento-cell--skeleton) are injected by choreography.js
-// into the first beat only, filling unoccupied grid positions.
-// They share the same border-radius and border as real cells.
+// Skeleton cells share the same border-radius and border as real cells.
 // No content, no background — just the outlined article shape.
 
 .bento-cell--skeleton {

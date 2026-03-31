@@ -85,7 +85,18 @@
   {# Derive grid-area name: "article-01" → "a01", "article-12" → "a12" #}
   {% set areaName = "a" + cell.id | replace("article-", "") %}
 
-  {% if cell.type == "image" and cell.scrollable and cell.media %}
+  {% if cell.type == "skeleton" %}
+
+    {# Skeleton cell — bare article, no content, no theme. #}
+    {# Grid placement via inline style from YAML desktop.col / desktop.row. #}
+    <article
+      class="bento-cell bento-cell--skeleton"
+      data-bento-cell="{{ cell.id }}"
+      aria-hidden="true"
+      {% if cell.desktop %}style="grid-column: {{ cell.desktop.col }}; grid-row: {{ cell.desktop.row }};"{% endif %}
+    ></article>
+
+  {% elif cell.type == "image" and cell.scrollable and cell.media %}
 
     {#
       Scrollable image cell — two sibling <article> elements sharing the same grid-area.
@@ -144,6 +155,7 @@
     <article
       class="{{ cellClasses }}"
       data-bento-cell="{{ cell.id }}"
+      {% if cell.variant %}data-bento-variant="{{ cell.variant }}"{% endif %}
     >
       <div class="bento-cell__inner">
         {% if cell.type == "image" and cell.artDirection and cell.media %}

@@ -9,6 +9,10 @@ mainClass: "layout--case-study"
 {% set data = pages[pageKey] %}
 
 <main class="layout {{ mainClass }}">
+  {# Frosted glass layer — case-study page type only. Fixed, behind page-header. #}
+  {# Sibling of page-header so z-index works correctly in root stacking context. #}
+  <div class="page-header__frosting" role="presentation"></div>
+
   {# Page-level h1 header — fixed, grid-column-informed, scoped to this page #}
   {% include "layouts/page-header.njk" %}
 
