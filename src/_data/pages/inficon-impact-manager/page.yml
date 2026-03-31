@@ -17,20 +17,87 @@ sections:
 
       - chapterKey: "chapter-01"
         chapterOffset: 0
-        fieldTextRow: 2
         skeleton:
           - ".  s  s  s"
           - "s  s  s  s"
           - "s  s  s  s"
           - "s  s  .  ."
-        fieldText:
-          beatIndex: 2
-          rowStart: 2
-          rowSpan: 2
-          content: |
-            <p class="field-text">Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like.</p>
+        fieldText: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
 
         pages:
+
+          - pageKey: "page-00"
+            wrapper: "content--section-01--chapter-01--page-00--cell-01"
+            bento:
+              id: "inficon--im--s01-c01-p00"
+              cols: 4
+              rows: 4
+              articles:
+                - id: article-01
+                  type: skeleton
+                  desktop:
+                    col: "2 / 3"
+                    row: "1 / 2"
+                - id: article-02
+                  type: skeleton
+                  desktop:
+                    col: "3 / 4"
+                    row: "1 / 2"
+                - id: article-03
+                  type: skeleton
+                  desktop:
+                    col: "4 / 5"
+                    row: "1 / 2"
+                - id: article-04
+                  type: skeleton
+                  desktop:
+                    col: "1 / 2"
+                    row: "2 / 3"
+                - id: article-05
+                  type: skeleton
+                  desktop:
+                    col: "2 / 3"
+                    row: "2 / 3"
+                - id: article-06
+                  type: skeleton
+                  desktop:
+                    col: "3 / 4"
+                    row: "2 / 3"
+                - id: article-07
+                  type: skeleton
+                  desktop:
+                    col: "4 / 5"
+                    row: "2 / 3"
+                - id: article-08
+                  type: skeleton
+                  desktop:
+                    col: "1 / 2"
+                    row: "3 / 4"
+                - id: article-09
+                  type: skeleton
+                  desktop:
+                    col: "2 / 3"
+                    row: "3 / 4"
+                - id: article-10
+                  type: skeleton
+                  desktop:
+                    col: "3 / 4"
+                    row: "3 / 4"
+                - id: article-11
+                  type: skeleton
+                  desktop:
+                    col: "4 / 5"
+                    row: "3 / 4"
+                - id: article-12
+                  type: skeleton
+                  desktop:
+                    col: "1 / 2"
+                    row: "4 / 5"
+                - id: article-13
+                  type: skeleton
+                  desktop:
+                    col: "2 / 3"
+                    row: "4 / 5"
 
           - pageKey: "page-01"
             wrapper: "content--section-01--chapter-01--page-01--cell-01"
@@ -134,20 +201,87 @@ sections:
 
       - chapterKey: "chapter-02"
         chapterOffset: 1
-        fieldTextRow: 2
         skeleton:
           - ".  .  s  s"
           - ".  s  s  s"
           - "s  s  s  s"
           - "s  s  s  s"
-        fieldText:
-          beatIndex: 1
-          rowStart: 1
-          rowSpan: 2
-          content: |
-            <p class="field-text">The FAB was the brief. Before designing anything, I needed to understand how the people inside it actually worked — and what the tools they were using were failing to do.</p>
+        fieldText: "The FAB was the brief. Before designing anything, I needed to understand how the people inside it actually worked — and what the tools they were using were failing to do."
 
         pages:
+
+          - pageKey: "page-00"
+            wrapper: "content--section-01--chapter-02--page-00--cell-01"
+            bento:
+              id: "inficon--im--s01-c02-p00"
+              cols: 4
+              rows: 4
+              articles:
+                - id: article-01
+                  type: skeleton
+                  desktop:
+                    col: "3 / 4"
+                    row: "1 / 2"
+                - id: article-02
+                  type: skeleton
+                  desktop:
+                    col: "4 / 5"
+                    row: "1 / 2"
+                - id: article-03
+                  type: skeleton
+                  desktop:
+                    col: "2 / 3"
+                    row: "2 / 3"
+                - id: article-04
+                  type: skeleton
+                  desktop:
+                    col: "3 / 4"
+                    row: "2 / 3"
+                - id: article-05
+                  type: skeleton
+                  desktop:
+                    col: "4 / 5"
+                    row: "2 / 3"
+                - id: article-06
+                  type: skeleton
+                  desktop:
+                    col: "1 / 2"
+                    row: "3 / 4"
+                - id: article-07
+                  type: skeleton
+                  desktop:
+                    col: "2 / 3"
+                    row: "3 / 4"
+                - id: article-08
+                  type: skeleton
+                  desktop:
+                    col: "3 / 4"
+                    row: "3 / 4"
+                - id: article-09
+                  type: skeleton
+                  desktop:
+                    col: "4 / 5"
+                    row: "3 / 4"
+                - id: article-10
+                  type: skeleton
+                  desktop:
+                    col: "1 / 2"
+                    row: "4 / 5"
+                - id: article-11
+                  type: skeleton
+                  desktop:
+                    col: "2 / 3"
+                    row: "4 / 5"
+                - id: article-12
+                  type: skeleton
+                  desktop:
+                    col: "3 / 4"
+                    row: "4 / 5"
+                - id: article-13
+                  type: skeleton
+                  desktop:
+                    col: "4 / 5"
+                    row: "4 / 5"
 
           - pageKey: "page-01"
             wrapper: "content--section-01--chapter-02--page-01--cell-01"

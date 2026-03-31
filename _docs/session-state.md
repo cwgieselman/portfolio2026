@@ -1,5 +1,5 @@
 # Session State
-*Last updated: March 25, 2026*
+*Last updated: March 30, 2026*
 
 > **THIS FILE IS AUTHORITATIVE STATE — read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -11,88 +11,68 @@
 ---
 
 ## Branch
-`build/inficon-bento-series` — `cwgieselman/portfolio2026`
+`build/subgrid-chapter-layout` — `cwgieselman/portfolio2026`
 
-> **Commit ready** — see `_docs/PR--choreography-fixes.md`. Next branch: `build/subgrid-chapter-layout`.
+> **Commit-ready.** PR doc at `_docs/PR--markup-choreography-cleanup.md`.
 
 ---
 
 ## Where We Are
 
-The page header semantics and layout grid refactor is complete and commit-ready (see `_docs/PR--page-header-semantics.md`). The header is correctly structured, fixed, and grid-aligned. Two open problems remain before Section 2 can be authored.
+Chapter 01 choreography is working correctly. Frosting appears on scroll. Markup is significantly cleaner than last session. A structural cleanup pass was completed before any new feature work — good hygiene before moving forward.
 
-**Why the header work matters:** The layout grid now has 6 named tracks that formally define every key alignment position — content column, screenshot start/end, header end, bento column. These named lines are the single source of truth for all grid-informed elements going forward.
-
----
-
-## Layout Grid (UPDATED — 6 tracks)
-
-```
-[content-start] 192px [screenshot-start] 176px [content-end] 80px
-[bento-start] 176px [header-end] 384px [screenshot-end] 192px [bento-end]
-```
-
-Named line positions from grid left:
-- `content-start` — 0px
-- `screenshot-start` — 192px
-- `content-end` — 368px
-- `bento-start` — 448px
-- `header-end` — 624px
-- `screenshot-end` — 1008px
-- `bento-end` — 1200px
-
-Reference: Figma wireframe node `2554:1203` (file: `LTePGo8Q1Lbapffom2X0W5`).
-
----
-
-## Open Priorities
-
-### 1. chapter__content subgrid refactor (PRIORITY 1 — next session)
-The field text column needs to participate in the chapter layout grid via CSS subgrid, not JS translation. Current approach (translateY on a sticky element) is unreliable — the sticky position in document flow means the translate fires at wrong scroll positions.
-
-**Agreed approach:**
-- `layout__chapter` defines both column AND row tracks (192px row units, same as bento geometry)
-- `chapter__content` and `chapter__bento` both participate in those rows via `grid-row` placement
-- `chapter__bento` uses `grid-template-rows: subgrid` to inherit parent rows
-- Field text vertical alignment is CSS (`grid-row` from `rowStart`/`rowSpan` YAML values) — no JS geometry
-- JS handles opacity only for field text — fade in with its assigned beat, no translateY
-- Chapter height: JS reads computed row heights from the grid instead of computing from bentoH
-
-**YAML shape is already updated** — `fieldText` is now an object with `beatIndex`, `rowStart`, `rowSpan`, `content`.
-**`compiled-page.njk`** — field text renders via `{{ chapter.fieldText.content | safe }}`.
-**`choreography.js`** — content beat wiring exists but translateY approach is wrong. Keep beat/opacity logic, remove translateY on content.
-
-### 2. Page header — audit `content-header.njk` rename (PRIORITY 2)
-`header.njk` was renamed to `content-header.njk` this session. Any templates still referencing `{% include "components/header.njk" %}` will fail on build. Audit all templates before next deploy.
+The next priority is the micro-alignment issues inside the bento and the chapter gap between C01 and C02.
 
 ---
 
 ## What's Working
 
 - `<nav class="navbar">` — global, fixed, in `base.njk` ✓
-- `<header class="page-header layout__chapter">` — fixed, touches navbar, correct z-index ✓
-- `page-header__inner` — spans `content-start / header-end` = 624px, frosted glass ✓
+- `<header class="page-header layout__chapter">` — sticky at `top: 64px`, correct z-index (90) ✓
+- `page-header__frosting` — fixed sibling of header in `index.njk`, fades in at 176px scroll threshold ✓
+- `page-header__inner` — pure layout/content container, no visual treatment ✓
 - Layout grid — 6 tracks, all named lines correct, `1200px` total ✓
-- `padding-inline` removed from `.layout__chapter` — column tracks at designed geometry ✓
-- `grid-template-areas` removed — gutter column no longer collapses ✓
-- `.layout__section .layout__chapter { position: relative }` — scoped correctly, no conflict with fixed header ✓
-- Container queries — unaffected, `.chapter__bento` still spans `bento-start / bento-end` as one element ✓
-- Scroll-driven choreography — `BEAT_PX = 300`, `OVERLAP = 0.5`, `CHROME_TOP = 64` (from March 24)
-- Skeletons disabled (`SHOW_SKELETON = false`) — code preserved
-- `page.style.overflow` removed from `choreography.js` entirely — no clipping on `.layout__page`, no ill effects observed
-- `addWatchTarget('src/assets/js/')` added to `.eleventy.js` — JS changes now trigger rebuild and copy correctly
+- `layout__narrative` / `layout__narrative--choreographed` — renamed from `layout__section` ✓
+- `layout__page` is now the container query host for bento (`container-name: content-cell`) ✓
+- `bento-grid` renders directly inside `layout__page` — no `content-cell` wrapper in bento path ✓
+- Subgrid fully removed from `.chapter__bento` ✓
+- `CHROME_TOP = 64` — bento sticks correctly just below navbar ✓
+- Frosting bottom / bento row 1 bottom are flush ✓
+- Chapter 01 beat choreography — `BEAT_PX = 300`, `OVERLAP = 0.5` ✓
+- Skeletons disabled (`SHOW_SKELETON = false`) — code preserved ✓
+- `addWatchTarget('src/assets/js/')` in `.eleventy.js` — JS changes trigger rebuild ✓
+
+---
+
+## Open Priorities
+
+### 1. Micro-alignment inside bento + chapter gap (PRIORITY 1)
+- Micro-alignment issues inside bento cells — not yet investigated
+- Gap between C01 and C02 when C02 enters — `chapterOffset` negative margin logic may be fighting chapter row track geometry
+
+### 2. Field text — extended page approach (PRIORITY 2)
+Subgrid approach is dead. Agreed new approach: field text becomes part of P02, which gets an extended grid context spanning `content-start / bento-end`. No synchronization needed — JS translates the whole page as one unit.
+
+**What this means:**
+- `chapter__content` removed from template, SCSS, JS
+- `fieldText` YAML moves from chapter level to P02's page level
+- `.layout__page--extended` spans `content-start / bento-end`
+- Mobile: field text gets `order: -1`
+
+### 3. `content-header.njk` audit (PRIORITY 3)
+Any template still referencing `{% include "components/header.njk" %}` will fail on build. Audit before next deploy.
 
 ---
 
 ## Deferred
 
-- **Big screenshot element** — named lines (`screenshot-start`, `screenshot-end`) are in the grid. Implementation deferred until Section 2 is authored.
-- **`--grid-margin` token** — defined in `_layout.scss`, documents the pattern for grid-informed-but-not-contained elements. No active consumers right now (header uses grid placement directly).
-- **Selfie scroll collision** — handle with fade/animation, custom article work
-- **Section 2** — not yet authored. After Priority 1 is resolved.
-- **`fieldTextRow` rows 3+4** — CSS rules exist, untested
-- **`bento-arrow.njk`** — can be deleted, deferred
+- **Big screenshot element** — named lines in grid, implementation deferred until Section 2
+- **Selfie scroll collision** — fade/animation, custom article work
+- **Section 2** — not yet authored
+- **`bento-arrow.njk`** — dead file, delete it
 - **Skeletons** — re-enable after Section 2 is authored
+- **Page header detached-on-load behavior** — frosting trigger is wired, visual treatment deferred
+- **Sticky-stack section navigation** — deferred until all three case studies are compiled
 
 ---
 
@@ -100,14 +80,15 @@ The field text column needs to participate in the chapter layout grid via CSS su
 
 | File | State |
 |------|-------|
-| `src/assets/js/choreography.js` | Scroll-driven, `SHOW_SKELETON=false` |
-| `src/assets/scss/_layout.scss` | 6-track grid, page-header rules, no padding on chapter |
-| `src/assets/scss/components/_bento-grid.scss` | Skeleton border `neutral-50`, good |
-| `src/_data/pages/inficon-impact-manager/page.yml` | `fieldTextRow: 2` for chapter-01 |
-| `src/inficon-impact-manager/index.njk` | page-header include, no page-chrome |
-| `src/_includes/layouts/page-header.njk` | Fixed h1 header with frosted glass on __inner |
-| `src/_includes/components/content-header.njk` | Renamed from header.njk, h2/h3 only |
-| `_docs/PR--page-header-semantics.md` | Commit-ready PR doc |
+| `src/assets/js/choreography.js` | `CHROME_TOP=64`, `initFrosting()`, no subgrid, `layout__narrative` selectors |
+| `src/assets/scss/_layout.scss` | `layout__narrative`, `page-header__frosting`, no subgrid, `layout__page` is container host |
+| `src/assets/scss/components/_bento-grid.scss` | Unchanged |
+| `src/_includes/layouts/compiled-page.njk` | `<div>` not `<section>`, `layout__narrative`, chapters loop directly |
+| `src/_includes/layouts/page.njk` | `bento-grid` direct child, no `content-cell` |
+| `src/_includes/layouts/page-header.njk` | No frosting div — moved to index.njk |
+| `src/inficon-impact-manager/index.njk` | `page-header__frosting` as first child of `<main>` |
+| `src/_includes/layouts/content-cell.njk` | Dead heading-injection block removed |
+| `_docs/PR--markup-choreography-cleanup.md` | Commit-ready |
 
 ---
 
@@ -130,6 +111,8 @@ Key nodes: full page `2350:1027` · section 01 `2492:14630` · page header `2386
 - One change at a time. Verify, then move.
 - Start fresh sessions earlier — long conversational sessions degrade work quality.
 - Session ends one of two ways: PR doc written → Claude Code handles commit, OR this file updated. No other exit.
-- `position: fixed` elements are not constrained by grid placement on themselves — place grid items *inside* the fixed container instead.
+- `position: fixed` elements cannot be z-indexed behind their own parent — they must be siblings, not children.
 - `grid-template-areas` with unnamed columns causes those columns to collapse — use named lines only.
 - `padding-inline` on a grid container shifts all track origins — put viewport-edge protection inside columns, not on the container.
+- Frosting is a page-type concern, not a header-internal concern — lives in the page template, not in the header include.
+- `layout__page` is the container query host for bento. `container-name: content-cell` kept so placements SCSS fires without changes.

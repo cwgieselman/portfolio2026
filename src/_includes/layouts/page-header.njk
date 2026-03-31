@@ -1,14 +1,15 @@
 {#
-  page-header — fixed page-level h1 header
+  page-header — sticky page-level h1 header
 
-  Scope: one per page, always h1, always fixed position.
-  Sibling to .layout__section inside <main class="layout">.
+  Scope: one per page, always h1, always sticky position.
+  Sibling to .layout__narrative and .page-header__frosting inside <main>.
 
   Carries .layout__chapter so it shares identical column tracks,
   padding, and named lines with the scrolling content below.
 
-  Visual treatment (frosted glass) applied directly to .page-header
-  via grid-column: content-start / header-end. No frosting div needed.
+  Visual treatment (frosted glass) lives in .page-header__frosting —
+  a fixed sibling div in the page template (index.njk), not here.
+  JS toggles .is-frosted on that element at the scroll threshold.
 
   Expects (via data.header):
   - eyebrow: string (· separated, split into chips)

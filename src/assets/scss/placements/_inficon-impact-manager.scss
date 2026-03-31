@@ -158,6 +158,15 @@
 #bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"] { overflow: visible; }
 
 #bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"]::before {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"].is-exiting::before {
+    opacity: 0;
+}
+
+#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"]::before {
     content: "";
     position: absolute; /* CONTRACT_EXCEPTION: decorative pseudo-element — no DOM node, no alt text required */
     width: var(--bento-cell-size);
@@ -176,13 +185,11 @@
 
 @container content-cell (min-width: 624px) {
     #bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"]::before {
-        // 4-up: left of the quote cell, offset 44px upward per Figma (bridges rows 3-4)
-        top: -44px; /* CONTRACT_EXCEPTION: pixel geometry from Figma — selfie bridges rows 3-4 */
+        top: 176px;
         left: auto;
-        right: 100%;
+        right: 232px;
         transform: none;
         margin-top: 0;
-        margin-right: var(--bento-gap);
     }
 }
 

@@ -21,17 +21,6 @@
         {% endif %}
       {% set params = item.params %}
 
-        {# Chapter label injection (Header) #}
-        {% set id = params.id %}
-        {% if sectionTitleId
-          and pageItemIndex0 == 0
-          and cellIndex0 == 0
-          and loop.index0 == 0
-          and (item.include == "components/header.njk" or item.include == "components/content-header.njk")
-        %}
-          {% set id = sectionTitleId %}
-        {% endif %}
-
         {# Single include switch (exactly once) #}
         {% if item.include == "components/figure.njk" %}
           {% set figureParams = params %}
@@ -52,13 +41,7 @@
           {% include item.include %}
 
         {% else %}
-            <!-- UNKNOWN_INCLUDE:
-                include={{ item.include }}
-                route={{ page.url }}
-                section={{ sectionTitleId }}
-                pageIndex={{ pageItemIndex0 }}
-                cellIndex={{ cellIndex0 }}
-            -->
+            <!-- UNKNOWN_INCLUDE: {{ item.include }} on {{ page.url }} -->
         {% endif %}
 
       {% endif %}
