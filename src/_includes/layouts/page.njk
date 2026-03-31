@@ -4,7 +4,7 @@
   bento-grid renders directly here — no content-cell wrapper.
   layout__page carries container-type so bento container queries fire correctly.
 #}
-<div class="layout__page" data-page="{{ pageId }}">
+<div class="layout__page">
   {% from "components/bento-grid.njk" import bentoGrid %}
   {{ bentoGrid(cell.bento) }}
 </div>

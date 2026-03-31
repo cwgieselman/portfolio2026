@@ -1,5 +1,8 @@
 /* _layout.scss */
 
+// Chrome geometry variables — defined in _shame.scss (provisional, pending tokenisation).
+@use "shame" as *;
+
 // ── Grid margin token ────────────────────────────────────────────────────────
 //
 // --grid-margin is the distance from the viewport edge to the left edge of the
@@ -43,9 +46,6 @@
         --grid-margin: calc(50% - 600px);
     }
 }
-
-// Chrome geometry variables — defined in _shame.scss (provisional, pending tokenisation).
-@use "shame" as *;
 
 /* ── Navbar (global, fixed) ───────────────────────────────────────────────── */
 // Global site navigation. Fixed at top:0, full viewport width.
