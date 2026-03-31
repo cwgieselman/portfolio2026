@@ -362,6 +362,35 @@ All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`, in th
 
 The `desktop.col` / `desktop.row` values in YAML are human-readable reference only — the template does not read them. The placements SCSS is the single source of truth for Bento Grid placement.
 
+#### Skeleton P00 Block (required per chapter)
+
+Every chapter has a P00 skeleton page. Its bento must emit a dedicated placements block — no inline styles, same file as the real pages. Skeleton cells use `grid-column`/`grid-row` directly (no named areas):
+
+```scss
+// ─────────────────────────────────────────────────────────────────────────────
+// S0N C0N P00 — bento--<pageKey>--s0N-c0N-p00
+// Skeleton underlay — always visible at z-index 0, never animated.
+// <cols> cols × <rows> rows. Marks composite bento area for Chapter N (P01–PN).
+//
+// Skeleton map:
+//   col:  1    2    3    4
+//   row1: .    s01  s02  s03
+//   ...
+// ─────────────────────────────────────────────────────────────────────────────
+
+#bento--<id>--p00 {
+    grid-template-columns: repeat(<cols>, var(--bento-cell-size));
+    grid-template-rows:    repeat(<rows>, var(--bento-cell-size));
+}
+
+/* ─── skeleton cell placements ─── */
+#bento--<id>--p00 .bento-cell[data-bento-cell="article-01"] { grid-column: 2 / 3; grid-row: 1 / 2; }
+#bento--<id>--p00 .bento-cell[data-bento-cell="article-02"] { grid-column: 3 / 4; grid-row: 1 / 2; }
+// ... one line per skeleton article
+```
+
+Place the P00 block immediately before the P01 block for its chapter.
+
 #### Bento YAML Shape
 
 ```yaml

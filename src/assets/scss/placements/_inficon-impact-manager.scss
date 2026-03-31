@@ -28,6 +28,72 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────────────────────
+// S01 C01 P00 — inficon--im--s01-c01-p00
+// Skeleton underlay — always visible at z-index 0, never animated.
+// 4 cols × 4 rows. Marks composite bento area for Chapter 01 (P01–P03).
+//
+// Skeleton map:
+//   col:  1    2    3    4
+//   row1: .    s01  s02  s03
+//   row2: s04  s05  s06  s07
+//   row3: s08  s09  s10  s11
+//   row4: s12  s13  .    .
+// ─────────────────────────────────────────────────────────────────────────────
+
+#bento--inficon--im--s01-c01-p00 {
+    grid-template-columns: repeat(4, var(--bento-cell-size));
+    grid-template-rows:    repeat(4, var(--bento-cell-size));
+}
+
+/* ─── skeleton cell placements ─── */
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-01"]  { grid-column: 2 / 3; grid-row: 1 / 2; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-02"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-03"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-04"]  { grid-column: 1 / 2; grid-row: 2 / 3; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-05"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-06"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-07"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-08"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-09"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-10"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-11"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-12"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
+#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-13"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// S01 C02 P00 — inficon--im--s01-c02-p00
+// Skeleton underlay — always visible at z-index 0, never animated.
+// 4 cols × 4 rows. Marks composite bento area for Chapter 02 (P01–P02).
+//
+// Skeleton map:
+//   col:  1    2    3    4
+//   row1: .    .    s01  s02
+//   row2: .    s03  s04  s05
+//   row3: s06  s07  s08  s09
+//   row4: s10  s11  s12  s13
+// ─────────────────────────────────────────────────────────────────────────────
+
+#bento--inficon--im--s01-c02-p00 {
+    grid-template-columns: repeat(4, var(--bento-cell-size));
+    grid-template-rows:    repeat(4, var(--bento-cell-size));
+}
+
+/* ─── skeleton cell placements ─── */
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-01"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-02"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-03"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-04"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-05"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-06"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-07"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-08"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-09"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-10"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-11"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-12"]  { grid-column: 3 / 4; grid-row: 4 / 5; }
+#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-13"]  { grid-column: 4 / 5; grid-row: 4 / 5; }
+
+// ─────────────────────────────────────────────────────────────────────────────
 // S01 C01 P01 — inficon--im--s01-c01-p01
 // Section 01, Chapter 01, Page 01.
 // 4 cols × 2 rows. Alps photo (2×1), cleanroom full (1×2).

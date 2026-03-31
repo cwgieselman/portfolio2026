@@ -66,34 +66,29 @@
   type: content              → {{ cell.content | safe }} (raw HTML block)
 
   ── Placement ──────────────────────────────────────────────────────────────────
-  grid-template-columns, grid-template-rows, grid-template-areas: in placements/_<pageKey>.scss on #bento--<id>.
-  .bento-cell[data-bento-cell="article-NN"] drives per-cell grid-area via data attr in placements SCSS.
-  style="grid-area: aNN" is set inline on each <article> — derived from cell.id by the macro.
+  All placement lives in placements/_<pageKey>.scss — nothing inline.
+  Real cells: #bento--<id> carries grid-template-areas; [data-bento-cell="article-NN"] gets grid-area: aNN.
+  Skeleton cells (P00): #bento--<id> carries grid-template-columns/rows; [data-bento-cell="article-NN"]
+    gets grid-column / grid-row (no named areas — skeleton is a sparse positional underlay).
+  desktop.col / desktop.row in YAML are reference only — consumed during compile, not by this template.
   z-index: in placements SCSS only.
   ─────────────────────────────────────────────────────────────────────────────
 #}
 
 {% macro bentoGrid(bento) %}
-<div
-  class="bento-grid"
-  id="bento--{{ bento.id }}"
-  data-bento="{{ bento.id }}"
->
+<div class="bento-grid" id="bento--{{ bento.id }}">
   {% for cell in bento.articles %}
 
   {# Class: type modifier + optional theme. Grid placement lives in placements SCSS. #}
-  {# Derive grid-area name: "article-01" → "a01", "article-12" → "a12" #}
-  {% set areaName = "a" + cell.id | replace("article-", "") %}
-
   {% if cell.type == "skeleton" %}
 
     {# Skeleton cell — bare article, no content, no theme. #}
-    {# Grid placement via inline style from YAML desktop.col / desktop.row. #}
+    {# Grid placement via placements SCSS on #bento--<id> — same pattern as real cells. #}
+    {# desktop.col / desktop.row in YAML are reference only — consumed by compile, not template. #}
     <article
       class="bento-cell bento-cell--skeleton"
       data-bento-cell="{{ cell.id }}"
       aria-hidden="true"
-      {% if cell.desktop %}style="grid-column: {{ cell.desktop.col }}; grid-row: {{ cell.desktop.row }};"{% endif %}
     ></article>
 
   {% elif cell.type == "image" and cell.scrollable and cell.media %}
