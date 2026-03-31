@@ -44,20 +44,8 @@
     }
 }
 
-// CONTRACT_EXCEPTION: all .page-chrome* values are provisional Figma constants.
-// Font sizes, spacing, colors, and pixel geometry will be replaced wholesale
-// when nav and page-header components are designed and tokenised.
-//
-// Architecture: navbar spans full width. Page header is left-column only
-// (sits alongside the bento, not above it). Bento column clears only the navbar.
-// R1C1 is permanently empty in all chapters — the header sits in that space.
-$chrome-navbar-height:  48px;   // global navbar, always fixed
-$chrome-header-height: 192px;   // page header: 16px top pad + 176px content area
-$chrome-content-gap:    16px;   // one bento gutter — gap between header and bento row 1
-// Sticky targets:
-//   page header:    top: $chrome-navbar-height                              = 48px
-//   bento/skeleton: top: $chrome-navbar-height + $chrome-content-gap       = 64px (CHROME_TOP)
-//   chapter text:   top: $chrome-navbar-height + $chrome-header-height + $chrome-content-gap = 258px
+// Chrome geometry variables — defined in _shame.scss (provisional, pending tokenisation).
+@use "shame" as *;
 
 /* ── Navbar (global, fixed) ───────────────────────────────────────────────── */
 // Global site navigation. Fixed at top:0, full viewport width.
@@ -78,122 +66,7 @@ body {
     z-index: 100;
 }
 
-/* ── Page header (fixed, page-scoped) ─────────────────────────────────────── */
-// The page-level h1 header. One per case study page.
-// Sibling to .layout__narrative and .page-header__frosting inside <main>.
-//
-// Carries .layout__chapter so it shares identical column tracks, padding,
-// and named grid lines with the scrolling content below — no transposition
-// math needed. Elements in the content column land at the same x-position
-// as content column items in .layout__narrative.
-//
-// Fixed positioning removes it from document flow. The scrolling content
-// below clears it via padding-block-start on .layout (= navbar + header height).
-
-.page-header {
-    // Sticky position — starts detached in normal flow, scrolls up to stick
-    // flush below the navbar. Frosting appears when .page-header--stuck is
-    // added by JS.
-    //
-    // Load position: header top edge at 224px from viewport top.
-    //   body padding: 48px (navbar)
-    //   layout padding: 16px (content gap)
-    //   margin-block-start: 160px (pushes to designed load position)
-    //   = 224px total
-    //
-    // Height: 192px = 16px top pad + 176px content area (one bento article).
-    // The 16px top pad aligns header content with bento row 1 cols 2-4.
-    //
-    // On load the header is transparent — only the text is visible.
-    position: sticky;
-    top: $chrome-navbar-height + $chrome-content-gap;       // 64px — flush with bento sticky top
-    margin-block-start: $chrome-header-height - $chrome-content-gap;  // 176px — load position offset
-    left: 0;
-    right: 0;
-    height: $chrome-header-height;   // 192px = 16px pad + 176px content
-    z-index: 90;                     // below navbar (100), above content
-}
-
-// Visual treatment on __inner, not on .page-header itself.
-// .page-header has left:0/right:0 for fixed positioning — it spans the full
-// viewport. __inner is a grid item correctly constrained to
-// content-start / header-end (624px), so the frosted glass lives there.
-
-.page-header__frosting {
-    // Decorative frosted glass layer — fixed, behind header content.
-    // Flush under navbar (top: 48px), height covers full header area.
-    // opacity: 0 on load, transitions to 1 when JS adds .is-frosted.
-    position: fixed;
-    top: $chrome-navbar-height;  // 48px — flush under navbar, no gap
-    left: var(--grid-margin);
-    width: 624px;  // CONTRACT_EXCEPTION: content-start / header-end = 624px
-    height: $chrome-header-height;  // 192px
-    background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(4px);
-    border-radius: 0 0 var(--corner-xs) var(--corner-xs);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
-    opacity: 0;
-    z-index: 88;  // behind header (90) and its children
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-
-    &.is-frosted {
-        opacity: 1;
-    }
-}
-
-.page-header__inner {
-    // Grid item spanning content-start / header-end = 624px.
-    // Pure layout/content container — no visual treatment here.
-    grid-column: content-start / header-end;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    height: 100%;
-    padding-block: $chrome-content-gap;  // 16px — aligns content with bento row 1
-    padding-inline-start: var(--spacing-xl);
-    position: relative;  // sits above __frosting via z-index from .page-header z-index: 90
-}
-
-.page-header__eyebrow {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.page-header__chip {
-    font-family: var(--font-family-brand);
-    font-size: 0.75rem;
-    font-weight: 400;
-    line-height: 1.25rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--color-secondary-70);
-    background-color: var(--color-neutral-20);
-    border: 1px solid var(--color-neutral-50);
-    border-radius: var(--corner-xxs);
-    padding-inline: 8px;
-    white-space: nowrap;
-}
-
-.page-header__headline {
-    font-family: var(--font-family-brand);
-    font-size: 1.75rem;
-    font-weight: 600;
-    line-height: 2.75rem;
-    color: var(--color-primary-60);
-    margin: 0;
-}
-
-.page-header__subhead {
-    font-family: var(--font-family-plain);
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.75rem;
-    color: var(--color-secondary-70);
-    margin: 0;
-}
+// Page header rules → _page-header.scss
 
 /* ── Base ────────────────────────────────────────────────────────────────────*/
 
