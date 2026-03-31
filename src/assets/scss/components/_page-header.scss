@@ -47,10 +47,10 @@
     left: var(--grid-margin);
     width: 624px;  // CONTRACT_EXCEPTION: content-start / header-end = 624px
     height: $chrome-header-height;  // 192px
-    background-color: rgba(255, 255, 255, 0.92);
+    background-color: rgba(255, 255, 255, 0.92); // CONTRACT_EXCEPTION: frosted glass translucency — no alpha token system yet; see Tier 3 token backlog
     backdrop-filter: blur(4px);
     border-radius: 0 0 var(--corner-xs) var(--corner-xs);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25); // CONTRACT_EXCEPTION: no shadow token system yet; see Tier 3 token backlog
     opacity: 0;
     z-index: 88;  // behind header (90) and its children
     pointer-events: none;
@@ -68,7 +68,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
+    gap: var(--scale-25);
     height: 100%;
     padding-block: $chrome-content-gap;  // 16px — aligns content with bento row 1
     padding-inline-start: var(--spacing-xl);
@@ -77,39 +77,39 @@
 
 .page-header__eyebrow {
     display: flex;
-    gap: 8px;
+    gap: var(--spacing-xs);
     align-items: center;
 }
 
 .page-header__chip {
     font-family: var(--font-family-brand);
-    font-size: 0.75rem;
-    font-weight: 400;
-    line-height: 1.25rem;
-    letter-spacing: 0.25em;
+    font-size: var(--scale-75);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--scale-125);
+    letter-spacing: 0.25em; // CONTRACT_EXCEPTION: em-based tracking — no em tracking token exists; see Tier 3 token backlog
     text-transform: uppercase;
     color: var(--color-secondary-70);
     background-color: var(--color-neutral-20);
     border: 1px solid var(--color-neutral-50);
     border-radius: var(--corner-xxs);
-    padding-inline: 8px;
+    padding-inline: var(--spacing-xs);
     white-space: nowrap;
 }
 
 .page-header__headline {
     font-family: var(--font-family-brand);
-    font-size: 1.75rem;
-    font-weight: 600;
-    line-height: 2.75rem;
+    font-size: var(--scale-175);
+    font-weight: var(--font-weight-semibold);
+    line-height: 2.75rem; // CONTRACT_EXCEPTION: 44px — no --scale-275 token; see Tier 3 token backlog
     color: var(--color-primary-60);
     margin: 0;
 }
 
 .page-header__subhead {
     font-family: var(--font-family-plain);
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.75rem;
+    font-size: var(--scale-100);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--scale-175);
     color: var(--color-secondary-70);
     margin: 0;
 }

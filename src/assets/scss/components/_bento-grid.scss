@@ -303,7 +303,7 @@
 .bento-cell--image-scrollable img {
     display: block;
     width: auto;
-    height: 500px;     // fixed — cell scrolls to reveal
+    height: 500px;     // CONTRACT_EXCEPTION: fixed scrollable window height — design constant, no scale token maps
     max-width: none;
     flex-shrink: 0;
 }
@@ -465,7 +465,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: var(--spacing-xs);
     z-index: 100;
     pointer-events: none;
     transition: opacity 0.4s ease, transform 0.4s ease;
@@ -474,13 +474,13 @@
 
 .scroll-indicator--hidden {
     opacity: 0;
-    transform: translateX(-50%) translateY(8px);
+    transform: translateX(-50%) translateY(var(--spacing-xs));
 }
 
 .scroll-indicator__label {
     font-family: var(--font-family-brand);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
+    font-size: var(--scale-75);
+    letter-spacing: 0.1em; // CONTRACT_EXCEPTION: em-based tracking — no em tracking token exists; see Tier 3 token backlog
     text-transform: uppercase;
     color: var(--color-primary-60);
     white-space: nowrap;
@@ -498,7 +498,7 @@
 
 @keyframes chevron-bob {
     0%, 100% { transform: rotate(45deg) translateY(0); }
-    50%       { transform: rotate(45deg) translateY(4px); }
+    50%       { transform: rotate(45deg) translateY(var(--scale-25)); }
 }
 
 // -- Reduced motion -----------------------------------------------------------
