@@ -22,7 +22,7 @@
   // -- Scroll indicator -----------------------------------------------------
 
   function initScrollIndicator() {
-    const section = document.querySelector(".layout__narrative--choreographed");
+    const section = document.querySelector(".layout__story--choreographed");
     if (!section) return;
 
     const indicator = document.createElement("div");
@@ -50,7 +50,7 @@
   // -- Scroll-driven choreography ------------------------------------------
 
   function initChoreography() {
-    const section = document.querySelector(".layout__narrative--choreographed");
+    const section = document.querySelector(".layout__story--choreographed");
     if (!section) return;
 
     // ── Tuneable constants ───────────────────────────────────────────────
@@ -69,7 +69,7 @@
       const pages = Array.from(
         chapter.querySelectorAll(".chapter__bento .layout__page"),
       );
-      const bentos = Array.from(chapter.querySelectorAll(".bento-grid"));
+      const bentos = Array.from(chapter.querySelectorAll(".mosaic"));
 
       // Bento height — constant from CSS grid (4 rows × 176px + 3 gaps × 16px = 752px).
       const bentoH = 752; // CONTRACT_EXCEPTION: pixel constant from bento MONEY geometry
@@ -151,7 +151,7 @@
         // P01 (beatIdx 0) is when field text should appear
         if (beatIdx === 0) {
           const content = chapter.querySelector(".chapter__content");
-          const selfieCell = document.querySelector("[data-bento-variant=\"selfie\"]");
+          const selfieCell = document.querySelector("[data-mosaic-variant=\"selfie\"]");
           if (content) {
             contentRanges.push({ content, selfieCell, showAt: scrollStart, hideAt: chapterEnd });
           }

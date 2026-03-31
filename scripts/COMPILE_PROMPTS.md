@@ -12,7 +12,7 @@ Use these names exactly. Do not use synonyms.
 |---|---|
 | **Field and Frame Grid** (abbrev: **FF Grid**) | The full 5-IU macro page grid. Active at ≥ 1248px viewport. |
 | **2-col Grid** | The simplified two-column layout grid. Active at 640px–1247px. |
-| **Bento Grid** | The CSS Grid inside a `.bento-grid` component instance. |
+| **Mosaic** | The CSS Grid inside a `.mosaic` component instance. Tiles are `<article>` elements. |
 
 ## INPUTS
 
@@ -288,14 +288,16 @@ Do not change global layout in this compile step. Only generate placements + dat
 
 ---
 
-### G) Bento Grid Compile Rules
+### G) Mosaic Compile Rules
 
-Bento Grid frames are identified by their direct children being named `article-NN` (e.g. `article-01`, `article-02`). When the compiler encounters a frame whose children follow this naming pattern, apply the Bento Grid compile rules below instead of the standard content-cell rules.
+Mosaic frames are identified by their direct children being named `article-NN` (e.g. `article-01`, `article-02`). When the compiler encounters a frame whose children follow this naming pattern, apply the Mosaic compile rules below instead of the standard content-cell rules.
 
-#### Bento Node Tree
+**Key vocabulary:** YAML key `tiles:` maps to HTML `<article>` elements — intentional split. The semantic HTML element is `<article>`; the YAML array key is `tiles:`.
+
+#### Mosaic Node Tree
 
 ```
-<bentoKey> [FRAME]
+<mosaicKey> [FRAME]
   grid-tracks [INSTANCE]     ← sibling; carries grid definition (same §D inference logic)
   article-01 [INSTANCE]      ← ordered top-left to bottom-right (reading order)
   article-02 [INSTANCE]
@@ -303,23 +305,23 @@ Bento Grid frames are identified by their direct children being named `article-N
   ...
 ```
 
-#### Article Naming and HTML
+#### Tile Naming and HTML
 
-Articles are named numerically from top-left to bottom-right in reading order. This naming order is canonical — it defines the semantic sequence in the HTML output.
+Tiles are named numerically from top-left to bottom-right in reading order. This naming order is canonical — it defines the semantic sequence in the HTML output.
 
-Each article emits only:
+Each tile emits only:
 ```html
-<article class="bento-cell bento-cell--{type} [bento-cell--theme-{theme}]" data-bento-cell="article-NN">
+<article class="mosaic-tile mosaic-tile--{type} [mosaic-tile--theme-{theme}]" data-mosaic-tile="article-NN">
 ```
 
-For `custom` cells, also emit `data-bento-variant`:
+For `custom` tiles, also emit `data-mosaic-variant`:
 ```html
-<article class="bento-cell bento-cell--custom [bento-cell--theme-{theme}]"
-         data-bento-cell="article-NN"
-         data-bento-variant="{variant}">
+<article class="mosaic-tile mosaic-tile--custom [mosaic-tile--theme-{theme}]"
+         data-mosaic-tile="article-NN"
+         data-mosaic-variant="{variant}">
 ```
 
-The `data-bento-cell` attribute is the CSS hook for per-cell placement. `data-bento-variant` is the hook for extended CSS and JS behavior. No numeric index class. No inline styles. No id attributes.
+The `data-mosaic-tile` attribute is the CSS hook for per-tile placement. `data-mosaic-variant` is the hook for extended CSS and JS behavior. No numeric index class. No inline styles. No id attributes.
 
 #### Z-Index from Figma Layer Order
 
@@ -327,50 +329,50 @@ Figma layer order (document order in the node tree) represents back-to-front sta
 
 **Rule:** For each `article-NN` sibling, read its index position in the Figma node tree (0-based). Emit `z-index` equal to that index + 1. Emit in the placements SCSS only — never as a YAML field or inline style.
 
-#### Bento Grid Placement
+#### Mosaic Placement
 
-Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, ±2px tolerance). The grid-tracks instance for a Bento Grid frame uses uniform square tracks with a common gutter — simpler than the FF Grid but the same algorithm applies.
+Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, ±2px tolerance). The grid-tracks instance for a Mosaic frame uses uniform square tracks with a common gutter — simpler than the FF Grid but the same algorithm applies.
 
 All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`, in the same file as the content-cell placements. Structure:
 
 ```scss
-/* ─── bento--<id> — cell area map (default 2-up, no query) ─── */
+/* ─── mosaic--<id> — tile area map (default 2-up, no query) ─── */
 
-#bento--<id> {
+#mosaic--<id> {
     grid-template-areas:
         "a01 a04"
         ...;
 }
 
-/* ─── bento--<id> — 5-up area map (content-cell ≥ 732px) ─── */
+/* ─── mosaic--<id> — 5-up area map (content-cell ≥ 732px) ─── */
 
 @container content-cell (min-width: 732px) {
-    #bento--<id> {
-        grid-template-columns: repeat(5, var(--bento-cell-size));
-        grid-template-rows:    repeat(5, var(--bento-cell-size));
+    #mosaic--<id> {
+        grid-template-columns: repeat(5, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(5, var(--mosaic-cell-size));
         grid-template-areas:
             "a01 a02 a02 a03 a03"
             ...;
     }
 }
 
-/* ─── cell areas ─── */
+/* ─── tile areas ─── */
 
-.bento-cell[data-bento-cell="article-01"] { grid-area: a01; z-index: 12; }
-.bento-cell[data-bento-cell="article-02"] { grid-area: a02; z-index: 11; }
+.mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; z-index: 12; }
+.mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; z-index: 11; }
 ```
 
-The `desktop.col` / `desktop.row` values in YAML are human-readable reference only — the template does not read them. The placements SCSS is the single source of truth for Bento Grid placement.
+The `desktop.col` / `desktop.row` values in YAML are human-readable reference only — the template does not read them. The placements SCSS is the single source of truth for Mosaic placement.
 
 #### Skeleton P00 Block (required per chapter)
 
-Every chapter has a P00 skeleton page. Its bento must emit a dedicated placements block — no inline styles, same file as the real pages. Skeleton cells use `grid-column`/`grid-row` directly (no named areas):
+Every chapter has a P00 skeleton page. Its mosaic must emit a dedicated placements block — no inline styles, same file as the real pages. Skeleton tiles use `grid-column`/`grid-row` directly (no named areas):
 
 ```scss
 // ─────────────────────────────────────────────────────────────────────────────
-// S0N C0N P00 — bento--<pageKey>--s0N-c0N-p00
+// S0N C0N P00 — mosaic--<pageKey>--s0N-c0N-p00
 // Skeleton underlay — always visible at z-index 0, never animated.
-// <cols> cols × <rows> rows. Marks composite bento area for Chapter N (P01–PN).
+// <cols> cols × <rows> rows. Marks composite mosaic area for Chapter N (P01–PN).
 //
 // Skeleton map:
 //   col:  1    2    3    4
@@ -378,36 +380,36 @@ Every chapter has a P00 skeleton page. Its bento must emit a dedicated placement
 //   ...
 // ─────────────────────────────────────────────────────────────────────────────
 
-#bento--<id>--p00 {
-    grid-template-columns: repeat(<cols>, var(--bento-cell-size));
-    grid-template-rows:    repeat(<rows>, var(--bento-cell-size));
+#mosaic--<id>--p00 {
+    grid-template-columns: repeat(<cols>, var(--mosaic-cell-size));
+    grid-template-rows:    repeat(<rows>, var(--mosaic-cell-size));
 }
 
-/* ─── skeleton cell placements ─── */
-#bento--<id>--p00 .bento-cell[data-bento-cell="article-01"] { grid-column: 2 / 3; grid-row: 1 / 2; }
-#bento--<id>--p00 .bento-cell[data-bento-cell="article-02"] { grid-column: 3 / 4; grid-row: 1 / 2; }
-// ... one line per skeleton article
+/* ─── skeleton tile placements ─── */
+#mosaic--<id>--p00 .mosaic-tile[data-mosaic-tile="article-01"] { grid-column: 2 / 3; grid-row: 1 / 2; }
+#mosaic--<id>--p00 .mosaic-tile[data-mosaic-tile="article-02"] { grid-column: 3 / 4; grid-row: 1 / 2; }
+// ... one line per skeleton tile
 ```
 
 Place the P00 block immediately before the P01 block for its chapter.
 
-#### Bento YAML Shape
+#### Mosaic YAML Shape
 
 ```yaml
-bento:
+mosaic:
   id: inficon--discovery
   cols: 5
   rows: 5
-  cells:
+  tiles:
     - id: article-01
       type: content              # content | image | custom
-      theme: primary-dark        # omit for image cells
+      theme: primary-dark        # omit for image tiles
       desktop:
         col: "1 / 2"
         row: "1 / 2"
       content: |
-        <span class="bento-stat">1</span>
-        <span class="bento-body">Week on-site at the pilot FAB in France:</span>
+        <span class="mosaic-stat">1</span>
+        <span class="mosaic-body">Week on-site at the pilot FAB in France:</span>
 
     - id: article-06
       type: image
@@ -420,7 +422,7 @@ bento:
         hasAlt: true
         alt: "TODO:alt"
         sizes: "40vw"
-        cssClass: "bento-cell__img"
+        cssClass: "mosaic-tile__img"
 
     - id: article-07
       type: custom
@@ -430,15 +432,15 @@ bento:
         col: "1 / 3"
         row: "4 / 5"
       content: |
-        <span class="bento-lead-italic">TODO:quote</span>
+        <span class="mosaic-lead-italic">TODO:quote</span>
 ```
 
-**Custom cell scaffolding rule:** When a `custom` cell is encountered, emit the YAML above and then append a scaffolding block to the compile report:
+**Custom tile scaffolding rule:** When a `custom` tile is encountered, emit the YAML above and then append a scaffolding block to the compile report:
 
 ```
-CUSTOM CELL SCAFFOLD — variant: selfie
-  SCSS: add ruleset for [data-bento-variant="selfie"] in placements/_<pageKey>.scss
-  JS:   add behavior keyed to document.querySelector('[data-bento-variant="selfie"]')
+CUSTOM TILE SCAFFOLD — variant: selfie
+  SCSS: add ruleset for [data-mosaic-variant="selfie"] in placements/_<pageKey>.scss
+  JS:   add behavior keyed to document.querySelector('[data-mosaic-variant="selfie"]')
         in choreography.js or a dedicated selfie.js partial
   Note: <describe the intended visual/interactive behavior from Figma>
 ```

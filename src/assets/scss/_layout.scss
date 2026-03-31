@@ -75,7 +75,7 @@ body {
     padding-block-start: $chrome-content-gap; // 16px — gap below navbar
 }
 
-.layout__narrative {
+.layout__story {
     width: 100%;
     max-width: 100vw;
     overflow-x: clip;
@@ -100,7 +100,7 @@ body {
 /* ── Choreographed section (≥ 640px) ────────────────────────────────────────
  * Layout hierarchy:
  *
- *   .layout__narrative--choreographed
+ *   .layout__story--choreographed
  *     .layout__page--header          full width, above chapters
  *     .layout__chapter               text left | bento right
  *       .chapter__content            left column
@@ -165,7 +165,7 @@ body {
         //
         // CONTRACT_EXCEPTION: track widths 192px, 176px, 152px, 384px, 192px
         // are Figma pixel constants derived from bento MONEY cell (176px) and
-        // bento gap (16px). Update if --bento-cell-size token changes.
+        // mosaic gap (16px). Update if --mosaic-cell-size token changes.
         grid-template-columns:
             [content-start]       192px  /* content col left                        */
             [screenshot-start]    176px  /* content col right — 1 bento unit wide   */
@@ -193,7 +193,7 @@ body {
     // position: relative is required for skeleton underlay (position:absolute
     // within .chapter__bento) but must NOT apply to .page-header.layout__chapter
     // since that element needs position: fixed. Scoped to narratives only.
-    .layout__narrative .layout__chapter {
+    .layout__story .layout__chapter {
         position: relative;
     }
 
@@ -201,7 +201,7 @@ body {
     // The header is 192px tall and sticky in normal flow above the section.
     // This negative margin pulls the section up so bento row 1 aligns with
     // the header's content area (which starts 16px into the header).
-    .layout__narrative--choreographed {
+    .layout__story--choreographed {
         margin-block-start: -$chrome-header-height;
     }
 
@@ -255,14 +255,14 @@ body {
         // Position and z-index set by choreography.js
         width: 100%;
         padding-inline: 0;
-        // Container query host — bento-grid fires container queries against this element.
+        // Container query host — mosaic fires container queries against this element.
         // name matches the former content-cell container so placements SCSS needs no changes.
         container-type: inline-size;
         container-name: content-cell;
     }
 
-    // .chapter__bento .layout__page .content-cell removed — bento-grid is now
-    // a direct child of layout__page, no content-cell wrapper in the bento path.
+    // .chapter__bento .layout__page .content-cell removed — mosaic is now
+    // a direct child of layout__page, no content-cell wrapper in the mosaic path.
 
 
 
@@ -295,7 +295,7 @@ body {
  *   9=654  10=678  11=768  12=792  13=918  14=942  15=966  16=1182 */
 
 @media (min-width: 1248px) {
-    .layout__narrative--designed .layout__page {
+    .layout__story--designed .layout__page {
         display: grid;
         width: 2016px;
         padding-inline: 0;
@@ -334,7 +334,7 @@ body {
             [iu4-end];
     }
 
-    .layout__narrative--designed .content-cell {
+    .layout__story--designed .content-cell {
         width: auto;
         margin-block-end: 0;
     }

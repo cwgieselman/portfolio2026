@@ -153,20 +153,20 @@ const tokens = [
   { tier:'semantic', group:'typography · headings', name:'--type-subheading-size', value:'alias → scale-150', type:'typography', desc:'24px · h3', fontFamily:'Raleway,sans-serif', preview:'aabb', previewSize:'16px' },
   { tier:'semantic', group:'typography · headings', name:'--type-fineprint-size', value:'alias → scale-75', type:'typography', desc:'12px · captions · labels', fontFamily:'"PT Sans",sans-serif', preview:'fox', previewSize:'12px' },
   { tier:'semantic', group:'typography · headings', name:'--type-eyebrow-size', value:'alias → scale-100', type:'typography', desc:'16px allcaps · section labels', fontFamily:'Raleway,sans-serif', preview:'fox', previewSize:'11px' },
-  // ── COMPONENT · bento themes ────────────────────────────────────
-  { tier:'component', group:'bento · theme · white', name:'--bento-theme-white-bg', value:'alias → neutral-10', type:'color', desc:'White cell background', alias:true, resolvedColor:'#FFFFFF' },
-  { tier:'component', group:'bento · theme · white', name:'--bento-theme-white-color', value:'alias → primary-60', type:'color', desc:'White cell text', alias:true, resolvedColor:'#0E4D8C' },
-  { tier:'component', group:'bento · theme · white', name:'--bento-theme-white-border', value:'alias → neutral-60', type:'color', desc:'White cell border', alias:true, resolvedColor:'#DFDFDE' },
-  { tier:'component', group:'bento · theme · primary-dark', name:'--bento-theme-primary-dark-bg', value:'alias → primary-60', type:'color', desc:'Dark blue cell background', alias:true, resolvedColor:'#0E4D8C' },
-  { tier:'component', group:'bento · theme · primary-dark', name:'--bento-theme-primary-dark-color', value:'alias → primary-10', type:'color', desc:'Dark blue cell text', alias:true, resolvedColor:'#E7EDF4' },
-  { tier:'component', group:'bento · theme · primary-dark', name:'--bento-theme-primary-dark-border', value:'alias → primary-80', type:'color', desc:'Dark blue cell border', alias:true, resolvedColor:'#061F38' },
-  { tier:'component', group:'bento · theme · primary-light', name:'--bento-theme-primary-light-bg', value:'alias → primary-20', type:'color', desc:'Light blue cell background', alias:true, resolvedColor:'#CFDBE8' },
-  { tier:'component', group:'bento · theme · secondary-dark', name:'--bento-theme-secondary-dark-bg', value:'alias → secondary-50', type:'color', desc:'Gold cell background', alias:true, resolvedColor:'#FFCD00' },
-  { tier:'component', group:'bento · theme · secondary-light', name:'--bento-theme-secondary-light-bg', value:'alias → secondary-20', type:'color', desc:'Light gold cell background', alias:true, resolvedColor:'#FFF0B3' },
-  // ── COMPONENT · bento type ──────────────────────────────────────
-  { tier:'component', group:'bento · type', name:'--bento-type-stat-family', value:'alias → font-family-display', type:'typography', desc:'Tienne · stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'24px' },
-  { tier:'component', group:'bento · type', name:'--bento-type-stat-size', value:'alias → scale-450', type:'typography', desc:'72px · stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'20px' },
-  { tier:'component', group:'bento · type', name:'--bento-type-stat-weight', value:'alias → font-weight-bold', type:'typography', desc:'700', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'18px' },
+  // ── COMPONENT · mosaic themes ────────────────────────────────────
+  { tier:'component', group:'mosaic · theme · white', name:'--mosaic-theme-white-bg', value:'alias → neutral-10', type:'color', desc:'White cell background', alias:true, resolvedColor:'#FFFFFF' },
+  { tier:'component', group:'mosaic · theme · white', name:'--mosaic-theme-white-color', value:'alias → primary-60', type:'color', desc:'White cell text', alias:true, resolvedColor:'#0E4D8C' },
+  { tier:'component', group:'mosaic · theme · white', name:'--mosaic-theme-white-border', value:'alias → neutral-60', type:'color', desc:'White cell border', alias:true, resolvedColor:'#DFDFDE' },
+  { tier:'component', group:'mosaic · theme · primary-dark', name:'--mosaic-theme-primary-dark-bg', value:'alias → primary-60', type:'color', desc:'Dark blue cell background', alias:true, resolvedColor:'#0E4D8C' },
+  { tier:'component', group:'mosaic · theme · primary-dark', name:'--mosaic-theme-primary-dark-color', value:'alias → primary-10', type:'color', desc:'Dark blue cell text', alias:true, resolvedColor:'#E7EDF4' },
+  { tier:'component', group:'mosaic · theme · primary-dark', name:'--mosaic-theme-primary-dark-border', value:'alias → primary-80', type:'color', desc:'Dark blue cell border', alias:true, resolvedColor:'#061F38' },
+  { tier:'component', group:'mosaic · theme · primary-light', name:'--mosaic-theme-primary-light-bg', value:'alias → primary-20', type:'color', desc:'Light blue cell background', alias:true, resolvedColor:'#CFDBE8' },
+  { tier:'component', group:'mosaic · theme · secondary-dark', name:'--mosaic-theme-secondary-dark-bg', value:'alias → secondary-50', type:'color', desc:'Gold cell background', alias:true, resolvedColor:'#FFCD00' },
+  { tier:'component', group:'mosaic · theme · secondary-light', name:'--mosaic-theme-secondary-light-bg', value:'alias → secondary-20', type:'color', desc:'Light gold cell background', alias:true, resolvedColor:'#FFF0B3' },
+  // ── COMPONENT · mosaic type ──────────────────────────────────────
+  { tier:'component', group:'mosaic · type', name:'--mosaic-type-stat-family', value:'alias → font-family-display', type:'typography', desc:'Tienne · stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'24px' },
+  { tier:'component', group:'mosaic · type', name:'--mosaic-type-stat-size', value:'alias → scale-450', type:'typography', desc:'72px · stat figures', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'20px' },
+  { tier:'component', group:'mosaic · type', name:'--mosaic-type-stat-weight', value:'alias → font-weight-bold', type:'typography', desc:'700', fontFamily:'Tienne,serif', preview:'aabb', previewSize:'18px' },
   // ── COMPONENT · content rhythm ──────────────────────────────────
   { tier:'component', group:'content rhythm', name:'--content-rhythm--block', value:'alias → spacing-xxl', type:'spacing', desc:'32px · between content blocks', alias:true, resolvedPx:32 },
   { tier:'component', group:'content rhythm', name:'--content-rhythm--continuation', value:'0px', type:'spacing', desc:'0 · continuation items stack tight', px:0 },
@@ -311,12 +311,12 @@ const componentDocsData = (() => { try { return JSON.parse(document.getElementBy
 
 const components = [
   {
-    id:'bento-article',
-    get name() { return componentDocsData['bento-article'].name; },
-    get desc() { return componentDocsData['bento-article'].desc; },
-    get tags() { return componentDocsData['bento-article'].tags; },
-    links:{ figma:'https://figma.com', njk:'/src/_includes/components/bento-grid.njk', netlify:'https://cwgport26.netlify.app' },
-    thumb: () => `<div class="ds-thumb-bento">
+    id:'mosaic',
+    get name() { return componentDocsData['mosaic'].name; },
+    get desc() { return componentDocsData['mosaic'].desc; },
+    get tags() { return componentDocsData['mosaic'].tags; },
+    links:{ figma:'https://figma.com', njk:'/src/_includes/components/mosaic.njk', netlify:'https://cwgport26.netlify.app' },
+    thumb: () => `<div class="ds-thumb-mosaic">
       <div class="ds-thumb-cell ds-thumb-cell--white" style="grid-column:1/3;grid-row:1/3;"><span class="ds-thumb-stat">3&times;</span></div>
       <div class="ds-thumb-cell ds-thumb-cell--img" style="grid-column:3/6;"></div>
       <div class="ds-thumb-cell ds-thumb-cell--white" style="grid-column:3/5;grid-row:2/3;"></div>
@@ -327,18 +327,18 @@ const components = [
         label:'the arrow problem',
         preview: (theme) => {
           const t = theme || 'white';
-          return `<div class="bento-grid ds-bento-preview" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,80px);width:100%;max-width:480px;">
-            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
-              <div class="bento-cell__inner"><span class="bento-stat">3&times;</span><span class="bento-body">arrow attempts</span></div>
+          return `<div class="mosaic ds-mosaic-preview" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,80px);width:100%;max-width:480px;">
+            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
+              <div class="mosaic-tile__inner"><span class="mosaic-stat">3&times;</span><span class="mosaic-body">arrow attempts</span></div>
             </article>
-            <article class="bento-cell bento-cell--image" style="grid-column:3/6;grid-row:1/2;background:var(--color-neutral-50);">
-              <div class="bento-cell__inner" style="align-items:center;justify-content:center;"><span class="bento-body" style="color:var(--color-neutral-60);">still no arrow</span></div>
+            <article class="mosaic-tile mosaic-tile--image" style="grid-column:3/6;grid-row:1/2;background:var(--color-neutral-50);">
+              <div class="mosaic-tile__inner" style="align-items:center;justify-content:center;"><span class="mosaic-body" style="color:var(--color-neutral-60);">still no arrow</span></div>
             </article>
-            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
-              <div class="bento-cell__inner"><span class="bento-body">SVG partial: raster</span></div>
+            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
+              <div class="mosaic-tile__inner"><span class="mosaic-body">SVG partial: raster</span></div>
             </article>
-            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
-              <div class="bento-cell__inner"><span class="bento-body">::after: nope</span></div>
+            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
+              <div class="mosaic-tile__inner"><span class="mosaic-body">::after: nope</span></div>
             </article>
           </div>`;
         },
@@ -348,7 +348,7 @@ const components = [
 <span class="yaml-key">theme</span>: <span class="yaml-str">white</span>
 <span class="yaml-key">cols</span>: <span class="yaml-val">5</span>
 <span class="yaml-key">rows</span>: <span class="yaml-val">2</span>
-<span class="yaml-key">articles</span>:
+<span class="yaml-key">tiles</span>:
   - <span class="yaml-key">id</span>: <span class="yaml-str">content-cell-01</span>
     <span class="yaml-key">type</span>: <span class="yaml-str">stat</span>
     <span class="yaml-key">col</span>: <span class="yaml-val">1</span>
@@ -367,9 +367,9 @@ const components = [
     <span class="yaml-key">media</span>:
       <span class="yaml-key">src</span>: <span class="yaml-str">"bento-arrow.njk"</span>
       <span class="yaml-comment">      # deleted. rip.</span>`,
-        get contract() { return componentDocsData['bento-article'].contract; },
+        get contract() { return componentDocsData['mosaic'].contract; },
         get usage() {
-          const d = componentDocsData['bento-article'];
+          const d = componentDocsData['mosaic'];
           return { ...d.usage, changelog: d.changelog };
         }
       },
@@ -377,18 +377,18 @@ const components = [
         label:'the compile party',
         preview: (theme) => {
           const t = theme || 'primary-dark';
-          return `<div class="bento-grid ds-bento-preview" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,80px);width:100%;max-width:480px;">
-            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
-              <div class="bento-cell__inner"><span class="bento-stat">3</span><span class="bento-body">case studies queued</span></div>
+          return `<div class="mosaic ds-mosaic-preview" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,80px);width:100%;max-width:480px;">
+            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
+              <div class="mosaic-tile__inner"><span class="mosaic-stat">3</span><span class="mosaic-body">case studies queued</span></div>
             </article>
-            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:3/6;grid-row:1/2;">
-              <div class="bento-cell__inner"><span class="bento-lead">BMTx &middot; INFICON IMS &middot; Impact Mgr</span></div>
+            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:3/6;grid-row:1/2;">
+              <div class="mosaic-tile__inner"><span class="mosaic-lead">BMTx &middot; INFICON IMS &middot; Impact Mgr</span></div>
             </article>
-            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
-              <div class="bento-cell__inner"><span class="bento-body">slot-first contract</span></div>
+            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
+              <div class="mosaic-tile__inner"><span class="mosaic-body">slot-first contract</span></div>
             </article>
-            <article class="bento-cell bento-cell--content bento-cell--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
-              <div class="bento-cell__inner"><span class="bento-body">TODO:src flagged</span></div>
+            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
+              <div class="mosaic-tile__inner"><span class="mosaic-body">TODO:src flagged</span></div>
             </article>
           </div>`;
         },
@@ -399,7 +399,7 @@ const components = [
 <span class="yaml-key">theme</span>: <span class="yaml-str">dark</span>
 <span class="yaml-key">cols</span>: <span class="yaml-val">5</span>
 <span class="yaml-key">rows</span>: <span class="yaml-val">2</span>
-<span class="yaml-key">articles</span>:
+<span class="yaml-key">tiles</span>:
   - <span class="yaml-key">id</span>: <span class="yaml-str">content-cell-01</span>
     <span class="yaml-key">type</span>: <span class="yaml-str">stat</span>
     <span class="yaml-key">col</span>: <span class="yaml-val">1</span>
@@ -484,7 +484,7 @@ const components = [
   <span class="yaml-comment">  # re-export at 2000px+ wide, 3:1+ ratio</span>
   <span class="yaml-comment">  # we built a token page instead tonight</span>
   <span class="yaml-comment">  # no regrets</span>
-  <span class="yaml-key">cssClass</span>: <span class="yaml-str">"bento-cell__img"</span>`,
+  <span class="yaml-key">cssClass</span>: <span class="yaml-str">"mosaic-tile__img"</span>`,
         get contract() { return componentDocsData['media'].contract; },
         get usage() {
           const d = componentDocsData['media'];

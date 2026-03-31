@@ -2,7 +2,7 @@
   media.njk
   ─────────────────────────────────────────────────────────────────────────────
   Renders a bare image with no caption wrapper.
-  Used by bento-grid.njk for image-type cells.
+  Used by mosaic.njk for image-type tiles.
   Also usable standalone wherever a caption-free image is needed.
 
   Usage (via include):
@@ -15,7 +15,7 @@
       hasAlt: true
       alt: "Descriptive alt text for assistive technology"
       sizes: "40vw"       # optional, defaults to 100vw
-      cssClass: "bento-cell__img"  # optional, injected as class on <img>
+      cssClass: "mosaic-tile__img"  # optional, injected as class on <img>
 
   States:
     - src missing or "TODO:src" → bacon placeholder, role="presentation"

@@ -9,32 +9,32 @@
  * ----------------------------------*/
 
 :root {
-  --bento-theme-default-bg: var(--color-neutral-10);
-  --bento-theme-default-border: var(--color-neutral-60);
-  --bento-theme-default-color: var(--color-primary-60);
-
-  --bento-theme-primary-dark-bg: var(--color-primary-60);
-  --bento-theme-primary-dark-border: var(--color-primary-80);
-  --bento-theme-primary-dark-color: var(--color-primary-10);
-
-  --bento-theme-primary-light-bg: var(--color-primary-20);
-  --bento-theme-primary-light-border: var(--color-primary-30);
-  --bento-theme-primary-light-color: var(--color-primary-60);
-
-  --bento-theme-secondary-dark-bg: var(--color-secondary-50);
-  --bento-theme-secondary-dark-border: var(--color-secondary-60);
-  --bento-theme-secondary-dark-color: var(--color-secondary-80);
-
-  --bento-theme-secondary-light-bg: var(--color-secondary-20);
-  --bento-theme-secondary-light-border: var(--color-secondary-30);
-  --bento-theme-secondary-light-color: var(--color-secondary-70);
-
-  --bento-type-stat-family: var(--font-family-display);
-  --bento-type-stat-lineHeight: var(--scale-450);
-  --bento-type-stat-size: var(--scale-450);
-  --bento-type-stat-weight: var(--font-weight-bold);
-
   --content-rhythm--block: var(--spacing-xxl);
   --content-rhythm--continuation: 0px;
   --content-rhythm--list-indent: var(--spacing-l);
+
+  --mosaic-theme-default-bg: var(--color-neutral-10);
+  --mosaic-theme-default-border: var(--color-neutral-60);
+  --mosaic-theme-default-color: var(--color-primary-60);
+
+  --mosaic-theme-primary-dark-bg: var(--color-primary-60);
+  --mosaic-theme-primary-dark-border: var(--color-primary-80);
+  --mosaic-theme-primary-dark-color: var(--color-primary-10);
+
+  --mosaic-theme-primary-light-bg: var(--color-primary-20);
+  --mosaic-theme-primary-light-border: var(--color-primary-30);
+  --mosaic-theme-primary-light-color: var(--color-primary-60);
+
+  --mosaic-theme-secondary-dark-bg: var(--color-secondary-50);
+  --mosaic-theme-secondary-dark-border: var(--color-secondary-60);
+  --mosaic-theme-secondary-dark-color: var(--color-secondary-80);
+
+  --mosaic-theme-secondary-light-bg: var(--color-secondary-20);
+  --mosaic-theme-secondary-light-border: var(--color-secondary-30);
+  --mosaic-theme-secondary-light-color: var(--color-secondary-70);
+
+  --mosaic-type-stat-family: var(--font-family-display);
+  --mosaic-type-stat-lineHeight: var(--scale-450);
+  --mosaic-type-stat-size: var(--scale-450);
+  --mosaic-type-stat-weight: var(--font-weight-bold);
 }

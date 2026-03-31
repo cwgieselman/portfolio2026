@@ -31,12 +31,12 @@
 @use "components/figure";
 @use "components/link";
 @use "components/link-block";
-@use "components/bento-grid";
+@use "components/mosaic";
 @use "components/comparison-slider";
 @use "components/design-system-hub";
 
-/* One-off bento cell overrides — add per-cell partials here */
-// @use "components/bento-cells/box-01";
+/* One-off mosaic tile overrides — add per-tile partials here */
+// @use "components/mosaic-tiles/box-01";
 
 /* Generated placements (Codex) */
 @use "placements/inficon-impact-manager";

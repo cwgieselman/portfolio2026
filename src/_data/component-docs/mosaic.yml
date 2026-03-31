@@ -1,7 +1,7 @@
-id: bento-article
-name: bento-article
-njk: components/bento-grid.njk
-desc: YAML-driven bento grid container
+id: mosaic
+name: mosaic
+njk: components/mosaic.njk
+desc: YAML-driven mosaic container
 tags:
   - layout
   - grid
@@ -13,11 +13,11 @@ links:
 variants:
   - label: "the arrow problem"
     desc: "3x2 grid, white theme, stat + image + body cells"
-    bento:
-      id: ds-bento-arrow-problem
+    mosaic:
+      id: ds-mosaic-arrow-problem
       cols: 5
       rows: 2
-      articles:
+      tiles:
         - id: article-01
           type: content
           theme: default
@@ -25,8 +25,8 @@ variants:
             col: "1 / 3"
             row: "1 / 3"
           content: |
-            <span class="bento-stat">3x</span>
-            <span class="bento-body">arrow implementation attempts</span>
+            <span class="mosaic-stat">3x</span>
+            <span class="mosaic-body">arrow implementation attempts</span>
         - id: article-02
           type: image
           theme: default
@@ -43,7 +43,7 @@ variants:
             col: "3 / 5"
             row: "2 / 3"
           content: |
-            <span class="bento-body">SVG partial: Figma returned raster</span>
+            <span class="mosaic-body">SVG partial: Figma returned raster</span>
         - id: article-04
           type: content
           theme: default
@@ -51,15 +51,15 @@ variants:
             col: "5 / 6"
             row: "2 / 3"
           content: |
-            <span class="bento-body">::after triangle: lost continuous-stroke intent</span>
+            <span class="mosaic-body">::after triangle: lost continuous-stroke intent</span>
 
   - label: "the compile party"
     desc: "3x2 grid, primary-dark theme"
-    bento:
-      id: ds-bento-compile-party
+    mosaic:
+      id: ds-mosaic-compile-party
       cols: 5
       rows: 2
-      articles:
+      tiles:
         - id: article-01
           type: content
           theme: primary-dark
@@ -67,8 +67,8 @@ variants:
             col: "1 / 3"
             row: "1 / 3"
           content: |
-            <span class="bento-stat">3</span>
-            <span class="bento-body">case studies in the compile party queue</span>
+            <span class="mosaic-stat">3</span>
+            <span class="mosaic-body">case studies in the compile party queue</span>
         - id: article-02
           type: content
           theme: primary-dark
@@ -76,7 +76,7 @@ variants:
             col: "3 / 6"
             row: "1 / 2"
           content: |
-            <span class="bento-lead">BMTx - INFICON IMS - Impact Manager</span>
+            <span class="mosaic-lead">BMTx - INFICON IMS - Impact Manager</span>
         - id: article-03
           type: content
           theme: primary-dark
@@ -84,7 +84,7 @@ variants:
             col: "3 / 5"
             row: "2 / 3"
           content: |
-            <span class="bento-body">slot-first contract</span>
+            <span class="mosaic-body">slot-first contract</span>
         - id: article-04
           type: content
           theme: primary-dark
@@ -92,50 +92,50 @@ variants:
             col: "5 / 6"
             row: "2 / 3"
           content: |
-            <span class="bento-body">TODO:src flagged</span>
+            <span class="mosaic-body">TODO:src flagged</span>
 
 contract:
-  - field: "bento.id"
+  - field: "mosaic.id"
     type: string
     required: true
-    desc: "Kebab-case. Drives #bento--{id} and placements SCSS selector."
-  - field: "bento.cols"
+    desc: "Kebab-case. Drives #mosaic--{id} and placements SCSS selector."
+  - field: "mosaic.cols"
     type: number
     required: true
     desc: "Column count. Reference only — actual grid tracks in placements SCSS."
-  - field: "bento.rows"
+  - field: "mosaic.rows"
     type: number
     required: true
     desc: "Row count. Reference only — actual grid tracks in placements SCSS."
-  - field: "bento.articles[]"
+  - field: "mosaic.tiles[]"
     type: array
     required: true
     desc: "One entry per cell. Order matches visual reading order."
-  - field: "bento.articles[].id"
+  - field: "mosaic.tiles[].id"
     type: string
     required: true
     desc: "article-NN format. Drives grid-area name (article-01 to a01)."
-  - field: "bento.articles[].type"
+  - field: "mosaic.tiles[].type"
     type: string
     required: true
-    desc: "content | image | graphic. Drives bento-cell--{type} class."
-  - field: "bento.articles[].theme"
+    desc: "content | image | graphic. Drives mosaic-tile--{type} class."
+  - field: "mosaic.tiles[].theme"
     type: string
     required: false
     desc: "default | primary-dark | primary-light | secondary-dark | secondary-light. Required on all article types."
-  - field: "bento.articles[].content"
+  - field: "mosaic.tiles[].content"
     type: string
     required: false
-    desc: "Raw HTML block rendered via | safe. Use bento-stat, bento-lead, bento-body spans."
-  - field: "bento.articles[].media"
+    desc: "Raw HTML block rendered via | safe. Use mosaic-stat, mosaic-lead, mosaic-body spans."
+  - field: "mosaic.tiles[].media"
     type: object
     required: false
     desc: "Image cell data. Passed to media.njk include."
-  - field: "bento.articles[].artDirection"
+  - field: "mosaic.tiles[].artDirection"
     type: boolean
     required: false
     desc: "true triggers picture element with src (5-up) + mobileSrc (2-up) crops."
-  - field: "bento.articles[].scrollable"
+  - field: "mosaic.tiles[].scrollable"
     type: boolean
     required: false
     desc: "true triggers two-sibling render. Requires media.scrollSrc."
@@ -143,14 +143,14 @@ contract:
 usage:
   do:
     - "Let the content determine the grid configuration, not the other way around."
-    - "Use bento-stat, bento-lead, bento-body spans inside content blocks for correct type rendering."
-    - "Placement CSS lives in placements/_<pageKey>.scss on #bento--<id>. Write it there, not inline."
+    - "Use mosaic-stat, mosaic-lead, mosaic-body spans inside content blocks for correct type rendering."
+    - "Placement CSS lives in placements/_<pageKey>.scss on #mosaic--<id>. Write it there, not inline."
   dont:
     - "Don't call get_design_context on root or section Figma nodes. It swallows the page and returns React."
     - "Don't use aspect-ratio: 1/1 on individual cells — it breaks multi-cell spans."
   gotchas:
     - "Span count is not end line. col 5 + colSpan 2 ends at line 7, not 6. Verify in _site output."
-    - "bento-arrow.njk is dead. Delete it."
+    - "mosaic arrow implementation is dead. Delete it."
     - "Figma MCP returns raster PNG for Union/Boolean nodes. For SVG paths use REST API GET /v1/images?format=svg."
     - "arrow: fields exist in page.yml on articles 01, 04, 06, 08, 09, 10, 11. Arrows do not yet exist."
     - "Double-hyphen YAML filenames trigger a Nunjucks parse bug. Use single hyphens."
@@ -166,13 +166,13 @@ usage:
 changelog:
   - ver: "0.6"
     date: "Mar 2026"
-    note: "bento.cells renamed to bento.articles. theme: white renamed to theme: default. theme required on all article types."
+    note: "bento.cells renamed to mosaic.tiles. theme: white renamed to theme: default. theme required on all article types."
   - ver: "0.5"
     date: "Mar 2026"
-    note: "bento-arrow.njk deleted. isCustom escape hatch documented."
+    note: "mosaic arrow implementation deleted. isCustom escape hatch documented."
   - ver: "0.4"
     date: "Mar 2026"
-    note: "Concept renamed bento-article. bento-grid.njk filename unchanged."
+    note: "Component renamed from bento-article to mosaic. mosaic.njk replaces the old bento template."
   - ver: "0.3"
     date: "Feb 2026"
     note: "Arrow attempt 2: CSS ::after. Continuous-stroke intent lost."

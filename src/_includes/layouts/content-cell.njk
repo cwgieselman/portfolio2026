@@ -7,10 +7,10 @@
   data-cell="{{ wrapper }}"
 >
 
-  {# ── Bento branch ──────────────────────────────────────────── #}
-  {% if cell.bento %}
-    {% from "components/bento-grid.njk" import bentoGrid %}
-    {{ bentoGrid(cell.bento) }}
+  {# ── Mosaic branch ─────────────────────────────────────────── #}
+  {% if cell.mosaic %}
+    {% from "components/mosaic.njk" import mosaic %}
+    {{ mosaic(cell.mosaic) }}
 
   {# ── Standard includes branch ──────────────────────────────── #}
   {% elif cell.includes and (cell.includes | length) %}

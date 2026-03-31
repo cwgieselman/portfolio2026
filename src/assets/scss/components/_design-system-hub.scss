@@ -506,7 +506,7 @@
 
 /* ── Thumbnail mini-component previews ──── */
 
-.ds-thumb-bento {
+.ds-thumb-mosaic {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 20px);
@@ -709,13 +709,13 @@
   border-bottom: 0.5px solid #eaeae8;
 }
 
-/* ── Bento preview override ─────────────
-   Real bento classes used in preview area.
+/* ── Mosaic preview override ────────────
+   Real mosaic classes used in preview area.
    Override container-query-driven layout to
    stay in fixed grid mode regardless of context.
 ────────────────────────────────────────── */
 
-.ds-comp__preview .bento-grid.ds-bento-preview {
+.ds-comp__preview .mosaic.ds-mosaic-preview {
   display: grid;
   container-type: normal;
   width: 100%;
@@ -723,13 +723,13 @@
   overflow: visible;
 }
 
-.ds-comp__preview .bento-grid.ds-bento-preview .bento-cell {
+.ds-comp__preview .mosaic.ds-mosaic-preview .mosaic-tile {
   container-type: normal;
 }
 
 /* ── Preview component mockups ──────────── */
 
-.ds-preview-bento {
+.ds-preview-mosaic {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 52px);
@@ -738,7 +738,7 @@
   max-width: 420px;
 }
 
-.ds-preview-bento--dark {
+.ds-preview-mosaic--dark {
   background: #1C1C1A;
   padding: 6px;
   border-radius: 6px;
