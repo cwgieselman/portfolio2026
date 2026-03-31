@@ -31,9 +31,10 @@ If generated output conflicts with this contract, either:
 |---|---|---|
 | **Field and Frame Grid** | **FF Grid** | The full 5-IU macro page grid in `_layout.scss`. Active at ≥ 1248px viewport. |
 | **2-col Grid** | — | The simplified two-column layout grid active at 640px–1247px. |
-| **Bento Grid** | — | The CSS Grid inside a `.bento-grid` component instance. Container-query driven. |
+| **Mosaic** | — | The CSS Grid inside a `.mosaic` component instance. Container-query driven. |
+| **Mosaic tile** | — | Individual cell inside `.mosaic`. YAML key `tiles:` maps to HTML `<article>` elements — intentional split. |
 
-Any use of "macro grid", "page grid", "5-col grid", "mid-tier grid", "responsive grid", "bento layout", or similar informal names is incorrect. Use the canonical names above.
+Any use of "macro grid", "page grid", "5-col grid", "mid-tier grid", "responsive grid", "bento layout", "bento grid", or similar informal names is incorrect. Use the canonical names above.
 
 ---
 

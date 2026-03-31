@@ -21,7 +21,7 @@ PR descriptions and commit suggestions live in `_docs/`. When given a PR filenam
 
 ## Visual Regression Testing
 
-Playwright tests both Chromium and WebKit at every breakpoint before committing CSS changes. **Run this before and after any CSS change that touches layout, bento, or responsive behavior.**
+Playwright tests both Chromium and WebKit at every breakpoint before committing CSS changes. **Run this before and after any CSS change that touches layout, mosaic, or responsive behavior.**
 
 ```bash
 npm run test:visual          # capture/update screenshots, assert metrics
@@ -32,9 +32,9 @@ npm run test:visual:report   # open HTML report in browser
 **What it tests:**
 - Full-page screenshots at all four main viewports (390, 820, 1052, 1248) in both browsers
 - Hard assertions at the six crossover viewports (±1px around 1052 and 1248)
-- Overflow sweep: bento `gridW <= contentCellW` assertion at every 50px from 375–1400px
+- Overflow sweep: mosaic `gridW <= contentCellW` assertion at every 50px from 375–1400px
 
-**The core invariant:** The bento grid must never exceed its content-cell width at any viewport in either browser. If this assertion fails the test output tells you the exact viewport, browser, gridW, and contentCellW.
+**The core invariant:** The mosaic must never exceed its content-cell width at any viewport in either browser. If this assertion fails the test output tells you the exact viewport, browser, gridW, and contentCellW.
 
 **Screenshots saved to** `tests/screenshots/{chromium|webkit}/inficon-impact-manager/` — gitignored, local only.
 
@@ -53,12 +53,12 @@ Four Chrome Incognito windows in Responsive Design Mode, set to these exact view
 
 | Label | Viewport | Notes |
 |-------|----------|-------|
-| iPhone | 390×844 | Mobile — 2-up bento, block layout |
-| iPad | 820×1180 | Tablet — 2-up bento, 2-col Grid |
+| iPhone | 390×844 | Mobile — 2-up mosaic, block layout |
+| iPad | 820×1180 | Tablet — 2-up mosaic, 2-col Grid |
 | Laptop | 1052×657 | Just below the 1052→1053 flip point |
 | Desktop | 1248×848 | Just above the 1248 FF Grid threshold |
 
-The 1052→1053 crossover is where the bento switches from 2-up to 5-up. The 1248→1249 crossover is where the macro layout switches from 2-col Grid to FF Grid.
+The 1052→1053 crossover is where the mosaic switches from 2-up to 5-up. The 1248→1249 crossover is where the macro layout switches from 2-col Grid to FF Grid.
 
 ---
 
@@ -200,7 +200,7 @@ Prefix signals intent; slug identifies subject. Format: `<prefix>/<short-slug>`
 
 - **Field and Frame Grid** (abbrev: **FF Grid**) — The full 5-IU macro page grid defined in `_layout.scss`. Five IUs, four gutters, named column and row lines, fixed geometry. Active at ≥ 1248px viewport. Any reference to "the macro grid", "the page grid", "the 5-col grid", or similar must use this name instead.
 - **2-col Grid** — The simplified two-column layout grid active at 640px–1247px. Columns: `1.5rem | 14rem text | 3rem gap | 1fr figure | 1.5rem`. `--scale-base` is overridden to 14px in this tier so columns and type shrink together. Any reference to "the mid-tier grid", "the responsive grid", "the text/figure grid", or similar must use this name instead.
-- **Bento Grid** — The CSS Grid inside a `.bento-grid` component instance. Driven by container queries on the parent `content-cell`. Any reference to "the bento layout", "the bento's grid", or similar must use this name instead.
+- **Mosaic** — The CSS Grid inside a `.mosaic` component instance. Tiles are `<article>` elements. Driven by container queries on the parent `content-cell`. Any reference to "the bento layout", "the bento grid", or similar must use "mosaic" instead. YAML key `tiles:` maps to HTML `<article>` elements — intentional split.
 - **Field** — Compositional lattice built from Interface Units. Provides rhythm and alignment.
 - **Frame** — Live area of the page where the main editorial point lives.
 - **Force** — Editorial posture of a page (Contextual, Interpretive, Authorial).
@@ -289,16 +289,16 @@ The current `inficon--discovery-bento.yml` is accessed via the `bentoDiscovery.j
 
 ---
 
-## Bento Grid System
+## Mosaic System
 
-The Bento Grid is a standalone component for non-executor contexts (e.g. discovery/process layouts inside case study pages).
+The Mosaic is the grid composition component for case study pages. YAML key `tiles:` maps to HTML `<article>` elements — intentional split; document in CONTRACT.md.
 
 **Files:**
-- Template: `src/_includes/components/bento-grid.njk` — full API docs in the file header
-- Styles: `src/assets/scss/components/_bento-grid.scss`
-- Themes: `src/assets/scss/components/_bento-grid.scss` (theme rulesets in the `// -- Themes` section)
-- Retired (git rm pending): `src/assets/scss/components/_bento-backgrounds.scss`, `src/_includes/components/bento-arrow.njk`, `src/_data/bentoDiscovery.js`, `src/_data/inficon--discovery-bento.yml`, `src/bento-test.njk`, `src/_includes/layouts/section.njk`
-- One-off overrides: `src/assets/scss/components/bento-cells/` — add partials here, uncomment import in `main.scss`
+- Template: `src/_includes/components/mosaic.njk` — full API docs in the file header
+- Styles: `src/assets/scss/components/_mosaic.scss`
+- Themes: `src/assets/scss/components/_mosaic.scss` (theme rulesets in the `// -- Themes` section)
+- Retired: `src/assets/scss/components/_bento-backgrounds.scss`, `src/_data/bentoDiscovery.js`, `src/_data/inficon--discovery-bento.yml`, `src/bento-test.njk`, `src/_includes/layouts/section.njk`
+- One-off overrides: `src/assets/scss/components/mosaic-tiles/` — add partials here, uncomment import in `main.scss`
 
 **Four named themes** (set via `theme:` in YAML):
 - `primary-dark` — primary/60 bg, primary/10 text, primary/80 border
@@ -310,15 +310,15 @@ The Bento Grid is a standalone component for non-executor contexts (e.g. discove
 
 | Span | Font | Size `clamp` | Line-height `clamp` | Align |
 |------|------|-------------|---------------------|-------|
-| `bento-stat` | Tienne Bold | `50px → 72px` (`36cqi`) | `1` | center (axiomatic) |
-| `bento-lead` | Raleway Regular | `19px → 24px` (`13.2cqi`) | `24px → 30px` (`17cqi`) | center (axiomatic) |
-| `bento-lead-italic` | Raleway Italic | `19px → 24px` (`13.2cqi`) | `24px → 30px` (`17cqi`) | center (axiomatic) |
-| `bento-body` | PT Sans Regular | `13px → 16px` (`9.2cqi`) | `18px → 24px` (`13cqi`) | left (default) |
-| `bento-body-bold` | PT Sans Bold | `13px → 16px` (`9.2cqi`) | `18px → 24px` (`13cqi`) | left (default) |
+| `mosaic-stat` | Tienne Bold | `50px → 72px` (`36cqi`) | `1` | center (axiomatic) |
+| `mosaic-lead` | Raleway Regular | `19px → 24px` (`13.2cqi`) | `24px → 30px` (`17cqi`) | center (axiomatic) |
+| `mosaic-lead-italic` | Raleway Italic | `19px → 24px` (`13.2cqi`) | `24px → 30px` (`17cqi`) | center (axiomatic) |
+| `mosaic-body` | PT Sans Regular | `13px → 16px` (`9.2cqi`) | `18px → 24px` (`13cqi`) | left (default) |
+| `mosaic-body-bold` | PT Sans Bold | `13px → 16px` (`9.2cqi`) | `18px → 24px` (`13cqi`) | left (default) |
 
-**Axiomatic centering:** `.bento-cell:has(.bento-lead, .bento-lead-italic, .bento-stat)` sets `text-align: center` on the cell — all child spans inherit it. No per-span alignment needed. Body-only cells stay left-aligned by default. Images unaffected.
+**Axiomatic centering:** `.mosaic-tile:has(.mosaic-lead, .mosaic-lead-italic, .mosaic-stat)` sets `text-align: center` on the tile — all child spans inherit it. No per-span alignment needed. Body-only tiles stay left-aligned by default. Images unaffected.
 
-**Computed sizes across bento states:**
+**Computed sizes across mosaic states:**
 
 | Style | 2-up MIN `~167px` | 2-up MAX `208px` | 5-up MIN `140px` | 5-up MAX `208px` |
 |-------|-------------------|------------------|------------------|------------------|
@@ -328,33 +328,33 @@ The Bento Grid is a standalone component for non-executor contexts (e.g. discove
 
 **Responsive model — container-query driven, small → large:**
 
-| Threshold | Layout | Cell size |
+| Threshold | Layout | Tile size |
 |---|---|---|
 | Default (no query) | 2-up, `width: 100%` | fluid `min(1fr, 208px)` |
 | `content-cell ≥ 500px` | 2-up, `width: 100%` | 208px capped |
 | `content-cell ≥ 732px` | 5-up, `width: fit-content` | 140px min (reset) |
 | `content-cell ≥ 900px` | 5-up, `width: fit-content` | 208px max |
 
-The Bento Grid 5-up threshold (732px) fires at ~1052px viewport in the 2-col Grid tier. Below that it is always 2-up. In the FF Grid tier the figure content-cell is always ≥ 792px so 5-up is always active.
+The Mosaic 5-up threshold (732px) fires at ~1052px viewport in the 2-col Grid tier. Below that it is always 2-up. In the FF Grid tier the figure content-cell is always ≥ 792px so 5-up is always active.
 
 **2-up layout model (content-driven rows):**
-`.bento-cell__inner` is always `position: relative`. In 2-up, content drives row height via normal flow — same-row cells share height automatically via grid row track sizing. In 5-up, the grid track defines the cell height and `__inner` fills it via `height: 100%`. No `position: absolute` is used anywhere in the bento system.
+`.mosaic-tile__inner` is always `position: relative`. In 2-up, content drives row height via normal flow — same-row tiles share height automatically via grid row track sizing. In 5-up, the grid track defines the tile height and `__inner` fills it via `height: 100%`. No `position: absolute` is used anywhere in the mosaic system.
 
-**Cascade note:** 2-up aspect-ratio rules (e.g. `aspect-ratio: 4/5` on `--image-directed`) are declared before the 5-up container query in `_bento-grid.scss`. The 5-up unset uses a doubled class selector (`.bento-cell--image-directed.bento-cell--image-directed`) to beat the base rule on specificity, since container queries add no specificity and the base rule compiles after the container query block.
+**Cascade note:** 2-up aspect-ratio rules (e.g. `aspect-ratio: 4/5` on `--image-directed`) are declared before the 5-up container query in `_mosaic.scss`. The 5-up unset uses a doubled class selector (`.mosaic-tile--image-directed.mosaic-tile--image-directed`) to beat the base rule on specificity, since container queries add no specificity and the base rule compiles after the container query block.
 
-**Cell types — full inventory:**
+**Tile types — full inventory:**
 
 | `type:` | Class | 2-up behavior | 5-up behavior | Use for |
 |---------|-------|---------------|---------------|---------|
-| `content` | `bento-cell--content` | content-driven height | fills grid track | text, stats, quotes |
-| `image` | `bento-cell--image` | fills width, content-driven height | fills grid track, `object-fit: cover` | photos that work at any ratio |
-| `image` + `artDirection: true` | `bento-cell--image-directed` | `aspect-ratio: 4/5`, viewport-switched `<picture>` | fills grid track, `object-fit: cover` | photos needing specific crops per context |
-| `image` + `scrollable: true` | two siblings: `--image-desktop` + `--image-scrollable` | scrollable window `2×cell` tall, 4-way scroll, no srcset | normal image cell | wide process artifacts, FigJam boards, diagrams |
-| `graphic` | `bento-cell--graphic` | `aspect-ratio: 1`, `object-fit: contain`, padded | fills grid track, `object-fit: contain` | square illustrations, diagrams, small graphics |
+| `content` | `mosaic-tile--content` | content-driven height | fills grid track | text, stats, quotes |
+| `image` | `mosaic-tile--image` | fills width, content-driven height | fills grid track, `object-fit: cover` | photos that work at any ratio |
+| `image` + `artDirection: true` | `mosaic-tile--image-directed` | `aspect-ratio: 4/5`, viewport-switched `<picture>` | fills grid track, `object-fit: cover` | photos needing specific crops per context |
+| `image` + `scrollable: true` | two siblings: `--image-desktop` + `--image-scrollable` | scrollable window `2×tile` tall, 4-way scroll, no srcset | normal image tile | wide process artifacts, FigJam boards, diagrams |
+| `graphic` | `mosaic-tile--graphic` | `aspect-ratio: 1`, `object-fit: contain`, padded | fills grid track, `object-fit: contain` | square illustrations, diagrams, small graphics |
 
-**`type: graphic` replaces `isCustom`** — `isCustom` was a reserved escape hatch for cells needing external CSS/JS. `graphic` is the semantic replacement. It is the correct hook for animated or externally-driven assets (Lottie, CSS animation, canvas). External asset wiring (via `cssClass:`, `jsInclude:`, or similar YAML fields) to be defined when first needed.
+**`type: graphic` replaces `isCustom`** — `isCustom` was a reserved escape hatch for tiles needing external CSS/JS. `graphic` is the semantic replacement. It is the correct hook for animated or externally-driven assets (Lottie, CSS animation, canvas). External asset wiring (via `cssClass:`, `jsInclude:`, or similar YAML fields) to be defined when first needed.
 
-TODO (future): define the external asset hook API on `graphic` cells for animation/interactivity.
+TODO (future): define the external asset hook API on `graphic` tiles for animation/interactivity.
 
 **Art-directed image YAML example:**
 ```yaml
@@ -384,8 +384,8 @@ The 1052px breakpoint in `<source media>` (art direction) and the `732px` contai
 
 TODO (future): make `mobileSrc` crop generation programmable via Sharp at build time from a crop region defined in YAML, rather than requiring manual export.
 
-**Stat cell display font:** Tienne Bold (loaded via Google Fonts). Font family token: `--font-family-display`.
+**Stat tile display font:** Tienne Bold (loaded via Google Fonts). Font family token: `--font-family-display`.
 
 **Token additions made manually** (pending Token Studio sync):
-- `scale.450` (72px), `font-family.display` (Tienne), `component.bento.theme.*`, `component.bento.type.*`
+- `scale.450` (72px), `font-family.display` (Tienne), `component.mosaic.theme.*`, `component.mosaic.type.*`
 - `--font-family-display` and `--scale-450` are now generated into `_tokens--primitives.scss`.

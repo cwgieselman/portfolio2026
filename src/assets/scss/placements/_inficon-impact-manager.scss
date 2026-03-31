@@ -1,6 +1,6 @@
 // Placements — inficon-impact-manager
 // ─────────────────────────────────────────────────────────────────────────────
-// Bento geometry reference (MONEY state, gap at 16px):
+// Mosaic geometry reference (MONEY state, gap at 16px):
 //   Cell:  176px
 //   Gap:   16px
 //   1-unit span: 176px
@@ -21,16 +21,16 @@
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MACRO LAYOUT — inficon-impact-manager
-// Chapter layout handles text/bento column placement via _layout.scss.
+// Chapter layout handles text/mosaic column placement via _layout.scss.
 // The .layout__chapter grid provides content-start / bento-start named lines.
-// Bento content-cells within .chapter__bento fill their container.
-// Per-bento area maps below handle cell placement within each bento grid.
+// Mosaic tiles within .chapter__bento fill their container.
+// Per-mosaic area maps below handle tile placement within each mosaic.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────────────────────
 // S01 C01 P00 — inficon--im--s01-c01-p00
 // Skeleton underlay — always visible at z-index 0, never animated.
-// 4 cols × 4 rows. Marks composite bento area for Chapter 01 (P01–P03).
+// 4 cols × 4 rows. Marks composite mosaic area for Chapter 01 (P01–P03).
 //
 // Skeleton map:
 //   col:  1    2    3    4
@@ -40,30 +40,30 @@
 //   row4: s12  s13  .    .
 // ─────────────────────────────────────────────────────────────────────────────
 
-#bento--inficon--im--s01-c01-p00 {
-    grid-template-columns: repeat(4, var(--bento-cell-size));
-    grid-template-rows:    repeat(4, var(--bento-cell-size));
+#mosaic--inficon--im--s01-c01-p00 {
+    grid-template-columns: repeat(4, var(--mosaic-cell-size));
+    grid-template-rows:    repeat(4, var(--mosaic-cell-size));
 }
 
 /* ─── skeleton cell placements ─── */
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-01"]  { grid-column: 2 / 3; grid-row: 1 / 2; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-02"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-03"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-04"]  { grid-column: 1 / 2; grid-row: 2 / 3; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-05"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-06"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-07"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-08"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-09"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-10"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-11"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-12"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
-#bento--inficon--im--s01-c01-p00 .bento-cell[data-bento-cell="article-13"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-01"]  { grid-column: 2 / 3; grid-row: 1 / 2; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-02"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-03"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-04"]  { grid-column: 1 / 2; grid-row: 2 / 3; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-05"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-06"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-07"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-08"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-09"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-10"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-11"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-12"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
+#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-13"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // S01 C02 P00 — inficon--im--s01-c02-p00
 // Skeleton underlay — always visible at z-index 0, never animated.
-// 4 cols × 4 rows. Marks composite bento area for Chapter 02 (P01–P02).
+// 4 cols × 4 rows. Marks composite mosaic area for Chapter 02 (P01–P02).
 //
 // Skeleton map:
 //   col:  1    2    3    4
@@ -73,25 +73,25 @@
 //   row4: s10  s11  s12  s13
 // ─────────────────────────────────────────────────────────────────────────────
 
-#bento--inficon--im--s01-c02-p00 {
-    grid-template-columns: repeat(4, var(--bento-cell-size));
-    grid-template-rows:    repeat(4, var(--bento-cell-size));
+#mosaic--inficon--im--s01-c02-p00 {
+    grid-template-columns: repeat(4, var(--mosaic-cell-size));
+    grid-template-rows:    repeat(4, var(--mosaic-cell-size));
 }
 
 /* ─── skeleton cell placements ─── */
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-01"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-02"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-03"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-04"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-05"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-06"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-07"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-08"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-09"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-10"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-11"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-12"]  { grid-column: 3 / 4; grid-row: 4 / 5; }
-#bento--inficon--im--s01-c02-p00 .bento-cell[data-bento-cell="article-13"]  { grid-column: 4 / 5; grid-row: 4 / 5; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-01"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-02"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-03"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-04"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-05"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-06"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-07"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-08"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-09"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-10"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-11"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-12"]  { grid-column: 3 / 4; grid-row: 4 / 5; }
+#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-13"]  { grid-column: 4 / 5; grid-row: 4 / 5; }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // S01 C01 P01 — inficon--im--s01-c01-p01
@@ -110,16 +110,16 @@
 //   row2: a02  .
 // ─────────────────────────────────────────────────────────────────────────────
 
-#bento--inficon--im--s01-c01-p01 {
+#mosaic--inficon--im--s01-c01-p01 {
     grid-template-areas:
         ". a01 a01 a02"
         ". .   .   a02";
 }
 
 @container content-cell (min-width: 624px) {
-    #bento--inficon--im--s01-c01-p01 {
-        grid-template-columns: repeat(4, var(--bento-cell-size));
-        grid-template-rows:    repeat(2, var(--bento-cell-size));
+    #mosaic--inficon--im--s01-c01-p01 {
+        grid-template-columns: repeat(4, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(2, var(--mosaic-cell-size));
         grid-template-areas:
             ". a01 a01 a02"
             ". .   .   a02";
@@ -127,8 +127,8 @@
 }
 
 /* ─── cell areas ─── */
-#bento--inficon--im--s01-c01-p01 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
-#bento--inficon--im--s01-c01-p01 .bento-cell[data-bento-cell="article-02"] { grid-area: a02; }
+#mosaic--inficon--im--s01-c01-p01 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+#mosaic--inficon--im--s01-c01-p01 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // S01 C01 P02 — inficon--im--s01-c01-p02
@@ -148,7 +148,7 @@
 //   row3: a02  a03
 // ─────────────────────────────────────────────────────────────────────────────
 
-#bento--inficon--im--s01-c01-p02 {
+#mosaic--inficon--im--s01-c01-p02 {
     grid-template-areas:
         "a01 a01"
         "a01 a01"
@@ -156,9 +156,9 @@
 }
 
 @container content-cell (min-width: 624px) {
-    #bento--inficon--im--s01-c01-p02 {
-        grid-template-columns: repeat(4, var(--bento-cell-size));
-        grid-template-rows:    repeat(3, var(--bento-cell-size));
+    #mosaic--inficon--im--s01-c01-p02 {
+        grid-template-columns: repeat(4, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(3, var(--mosaic-cell-size));
         grid-template-areas:
             ".   .   .   ."
             "a01 a01 a02 ."
@@ -167,9 +167,9 @@
 }
 
 /* ─── cell areas ─── */
-#bento--inficon--im--s01-c01-p02 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
-#bento--inficon--im--s01-c01-p02 .bento-cell[data-bento-cell="article-02"] { grid-area: a02; }
-#bento--inficon--im--s01-c01-p02 .bento-cell[data-bento-cell="article-03"] { grid-area: a03; }
+#mosaic--inficon--im--s01-c01-p02 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+#mosaic--inficon--im--s01-c01-p02 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
+#mosaic--inficon--im--s01-c01-p02 .mosaic-tile[data-mosaic-tile="article-03"] { grid-area: a03; }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // S01 C01 P03 — inficon--im--s01-c01-p03
@@ -189,15 +189,15 @@
 //   row4: a01  a01
 // ─────────────────────────────────────────────────────────────────────────────
 
-#bento--inficon--im--s01-c01-p03 {
+#mosaic--inficon--im--s01-c01-p03 {
     grid-template-areas:
         "a01 a01";
 }
 
 @container content-cell (min-width: 624px) {
-    #bento--inficon--im--s01-c01-p03 {
-        grid-template-columns: repeat(4, var(--bento-cell-size));
-        grid-template-rows:    repeat(4, var(--bento-cell-size));
+    #mosaic--inficon--im--s01-c01-p03 {
+        grid-template-columns: repeat(4, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(4, var(--mosaic-cell-size));
         grid-template-areas:
             ".   .   .   ."
             ".   .   .   ."
@@ -207,7 +207,7 @@
 }
 
 /* ─── cell areas ─── */
-#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
 
 // ─── Selfie pseudo-element ───────────────────────────────────────────────────
 // Decorative — no semantic content, no DOM node, no alt text required.
@@ -217,40 +217,40 @@
 // Image optimization does not apply — background-image on pseudo-element.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// CONTRACT_EXCEPTION: overflow: visible required on both the bento grid and the
-// quote cell so the selfie ::before pseudo-element can escape the bento bounds.
-// The bento grid has overflow: hidden by default for border-radius clipping.
-#bento--inficon--im--s01-c01-p03 { overflow: visible; }
-#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"] { overflow: visible; }
+// CONTRACT_EXCEPTION: overflow: visible required on both the mosaic and the
+// quote cell so the selfie ::before pseudo-element can escape the mosaic bounds.
+// The mosaic has overflow: hidden by default for border-radius clipping.
+#mosaic--inficon--im--s01-c01-p03 { overflow: visible; }
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-tile="article-01"] { overflow: visible; }
 
-#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"]::before {
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-tile="article-01"]::before {
     opacity: 1;
     transition: opacity 0.5s ease;
 }
 
-#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"].is-exiting::before {
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-tile="article-01"].is-exiting::before {
     opacity: 0;
 }
 
-#bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"]::before {
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-tile="article-01"]::before {
     content: "";
     position: absolute; /* CONTRACT_EXCEPTION: decorative pseudo-element — no DOM node, no alt text required */
-    width: var(--bento-cell-size);
-    height: var(--bento-cell-size);
+    width: var(--mosaic-cell-size);
+    height: var(--mosaic-cell-size);
     background-image: url('/assets/images/inficon--photo--craig-cleanroom-selfie.jpg');
     background-size: cover;
     background-position: center top;
-    border-radius: var(--bento-radius);
+    border-radius: var(--mosaic-radius);
 
     // Default (2-up): below the quote cell, centered
     top: 100%;
     left: 50%;
     transform: translateX(-50%); /* CONTRACT_EXCEPTION: centering a pseudo-element below its anchor cell */
-    margin-top: var(--bento-gap);
+    margin-top: var(--mosaic-gap);
 }
 
 @container content-cell (min-width: 624px) {
-    #bento--inficon--im--s01-c01-p03 .bento-cell[data-bento-cell="article-01"]::before {
+    #mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-tile="article-01"]::before {
         top: 176px;
         left: auto;
         right: 232px;
@@ -270,16 +270,16 @@
 //   row2: .    .    a01  a01
 // ─────────────────────────────────────────────────────────────────────────────
 
-#bento--inficon--im--s01-c02-p01 {
+#mosaic--inficon--im--s01-c02-p01 {
     grid-template-areas:
         ". . a01 a01"
         ". . a01 a01";
 }
 
 @container content-cell (min-width: 624px) {
-    #bento--inficon--im--s01-c02-p01 {
-        grid-template-columns: repeat(4, var(--bento-cell-size));
-        grid-template-rows:    repeat(2, var(--bento-cell-size));
+    #mosaic--inficon--im--s01-c02-p01 {
+        grid-template-columns: repeat(4, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(2, var(--mosaic-cell-size));
         grid-template-areas:
             ".   .   a01 a01"
             ".   .   a01 a01";
@@ -287,7 +287,7 @@
 }
 
 /* ─── cell areas ─── */
-#bento--inficon--im--s01-c02-p01 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
+#mosaic--inficon--im--s01-c02-p01 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // S01 C02 P02 — inficon--im--s01-c02-p02
@@ -302,7 +302,7 @@
 //   row4: a02  a02  a02  a04
 // ─────────────────────────────────────────────────────────────────────────────
 
-#bento--inficon--im--s01-c02-p02 {
+#mosaic--inficon--im--s01-c02-p02 {
     grid-template-areas:
         "a01 ."
         "a02 a02"
@@ -311,9 +311,9 @@
 }
 
 @container content-cell (min-width: 624px) {
-    #bento--inficon--im--s01-c02-p02 {
-        grid-template-columns: repeat(4, var(--bento-cell-size));
-        grid-template-rows:    repeat(4, var(--bento-cell-size));
+    #mosaic--inficon--im--s01-c02-p02 {
+        grid-template-columns: repeat(4, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(4, var(--mosaic-cell-size));
         grid-template-areas:
             ".   .   .   ."
             ".   a01 .   ."
@@ -323,7 +323,7 @@
 }
 
 /* ─── cell areas ─── */
-#bento--inficon--im--s01-c02-p02 .bento-cell[data-bento-cell="article-01"] { grid-area: a01; }
-#bento--inficon--im--s01-c02-p02 .bento-cell[data-bento-cell="article-02"] { grid-area: a02; }
-#bento--inficon--im--s01-c02-p02 .bento-cell[data-bento-cell="article-03"] { grid-area: a03; }
-#bento--inficon--im--s01-c02-p02 .bento-cell[data-bento-cell="article-04"] { grid-area: a04; }
+#mosaic--inficon--im--s01-c02-p02 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+#mosaic--inficon--im--s01-c02-p02 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
+#mosaic--inficon--im--s01-c02-p02 .mosaic-tile[data-mosaic-tile="article-03"] { grid-area: a03; }
+#mosaic--inficon--im--s01-c02-p02 .mosaic-tile[data-mosaic-tile="article-04"] { grid-area: a04; }

@@ -28,11 +28,11 @@ sections:
 
           - pageKey: "page-00"
             wrapper: "content--section-01--chapter-01--page-00--cell-01"
-            bento:
+            mosaic:
               id: "inficon--im--s01-c01-p00"
               cols: 4
               rows: 4
-              articles:
+              tiles:
                 - id: article-01
                   type: skeleton
                   desktop:
@@ -101,11 +101,11 @@ sections:
 
           - pageKey: "page-01"
             wrapper: "content--section-01--chapter-01--page-01--cell-01"
-            bento:
+            mosaic:
               id: "inficon--im--s01-c01-p01"
               cols: 4
               rows: 2
-              articles:
+              tiles:
                 - id: article-01
                   type: image
                   theme: default
@@ -119,7 +119,7 @@ sections:
                     hasAlt: true
                     alt: "The ST Microelectronics facility in Crolles, France — a large semiconductor FAB with the French Alps visible in the background."
                     sizes: "40vw"
-                    cssClass: "bento-cell__img"
+                    cssClass: "mosaic-tile__img"
 
                 - id: article-02
                   type: image
@@ -132,15 +132,15 @@ sections:
                     hasAlt: true
                     alt: "Craig in a full cleanroom suit, ready to make some chips. At the pilot FAB in Crolles, France."
                     sizes: "20vw"
-                    cssClass: "bento-cell__img"
+                    cssClass: "mosaic-tile__img"
 
           - pageKey: "page-02"
             wrapper: "content--section-01--chapter-01--page-02--cell-01"
-            bento:
+            mosaic:
               id: "inficon--im--s01-c01-p02"
               cols: 4
               rows: 3
-              articles:
+              tiles:
                 - id: article-01
                   type: image
                   theme: default
@@ -152,7 +152,7 @@ sections:
                     hasAlt: true
                     alt: "An artist's rendering of the new control center the new software would operate in."
                     sizes: "40vw"
-                    cssClass: "bento-cell__img"
+                    cssClass: "mosaic-tile__img"
 
                 - id: article-02
                   type: content
@@ -161,8 +161,8 @@ sections:
                     col: "3 / 4"
                     row: "2 / 3"
                   content: |
-                    <span class="bento-stat">1</span>
-                    <span class="bento-body">Week on-site at the pilot facility:</span>
+                    <span class="mosaic-stat">1</span>
+                    <span class="mosaic-body">Week on-site at the pilot facility:</span>
 
                 - id: article-03
                   type: image
@@ -177,15 +177,15 @@ sections:
                     hasAlt: true
                     alt: "A Workshop Island in the control room with wall-mounted screens showing localized production data and individual workstations."
                     sizes: "40vw"
-                    cssClass: "bento-cell__img"
+                    cssClass: "mosaic-tile__img"
 
           - pageKey: "page-03"
             wrapper: "content--section-01--chapter-01--page-03--cell-01"
-            bento:
+            mosaic:
               id: "inficon--im--s01-c01-p03"
               cols: 4
               rows: 4
-              articles:
+              tiles:
                 - id: article-01
                   type: custom
                   variant: selfie
@@ -195,9 +195,9 @@ sections:
                     row: "4 / 5"
                   description: "Decorative portrait photo rendered as a CSS ::before pseudo-element on the quote cell. Positioned left of the cell at desktop, below at mobile, bridging rows 3–4. Image path and placement in placements SCSS."
                   content: |
-                    <span class="bento-lead-italic">"How can we make THIS</span>
-                    <span class="bento-body">&lt;waves hand at the room as it is today&gt;</span>
-                    <span class="bento-lead-italic">more useful to you?"</span>
+                    <span class="mosaic-lead-italic">"How can we make THIS</span>
+                    <span class="mosaic-body">&lt;waves hand at the room as it is today&gt;</span>
+                    <span class="mosaic-lead-italic">more useful to you?"</span>
 
       - chapterKey: "chapter-02"
         chapterOffset: 1
@@ -212,11 +212,11 @@ sections:
 
           - pageKey: "page-00"
             wrapper: "content--section-01--chapter-02--page-00--cell-01"
-            bento:
+            mosaic:
               id: "inficon--im--s01-c02-p00"
               cols: 4
               rows: 4
-              articles:
+              tiles:
                 - id: article-01
                   type: skeleton
                   desktop:
@@ -285,11 +285,11 @@ sections:
 
           - pageKey: "page-01"
             wrapper: "content--section-01--chapter-02--page-01--cell-01"
-            bento:
+            mosaic:
               id: "inficon--im--s01-c02-p01"
               cols: 4
               rows: 2
-              articles:
+              tiles:
                 - id: article-01
                   type: content
                   theme: primary-light
@@ -297,16 +297,16 @@ sections:
                     col: "3 / 5"
                     row: "1 / 3"
                   content: |
-                    <span class="bento-body">Each <span class="bento-body-bold">Workshop</span> in the FAB has its own 'Island' with a central display of localized data and individual workstations for the <span class="bento-body-bold">Actors</span> assigned to that Workshop</span>
-                    <img class="bento-cell__screenshot" src="/assets/images/inficon--screen--anomaly-ui-st.png" alt="" role="presentation" />
+                    <span class="mosaic-body">Each <span class="mosaic-body-bold">Workshop</span> in the FAB has its own 'Island' with a central display of localized data and individual workstations for the <span class="mosaic-body-bold">Actors</span> assigned to that Workshop</span>
+                    <img class="mosaic-tile__screenshot" src="/assets/images/inficon--screen--anomaly-ui-st.png" alt="" role="presentation" />
 
           - pageKey: "page-02"
             wrapper: "content--section-01--chapter-02--page-02--cell-01"
-            bento:
+            mosaic:
               id: "inficon--im--s01-c02-p02"
               cols: 4
               rows: 4
-              articles:
+              tiles:
                 - id: article-01
                   type: content
                   theme: secondary-dark
@@ -314,7 +314,7 @@ sections:
                     col: "2 / 3"
                     row: "2 / 3"
                   content: |
-                    <span class="bento-body">Replacing this interface from the Island workstations was the focus of <span class="bento-body-bold">Phase 1</span>.</span>
+                    <span class="mosaic-body">Replacing this interface from the Island workstations was the focus of <span class="mosaic-body-bold">Phase 1</span>.</span>
 
                 - id: article-02
                   type: image
@@ -329,7 +329,7 @@ sections:
                     hasAlt: true
                     alt: "FigJam mapping of the legacy anomaly workstation interface — inputs, workflows, and display states documented in collaboration with Actors during discovery."
                     sizes: "55vw"
-                    cssClass: "bento-cell__img"
+                    cssClass: "mosaic-tile__img"
 
                 - id: article-03
                   type: content
@@ -338,7 +338,7 @@ sections:
                     col: "4 / 5"
                     row: "3 / 4"
                   content: |
-                    <span class="bento-body">We saw the tool reporting data and spreadsheets used to identify anomalies manually.</span>
+                    <span class="mosaic-body">We saw the tool reporting data and spreadsheets used to identify anomalies manually.</span>
 
                 - id: article-04
                   type: content
@@ -347,4 +347,4 @@ sections:
                     col: "4 / 5"
                     row: "4 / 5"
                   content: |
-                    <span class="bento-body">and I mapped the functionality of the interface technicians used to assign and log the fixes.</span>
+                    <span class="mosaic-body">and I mapped the functionality of the interface technicians used to assign and log the fixes.</span>

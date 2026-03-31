@@ -1,30 +1,30 @@
 {#
-  bento-grid.njk
+  mosaic.njk
   ─────────────────────────────────────────────────────────────────────────────
-  Renders a bento grid from compiled YAML data.
+  Renders a mosaic from compiled YAML data.
 
-  Usage (via content-cell.njk executor):
-    {% from "components/bento-grid.njk" import bentoGrid %}
-    {{ bentoGrid(cell.bento) }}
+  Usage (via layouts/page.njk):
+    {% from "components/mosaic.njk" import mosaic %}
+    {{ mosaic(cell.mosaic) }}
 
   YAML shape (compiled by COMPILE_PROMPTS.md §G):
-    bento:
+    mosaic:
       id: inficon--im-research
       cols: 5                        # reference only — drives placements SCSS
       rows: 5                        # reference only — drives placements SCSS
-      cells:
+      tiles:
         - id: article-01
           type: content              # content | image
-          theme: primary-dark        # omit for image cells
+          theme: primary-dark        # omit for image tiles
           desktop:                   # reference only — drives placements SCSS
             col: "1 / 2"
             row: "1 / 2"
           content: |                 # raw HTML block — rendered via | safe
-            <span class="bento-stat">1</span>
-            <span class="bento-body">Week on-site...</span>
+            <span class="mosaic-stat">1</span>
+            <span class="mosaic-body">Week on-site...</span>
 
         - id: article-03
-          type: image                # image cells use media: block, not content:
+          type: image                # image tiles use media: block, not content:
           desktop:                   # reference only — drives placements SCSS
             col: "4 / 6"
             row: "1 / 2"
@@ -33,11 +33,11 @@
             hasAlt: true
             alt: "Descriptive alt text for assistive technology"
             sizes: "40vw"
-            cssClass: "bento-cell__img"
+            cssClass: "mosaic-tile__img"
 
         - id: article-04
           type: image                # art-directed flavor: two crops, viewport-switched
-          artDirection: true         # triggers bento-cell--image-directed class + <picture> render
+          artDirection: true         # triggers mosaic-tile--image-directed class + <picture> render
           desktop:
             col: "4 / 6"
             row: "1 / 2"
@@ -52,77 +52,80 @@
   theme: primary-light    → --cell-bg: primary/20, --cell-color: primary/60
   theme: secondary-dark   → --cell-bg: secondary/50, --cell-color: secondary/80
   theme: secondary-light  → --cell-bg: secondary/20, --cell-color: secondary/70
-  (omit theme for image-only cells — transparent bg, no border)
+  (omit theme for image-only tiles — transparent bg, no border)
 
   ── Inline type spans ────────────────────────────────────────────────────────
-  bento-stat           Tienne Bold, clamp 50px→72px
-  bento-lead           Raleway Regular, clamp 19px→24px
-  bento-lead-italic    Raleway Italic, clamp 19px→24px
-  bento-body           PT Sans Regular, clamp 13px→16px
-  bento-body-bold      PT Sans Bold, clamp 13px→16px
+  mosaic-stat           Tienne Bold, clamp 50px→72px
+  mosaic-lead           Raleway Regular, clamp 19px→24px
+  mosaic-lead-italic    Raleway Italic, clamp 19px→24px
+  mosaic-body           PT Sans Regular, clamp 13px→16px
+  mosaic-body-bold      PT Sans Bold, clamp 13px→16px
 
   ── Render paths ─────────────────────────────────────────────────────────────
   type: image + media: block → media.njk include (img, alt, optimization pipeline)
-  type: content              → {{ cell.content | safe }} (raw HTML block)
+  type: content              → {{ tile.content | safe }} (raw HTML block)
 
   ── Placement ──────────────────────────────────────────────────────────────────
   All placement lives in placements/_<pageKey>.scss — nothing inline.
-  Real cells: #bento--<id> carries grid-template-areas; [data-bento-cell="article-NN"] gets grid-area: aNN.
-  Skeleton cells (P00): #bento--<id> carries grid-template-columns/rows; [data-bento-cell="article-NN"]
+  Real tiles: #mosaic--<id> carries grid-template-areas; [data-mosaic-tile="article-NN"] gets grid-area: aNN.
+  Skeleton tiles (P00): #mosaic--<id> carries grid-template-columns/rows; [data-mosaic-tile="article-NN"]
     gets grid-column / grid-row (no named areas — skeleton is a sparse positional underlay).
   desktop.col / desktop.row in YAML are reference only — consumed during compile, not by this template.
   z-index: in placements SCSS only.
+
+  NOTE: YAML key `tiles:` maps to HTML `<article>` elements — intentional split.
+  The semantic HTML element is `<article>`; the YAML vocabulary is `tiles:`.
   ─────────────────────────────────────────────────────────────────────────────
 #}
 
-{% macro bentoGrid(bento) %}
-<div class="bento-grid" id="bento--{{ bento.id }}">
-  {% for cell in bento.articles %}
+{% macro mosaic(data) %}
+<div class="mosaic" id="mosaic--{{ data.id }}">
+  {% for tile in data.tiles %}
 
   {# Class: type modifier + optional theme. Grid placement lives in placements SCSS. #}
-  {% if cell.type == "skeleton" %}
+  {% if tile.type == "skeleton" %}
 
-    {# Skeleton cell — bare article, no content, no theme. #}
-    {# Grid placement via placements SCSS on #bento--<id> — same pattern as real cells. #}
+    {# Skeleton tile — bare article, no content, no theme. #}
+    {# Grid placement via placements SCSS on #mosaic--<id> — same pattern as real tiles. #}
     {# desktop.col / desktop.row in YAML are reference only — consumed by compile, not template. #}
     <article
-      class="bento-cell bento-cell--skeleton"
-      data-bento-cell="{{ cell.id }}"
+      class="mosaic-tile mosaic-tile--skeleton"
+      data-mosaic-tile="{{ tile.id }}"
       aria-hidden="true"
     ></article>
 
-  {% elif cell.type == "image" and cell.scrollable and cell.media %}
+  {% elif tile.type == "image" and tile.scrollable and tile.media %}
 
     {#
-      Scrollable image cell — two sibling <article> elements sharing the same grid-area.
-      Desktop instance: normal image cell, shown in 5-up (content-cell ≥ 732px), hidden below.
+      Scrollable image tile — two sibling <article> elements sharing the same grid-area.
+      Desktop instance: normal image tile, shown in 4-up (content-cell ≥ 624px), hidden below.
       Scrollable instance: 500px tall, overflow: auto both axes, no srcset, shown in 2-up only.
       scrollSrc: is a dedicated image for the scroll context (no srcset processing).
     #}
 
     {# — Desktop instance — #}
     <article
-      class="bento-cell bento-cell--image bento-cell--image-desktop"
-      data-bento-cell="{{ cell.id }}"
+      class="mosaic-tile mosaic-tile--image mosaic-tile--image-desktop"
+      data-mosaic-tile="{{ tile.id }}"
       aria-hidden="true"
     >
-      <div class="bento-cell__inner">
-        {% set mediaParams = cell.media %}
+      <div class="mosaic-tile__inner">
+        {% set mediaParams = tile.media %}
         {% include "components/media.njk" %}
       </div>
     </article>
 
     {# — Scrollable instance — #}
     <article
-      class="bento-cell bento-cell--image bento-cell--image-scrollable"
-      data-bento-cell="{{ cell.id }}-scroll"
+      class="mosaic-tile mosaic-tile--image mosaic-tile--image-scrollable"
+      data-mosaic-tile="{{ tile.id }}-scroll"
       role="region"
-      aria-label="{{ cell.media.alt if cell.media.hasAlt else 'Process artifact' }}"
+      aria-label="{{ tile.media.alt if tile.media.hasAlt else 'Process artifact' }}"
     >
-      <div class="bento-cell__inner">
+      <div class="mosaic-tile__inner">
         <img
-          src="{{ cell.media.scrollSrc }}"
-          {% if cell.media.hasAlt %}alt="{{ cell.media.alt }}"{% else %}alt="" role="presentation"{% endif %}
+          src="{{ tile.media.scrollSrc }}"
+          {% if tile.media.hasAlt %}alt="{{ tile.media.alt }}"{% else %}alt="" role="presentation"{% endif %}
           loading="lazy"
         />
       </div>
@@ -130,41 +133,41 @@
 
   {% else %}
 
-    {# Standard cell render path #}
+    {# Standard tile render path #}
     {# image-directed: opt-in art direction — <picture> with <source media> for 2-up vs 5-up crops. #}
     {# graphic: illustration/diagram asset — object-fit: contain, padded, square in 2-up. #}
-    {% set typeClass = cell.type %}
-    {% if cell.type == "image" and cell.artDirection %}
+    {% set typeClass = tile.type %}
+    {% if tile.type == "image" and tile.artDirection %}
       {% set typeClass = "image-directed" %}
-    {% elif cell.type == "graphic" %}
+    {% elif tile.type == "graphic" %}
       {% set typeClass = "graphic" %}
     {% endif %}
-    {% set cellClasses = "bento-cell bento-cell--" + typeClass %}
-    {% if cell.theme %}
-      {% set cellClasses = cellClasses + " bento-cell--theme-" + cell.theme %}
+    {% set tileClasses = "mosaic-tile mosaic-tile--" + typeClass %}
+    {% if tile.theme %}
+      {% set tileClasses = tileClasses + " mosaic-tile--theme-" + tile.theme %}
     {% endif %}
     <article
-      class="{{ cellClasses }}"
-      data-bento-cell="{{ cell.id }}"
-      {% if cell.variant %}data-bento-variant="{{ cell.variant }}"{% endif %}
+      class="{{ tileClasses }}"
+      data-mosaic-tile="{{ tile.id }}"
+      {% if tile.variant %}data-mosaic-variant="{{ tile.variant }}"{% endif %}
     >
-      <div class="bento-cell__inner">
-        {% if cell.type == "image" and cell.artDirection and cell.media %}
-          <picture class="bento-cell__img">
-            <source media="(min-width: 1052px)" srcset="{{ cell.media.src }}">
-            <source media="(max-width: 1051px)" srcset="{{ cell.media.mobileSrc }}">
+      <div class="mosaic-tile__inner">
+        {% if tile.type == "image" and tile.artDirection and tile.media %}
+          <picture class="mosaic-tile__img">
+            <source media="(min-width: 1052px)" srcset="{{ tile.media.src }}">
+            <source media="(max-width: 1051px)" srcset="{{ tile.media.mobileSrc }}">
             <img
-              src="{{ cell.media.mobileSrc }}"
-              {% if cell.media.hasAlt %}alt="{{ cell.media.alt }}"{% else %}alt="" role="presentation"{% endif %}
-              class="bento-cell__img"
+              src="{{ tile.media.mobileSrc }}"
+              {% if tile.media.hasAlt %}alt="{{ tile.media.alt }}"{% else %}alt="" role="presentation"{% endif %}
+              class="mosaic-tile__img"
               loading="lazy"
             />
           </picture>
-        {% elif cell.type == "image" and cell.media or cell.type == "graphic" and cell.media %}
-          {% set mediaParams = cell.media %}
+        {% elif tile.type == "image" and tile.media or tile.type == "graphic" and tile.media %}
+          {% set mediaParams = tile.media %}
           {% include "components/media.njk" %}
         {% else %}
-          {{ cell.content | safe }}
+          {{ tile.content | safe }}
         {% endif %}
       </div>
 

@@ -9,7 +9,7 @@
   {% set sectionKey = section.sectionKey %}
 
   {% if not section.mode %}<!-- SECTION_ERROR: mode required on {{ sectionKey }} -->{% endif %}
-  <div class="layout__narrative layout__narrative--{{ section.mode }}">
+  <div class="layout__story layout__story--{{ section.mode }}">
 
     {% for chapter in section.chapters %}
     {% set chapterKey = chapter.chapterKey %}

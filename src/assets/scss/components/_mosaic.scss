@@ -1,15 +1,15 @@
-// _bento-grid.scss
+// _mosaic.scss
 // -----------------------------------------------------------------------------
-// Self-contained bento grid system.
+// Self-contained mosaic system.
 //
 // Design intent: The content slot is the anchor. Gap and padding are the
 // shock absorbers. Cell size snaps at designed states; gap and padding flex
 // fluidly between them so the text column width is always predictable.
 //
 // Token system — unified unit for grid and macro layout:
-//   --bento-cell-size  snaps at three authored states (never fluid)
-//   --bento-gap        flexes via clamp() — absorbs mid-state fluidity
-//   --bento-padding    flexes via clamp() — absorbs mid-state fluidity
+//   --mosaic-cell-size  snaps at three authored states (never fluid)
+//   --mosaic-gap        flexes via clamp() — absorbs mid-state fluidity
+//   --mosaic-padding    flexes via clamp() — absorbs mid-state fluidity
 //
 // Cell size states:
 //   MIN   144px   2× gap below MONEY; shared between 4-up and 2-up narrow
@@ -17,7 +17,7 @@
 //   MAX   208px   2× gap above MONEY; 2-up wide state only
 //
 // Gap — consistent 16px at all designed states, flexes between:
-//   --bento-gap: clamp(8px, 2cqi, 16px)
+//   --mosaic-gap: clamp(8px, 2cqi, 16px)
 //
 // Derived grid widths (at designed gap of 16px):
 //   4-up MONEY  4×176 + 3×16 = 752px   ← desktop target
@@ -27,8 +27,8 @@
 //
 // Macro layout relationship (same unit system):
 //   Content column  2 cells wide  =  368px  (2×176 + 1×16)
-//   Content/bento gutter          =   80px  (5×16)
-//   Bento column    4 cells wide  =  752px  (4×176 + 3×16)
+//   Content/mosaic gutter         =   80px  (5×16)
+//   Mosaic column   4 cells wide  =  752px  (4×176 + 3×16)
 //   Total content width           = 1200px  ✓
 //
 // Responsive model — small → large, container-query driven:
@@ -38,36 +38,36 @@
 //     Gap and padding flex via clamp().
 //
 //   @container content-cell (min-width: 624px): 4-up layout, MIN cells (144px).
-//     624px = 4×144 + 3×16. Bento becomes fit-content, centered in container.
-//     Per-bento grid-template-areas live in placements/_<pageKey>.scss.
+//     624px = 4×144 + 3×16. Mosaic becomes fit-content, centered in container.
+//     Per-mosaic grid-template-areas live in placements/_<pageKey>.scss.
 //
 //   @container content-cell (min-width: 752px): 4-up layout, MONEY cells (176px).
 //     752px = 4×176 + 3×16. The designed desktop state.
 //
-// Container queries fire against content-cell (the bento's parent),
+// Container queries fire against content-cell (the mosaic's parent),
 // which has container-type: inline-size in _content-cell.scss.
-// The bento also declares container-type so bento-cell cqi units work.
+// The mosaic also declares container-type so mosaic-tile cqi units work.
 //
 // Note: The FF Grid macro layout is preserved in the codebase for special-case
 // page types but is no longer the default container for case study pages.
 // -----------------------------------------------------------------------------
 
-.bento-grid {
+.mosaic {
     // ── Content slot — snaps at designed states, never fluid ─────────────────
-    --bento-cell-size:    144px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma — MIN state */
+    --mosaic-cell-size:    144px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma — MIN state */
 
     // ── Air — fluid between designed states, consistent at 16px ──────────────
     // clamp(min, preferred, max): hits 16px at designed states, compresses gracefully between.
-    --bento-gap:          clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: pixel geometry from Figma */
-    --bento-padding:      clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: inner cell padding — independent of gap */
+    --mosaic-gap:          clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: pixel geometry from Figma */
+    --mosaic-padding:      clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: inner cell padding — independent of gap */
 
     // ── Fixed geometry ────────────────────────────────────────────────────────
-    --bento-border-width: 2px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
-    --bento-radius:       var(--corner-xs);    /* 8px */
-    --bento-inner-radius: var(--corner-xxs);   /* 4px */
+    --mosaic-border-width: 2px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
+    --mosaic-radius:       var(--corner-xs);    /* 8px */
+    --mosaic-inner-radius: var(--corner-xxs);   /* 4px */
 
     display: grid;
-    gap: var(--bento-gap);
+    gap: var(--mosaic-gap);
 
     // Default: 2-up, fluid — cells grow from MIN (144px) to MAX (208px).
     // minmax avoids circular dependency with container-type: inline-size.
@@ -75,31 +75,31 @@
     width: 100%;
     margin-inline: auto;
 
-    // Own container so bento-cell cqi font sizing works.
+    // Own container so mosaic-tile cqi font sizing works.
     container-type: inline-size;
-    container-name: bento;
+    container-name: mosaic;
 
     overflow: hidden;
 }
 
 // -- Alignment modifiers ------------------------------------------------------
-// Only meaningful when bento is fit-content (4-up). Ignored in fluid 2-up.
+// Only meaningful when mosaic is fit-content (4-up). Ignored in fluid 2-up.
 
-.bento-grid--align-start { margin-inline-start: 0; margin-inline-end: auto; }
-.bento-grid--align-end   { margin-inline-start: auto; margin-inline-end: 0; }
+.mosaic--align-start { margin-inline-start: 0; margin-inline-end: auto; }
+.mosaic--align-end   { margin-inline-start: auto; margin-inline-end: 0; }
 
 // -- Container query: 4-up layout, MIN cells (content-cell ≥ 624px) ----------
 // 624px = 4×144 + 3×16 — geometric minimum for 4-up at MIN cell size.
-// Bento becomes fit-content and centers in its content-cell.
-// grid-template-areas are authored per-bento in placements/_<pageKey>.scss.
+// Mosaic becomes fit-content and centers in its content-cell.
+// grid-template-areas are authored per-mosaic in placements/_<pageKey>.scss.
 // Upper bound at 751px prevents MONEY query firing at the same time.
 
 @container content-cell (min-width: 624px) and (max-width: 751px) {
-    .bento-grid {
-        --bento-cell-size: 144px;
+    .mosaic {
+        --mosaic-cell-size: 144px;
 
-        grid-template-columns: repeat(4, var(--bento-cell-size));
-        grid-template-rows:    repeat(4, var(--bento-cell-size));
+        grid-template-columns: repeat(4, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(4, var(--mosaic-cell-size));
 
         width: fit-content;
         margin-inline: auto;
@@ -108,8 +108,8 @@
     // 4-up: grid tracks define cell dimensions — unset 2-up aspect-ratio constraints.
     // Double-class selector raises specificity above single-class base rules,
     // ensuring this wins regardless of cascade order.
-    .bento-cell--image-directed.bento-cell--image-directed,
-    .bento-cell--graphic.bento-cell--graphic {
+    .mosaic-tile--image-directed.mosaic-tile--image-directed,
+    .mosaic-tile--graphic.mosaic-tile--graphic {
         aspect-ratio: unset;
     }
 }
@@ -119,127 +119,127 @@
 // This is the authored composition state — cell size locks to 176px (MONEY).
 
 @container content-cell (min-width: 752px) {
-    .bento-grid {
-        --bento-cell-size: 176px;              /* MONEY — the designed state */
+    .mosaic {
+        --mosaic-cell-size: 176px;              /* MONEY — the designed state */
 
-        grid-template-columns: repeat(4, var(--bento-cell-size));
-        grid-template-rows:    repeat(4, var(--bento-cell-size));
+        grid-template-columns: repeat(4, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(4, var(--mosaic-cell-size));
 
         width: fit-content;
         margin-inline: auto;
     }
 
     // 4-up: unset 2-up aspect-ratio constraints.
-    .bento-cell--image-directed.bento-cell--image-directed,
-    .bento-cell--graphic.bento-cell--graphic {
+    .mosaic-tile--image-directed.mosaic-tile--image-directed,
+    .mosaic-tile--graphic.mosaic-tile--graphic {
         aspect-ratio: unset;
     }
 }
 
-// -- Scrollable image cell visibility ----------------------------------------
+// -- Scrollable image tile visibility ----------------------------------------
 // Mirrors the 4-up threshold — desktop instance shows in 4-up, hides in 2-up.
 
-.bento-cell--image-desktop {
+.mosaic-tile--image-desktop {
     display: none; // hidden by default (2-up context)
 }
 
 @container content-cell (min-width: 624px) {
-    .bento-cell--image-desktop {
+    .mosaic-tile--image-desktop {
         display: block; // shown in 4-up
     }
-    .bento-cell--image-scrollable {
+    .mosaic-tile--image-scrollable {
         display: none; // hidden in 4-up
     }
 }
 
 // -- Themes -------------------------------------------------------------------
-// Maps named theme classes to cell custom properties.
+// Maps named theme classes to tile custom properties.
 // Source: CGDC-DS Figma node 2883-623 / tokens in _tokens--component.scss.
 
-.bento-cell--theme-primary-dark {
-    --cell-bg:     var(--bento-theme-primary-dark-bg);
-    --cell-color:  var(--bento-theme-primary-dark-color);
-    --cell-border: var(--bento-theme-primary-dark-border);
+.mosaic-tile--theme-primary-dark {
+    --cell-bg:     var(--mosaic-theme-primary-dark-bg);
+    --cell-color:  var(--mosaic-theme-primary-dark-color);
+    --cell-border: var(--mosaic-theme-primary-dark-border);
 }
 
-.bento-cell--theme-primary-light {
-    --cell-bg:     var(--bento-theme-primary-light-bg);
-    --cell-color:  var(--bento-theme-primary-light-color);
-    --cell-border: var(--bento-theme-primary-light-border);
+.mosaic-tile--theme-primary-light {
+    --cell-bg:     var(--mosaic-theme-primary-light-bg);
+    --cell-color:  var(--mosaic-theme-primary-light-color);
+    --cell-border: var(--mosaic-theme-primary-light-border);
 }
 
-.bento-cell--theme-secondary-dark {
-    --cell-bg:     var(--bento-theme-secondary-dark-bg);
-    --cell-color:  var(--bento-theme-secondary-dark-color);
-    --cell-border: var(--bento-theme-secondary-dark-border);
+.mosaic-tile--theme-secondary-dark {
+    --cell-bg:     var(--mosaic-theme-secondary-dark-bg);
+    --cell-color:  var(--mosaic-theme-secondary-dark-color);
+    --cell-border: var(--mosaic-theme-secondary-dark-border);
 }
 
-.bento-cell--theme-secondary-light {
-    --cell-bg:     var(--bento-theme-secondary-light-bg);
-    --cell-color:  var(--bento-theme-secondary-light-color);
-    --cell-border: var(--bento-theme-secondary-light-border);
+.mosaic-tile--theme-secondary-light {
+    --cell-bg:     var(--mosaic-theme-secondary-light-bg);
+    --cell-color:  var(--mosaic-theme-secondary-light-color);
+    --cell-border: var(--mosaic-theme-secondary-light-border);
 }
 
-.bento-cell--theme-default {
-    --cell-bg:     var(--bento-theme-default-bg);
-    --cell-color:  var(--bento-theme-default-color);
-    --cell-border: var(--bento-theme-default-border);
+.mosaic-tile--theme-default {
+    --cell-bg:     var(--mosaic-theme-default-bg);
+    --cell-color:  var(--mosaic-theme-default-color);
+    --cell-border: var(--mosaic-theme-default-border);
 }
 
-// -- Cells --------------------------------------------------------------------
-// Architecture note: .bento-cell__inner is ALWAYS position: relative.
+// -- Tiles --------------------------------------------------------------------
+// Architecture note: .mosaic-tile__inner is ALWAYS position: relative.
 // In 2-up, content drives row height via normal flow.
-// In 4-up, the grid track defines the cell height; __inner fills it via
+// In 4-up, the grid track defines the tile height; __inner fills it via
 // height: 100%. No position: absolute needed or used anywhere.
 
-.bento-cell {
+.mosaic-tile {
     background-color: var(--cell-bg);
     color: var(--cell-color);
-    border: var(--bento-border-width) solid var(--cell-border);
+    border: var(--mosaic-border-width) solid var(--cell-border);
 
     container-type: inline-size;
-    container-name: bento-cell;
+    container-name: mosaic-tile;
 
     position: relative;
-    z-index: 1;                        /* sits above skeleton cells (z-index: 0) */
+    z-index: 1;                        /* sits above skeleton tiles (z-index: 0) */
     overflow: hidden;
-    border-radius: var(--bento-radius);
+    border-radius: var(--mosaic-radius);
 }
 
-.bento-cell__inner {
+.mosaic-tile__inner {
     position: relative;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: var(--bento-padding);
+    padding: var(--mosaic-padding);
     height: 100%;
     min-height: 100%;
     box-sizing: border-box;
 }
 
-// -- 2-up cell type modifiers -------------------------------------------------
-// aspect-ratio rules that constrain specific cell types in 2-up.
+// -- 2-up tile type modifiers -------------------------------------------------
+// aspect-ratio rules that constrain specific tile types in 2-up.
 // ALL of these must appear BEFORE the 4-up container queries so the
 // 4-up unset wins via cascade order at equal specificity.
 
 // image-directed: portrait crop box in 2-up
-.bento-cell--image-directed {
+.mosaic-tile--image-directed {
     aspect-ratio: 4 / 5;
 }
 
 // graphic: square box in 2-up
-.bento-cell--graphic {
+.mosaic-tile--graphic {
     aspect-ratio: 1;
 }
 
-// image / image-directed: __inner fills cell, no padding, picture fills inner
-.bento-cell--image .bento-cell__inner,
-.bento-cell--image-directed .bento-cell__inner {
+// image / image-directed: __inner fills tile, no padding, picture fills inner
+.mosaic-tile--image .mosaic-tile__inner,
+.mosaic-tile--image-directed .mosaic-tile__inner {
     padding: 0;
 }
 
-.bento-cell--image picture,
-.bento-cell--image-directed picture {
+.mosaic-tile--image picture,
+.mosaic-tile--image-directed picture {
     display: block;
     width: 100%;
     height: 100%;
@@ -247,9 +247,9 @@
 
 // Override intrinsic width/height attributes set by the image transform.
 // The transform adds width="N" height="N" to <img> for CLS prevention,
-// but inside bento cells these must yield to the CSS layout.
-.bento-cell--image .bento-cell__inner img,
-.bento-cell--image-directed .bento-cell__inner img {
+// but inside mosaic tiles these must yield to the CSS layout.
+.mosaic-tile--image .mosaic-tile__inner img,
+.mosaic-tile--image-directed .mosaic-tile__inner img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -257,13 +257,13 @@
     display: block;
 }
 
-// -- Scrollable image cell ----------------------------------------------------
+// -- Scrollable image tile ----------------------------------------------------
 // Use for wide process artifacts (FigJam boards, journey maps, diagrams) where
 // the breadth of the content is editorially meaningful.
 //
 // Two sibling <article> elements are rendered from YAML when scrollable: true:
-//   .bento-cell--image-desktop    — shown in 4-up (≥ 624px), hidden in 2-up
-//   .bento-cell--image-scrollable — shown in 2-up, hidden in 4-up
+//   .mosaic-tile--image-desktop    — shown in 4-up (≥ 624px), hidden in 2-up
+//   .mosaic-tile--image-scrollable — shown in 2-up, hidden in 4-up
 //
 // The scrollable instance uses a dedicated scrollSrc: image (no srcset),
 // fixed height, overflow: auto on both axes.
@@ -271,8 +271,8 @@
 // YAML: type: image + scrollable: true + media.scrollSrc: path-to-scroll-image
 
 // Scrollable instance — 2-up only
-.bento-cell--image-scrollable {
-    height: calc(var(--bento-cell-size) * 2 + var(--bento-gap));
+.mosaic-tile--image-scrollable {
+    height: calc(var(--mosaic-cell-size) * 2 + var(--mosaic-gap));
     overflow: hidden; // border-radius clip
 
     // Fade affordance on right edge — signals more content
@@ -286,11 +286,11 @@
         background: linear-gradient(to right, transparent, var(--color-neutral-10));
         pointer-events: none;
         z-index: 1;
-        border-radius: 0 var(--bento-radius) var(--bento-radius) 0;
+        border-radius: 0 var(--mosaic-radius) var(--mosaic-radius) 0;
     }
 }
 
-.bento-cell--image-scrollable .bento-cell__inner {
+.mosaic-tile--image-scrollable .mosaic-tile__inner {
     padding: 0;
     height: 100%;
     overflow: auto;
@@ -300,7 +300,7 @@
     align-items: flex-start;
 }
 
-.bento-cell--image-scrollable img {
+.mosaic-tile--image-scrollable img {
     display: block;
     width: auto;
     height: 500px;     // CONTRACT_EXCEPTION: fixed scrollable window height — design constant, no scale token maps
@@ -308,10 +308,10 @@
     flex-shrink: 0;
 }
 
-// .bento-cell__img is on <picture> — also target the <img> inside it
+// .mosaic-tile__img is on <picture> — also target the <img> inside it
 // since the HTML transform nests <img> inside <picture>.
-.bento-cell__img,
-.bento-cell__img img {
+.mosaic-tile__img,
+.mosaic-tile__img img {
     display: block;
     width: 100%;
     height: 100%;
@@ -319,18 +319,18 @@
     object-position: center top;
 }
 
-// -- Graphic cell -------------------------------------------------------------
+// -- Graphic tile -------------------------------------------------------------
 // Square illustration/diagram assets. aspect-ratio: 1 declared above with
 // other 2-up modifiers. Unset in 4-up container queries above.
 
-.bento-cell--graphic .bento-cell__inner {
-    padding: var(--bento-padding);
+.mosaic-tile--graphic .mosaic-tile__inner {
+    padding: var(--mosaic-padding);
     justify-content: center;
     align-items: center;
 }
 
-.bento-cell--graphic picture,
-.bento-cell--graphic img {
+.mosaic-tile--graphic picture,
+.mosaic-tile--graphic img {
     display: block;
     width: 100%;
     height: 100%;
@@ -338,33 +338,33 @@
     object-position: center center;
 }
 
-.bento-cell--content .bento-cell__inner {
+.mosaic-tile--content .mosaic-tile__inner {
     justify-content: center;
-    gap: var(--bento-gap);
+    gap: var(--mosaic-gap);
 }
 
-.bento-cell--composite .bento-cell__inner {
+.mosaic-tile--composite .mosaic-tile__inner {
     justify-content: space-between;
-    gap: var(--bento-gap);
+    gap: var(--mosaic-gap);
 }
 
-.bento-cell__screenshot {
+.mosaic-tile__screenshot {
     display: block;
     width: 100%;
-    border-radius: var(--bento-inner-radius);
+    border-radius: var(--mosaic-inner-radius);
     border: 1px solid var(--color-neutral-50); /* CONTRACT_EXCEPTION: hairline decorative border */
     flex-shrink: 0;
 }
 
 // -- Type styles --------------------------------------------------------------
 
-// Axiomatic centering — if a cell contains a lead or stat, center all text.
-// Body-only cells stay left-aligned by default. Images unaffected.
-.bento-cell:has(.bento-lead, .bento-lead-italic, .bento-stat) {
+// Axiomatic centering — if a tile contains a lead or stat, center all text.
+// Body-only tiles stay left-aligned by default. Images unaffected.
+.mosaic-tile:has(.mosaic-lead, .mosaic-lead-italic, .mosaic-stat) {
     text-align: center;
 }
 
-.bento-cell .bento-stat {
+.mosaic-tile .mosaic-stat {
     font-family: var(--font-family-display);
     font-size: clamp(3.125rem, 36cqi, 4.5rem);
     font-weight: 700;
@@ -373,7 +373,7 @@
     display: block;
 }
 
-.bento-cell .bento-lead {
+.mosaic-tile .mosaic-lead {
     font-family: var(--font-family-brand);
     font-size: clamp(1.1875rem, 13.2cqi, 1.5rem);
     font-weight: 400;
@@ -382,7 +382,7 @@
     color: inherit;
 }
 
-.bento-cell .bento-lead-italic {
+.mosaic-tile .mosaic-lead-italic {
     font-family: var(--font-family-brand);
     font-size: clamp(1.1875rem, 13.2cqi, 1.5rem);
     font-weight: 400;
@@ -391,7 +391,7 @@
     color: inherit;
 }
 
-.bento-cell .bento-body {
+.mosaic-tile .mosaic-body {
     font-family: var(--font-family-plain);
     font-size: clamp(0.8125rem, 9.2cqi, 1rem);
     font-weight: 400;
@@ -400,7 +400,7 @@
     color: inherit;
 }
 
-.bento-cell .bento-body-bold {
+.mosaic-tile .mosaic-body-bold {
     font-family: var(--font-family-plain);
     font-size: clamp(0.8125rem, 9.2cqi, 1rem);
     font-weight: 700;
@@ -409,40 +409,40 @@
     color: inherit;
 }
 
-// Skeleton cells are P00 in the chapter page stack — defined in YAML,
-// rendered by bento-grid.njk (type: skeleton branch), permanent underlay at z-index 0.
+// Skeleton tiles are P00 in the chapter page stack — defined in YAML,
+// rendered by mosaic.njk (type: skeleton branch), permanent underlay at z-index 0.
 
 // -- Choreography states ------------------------------------------------------
-// bento--pending: skeleton state. Cells show as ghost outlines.
-// bento--visible: normal rendered state.
+// mosaic--pending: skeleton state. Tiles show as ghost outlines.
+// mosaic--visible: normal rendered state.
 // JS in choreography.js drives the state transitions via IntersectionObserver.
 //
-// Skeleton cells share the same border-radius and border as real cells.
+// Skeleton tiles share the same border-radius and border as real tiles.
 // No content, no background — just the outlined article shape.
 
-.bento-cell--skeleton {
+.mosaic-tile--skeleton {
     background-color: transparent;
-    border: var(--bento-border-width) solid var(--color-neutral-50);
-    border-radius: var(--bento-radius);
+    border: var(--mosaic-border-width) solid var(--color-neutral-50);
+    border-radius: var(--mosaic-radius);
     pointer-events: none;
     z-index: 0;
 }
 
-.bento-grid.bento--pending {
+.mosaic.mosaic--pending {
     // Hide entirely so the skeleton underlay beneath shows through.
     // Revealed by JS observer when the beat scrolls into view.
     visibility: hidden;
 }
 
-.bento-grid.bento--visible {
+.mosaic.mosaic--visible {
     // Animate in from slightly below
-    animation: bento-reveal 0.5s ease-out both;
+    animation: mosaic-reveal 0.5s ease-out both;
 }
 
-@keyframes bento-reveal {
+@keyframes mosaic-reveal {
     from {
         opacity: 0;
-        transform: translateY(var(--bento-gap)); /* one gap unit — entry offset */
+        transform: translateY(var(--mosaic-gap)); /* one gap unit — entry offset */
     }
     to {
         opacity: 1;
@@ -504,11 +504,11 @@
 // -- Reduced motion -----------------------------------------------------------
 
 @media (prefers-reduced-motion: reduce) {
-    .bento-cell {
+    .mosaic-tile {
         transition: none !important;
         animation: none !important;
     }
-    .bento-grid.bento--visible {
+    .mosaic.mosaic--visible {
         animation: none;
     }
     .scroll-indicator__chevron {

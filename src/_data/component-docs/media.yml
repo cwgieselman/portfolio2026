@@ -1,30 +1,30 @@
 id: media
 name: media
 njk: components/media.njk
-desc: Bare image for bento cells — no caption wrapper
+desc: Bare image for mosaic tiles — no caption wrapper
 tags:
   - content
   - media
-  - bento
+  - mosaic
 links:
   figma: ~
   netlify: ~
 
 variants:
   - label: "default"
-    desc: "Standard bento image cell, decorative"
+    desc: "Standard mosaic image tile, decorative"
     mediaParams:
       src: "TODO:src"
       hasAlt: false
-      cssClass: "bento-cell__img"
+      cssClass: "mosaic-tile__img"
 
   - label: "with alt text"
-    desc: "Bento image cell where image carries meaning"
+    desc: "Mosaic image tile where image carries meaning"
     mediaParams:
       src: "TODO:src"
       hasAlt: true
       alt: "Descriptive alt text for this image."
-      cssClass: "bento-cell__img"
+      cssClass: "mosaic-tile__img"
       sizes: "40vw"
 
   - label: "the FigJam scroll"
@@ -32,7 +32,7 @@ variants:
     mediaParams:
       src: "TODO:src"
       hasAlt: false
-      cssClass: "bento-cell__img"
+      cssClass: "mosaic-tile__img"
       scrollSrc: "TODO:src"
 
 contract:
@@ -51,7 +51,7 @@ contract:
   - field: "mediaParams.cssClass"
     type: string
     required: false
-    desc: "Injected as class on the img element. Use bento-cell__img for bento context."
+    desc: "Injected as class on the img element. Use mosaic-tile__img for mosaic context."
   - field: "mediaParams.sizes"
     type: string
     required: false
@@ -63,7 +63,7 @@ contract:
 
 usage:
   do:
-    - "Use media.njk inside bento cells, not figure.njk. The figure wrapper breaks bento cell grid placement."
+    - "Use media.njk inside mosaic tiles, not figure.njk. The figure wrapper breaks mosaic tile grid placement."
     - "Use --SCROLL suffix in scrollSrc filenames. It is a naming convention that future-you will appreciate."
     - "Export scrollable images at 3:1 ratio or wider. A nearly-square scrollable cell is not a good experience."
   dont:
@@ -76,14 +76,14 @@ usage:
     - "The two-sibling render pattern for scrollable cells means two DOM elements per cell. Account for this in grid placement."
   a11y:
     - attr: "alt=''"
-      desc: "Correct for decorative bento image cells. The surrounding content cell carries the meaning."
+      desc: "Correct for decorative mosaic image tiles. The surrounding tile carries the meaning."
     - attr: "role=presentation"
       desc: "Auto-applied when hasAlt: false."
     - attr: "aria-details"
       desc: "Wired via arrow field on the related content cell. Points to this cell's ID."
   related:
     - figure
-    - bento-article
+    - mosaic-article
 
 changelog:
   - ver: "0.2"
