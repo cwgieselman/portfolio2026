@@ -10,8 +10,22 @@
 
 :root {
   --color-bg: var(--color-neutral-20);
+  --color-body: var(--color-primary-70);
+  --color-eyebrow: var(--color-secondary-70);
   --color-focus: var(--color-primary-50);
-  --color-text: var(--color-primary-70);
+  --color-heading: var(--color-primary-60);
+  --color-link: var(--color-secondary-70);
+  --color-pillBG: var(--color-neutral-20);
+  --color-pillBorder: var(--color-neutral-50);
+  --color-pillText: var(--color-secondary-80);
+  --color-primaryButtonBG: var(--color-primary-60);
+  --color-primaryButtonBorder: var(--color-primary-70);
+  --color-primaryButtonText: var(--color-primary-10);
+  --color-primaryCTA: var(--color-primary-60);
+  --color-secondaryButtonBG: var(--color-primary-20);
+  --color-secondaryButtonBorder: var(--color-primary-30);
+  --color-secondaryButtonText: var(--color-primary-70);
+  --color-secondaryCTA: var(--color-primary-50);
 
   --corner-none: 0px;
   --corner-xxs: var(--scale-25);
@@ -64,6 +78,12 @@
   --type-paragraph-weight: var(--font-weight-regular);
 
   --type-paragraphLead-weight: var(--font-weight-regular);
+
+  --type-pill-family: var(--font-family-brand);
+  --type-pill-letterSpacing: var(--scale-25);
+  --type-pill-lineHeight: var(--scale-125);
+  --type-pill-size: var(--scale-75);
+  --type-pill-weight: var(--font-weight-regular);
 
   --type-sectionHeading-color: var(--color-primary-60);
   --type-sectionHeading-family: var(--font-family-brand);
