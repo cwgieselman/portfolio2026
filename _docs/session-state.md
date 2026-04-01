@@ -10,7 +10,7 @@
 ## Branches
 
 All previous branches — merged to main ✓
-`build/figma-pull-script` — **PR doc written. Ready for Claude Code.**
+`build/figma-pull-script` — merged to main ✓
 
 ---
 
@@ -73,17 +73,7 @@ Vision at `_docs/DESIGN-SYSTEM-HUB-VISION.md`.
 
 ## Open Priorities
 
-### 1. Commit `build/figma-pull-script` (hand off to Claude Code now)
-Files to commit:
-- `scripts/figma-pull.mjs`
-- `README.md`
-- `_docs/PR--build-figma-pull-script.md` (delete after commit per WORKFLOW.md)
-- `_docs/session-state.md`
-
-Verify: `npm run tokens:pull` without FIGMA_TOKEN exits with helpful error.
-`npm start` still builds. README renders correctly on GitHub.
-
-### 2. First live pull test (after branch merges)
+### 1. First live pull test
 Run: `FIGMA_TOKEN=your_pat npm run tokens:pull`
 Verify: pulled/skipped counts look right. `primitives.scale` unchanged.
 Then: `npm run tokens:build` — no errors.
