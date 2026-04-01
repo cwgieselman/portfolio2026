@@ -9,102 +9,109 @@
 
 ## Branches
 
-`rehab/markup-choreography-cleanup` — committed, pushed. PR done.
-`stabilize/custom-variant-contract` — committed, pushed. PR done.
-`rehab/vocabulary-rename` — committed, pushed. PR done.
-`rehab/font-stack-update` — **Claude Code working on this now.** `npm run tokens:build`, verify Playfair Display + Courier Prime in output, commit.
+All previous branches — merged to main ✓
+`build/figma-pull-script` — **PR doc written. Ready for Claude Code.**
 
 ---
 
 ## Where We Are
 
-Long tokens session. Significant ground covered:
+Tokens session. The full token pipeline cycle is now complete:
 
-**Completed this session:**
-- Token Studio fully decommissioned — plugin data blob wiped from CGDC-DS, plugin removed from account
-- Figma variables cleaned — duplicates deleted, `/web/` namespace stripped, `bento→mosaic` renamed, `letterSpacing` casing standardized, `font/family/display` restored, `font/family/mono` added
-- Font stack updated — Tienne → Playfair Display (700 only), `monospace` system → Courier Prime (400 + italic). Both in `base.njk` `<link>` tag and `tokens.json`
-- `tokens.json` updated — `font-family.display: Playfair Display`, `font-family.mono: Courier Prime`, `cta→ctaLink` rename, `eyebrow.letterSpacing` casing fix
-- Vocabulary rename — bento→mosaic, layout__narrative→layout__story. Committed via Claude Code.
-- `.zed/settings.json` created — Design Tokens LSP wired to `tokens/tokens.json`
-- `package.json` — `tokens:pull` script added as placeholder
-- Design System Hub — token viewer wired to `tokens/tokens.json` via Eleventy data transform
-- Vision doc written — `_docs/DESIGN-SYSTEM-HUB-VISION.md`
+```
+Figma Variables (CGDC-DS)
+  ↓ npm run tokens:pull  (scripts/figma-pull.mjs — NEW, ready to commit)
+tokens/tokens.json
+  ↓ npm run tokens:build
+src/assets/scss/_tokens--*.scss
+  ↓ Eleventy
+CSS
+```
 
-**Architecture decisions locked:**
-- Token Studio gone. Pipeline: `tokens/tokens.json` → `build-tokens-scss.mjs` → CSS
-- `tokens:pull` (figma-pull.mjs) — planned, not yet built. Figma variables are clean and ready.
-- Direction of truth: Figma owns color/semantic/component. Code owns scale math.
-- Print tokens: additive `@media print` overrides in SCSS. No `/web/` namespace.
-- Font stack: Raleway (brand) · PT Sans (plain) · Playfair Display (display) · Courier Prime (mono)
+Craig is in Figma building Text Styles and Color Styles using the clean variable system.
+
+---
+
+## What's Done This Session (full list)
+
+- Token Studio fully decommissioned — plugin blob wiped, plugin removed
+- Figma variables cleaned — no duplicates, correct structure, mosaic vocabulary
+- Font stack finalized — Raleway · PT Sans · Playfair Display · Courier Prime
+- `tokens.json` updated — Playfair Display, Courier Prime, ctaLink, letterSpacing fix
+- Vocabulary rename — bento→mosaic, layout__narrative→layout__story (all files)
+- `.zed/settings.json` — Design Tokens LSP wired
+- `package.json` — `tokens:pull` script registered
+- `src/_data/tokenDocs.js` — Eleventy data transform for token viewer
+- `src/design-system/index.njk` — token viewer wired to tokenDocs, hardcoded array removed
+- `_docs/DESIGN-SYSTEM-HUB-VISION.md` — vision and roadmap written
+- `README.md` — complete rewrite with current pipeline, Style Dictionary decision record
+- `scripts/figma-pull.mjs` — NEW. Figma REST API pull script. Ready to commit.
 
 ---
 
 ## Canonical Vocabulary (locked)
 
-| Concept | Name | Notes |
+| Concept | Name | CSS / YAML |
 |---|---|---|
-| Whole case study | **story** | `layout__story` in CSS |
+| Whole case study | **story** | `layout__story` |
 | Narrative unit | **chapter** | unchanged |
-| Scroll stack unit | **page** | unchanged |
-| Grid composition | **mosaic** | was bento-grid |
-| Composition cell | **mosaic-tile** | was bento-cell, renders as `<article>` |
+| Scroll stack unit | **page** | `pages:` in YAML |
+| Grid composition | **mosaic** | `.mosaic` |
+| Composition cell | **mosaic-tile** | `.mosaic-tile` / `tiles:` in YAML |
+
+YAML `tiles:` → HTML `<article>`. Intentional split. Documented in CONTRACT.
 
 ---
 
-## Design System Hub — Current State
+## Design System Hub
 
-Token viewer is now wired to `tokens/tokens.json` via `src/_data/tokenDocs.js`.
-- `tokenDocs.js` — Eleventy data transform. Reads tokens.json, produces flat token array.
-- `index.njk` — `{{ tokenDocs | dump | safe }}` injected via `<script id="ds-token-data">`. Hardcoded array removed.
-- Component gallery — mothballed (commented out). Ready to revive on a future branch.
-- Vision + roadmap — `_docs/DESIGN-SYSTEM-HUB-VISION.md`
-
-**After `rehab/font-stack-update` merges:** Token page will show Playfair Display and Courier Prime correctly in the typography section.
+Token viewer live at `/design-system/`. Sourced from `tokens/tokens.json` via `tokenDocs.js`.
+Component gallery mothballed — ready to revive.
+Vision at `_docs/DESIGN-SYSTEM-HUB-VISION.md`.
 
 ---
 
 ## Open Priorities
 
-### 1. `rehab/font-stack-update` — Claude Code in progress
-Run `npm run tokens:build`. Verify `_tokens--primitives.scss` has `--font-family-display: Playfair Display` and `--font-family-mono: Courier Prime`. No `Tienne` anywhere. Commit.
+### 1. Commit `build/figma-pull-script` (hand off to Claude Code now)
+Files to commit:
+- `scripts/figma-pull.mjs`
+- `README.md`
+- `_docs/PR--build-figma-pull-script.md` (delete after commit per WORKFLOW.md)
+- `_docs/session-state.md`
 
-### 2. Token viewer verification (after font branch merges)
-Open `/design-system/` in browser. Verify:
-- Typography section shows Playfair Display and Courier Prime with correct previews
-- No `bento` references anywhere in token names
-- Color swatches rendering
-- Alias tokens showing resolved colors
+Verify: `npm run tokens:pull` without FIGMA_TOKEN exits with helpful error.
+`npm start` still builds. README renders correctly on GitHub.
 
-### 3. figma-pull.mjs (next tokens session)
-Figma variables are clean. Script needed. Selective pull: color/semantic/component from Figma, skip scale. ~120 lines of Node.
+### 2. First live pull test (after branch merges)
+Run: `FIGMA_TOKEN=your_pat npm run tokens:pull`
+Verify: pulled/skipped counts look right. `primitives.scale` unchanged.
+Then: `npm run tokens:build` — no errors.
+Then: open `/design-system/` — token viewer still renders correctly.
 
-### 4. Token backlog items (still open)
-- Shadow system (item 1) — design in Figma first
+### 3. Token backlog items (need Figma design decisions)
+- Shadow system (item 1) — design in Figma, then add to pull
 - Alpha/overlay color (item 2)
 - Frosted glass bg token (item 3)
-- Scale/275 line-height decision (item 4)
+- Scale/275 line-height decision (item 4) — quick Figma check
 - Em-based letter-spacing (item 5)
 - DS hub UI redesign (item 6 — defer to rebuild)
 
-### 5. Micro-alignment inside mosaic + chapter gap (build priority)
-- Micro-alignment issues inside mosaic tiles
-- Gap between C01 and C02 — `chapterOffset` negative margin logic
-
-### 6. Field text — extended page approach
-`.layout__page--extended` spanning `content-start / bento-end`. `chapter__content` removal.
+### 4. Build priorities (separate from tokens)
+- Micro-alignment inside mosaic + chapter gap
+- Field text extended page approach (`.layout__page--extended`)
+- Section 2 content authoring
 
 ---
 
 ## Deferred
 
-- **figma-pull.mjs** — next tokens session
 - **DS hub component gallery revival** — future branch
-- **DS hub YAML builder** — future branch (spec in Figma first)
+- **DS hub YAML builder** — spec in Figma first
 - **Page header detached-on-load behavior**
-- **Sticky-stack section navigation** — after all three case studies compiled
-- **Section 2** — not yet authored
-- **Skeletons** — re-enable after Section 2
+- **Sticky-stack section navigation**
+- **Section 2 authored content**
+- **Skeletons re-enabled**
 
 ---
 
@@ -112,15 +119,15 @@ Figma variables are clean. Script needed. Selective pull: color/semantic/compone
 
 | File | State |
 |------|-------|
-| `tokens/tokens.json` | Playfair Display + Courier Prime. mosaic vocabulary. ctaLink. |
-| `src/_data/tokenDocs.js` | NEW — Eleventy data transform for token viewer |
-| `src/design-system/index.njk` | Token viewer wired to tokenDocs. Hardcoded array removed. |
-| `src/_includes/layouts/base.njk` | Playfair Display + Courier Prime in Google Fonts link |
-| `.zed/settings.json` | NEW — Design Tokens LSP config |
-| `_docs/DESIGN-SYSTEM-HUB-VISION.md` | NEW — DS hub vision + roadmap |
-| `src/assets/js/choreography.js` | `layout__story` selectors, mosaic vocabulary |
-| `src/assets/scss/components/_mosaic.scss` | mosaic system (was _bento-grid.scss) |
-| `CONTRACT.md` | vocabulary section updated |
+| `scripts/figma-pull.mjs` | NEW — ready to commit |
+| `scripts/build-tokens-scss.mjs` | Working. Run via `npm run tokens:build`. |
+| `tokens/tokens.json` | Authoritative. Playfair Display, Courier Prime, mosaic vocab. |
+| `src/_data/tokenDocs.js` | Eleventy data transform for token viewer |
+| `src/design-system/index.njk` | Token viewer wired to tokenDocs |
+| `src/_includes/layouts/base.njk` | Playfair Display + Courier Prime in Google Fonts |
+| `.zed/settings.json` | Design Tokens LSP → tokens/tokens.json |
+| `README.md` | Rewritten — current pipeline + Style Dictionary decision |
+| `_docs/DESIGN-SYSTEM-HUB-VISION.md` | DS hub vision + roadmap |
 
 ---
 
@@ -136,11 +143,11 @@ Figma variables are clean. Script needed. Selective pull: color/semantic/compone
 
 ## Rules (learned the hard way)
 
-- Read Figma metadata before writing CSS.
-- Verify in Chrome before declaring anything done.
-- One change at a time. Verify, then move.
+- Read Figma metadata before writing CSS. `get_metadata` first, every time.
+- Verify in Chrome before declaring anything done. One change at a time.
 - Session ends: PR doc written → Claude Code commits, OR this file updated.
-- Scale tokens stay in tokens.json as math expressions — Figma stores resolved values.
-- Figma pull script pulls color/semantic/component only — scale is code-side.
-- YAML key `tiles:` maps to HTML `<article>` elements — intentional, in CONTRACT.
-- Token Studio is gone. Do not reinstall. Do not reference it in new docs.
+- Scale tokens stay in tokens.json as math expressions. Figma stores resolved values.
+- Pull script pulls color/semantic/component only. Scale is code-side truth.
+- YAML `tiles:` → HTML `<article>`. Intentional. In CONTRACT.
+- Token Studio is gone. Do not reinstall. Do not reference in new docs.
+- Style Dictionary was evaluated and deliberately not adopted — see README.
