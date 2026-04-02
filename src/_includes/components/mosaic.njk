@@ -135,12 +135,9 @@
 
     {# Standard tile render path #}
     {# image-directed: opt-in art direction — <picture> with <source media> for 2-up vs 5-up crops. #}
-    {# graphic: illustration/diagram asset — object-fit: contain, padded, square in 2-up. #}
     {% set typeClass = tile.type %}
     {% if tile.type == "image" and tile.artDirection %}
       {% set typeClass = "image-directed" %}
-    {% elif tile.type == "graphic" %}
-      {% set typeClass = "graphic" %}
     {% endif %}
     {% set tileClasses = "mosaic-tile mosaic-tile--" + typeClass %}
     {% if tile.theme %}
@@ -163,7 +160,7 @@
               loading="lazy"
             />
           </picture>
-        {% elif tile.type == "image" and tile.media or tile.type == "graphic" and tile.media %}
+        {% elif tile.type == "image" and tile.media %}
           {% set mediaParams = tile.media %}
           {% include "components/media.njk" %}
         {% else %}

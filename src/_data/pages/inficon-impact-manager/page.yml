@@ -187,7 +187,8 @@ sections:
               rows: 4
               tiles:
                 - id: article-01
-                  type: custom
+                  type: content
+                  custom: true
                   variant: selfie
                   theme: default
                   desktop:

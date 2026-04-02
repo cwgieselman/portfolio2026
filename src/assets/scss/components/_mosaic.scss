@@ -6,43 +6,43 @@
 // shock absorbers. Cell size snaps at designed states; gap and padding flex
 // fluidly between them so the text column width is always predictable.
 //
-// Token system — unified unit for grid and macro layout:
+// Token system -- unified unit for grid and macro layout:
 //   --mosaic-cell-size  snaps at three authored states (never fluid)
-//   --mosaic-gap        flexes via clamp() — absorbs mid-state fluidity
-//   --mosaic-padding    flexes via clamp() — absorbs mid-state fluidity
+//   --mosaic-gap        flexes via clamp() -- absorbs mid-state fluidity
+//   --mosaic-padding    flexes via clamp() -- absorbs mid-state fluidity
 //
 // Cell size states:
-//   MIN   144px   2× gap below MONEY; shared between 4-up and 2-up narrow
-//   MONEY 176px   Primary desktop state — divisible by 16, anchors all math
-//   MAX   208px   2× gap above MONEY; 2-up wide state only
+//   MIN   144px   2x gap below MONEY; shared between 4-up and 2-up narrow
+//   MONEY 176px   Primary desktop state -- divisible by 16, anchors all math
+//   MAX   208px   2x gap above MONEY; 2-up wide state only
 //
-// Gap — consistent 16px at all designed states, flexes between:
+// Gap -- consistent 16px at all designed states, flexes between:
 //   --mosaic-gap: clamp(8px, 2cqi, 16px)
 //
 // Derived grid widths (at designed gap of 16px):
-//   4-up MONEY  4×176 + 3×16 = 752px   ← desktop target
-//   4-up MIN    4×144 + 3×16 = 624px   ← 4-up at narrower containers
-//   2-up MAX    2×208 + 1×16 = 432px   ← 2-up wide
-//   2-up MIN    2×144 + 1×16 = 304px   ← 2-up narrow / default
+//   4-up MONEY  4x176 + 3x16 = 752px   <- desktop target
+//   4-up MIN    4x144 + 3x16 = 624px   <- 4-up at narrower containers
+//   2-up MAX    2x208 + 1x16 = 432px   <- 2-up wide
+//   2-up MIN    2x144 + 1x16 = 304px   <- 2-up narrow / default
 //
 // Macro layout relationship (same unit system):
-//   Content column  2 cells wide  =  368px  (2×176 + 1×16)
-//   Content/mosaic gutter         =   80px  (5×16)
-//   Mosaic column   4 cells wide  =  752px  (4×176 + 3×16)
-//   Total content width           = 1200px  ✓
+//   Content column  2 cells wide  =  368px  (2x176 + 1x16)
+//   Content/mosaic gutter         =   80px  (5x16)
+//   Mosaic column   4 cells wide  =  752px  (4x176 + 3x16)
+//   Total content width           = 1200px
 //
-// Responsive model — small → large, container-query driven:
+// Responsive model -- small -> large, container-query driven:
 //
 //   DEFAULT (no query): 2-up layout, MIN cells (144px), fluid width.
-//     repeat(2, minmax(144px, 208px)) — cells grow to MAX in wide 2-up.
+//     repeat(2, minmax(144px, 208px)) -- cells grow to MAX in wide 2-up.
 //     Gap and padding flex via clamp().
 //
 //   @container content-cell (min-width: 624px): 4-up layout, MIN cells (144px).
-//     624px = 4×144 + 3×16. Mosaic becomes fit-content, centered in container.
+//     624px = 4x144 + 3x16. Mosaic becomes fit-content, centered in container.
 //     Per-mosaic grid-template-areas live in placements/_<pageKey>.scss.
 //
 //   @container content-cell (min-width: 752px): 4-up layout, MONEY cells (176px).
-//     752px = 4×176 + 3×16. The designed desktop state.
+//     752px = 4x176 + 3x16. The designed desktop state.
 //
 // Container queries fire against content-cell (the mosaic's parent),
 // which has container-type: inline-size in _content-cell.scss.
@@ -53,15 +53,15 @@
 // -----------------------------------------------------------------------------
 
 .mosaic {
-    // ── Content slot — snaps at designed states, never fluid ─────────────────
-    --mosaic-cell-size:    144px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma — MIN state */
+    // -- Content slot -- snaps at designed states, never fluid ----------------
+    --mosaic-cell-size:    144px;               /* CONTRACT_EXCEPTION: pixel geometry from Figma -- MIN state */
 
-    // ── Air — fluid between designed states, consistent at 16px ──────────────
+    // -- Air -- fluid between designed states, consistent at 16px -------------
     // clamp(min, preferred, max): hits 16px at designed states, compresses gracefully between.
     --mosaic-gap:          clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: pixel geometry from Figma */
-    --mosaic-padding:      clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: inner cell padding — independent of gap */
+    --mosaic-padding:      clamp(8px, 2cqi, 16px);   /* CONTRACT_EXCEPTION: inner cell padding -- independent of gap */
 
-    // ── Fixed geometry ────────────────────────────────────────────────────────
+    // -- Fixed geometry -------------------------------------------------------
     --mosaic-border-width: 2px;                 /* CONTRACT_EXCEPTION: pixel geometry from Figma */
     --mosaic-radius:       var(--corner-xs);    /* 8px */
     --mosaic-inner-radius: var(--corner-xxs);   /* 4px */
@@ -69,7 +69,7 @@
     display: grid;
     gap: var(--mosaic-gap);
 
-    // Default: 2-up, fluid — cells grow from MIN (144px) to MAX (208px).
+    // Default: 2-up, fluid -- cells grow from MIN (144px) to MAX (208px).
     // minmax avoids circular dependency with container-type: inline-size.
     grid-template-columns: repeat(2, minmax(144px, 208px));
     width: 100%;
@@ -88,8 +88,8 @@
 .mosaic--align-start { margin-inline-start: 0; margin-inline-end: auto; }
 .mosaic--align-end   { margin-inline-start: auto; margin-inline-end: 0; }
 
-// -- Container query: 4-up layout, MIN cells (content-cell ≥ 624px) ----------
-// 624px = 4×144 + 3×16 — geometric minimum for 4-up at MIN cell size.
+// -- Container query: 4-up layout, MIN cells (content-cell >= 624px) ----------
+// 624px = 4x144 + 3x16 -- geometric minimum for 4-up at MIN cell size.
 // Mosaic becomes fit-content and centers in its content-cell.
 // grid-template-areas are authored per-mosaic in placements/_<pageKey>.scss.
 // Upper bound at 751px prevents MONEY query firing at the same time.
@@ -105,22 +105,21 @@
         margin-inline: auto;
     }
 
-    // 4-up: grid tracks define cell dimensions — unset 2-up aspect-ratio constraints.
+    // 4-up: grid tracks define cell dimensions -- unset 2-up aspect-ratio constraints.
     // Double-class selector raises specificity above single-class base rules,
     // ensuring this wins regardless of cascade order.
-    .mosaic-tile--image-directed.mosaic-tile--image-directed,
-    .mosaic-tile--graphic.mosaic-tile--graphic {
+    .mosaic-tile--image-directed.mosaic-tile--image-directed {
         aspect-ratio: unset;
     }
 }
 
-// -- Container query: 4-up layout, MONEY cells (content-cell ≥ 752px) --------
-// 752px = 4×176 + 3×16 — the primary desktop designed state.
-// This is the authored composition state — cell size locks to 176px (MONEY).
+// -- Container query: 4-up layout, MONEY cells (content-cell >= 752px) --------
+// 752px = 4x176 + 3x16 -- the primary desktop designed state.
+// This is the authored composition state -- cell size locks to 176px (MONEY).
 
 @container content-cell (min-width: 752px) {
     .mosaic {
-        --mosaic-cell-size: 176px;              /* MONEY — the designed state */
+        --mosaic-cell-size: 176px;              /* MONEY -- the designed state */
 
         grid-template-columns: repeat(4, var(--mosaic-cell-size));
         grid-template-rows:    repeat(4, var(--mosaic-cell-size));
@@ -130,14 +129,13 @@
     }
 
     // 4-up: unset 2-up aspect-ratio constraints.
-    .mosaic-tile--image-directed.mosaic-tile--image-directed,
-    .mosaic-tile--graphic.mosaic-tile--graphic {
+    .mosaic-tile--image-directed.mosaic-tile--image-directed {
         aspect-ratio: unset;
     }
 }
 
 // -- Scrollable image tile visibility ----------------------------------------
-// Mirrors the 4-up threshold — desktop instance shows in 4-up, hides in 2-up.
+// Mirrors the 4-up threshold -- desktop instance shows in 4-up, hides in 2-up.
 
 .mosaic-tile--image-desktop {
     display: none; // hidden by default (2-up context)
@@ -210,6 +208,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     overflow: hidden;
     padding: var(--mosaic-padding);
     height: 100%;
@@ -225,11 +224,6 @@
 // image-directed: portrait crop box in 2-up
 .mosaic-tile--image-directed {
     aspect-ratio: 4 / 5;
-}
-
-// graphic: square box in 2-up
-.mosaic-tile--graphic {
-    aspect-ratio: 1;
 }
 
 // image / image-directed: __inner fills tile, no padding, picture fills inner
@@ -262,20 +256,20 @@
 // the breadth of the content is editorially meaningful.
 //
 // Two sibling <article> elements are rendered from YAML when scrollable: true:
-//   .mosaic-tile--image-desktop    — shown in 4-up (≥ 624px), hidden in 2-up
-//   .mosaic-tile--image-scrollable — shown in 2-up, hidden in 4-up
+//   .mosaic-tile--image-desktop    -- shown in 4-up (>= 624px), hidden in 2-up
+//   .mosaic-tile--image-scrollable -- shown in 2-up, hidden in 4-up
 //
 // The scrollable instance uses a dedicated scrollSrc: image (no srcset),
 // fixed height, overflow: auto on both axes.
 //
 // YAML: type: image + scrollable: true + media.scrollSrc: path-to-scroll-image
 
-// Scrollable instance — 2-up only
+// Scrollable instance -- 2-up only
 .mosaic-tile--image-scrollable {
     height: calc(var(--mosaic-cell-size) * 2 + var(--mosaic-gap));
     overflow: hidden; // border-radius clip
 
-    // Fade affordance on right edge — signals more content
+    // Fade affordance on right edge -- signals more content
     // CONTRACT_EXCEPTION: position: absolute on ::after used solely as decorative overlay.
     &::after {
         content: "";
@@ -303,12 +297,12 @@
 .mosaic-tile--image-scrollable img {
     display: block;
     width: auto;
-    height: 500px;     // CONTRACT_EXCEPTION: fixed scrollable window height — design constant, no scale token maps
+    height: 500px;     // CONTRACT_EXCEPTION: fixed scrollable window height -- design constant, no scale token maps
     max-width: none;
     flex-shrink: 0;
 }
 
-// .mosaic-tile__img is on <picture> — also target the <img> inside it
+// .mosaic-tile__img is on <picture> -- also target the <img> inside it
 // since the HTML transform nests <img> inside <picture>.
 .mosaic-tile__img,
 .mosaic-tile__img img {
@@ -319,27 +313,12 @@
     object-position: center top;
 }
 
-// -- Graphic tile -------------------------------------------------------------
-// Square illustration/diagram assets. aspect-ratio: 1 declared above with
-// other 2-up modifiers. Unset in 4-up container queries above.
-
-.mosaic-tile--graphic .mosaic-tile__inner {
-    padding: var(--mosaic-padding);
-    justify-content: center;
-    align-items: center;
-}
-
-.mosaic-tile--graphic picture,
-.mosaic-tile--graphic img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center center;
-}
+// -- Content tiles ------------------------------------------------------------
+// Padded. Text, stats, quotes. Gap spaces multiple flex children (stat + body, etc.).
+// Centering is axiomatic — lives on .mosaic-tile__inner base. Override in
+// placements SCSS if a specific custom variant needs different alignment.
 
 .mosaic-tile--content .mosaic-tile__inner {
-    justify-content: center;
     gap: var(--mosaic-gap);
 }
 
@@ -358,7 +337,7 @@
 
 // -- Type styles --------------------------------------------------------------
 
-// Axiomatic centering — if a tile contains a lead or stat, center all text.
+// Axiomatic centering -- if a tile contains a lead or stat, center all text.
 // Body-only tiles stay left-aligned by default. Images unaffected.
 .mosaic-tile:has(.mosaic-lead, .mosaic-lead-italic, .mosaic-stat) {
     text-align: center;
@@ -409,7 +388,7 @@
     color: inherit;
 }
 
-// Skeleton tiles are P00 in the chapter page stack — defined in YAML,
+// Skeleton tiles are P00 in the chapter page stack -- defined in YAML,
 // rendered by mosaic.njk (type: skeleton branch), permanent underlay at z-index 0.
 
 // -- Choreography states ------------------------------------------------------
@@ -418,7 +397,7 @@
 // JS in choreography.js drives the state transitions via IntersectionObserver.
 //
 // Skeleton tiles share the same border-radius and border as real tiles.
-// No content, no background — just the outlined article shape.
+// No content, no background -- just the outlined article shape.
 
 .mosaic-tile--skeleton {
     background-color: transparent;
@@ -442,7 +421,7 @@
 @keyframes mosaic-reveal {
     from {
         opacity: 0;
-        transform: translateY(var(--mosaic-gap)); /* one gap unit — entry offset */
+        transform: translateY(var(--mosaic-gap)); /* one gap unit -- entry offset */
     }
     to {
         opacity: 1;
@@ -451,7 +430,7 @@
 }
 
 // -- Scroll indicator ---------------------------------------------------------
-// CONTRACT_EXCEPTION: design placeholder — brand treatment deferred to Figma.
+// CONTRACT_EXCEPTION: design placeholder -- brand treatment deferred to Figma.
 // All pixel values, transforms, and non-token typography in this block are
 // intentionally provisional. Replace wholesale when Figma spec is ready.
 // Minimal, non-branded placeholder. Sits at the bottom of the viewport
@@ -480,7 +459,7 @@
 .scroll-indicator__label {
     font-family: var(--font-family-brand);
     font-size: var(--scale-75);
-    letter-spacing: 0.1em; // CONTRACT_EXCEPTION: em-based tracking — no em tracking token exists; see Tier 3 token backlog
+    letter-spacing: 0.1em; // CONTRACT_EXCEPTION: em-based tracking -- no em tracking token exists; see Tier 3 token backlog
     text-transform: uppercase;
     color: var(--color-primary-60);
     white-space: nowrap;
