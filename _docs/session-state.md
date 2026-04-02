@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 1, 2026*
+*Last updated: April 2, 2026*
 
 > **THIS FILE IS AUTHORITATIVE STATE — read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -9,19 +9,15 @@
 
 ## Branch
 
-`build/subgrid-chapter-layout` — active, uncommitted
+`build/token-system-cleanup` — committed `cdcd2f6`, ready to merge to main
 
 ---
 
 ## Where We Are
 
-Long documentation and token cleanup session. The token pipeline is clean and
-building correctly. CONTRACT.md, CLAUDE.md, and COMPILE_PROMPTS.md have all
-been substantially updated to reflect the current architecture.
-
-The page-header include, pill component, and YAML shape have been updated and
-are ready to verify in the browser. `npm run tokens:build` needs to run before
-any browser verification.
+Token pipeline overhaul committed. All generated SCSS files are current.
+Browser verification pending — specifically check eyebrow color (secondary-70
+via `--color-eyebrow`) and page-header pills rendering correctly.
 
 ---
 
@@ -105,17 +101,13 @@ any browser verification.
 
 ## Open Priorities
 
-### Immediate (this branch, before merge)
-1. Run `npm run tokens:build` — regenerate SCSS from updated tokens.json
-2. Run `npm start` — verify page-header renders correctly in browser:
-   - Three pills in eyebrow
-   - Headline at 28px Raleway Bold
-   - Subhead at 20px Raleway Regular in secondary/70 yellow
-3. `_typography.scss` block-tier h1 override — currently 40px/48px, sized for old
-   56px desktop h1. With 28px desktop this makes mobile larger than desktop.
-   Deferred pending mobile design pass — flag for next session.
-4. CLAUDE.md typography table still documents h1 as 56px/64px — needs updating
-   to reflect actual 28px/48px values now in tokens.
+### Immediate (before merge)
+1. Browser verify page-header: three pills, 28px headline, 20px Raleway Regular subhead
+2. Check eyebrow color visually — shifted secondary-80 → secondary-70 (`--color-eyebrow`)
+3. `_typography.scss` block-tier h1 override — 40px/48px mobile is larger than
+   28px desktop. Deferred pending mobile design pass.
+4. CLAUDE.md typography table documents h1 as 56px/64px — needs updating to
+   reflect actual 28px/48px values now in tokens.
 
 ### Build priorities (after branch merge)
 - Complete chapter-02 in INFI Figma, then fresh compile attempt
