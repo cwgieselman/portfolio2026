@@ -1,4 +1,4 @@
-# PROMPT C — FULL PAGE COMPILE (Figma → Eleventy page data + placements + report)
+# PROMPT C — FULL PAGE COMPILE (Figma -> Eleventy page data + placements + report)
 
 ## ROLE
 
@@ -10,12 +10,12 @@ Use these names exactly. Do not use synonyms.
 
 | Canonical name | What it is |
 |---|---|
-| **Field and Frame Grid** (abbrev: **FF Grid**) | The full 5-IU macro page grid. Active at ≥ 1248px viewport. |
-| **2-col Grid** | The simplified two-column layout grid. Active at 640px–1247px. |
+| **Field and Frame Grid** (abbrev: **FF Grid**) | The full 5-IU macro page grid. Active at >= 1248px viewport. |
+| **2-col Grid** | The simplified two-column layout grid. Active at 640px-1247px. |
 | **Mosaic** | The CSS Grid inside a `.mosaic` component instance. Tiles are `<article>` elements. |
-| **Chapter** | A narrative unit. Instance of `chapter-##`. Contains a skeleton (P00), one or more pages (P01–PN), and a `chapter--content` field text block. |
+| **Chapter** | A narrative unit. Instance of `chapter-##`. Contains a skeleton (P00), one or more pages (P01-PN), and a `richtext` field text block. |
 | **Page** | A scroll-stack unit within a chapter. Instance of `chapter--page-##`. Contains a mosaic grid. |
-| **Field text** | The short editorial text above a chapter's mosaic. Instance of `chapter--content`. Contains a `paragraph` instance in its Slot. |
+| **Richtext** | The editorial text block above a chapter's mosaic. Instance of `richtext`. Contains a `paragraph` instance in its Slot. |
 
 ## INPUTS
 
@@ -36,7 +36,7 @@ Use these names exactly. Do not use synonyms.
    - All chapter names and IDs
    - All page names and IDs within each chapter
    - The skeleton (P00) mosaic per chapter
-   - The `chapter--content` field text instance per chapter
+   - The `richtext` field text instance per chapter
    - All mosaic tile instances and their bounding boxes within each page
    Save this tree as your working manifest. Sort per §E.
 
@@ -51,15 +51,15 @@ For each chapter (in order):
 
 3. Open the chapter in YAML (`- chapterKey: "chapter-NN"`).
 
-4. Extract the `chapter--content` field text:
-   - Find the `chapter--content` instance in the chapter's wrapper Slot.
-   - Find the `paragraph` instance in the `chapter--content` Slot.
+4. Extract the `richtext` field text:
+   - Find the `richtext` instance in the chapter's wrapper Slot.
+   - Find the `paragraph` instance in the `richtext` Slot.
    - Extract `Text#466:0` from the paragraph's componentProperties.
    - Emit as `fieldText:` in YAML.
 
 5. Emit the skeleton (P00) mosaic placements block to the SCSS file (see §G).
 
-6. For each page in the chapter (in order, P01–PN):
+6. For each page in the chapter (in order, P01-PN):
    Open the page in YAML (`- pageKey: "page-NN"`).
    Compile the mosaic per §G.
    Close the page.
@@ -114,6 +114,32 @@ Pasted Figma FRAME URL with JSON fetch script. Only use if the user says "fetch 
 
 ## PROJECT CONTRACTS (NON-NEGOTIABLE)
 
+### Figma Annotation Conventions — ALWAYS IGNORE THESE
+
+Certain visual properties in Figma are working affordances for the designer only.
+They have no CSS equivalent, no YAML representation, and must never be emitted to
+any output. If encountered during compile, discard silently — do not log as a
+warning, do not attempt to map to a token or class.
+
+**Component boundary outlines:**
+Components in the CGDC-DS library that participate in layout compositions carry a
+1px dashed border on their outermost node. This is a Figma-only visual affordance
+to make component boundaries legible while composing layouts in the design file.
+
+Properties: `stroke: 1px, dashed, outside, on topmost node of component`
+
+Current components carrying this treatment:
+- `richtext`
+- `chapter-##`
+- `chapter--page-##`
+
+More components may carry this in future. The rule is universal: **any 1px dashed
+border on the topmost node of a CGDC-DS component is a boundary annotation and
+must be ignored entirely.** Do not emit it as a border, outline, box-shadow, or
+any other CSS property. Do not emit it to YAML.
+
+---
+
 ### A) No Invented Copy
 
 All string content must come from raw Figma text in JSON.
@@ -124,21 +150,21 @@ If missing, output TODO tokens (e.g. `TODO:headline`, `TODO:body`, `TODO:src`, `
 **Case study pages use the chapter/page hierarchy. This is the active pipeline.**
 
 ```
-<pageKey> [FRAME]                          ← root compile target
-  navbar [INSTANCE]                        ← structural, skip
-  page-header [INSTANCE]                  ← h1 + eyebrow + subhead (compile separately — see §H)
+<pageKey> [FRAME]                          <- root compile target
+  navbar [INSTANCE]                        <- structural, skip
+  page-header [INSTANCE]                   <- h1 + eyebrow + subhead (compile separately - see §H)
   chapter-01 [INSTANCE of chapter-##]
     wrapper [SLOT]
-      mosaic--skeleton [INSTANCE]          ← P00 skeleton (compile per §G)
+      mosaic--skeleton [INSTANCE]          <- P00 skeleton (compile per §G)
       page-01 [INSTANCE of chapter--page-##]
         wrapper [SLOT]
-          mosaic-grid [FRAME]              ← contains article-NN tiles (compile per §G)
+          mosaic-grid [FRAME]              <- contains article-NN tiles (compile per §G)
       page-02 [INSTANCE of chapter--page-##]
         wrapper [SLOT]
           mosaic-grid [FRAME]
-      chapter--content [INSTANCE]         ← field text block (compile per §H)
+      richtext [INSTANCE]                  <- field text block (compile per §H)
         content [SLOT]
-          paragraph [INSTANCE]            ← Text#466:0 = field text string
+          paragraph [INSTANCE]            <- Text#466:0 = field text string
   chapter-02 [INSTANCE of chapter-##]
     wrapper [SLOT]
       ...
@@ -151,11 +177,11 @@ If missing, output TODO tokens (e.g. `TODO:headline`, `TODO:body`, `TODO:src`, `
 
 **Content-bearing components — compile:**
 - `page-header` — h1 headline, eyebrow (text or pills), subhead
-- `chapter--content` — field text (paragraph instance in Slot)
+- `richtext` — field text (paragraph instance in Slot)
 - `mosaic-grid` children (`article-NN` tiles) — mosaic content
 
 **Legacy hierarchy (content-cell pipeline) — DO NOT USE for case study pages:**
-The old `section-NN → page-NN → content-cell-NN` hierarchy and `components/header.njk`,
+The old `section-NN -> page-NN -> content-cell-NN` hierarchy and `components/header.njk`,
 `components/richtext.njk` etc. are the executor pipeline for non-mosaic pages. Case study
 pages use the chapter/page/mosaic hierarchy documented here. Do not mix the two.
 
@@ -173,7 +199,7 @@ Content-cell grid positions are **inferred at compile time** from the grid-track
 
 The FF Grid geometry is standardized across all pages — build the lookup table once and reuse it.
 
-**Columns:** 5 full IUs × 384px + 4 gutters × 24px = 2016px Field. Frame = IU2–IU4 (408px → 1608px).
+**Columns:** 5 full IUs x 384px + 4 gutters x 24px = 2016px Field. Frame = IU2-IU4 (408px -> 1608px).
 
 | Column Line | px position | Named line |
 |-------------|-------------|------------|
@@ -227,7 +253,7 @@ Compute:
 
 #### Step 4: Apply Snap Tolerance
 
-Figma's grid-snapping uses 1px rectangle tracks, so content-cell coordinates may be off by 1–2 pixels. Apply a **±2px tolerance** when matching coordinates to grid line positions.
+Figma's grid-snapping uses 1px rectangle tracks, so content-cell coordinates may be off by 1-2 pixels. Apply a **+-2px tolerance** when matching coordinates to grid line positions.
 
 If a coordinate does not match any grid line within tolerance, log a warning in the extract report with the cell name, coordinate, and nearest grid line.
 
@@ -246,8 +272,8 @@ Emit placements SCSS only (no inline styles).
 
 ### E) Ordering Contract
 
-- Sort chapters by numeric suffix (`chapter-01`, `chapter-02`…).
-- Sort pages by numeric suffix within each chapter (`page-01`, `page-02`…).
+- Sort chapters by numeric suffix (`chapter-01`, `chapter-02`...).
+- Sort pages by numeric suffix within each chapter (`page-01`, `page-02`...).
 - Sort mosaic tiles within a page by visual position using bounding box:
   - Primary: y (top)
   - Secondary: x (left)
@@ -274,9 +300,9 @@ Each `article-NN` tile is a `mosaic-article` instance with these props:
 | Figma prop | Key | Type | Notes |
 |-----------|-----|------|-------|
 | `type` | VARIANT | `skeleton` \| `bleed` \| `frame` | `frame` = content tile (padded), `bleed` = image tile (no padding), `skeleton` = P00 underlay |
-| `custom#3129:0` | BOOLEAN | — | True = custom/variant tile |
-| `variant#3129:4` | TEXT | — | Variant name for custom tiles |
-| `Slot#2914:54` | SLOT | — | Content slot (present on `frame` and `bleed` types) |
+| `custom#3129:0` | BOOLEAN | -- | True = custom/variant tile |
+| `variant#3129:4` | TEXT | -- | Variant name for custom tiles |
+| `Slot#2914:54` | SLOT | -- | Content slot (present on `frame` and `bleed` types) |
 
 The `_mosaic-article__frame` sub-component carries:
 - `Arrow` VARIANT: `Up` \| `Down` \| `Left` \| `Right` \| `None`
@@ -287,14 +313,14 @@ The `_mosaic-article__theme` sub-component carries:
 - `points-to#2918:55` TEXT: the `#ID` of the target `<article>` element this arrow points at
   - **Arrow targets are deferred.** Do not emit `points-to` to YAML.
 
-**Type → YAML tile type mapping:**
+**Type -> YAML tile type mapping:**
 
 | Figma `type` | `custom` | YAML `type` |
 |---|---|---|
 | `frame` | false | `content` |
 | `bleed` | false | `image` |
 | `frame` | true | `custom` |
-| `skeleton` | — | `skeleton` (P00 only) |
+| `skeleton` | -- | `skeleton` (P00 only) |
 
 #### Tile Content Extraction
 
@@ -304,9 +330,9 @@ The `_mosaic-article__theme` sub-component carries:
 
 **`type=bleed` (image tile):** No Slot content. Emit `media:` block with `src: "TODO:src"`, `hasAlt`, `alt`.
 
-**`type=frame` + `custom=true` (custom tile):** Read `variant` TEXT prop. Emit `type: custom`, `variant: "<value>"`. Append custom tile scaffold block to report.
+**`type=frame` + `custom=true` (custom tile):** Read `variant` TEXT prop. Emit `type: content`, `custom: true`, `variant: "<value>"`. Append custom tile scaffold block to report.
 
-**`type=skeleton`:** No content. Emit SCSS placements only — no YAML entry.
+**`type=skeleton`:** No content. Emit SCSS placements only -- no YAML entry.
 
 #### Tile Naming and HTML
 
@@ -316,9 +342,9 @@ Each tile emits:
          data-mosaic-tile="article-NN">
 ```
 
-For custom tiles:
+For custom tiles (`custom: true` on a `content` or `image` base):
 ```html
-<article class="mosaic-tile mosaic-tile--custom [mosaic-tile--theme-{theme}]"
+<article class="mosaic-tile mosaic-tile--{base-type} [mosaic-tile--theme-{theme}]"
          data-mosaic-tile="article-NN"
          data-mosaic-variant="{variant}">
 ```
@@ -329,12 +355,12 @@ For custom tiles:
 
 #### Mosaic Placement
 
-Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, ±2px tolerance). The grid-tracks instance for a Mosaic frame uses uniform square tracks with a common gutter — simpler than the FF Grid but the same algorithm applies.
+Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, +-2px tolerance). The grid-tracks instance for a Mosaic frame uses uniform square tracks with a common gutter — simpler than the FF Grid but the same algorithm applies.
 
 All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`. Structure:
 
 ```scss
-/* ─── mosaic--<id> — tile area map (default 2-up, no query) ─── */
+/* --- mosaic--<id> — tile area map (default 2-up, no query) --- */
 
 #mosaic--<id> {
     grid-template-areas:
@@ -342,19 +368,19 @@ All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`. Struc
         ...;
 }
 
-/* ─── mosaic--<id> — 5-up area map (content-cell ≥ 732px) ─── */
+/* --- mosaic--<id> — 4-up area map (content-cell >= 752px) --- */
 
-@container content-cell (min-width: 732px) {
+@container content-cell (min-width: 752px) {
     #mosaic--<id> {
-        grid-template-columns: repeat(5, var(--mosaic-cell-size));
-        grid-template-rows:    repeat(5, var(--mosaic-cell-size));
+        grid-template-columns: repeat(4, var(--mosaic-cell-size));
+        grid-template-rows:    repeat(4, var(--mosaic-cell-size));
         grid-template-areas:
-            "a01 a02 a02 a03 a03"
+            "a01 a02 a02 a03"
             ...;
     }
 }
 
-/* ─── tile areas ─── */
+/* --- tile areas --- */
 
 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; z-index: 12; }
 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; z-index: 11; }
@@ -365,11 +391,9 @@ All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`. Struc
 Every chapter has a P00 `mosaic--skeleton` instance. Its tiles must emit SCSS placements only — no YAML. Skeleton tiles use `grid-column`/`grid-row` directly (no named areas):
 
 ```scss
-// ─────────────────────────────────────────────────────────────────────────────
 // Chapter NN P00 — mosaic--<chapterKey>--p00
 // Skeleton underlay — always visible at z-index 0, never animated.
-// <cols> cols × <rows> rows. Marks composite mosaic area for Chapter N (P01–PN).
-// ─────────────────────────────────────────────────────────────────────────────
+// <cols> cols x <rows> rows. Marks composite mosaic area for Chapter N (P01-PN).
 
 #mosaic--<id>--p00 {
     grid-template-columns: repeat(<cols>, var(--mosaic-cell-size));
@@ -387,8 +411,8 @@ Place the P00 block immediately before the P01 block for its chapter.
 ```yaml
 mosaic:
   id: inficon--chapter-01--p01
-  cols: 5
-  rows: 5
+  cols: 4
+  rows: 4
   tiles:
     - id: article-01
       type: content
@@ -403,7 +427,7 @@ mosaic:
     - id: article-06
       type: image
       desktop:
-        col: "3 / 6"
+        col: "3 / 5"
         row: "2 / 4"
       media:
         src: "TODO:src"
@@ -411,7 +435,8 @@ mosaic:
         alt: "TODO:alt"
 
     - id: article-07
-      type: custom
+      type: content
+      custom: true
       variant: "selfie"
       theme: primary-dark
       desktop:
@@ -472,9 +497,9 @@ pageHeader:
   subhead: "13 months as the first UX designer in the IMS Group..."
 ```
 
-#### `chapter--content` (field text above each chapter's mosaic)
+#### `richtext` (field text above each chapter's mosaic)
 
-Source: `chapter--content` instance inside the chapter's `wrapper` Slot.
+Source: `richtext` instance inside the chapter's `wrapper` Slot.
 
 The content Slot contains a `paragraph` instance. Extract `Text#466:0` from its componentProperties.
 
@@ -489,18 +514,36 @@ The content Slot contains a `paragraph` instance. Extract `Text#466:0` from its 
         ...
 ```
 
-#### `heading` component (h2/h3 within mosaic content or field text)
+#### `richtext` child components (paragraph, unordered-list, ordered-list, heading)
 
-Source: `heading` instance — used within content cells in non-mosaic contexts.
+The `richtext` container holds child component instances dropped into its Slot.
+These are the building blocks of long-form text. All render via `richtext.njk`.
 
-| YAML param | Figma property | Notes |
-|------------|---------------|-------|
-| `level` | `level` VARIANT | `"h2"` \| `"h3"` |
-| `headline` | `headline#445:3` (TEXT) | Required |
-| `showSubhead` | `showSubhead#458:0` (BOOLEAN) | h3 variant ignores subhead |
-| `subhead` | `subhead#458:3` (TEXT) | Only when showSubhead=true and level=h2 |
+| Figma component | Node ID | YAML `kind` | HTML output |
+|---|---|---|---|
+| `paragraph` | 2781:453 | `"p"` | `<p class="richtext">` |
+| `unordered-list` | 2781:455 | `"ul"` | `<ul class="richtext richtext--ul">` |
+| `ordered-list` | 3277:2226 | `"ol"` | `<ol class="richtext richtext--ol">` |
+| `heading` level=h2 | 2466:1306 | `"h2"` | `<div class="richtext richtext--h2"><h2>` |
+| `heading` level=h3 | 2780:439 | `"h3"` | `<div class="richtext richtext--h3"><h3>` |
 
-Note: `heading` has no eyebrow — eyebrow is a `page-header` concern only. No `h1` variant — h1 is exclusively `page-header`.
+Typography tokens (all from CGDC-DS variables — do not hardcode values):
+- `paragraph` / `unordered-list` / `ordered-list`: `type/paragraph/*`, `color/body`
+- `heading h2` headline: `type/sectionHeading/*`, `color/heading`
+- `heading h2` subhead (p): `type/subheading/*`, `color/heading` (non-semantic)
+- `heading h3`: `type/subheading/*`, `color/heading`
+
+#### `heading` YAML shape
+
+```yaml
+- kind: "h2"
+  headline: "Section headline"
+  showSubhead: true
+  subhead: "Non-semantic subhead text"
+
+- kind: "h3"
+  headline: "Sub-section headline"
+```
 
 #### Full page YAML shape (chapter/page/mosaic pipeline)
 
@@ -525,8 +568,8 @@ chapters:
       - pageKey: "page-01"
         mosaic:
           id: "inficon-ims--chapter-01--p01"
-          cols: 5
-          rows: 5
+          cols: 4
+          rows: 4
           tiles:
             - id: article-01
               type: content
@@ -542,8 +585,8 @@ chapters:
       - pageKey: "page-02"
         mosaic:
           id: "inficon-ims--chapter-01--p02"
-          cols: 5
-          rows: 5
+          cols: 4
+          rows: 4
           tiles:
             ...
 
@@ -615,7 +658,7 @@ Must include:
 - Custom tile scaffold blocks emitted (list variant names)
 
 **Tile Manifest:**
-- Chapter → Page → tile id, type, theme
+- Chapter -> Page -> tile id, type, theme
 
 ---
 
