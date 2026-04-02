@@ -1,12 +1,12 @@
-# Portfolio2026 — Claude Code Instructions
+# Portfolio2026 -- Claude Code Instructions
 
-UX/Design Systems portfolio for Craig Gieselman. Built with 11ty (v3), Nunjucks, Sass, and a deterministic Figma→YAML→template→DOM pipeline.
+UX/Design Systems portfolio for Craig Gieselman. Built with 11ty (v3), Nunjucks, Sass, and a deterministic Figma->YAML->template->DOM pipeline.
 
 ## Commands
 
-- `npm start` — Build tokens, serve 11ty (Sass compiled natively by 11ty)
-- `npm run build` — Full production build
-- `npm run tokens:build` — Regenerate SCSS token files from `tokens/tokens.json`
+- `npm start` -- Build tokens, serve 11ty (Sass compiled natively by 11ty)
+- `npm run build` -- Full production build
+- `npm run tokens:build` -- Regenerate SCSS token files from `tokens/tokens.json`
 
 ## PR Documents
 
@@ -20,18 +20,18 @@ Playwright tests both Chromium and WebKit at every breakpoint before committing 
 
 ```bash
 npm run test:visual          # capture/update screenshots, assert metrics
-npm run test:visual:check    # assert only — fails if anything changed
+npm run test:visual:check    # assert only -- fails if anything changed
 npm run test:visual:report   # open HTML report in browser
 ```
 
 **What it tests:**
 - Full-page screenshots at all four main viewports (390, 820, 1052, 1248) in both browsers
-- Hard assertions at the six crossover viewports (±1px around 1052 and 1248)
-- Overflow sweep: mosaic `gridW <= contentCellW` assertion at every 50px from 375–1400px
+- Hard assertions at the six crossover viewports (+-1px around 1052 and 1248)
+- Overflow sweep: mosaic `gridW <= contentCellW` assertion at every 50px from 375-1400px
 
 **The core invariant:** The mosaic must never exceed its content-cell width at any viewport in either browser. If this assertion fails the test output tells you the exact viewport, browser, gridW, and contentCellW.
 
-**Screenshots saved to** `tests/screenshots/{chromium|webkit}/inficon-impact-manager/` — gitignored, local only.
+**Screenshots saved to** `tests/screenshots/{chromium|webkit}/inficon-impact-manager/` -- gitignored, local only.
 
 **Dev server must be running** (`npm start`) before running tests.
 
@@ -48,17 +48,17 @@ Four Chrome Incognito windows in Responsive Design Mode, set to these exact view
 
 | Label | Viewport | Notes |
 |-------|----------|-------|
-| iPhone | 390×844 | Mobile — 2-up mosaic, block layout |
-| iPad | 820×1180 | Tablet — 2-up mosaic, 2-col Grid |
-| Laptop | 1052×657 | Just below the 1052→1053 flip point |
-| Desktop | 1248×848 | Just above the 1248 FF Grid threshold |
+| iPhone | 390x844 | Mobile -- 2-up mosaic, block layout |
+| iPad | 820x1180 | Tablet -- 2-up mosaic, 2-col Grid |
+| Laptop | 1052x657 | Just below the 1052->1053 flip point |
+| Desktop | 1248x848 | Just above the 1248 FF Grid threshold |
 
-The 1052→1053 crossover is where the macro layout switches from 2-col Grid to FF Grid.
+The 1052->1053 crossover is where the macro layout switches from 2-col Grid to FF Grid.
 The mosaic switches from 2-up to 4-up at container width 624px (MIN cells) and 752px (MONEY cells).
 
 ---
 
-## Token Sync Workflow (Figma → Code)
+## Token Sync Workflow (Figma -> Code)
 
 Token Studio has been decommissioned. The active workflow is:
 
@@ -69,35 +69,35 @@ Token Studio has been decommissioned. The active workflow is:
 5. Commit `tokens/tokens.json` and the generated `_tokens--*.scss` files together
 
 **Important:** Run `npm run tokens:build` after any edit to `tokens/tokens.json`.
-The `tokens/sync` branch prefix is retired — do not use it.
+The `tokens/sync` branch prefix is retired -- do not use it.
 
 ## Project Architecture
 
 ```
-Figma (design intent — not consumed directly by templates)
-  ↓
-YAML (implementation contract — the ONLY data source for templates)
-  ↓
+Figma (design intent -- not consumed directly by templates)
+  |
+YAML (implementation contract -- the ONLY data source for templates)
+  |
 Eleventy templates (Nunjucks)
-  ↓
+  |
 Rendered HTML
-  ↓
+  |
 CSS (layout + styling via Sass, compiled natively by 11ty)
 ```
 
 **Two active rendering pipelines:**
 
-Pipeline A — Chapter/Page/Mosaic (case study pages):
-`compiled-page.njk` → chapter/page layout → `components/mosaic.njk`
+Pipeline A -- Chapter/Page/Mosaic (case study pages):
+`compiled-page.njk` -> chapter/page layout -> `components/mosaic.njk`
 
-Pipeline B — Executor (non-mosaic pages):
-`compiled-page.njk` → `page.njk` → `content-cell.njk` → component includes
+Pipeline B -- Executor (non-mosaic pages):
+`compiled-page.njk` -> `page.njk` -> `content-cell.njk` -> component includes
 
 YAML lives in `src/_data/pages/<pageKey>/page.yml`. The data loader is `src/_data/pages.js`.
 
 ## Non-Negotiable Rules
 
-Read `CONTRACT.md` before modifying any template, executor, component, or data file. It is the normative specification. What follows is a summary — CONTRACT.md is authoritative when in doubt.
+Read `CONTRACT.md` before modifying any template, executor, component, or data file. It is the normative specification. What follows is a summary -- CONTRACT.md is authoritative when in doubt.
 
 ### No Invention
 
@@ -111,7 +111,7 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 - Missing required fields must emit visible error comments: `<!-- <SCOPE>_ERROR: <message> -->`
 - Unknown includes must emit: `<!-- UNKNOWN_INCLUDE: ... -->`
 
-### Executor Contract (Pipeline B only — content-cell.njk)
+### Executor Contract (Pipeline B only -- content-cell.njk)
 
 - Each include receives a single `params` object and renders only that object.
 - Safelisted includes only: `figure.njk`, `header.njk`, `link-block.njk`, `richtext.njk`
@@ -121,7 +121,7 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 
 - No `position: absolute`, no transform offsets, no negative margins (except documented CONTRACT_EXCEPTION blocks in SCSS).
 - Placement uses `grid-column`, `grid-row`.
-- No `var(--token, fallback)` — fallback values in CSS custom properties are prohibited.
+- No `var(--token, fallback)` -- fallback values in CSS custom properties are prohibited.
 - No magic numbers. Every spacing/typography/layout value must trace to a token.
 - Display typography (h1, h2) uses explicit grid-snapped line-height tokens, not multipliers.
 
@@ -139,11 +139,11 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 
 This project uses a two-phase workflow. Full details in `_docs/WORKFLOW.md`.
 
-**Phase 1 — Design & Build (Claude.ai chat session)**
+**Phase 1 -- Design & Build (Claude.ai chat session)**
 Architectural decisions, Figma reading, file edits, browser verification.
 Output: changed files on a feature branch + a PR summary document.
 
-**Phase 2 — Review & Commit (Claude Code in Zed)**
+**Phase 2 -- Review & Commit (Claude Code in Zed)**
 Mechanical verification against contracts, build checks, tidiness review.
 Output: clean commit pushed to branch, ready to merge.
 
@@ -159,7 +159,7 @@ See `_docs/WORKFLOW.md` for the PR summary template and review checklist format.
 1. Read CONTRACT.md
 2. Make the smallest possible change
 3. Verify visually in browser
-4. Commit independently — one component per cycle
+4. Commit independently -- one component per cycle
 5. Log change in README
 
 ### For content/visual changes (copy updates, styling, non-structural tweaks):
@@ -181,13 +181,13 @@ Prefix signals intent; slug identifies subject. Format: `<prefix>/<short-slug>`
 ## File Boundaries
 
 - **Safe to edit:** `src/`, `tokens/tokens.json`, `CONTRACT.md`, `README.md`, `scripts/`
-- **Generated — do not hand-edit:** `src/assets/scss/_tokens--*.scss`
-- **Build output — do not commit:** `_site/`
+- **Generated -- do not hand-edit:** `src/assets/scss/_tokens--*.scss`
+- **Build output -- do not commit:** `_site/`
 
 ## Key Reference Files
 
-- `CONTRACT.md` — Normative render contract, component APIs, all invariants
-- `scripts/COMPILE_PROMPTS.md` — Full page compile prompt (Figma → YAML + placements + report)
+- `CONTRACT.md` -- Normative render contract, component APIs, all invariants
+- `scripts/COMPILE_PROMPTS.md` -- Full page compile prompt (Figma -> YAML + placements + report)
 
 ---
 
@@ -195,35 +195,35 @@ Prefix signals intent; slug identifies subject. Format: `<prefix>/<short-slug>`
 
 **These names are canonical. Use them exactly. Do not invent synonyms.**
 
-- **Story** — The full case study page. CSS class `layout__story`.
-- **Chapter** — A narrative unit. Instance of `chapter-##`. Contains a skeleton (P00), pages (P01–PN), and a field text block.
-- **Page** — A scroll-stack unit within a chapter. Instance of `chapter--page-##`. Contains a mosaic grid.
-- **Field text** — Short editorial text above a chapter's mosaic. Instance of `chapter--content`.
-- **Mosaic** — The CSS Grid inside a `.mosaic` component instance. Tiles are `<article>` elements. Driven by container queries. Any reference to "bento", "bento grid", or "bento layout" must use "mosaic" instead. YAML key `tiles:` maps to `<article>` elements — intentional split.
-- **Mosaic tile** — Individual cell inside `.mosaic`.
-- **2-col Grid** — The simplified two-column layout grid active at 640px–1247px.
-- **FF Grid** — The full 5-IU macro page grid. Active at ≥ 1248px viewport for special-case page types. Not the default container for case study pages.
-- **pageKey** — Kebab-case slug identifying a page. Must match folder name in `src/_data/pages/`.
-- **Compiled page** — A page whose content is defined entirely in YAML and rendered through a pipeline template. No inline content in `.njk` files.
+- **Story** -- The full case study page. CSS class `layout__story`.
+- **Chapter** -- A narrative unit. Instance of `chapter-##`. Contains a skeleton (P00), pages (P01-PN), and a richtext field text block.
+- **Page** -- A scroll-stack unit within a chapter. Instance of `chapter--page-##`. Contains a mosaic grid.
+- **Richtext** -- Long-form editorial text. Figma component: `richtext`. Template: `richtext.njk`. CSS class: `.richtext`. Used in both pipelines. Handles `p`, `h2`, `h3`, `ul`, `ol`.
+- **Mosaic** -- The CSS Grid inside a `.mosaic` component instance. Tiles are `<article>` elements. Driven by container queries. Any reference to "bento", "bento grid", or "bento layout" must use "mosaic" instead. YAML key `tiles:` maps to `<article>` elements -- intentional split.
+- **Mosaic tile** -- Individual cell inside `.mosaic`.
+- **2-col Grid** -- The simplified two-column layout grid active at 640px-1247px.
+- **FF Grid** -- The full 5-IU macro page grid. Active at >= 1248px viewport for special-case page types. Not the default container for case study pages.
+- **pageKey** -- Kebab-case slug identifying a page. Must match folder name in `src/_data/pages/`.
+- **Compiled page** -- A page whose content is defined entirely in YAML and rendered through a pipeline template. No inline content in `.njk` files.
 
 ---
 
 ## Layout Grid System
 
-Three tiers, small → large. Defined in `src/assets/scss/_layout.scss`.
+Three tiers, small -> large. Defined in `src/assets/scss/_layout.scss`.
 
 | Tier | Viewport | Grid | Notes |
 |---|---|---|---|
-| **Block** | `< 640px` | No grid — content stacks | 24px inline padding on `.layout__page` |
-| **2-col Grid** | `640px – 1247px` | `1.5rem | 14rem | 3rem | 1fr | 1.5rem` | `--scale-base: 14px` overridden here |
-| **FF Grid** | `≥ 1248px` | 5-IU Field and Frame, fixed 2016px | Special-case page types only |
+| **Block** | `< 640px` | No grid -- content stacks | 24px inline padding on `.layout__page` |
+| **2-col Grid** | `640px - 1247px` | `1.5rem | 14rem | 3rem | 1fr | 1.5rem` | `--scale-base: 14px` overridden here |
+| **FF Grid** | `>= 1248px` | 5-IU Field and Frame, fixed 2016px | Special-case page types only |
 
 **FF Grid geometry:**
-- IU Wide: 384 × 240px
-- IU Split: 384 × 390px
+- IU Wide: 384 x 240px
+- IU Split: 384 x 390px
 - Gutter: 24px
 - Field: 2016px (5 IUs + 4 gutters)
-- Frame: 1200px wide × 750px tall
+- Frame: 1200px wide x 750px tall
 
 **FF Grid column lines (10 lines, px positions):**
 `1=0  2=384  3=408  4=792  5=816  6=1200  7=1224  8=1608  9=1632  10=2016`
@@ -237,18 +237,26 @@ Three tiers, small → large. Defined in `src/assets/scss/_layout.scss`.
 
 Type scales are controlled by `--scale-base` in `src/assets/scss/_tokens--primitives.scss`. All type tokens derive from it via `calc(var(--scale-base) * N)`.
 
-**Design philosophy:** Block (phone) and FF Grid (desktop) are the two primary designed states — both run at `--scale-base: 16px`. The 2-col Grid tier is the adaptation layer: `--scale-base` drops to 14px so columns and type shrink together.
+**Design philosophy:** Block (phone) and desktop (2-col Grid + FF Grid) are both `--scale-base: 16px`. The block tier applies explicit overrides in `_typography.scss` where proportional scaling isn't right for narrow columns.
 
-| Style | Element / Class | Block `< 640px` | 2-col Grid `640–1247px` | FF Grid `≥ 1248px` |
-|---|---|---|---|---|
-| **h1** Raleway Bold | `h1` | 40px / 48px | 49px / 56px | 56px / 64px |
-| **h2** Raleway Semibold | `h2` | 28px / 32px | 28px / 42px | 32px / 48px |
-| **h2 quiet** Raleway Regular | `h2.header__headline--quiet` | 20px / 28px | 21px / 42px | 24px / 48px |
-| **h3** Raleway Regular | `h3` | 20px / 28px | 21px / 42px | 24px / 48px |
-| **p** PT Sans Regular | `p` | 16px / 28px | 14px / 24.5px | 16px / 28px |
-| **eyebrow** Raleway Regular caps | `.header__eyebrow` | 16px / 32px | 14px / 28px | 16px / 32px |
-| **fineprint** PT Sans Regular | `.fineprint` | 12px / 20px | 10.5px / 17.5px | 12px / 20px |
-| **CTA** Raleway | `.link__label` | 16px / 28px | 14px / 24.5px | 16px / 28px |
+**Figma is the source of truth for all type values. Always read from CGDC-DS before modifying.**
+
+| Style | Token | Block `< 640px` | Desktop `>= 640px` |
+|---|---|---|---|
+| **page title** Raleway Bold | `type/pageTitle/*` | 40px / 48px | 28px / 48px |
+| **h2 / section heading** Raleway Semibold | `type/sectionHeading/*` | 32px / 32px | 32px / 40px |
+| **h3 / subheading** Raleway Regular | `type/subheading/*` | 20px / 28px | 20px / 32px |
+| **p / paragraph** PT Sans Regular | `type/paragraph/*` | 16px / 28px | 16px / 28px |
+| **eyebrow** Raleway Regular caps | `type/eyebrow/*` | 16px / 20px | 16px / 20px |
+| **fineprint** PT Sans Regular | `type/fineprint/*` | 12px / 20px | 12px / 20px |
+| **pill** Raleway Regular caps | `type/pill/*` | 12px / 20px | 12px / 20px |
+
+Notes:
+- `pageTitle` is used for the case study page `<h1>` only (via `page-header` component).
+- `sectionHeading` is the `h2` global style and the mosaic `mosaic-lead` span.
+- `subheading` is the `h3` global style, the `h2` non-semantic subhead, and the `page-header` subhead.
+- Block overrides are explicit in `_typography.scss`. Desktop values come directly from tokens.
+- The 2-col Grid tier (640-1247px) does not override `--scale-base` for type -- all tiers >= 640px use the same token values.
 
 ---
 
@@ -289,21 +297,23 @@ The Mosaic is the grid composition component for case study pages. Full contract
 
 | Span | Font | Size `clamp` |
 |------|------|-------------|
-| `mosaic-stat` | Playfair Display Bold | `50px → 72px` |
-| `mosaic-lead` | Raleway Regular | `19px → 24px` |
-| `mosaic-lead-italic` | Raleway Italic | `19px → 24px` |
-| `mosaic-body` | PT Sans Regular | `13px → 16px` |
-| `mosaic-body-bold` | PT Sans Bold | `13px → 16px` |
+| `mosaic-stat` | Playfair Display Bold | `50px -> 72px` |
+| `mosaic-lead` | Raleway Regular | `19px -> 24px` |
+| `mosaic-lead-italic` | Raleway Italic | `19px -> 24px` |
+| `mosaic-body` | PT Sans Regular | `13px -> 16px` |
+| `mosaic-body-bold` | PT Sans Bold | `13px -> 16px` |
 
-**Responsive model — container-query driven:**
+**Responsive model -- container-query driven:**
 
 | Container width | Layout | Cell size |
 |---|---|---|
-| Default | 2-up, fluid | MIN → MAX (`minmax(144px, 208px)`) |
-| `content-cell ≥ 624px` | 4-up, `fit-content` | MIN (144px) |
-| `content-cell ≥ 752px` | 4-up, `fit-content` | MONEY (176px) — designed state |
+| Default | 2-up, fluid | MIN -> MAX (`minmax(144px, 208px)`) |
+| `content-cell >= 624px` | 4-up, `fit-content` | MIN (144px) |
+| `content-cell >= 752px` | 4-up, `fit-content` | MONEY (176px) -- designed state |
 
-**Tile types:** `content`, `image`, `image` + `artDirection`, `image` + `scrollable`, `graphic`, `custom`, `skeleton`
+**Tile types:** `content`, `image`, `image` + `artDirection`, `image` + `scrollable`, `skeleton`
+
+**Custom tiles:** `custom: true` is an additive boolean on any base type. When set, a `variant: "name"` string prop is also required — it becomes `data-mosaic-variant` on the article element. No extra CSS class is emitted. All extended behavior (overflow overrides, `::before` pseudo-elements, JS state) hangs off `[data-mosaic-variant]` selectors in the placements file.
 
 **Art-directed image YAML:**
 ```yaml
