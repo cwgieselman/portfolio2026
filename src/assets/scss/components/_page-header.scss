@@ -12,19 +12,6 @@
 /* ── Page header ─────────────────────────────────────────────────────────────*/
 
 .page-header {
-    // Sticky position — starts detached in normal flow, scrolls up to stick
-    // flush below the navbar.
-    //
-    // Load position: header top edge at 224px from viewport top.
-    //   body padding: 48px (navbar)
-    //   layout padding: 16px (content gap)
-    //   margin-block-start: 176px (pushes to designed load position)
-    //   = 240px total
-    //
-    // Height: 192px = 16px top pad + 176px content area (one bento article).
-    // The 16px top pad aligns header content with bento row 1.
-    //
-    // On load the header is transparent — only the text is visible.
     position: sticky;
     top: $chrome-navbar-height + $chrome-content-gap;      // 64px — flush with bento sticky top
     margin-block-start: $chrome-header-height - $chrome-content-gap; // 176px — load position offset
@@ -34,14 +21,7 @@
     z-index: 90;                    // below navbar (100), above content
 }
 
-// Visual treatment on __inner, not on .page-header itself.
-// .page-header has left:0/right:0 — it spans the full viewport.
-// __inner is a grid item constrained to content-start / header-end (624px).
-
 .page-header__frosting {
-    // Decorative frosted glass layer — fixed, behind header content.
-    // Flush under navbar (top: 48px), height covers full header area.
-    // opacity: 0 on load, transitions to 1 when JS adds .is-frosted.
     position: fixed;
     top: $chrome-navbar-height;  // 48px — flush under navbar, no gap
     left: var(--grid-margin);
@@ -62,8 +42,6 @@
 }
 
 .page-header__inner {
-    // Grid item spanning content-start / header-end = 624px.
-    // Pure layout/content container — no visual treatment here.
     grid-column: content-start / header-end;
     display: flex;
     flex-direction: column;
@@ -72,8 +50,10 @@
     height: 100%;
     padding-block: $chrome-content-gap;  // 16px — aligns content with bento row 1
     padding-inline-start: var(--spacing-xl);
-    position: relative;  // sits above __frosting via z-index from .page-header z-index: 90
+    position: relative;
 }
+
+// ── Eyebrow ──────────────────────────────────────────────────────────────────
 
 .page-header__eyebrow {
     display: flex;
@@ -81,35 +61,57 @@
     align-items: center;
 }
 
-.page-header__chip {
-    font-family: var(--font-family-brand);
-    font-size: var(--scale-75);
-    font-weight: var(--font-weight-regular);
-    line-height: var(--scale-125);
-    letter-spacing: 0.25em; // CONTRACT_EXCEPTION: em-based tracking — no em tracking token exists; see Tier 3 token backlog
+// Text variant — single eyebrow string
+.page-header__eyebrow--text {
+    font-family: var(--type-eyebrow-family);
+    font-size: var(--type-eyebrow-size);
+    font-weight: var(--type-eyebrow-weight);
+    line-height: var(--type-eyebrow-lineHeight);
+    letter-spacing: var(--type-eyebrow-letterSpacing);
     text-transform: uppercase;
-    color: var(--color-secondary-70);
-    background-color: var(--color-neutral-20);
-    border: 1px solid var(--color-neutral-50);
+    color: var(--color-eyebrow);
+}
+
+// ── Pill (eyebrow pills variant) ─────────────────────────────────────────────
+// .pill is a standalone component class — not BEM-scoped to page-header.
+// Defined here because page-header is the only current consumer.
+// Move to _pill.scss when a second consumer exists.
+
+.pill {
+    font-family: var(--type-pill-family);
+    font-size: var(--type-pill-size);
+    font-weight: var(--type-pill-weight);
+    line-height: var(--type-pill-lineHeight);
+    letter-spacing: var(--type-pill-letterSpacing);
+    text-transform: uppercase;
+    color: var(--color-pill-text);
+    background-color: var(--color-pill-bg);
+    border: 1px solid var(--color-pill-border);
     border-radius: var(--corner-xxs);
     padding-inline: var(--spacing-xs);
     white-space: nowrap;
 }
 
+// ── Headline ─────────────────────────────────────────────────────────────────
+
 .page-header__headline {
-    font-family: var(--font-family-brand);
-    font-size: var(--scale-175);
-    font-weight: var(--font-weight-semibold);
-    line-height: 2.75rem; // CONTRACT_EXCEPTION: 44px — no --scale-275 token; see Tier 3 token backlog
-    color: var(--color-primary-60);
+    font-family: var(--type-pageTitle-family);
+    font-size: var(--type-pageTitle-size);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--type-pageTitle-lineHeight);
+    color: var(--color-heading);
     margin: 0;
 }
 
+// ── Subhead ───────────────────────────────────────────────────────────────────
+// Raleway Regular at subheading scale — not a paragraph.
+// Matches Figma: font-family brand, 20px / 40px, secondary/70 color.
+
 .page-header__subhead {
-    font-family: var(--font-family-plain);
-    font-size: var(--scale-100);
+    font-family: var(--type-subheading-family);
+    font-size: var(--type-subheading-size);
     font-weight: var(--font-weight-regular);
-    line-height: var(--scale-175);
-    color: var(--color-secondary-70);
+    line-height: var(--type-subheading-lineHeight);
+    color: var(--color-eyebrow);
     margin: 0;
 }

@@ -83,6 +83,9 @@ function valueToCss(value, refToCssVar, type) {
 /**
  * Map token path → CSS variable name.
  * This is where we preserve your existing naming patterns.
+ *
+ * NOTE: Slashes in token path segments (e.g. weight/bold from Figma slash-path
+ * convention) are sanitized to hyphens so CSS custom property names are valid.
  */
 function refToCssVar(fullPath) {
   // fullPath like "primitives.scale.baseRem" or "semantic.space.m"
@@ -102,17 +105,11 @@ function refToCssVar(fullPath) {
   if (setName === "semantic" && rest[0] === "radius")
     return `--corner-${rest[1]}`;
 
-  // --- COMPONENT --------------------------------------------------
-  // component.space.content-rhythm.block -> --content-rhythm--block
-  if (
-    setName === "component" &&
-    rest[0] === "space" &&
-    rest[1] === "content-rhythm"
-  )
-    return `--content-rhythm--${rest[2]}`;
-
-  // Fallback: join path segments with dashes, preserving Figma camelCase names
-  return `--${rest.join("-")}`.replace(/--+/g, "--");
+  // --- FALLBACK ---------------------------------------------------
+  // Join path segments with dashes, sanitize slashes to hyphens,
+  // and collapse any double-dashes produced in the process.
+  // e.g. type.paragraph.weight/bold -> --type-paragraph-weight-bold
+  return `--${rest.join("-").replace(/\//g, "-")}`.replace(/--+/g, "--");
 }
 
 function collectVars(node, prefixPath = []) {

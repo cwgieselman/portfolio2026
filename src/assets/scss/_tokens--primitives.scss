@@ -9,6 +9,8 @@
  * ----------------------------------*/
 
 :root {
+  --color-accent-50: #FF5C04;
+
   --color-neutral-10: #FFFFFF;
   --color-neutral-20: #F8F8F7;
   --color-neutral-50: #ECECE9;
@@ -61,7 +63,9 @@
   --scale-400: calc(var(--scale-base) * 4);
   --scale-450: calc(var(--scale-base) * 4.5);
 
+  --text-leading-loose: var(--scale-50);
+  --text-leading-normal: var(--scale-25);
+  --text-leading-snug: 0px;
+
   --text-tracking-loose: var(--scale-25);
-  --text-tracking-normal: 0px;
-  --text-tracking-snug: calc(var(--scale-25) * -1);
 }

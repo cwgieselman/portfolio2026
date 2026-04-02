@@ -9,21 +9,21 @@
     position: relative;
 
     > * + * {
-        margin-top: var(--content-rhythm--block);
+        margin-top: var(--richtext-block);
     }
 
     p + ul {
-        margin-top: var(--content-rhythm--continuation);
+        margin-top: var(--richtext-continuation);
     }
 
     ul,
     ol {
         margin: 0;
-        padding-inline-start: var(--content-rhythm--list-indent);
+        padding-inline-start: var(--richtext-list-indent);
     }
 
     li + li {
-        margin-top: var(--content-rhythm--continuation);
+        margin-top: var(--richtext-continuation);
     }
 }
 

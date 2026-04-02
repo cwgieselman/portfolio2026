@@ -12,11 +12,6 @@ UX/Design Systems portfolio for Craig Gieselman. Built with 11ty (v3), Nunjucks,
 
 PR descriptions and commit suggestions live in `_docs/`. When given a PR filename to review, also read `_docs/session-state.md` for broader context on why the work was done and what problems it is solving. The PR doc carries commit-specific detail; `session-state.md` carries the why.
 
-| File | Branch / Topic |
-|------|----------------|
-| `PR--bento-responsive.md` | Earlier bento grid work |
-| `PR--bento-image-types-and-typography.md` | Image cell types, 2-up model, typography (March 16 2026) |
-
 ---
 
 ## Visual Regression Testing
@@ -58,30 +53,28 @@ Four Chrome Incognito windows in Responsive Design Mode, set to these exact view
 | Laptop | 1052×657 | Just below the 1052→1053 flip point |
 | Desktop | 1248×848 | Just above the 1248 FF Grid threshold |
 
-The 1052→1053 crossover is where the mosaic switches from 2-up to 5-up. The 1248→1249 crossover is where the macro layout switches from 2-col Grid to FF Grid.
+The 1052→1053 crossover is where the macro layout switches from 2-col Grid to FF Grid.
+The mosaic switches from 2-up to 4-up at container width 624px (MIN cells) and 752px (MONEY cells).
 
 ---
 
-## Token Sync Workflow (Figma → GitHub)
+## Token Sync Workflow (Figma → Code)
 
-1. Update tokens in Figma via the Token Studio plugin
-2. In Token Studio, push to the `tokens/sync` branch
-3. GitHub Action triggers automatically — runs `tokens:build`, commits the generated SCSS
-4. A PR from `tokens/sync` → `main` is opened (or updated if one is already open)
-5. Review and merge
+Token Studio has been decommissioned. The active workflow is:
 
-Token Studio sync settings (configure once in the plugin):
-- Repository: `cwgieselman/portfolio2026`
-- Branch: `tokens/sync`
-- File path: `tokens/tokens.json`
-- Auth: GitHub Personal Access Token (stored in plugin, not in repo)
+1. Open a Claude.ai session with Figma MCP connected
+2. Read variables from the CGDC-DS Figma file via `use_figma`
+3. Write updated values to `tokens/tokens.json` via the filesystem MCP
+4. Run `npm run tokens:build` to regenerate SCSS token files
+5. Commit `tokens/tokens.json` and the generated `_tokens--*.scss` files together
 
-**Important:** The GitHub Action only fires on pushes to `tokens/sync`. If `tokens/tokens.json` is edited directly on a feature branch, run `npm run tokens:build` manually before committing to keep the generated SCSS in sync.
+**Important:** Run `npm run tokens:build` after any edit to `tokens/tokens.json`.
+The `tokens/sync` branch prefix is retired — do not use it.
 
 ## Project Architecture
 
 ```
-Figma JSON (design intent, not consumed by templates)
+Figma (design intent — not consumed directly by templates)
   ↓
 YAML (implementation contract — the ONLY data source for templates)
   ↓
@@ -92,7 +85,13 @@ Rendered HTML
 CSS (layout + styling via Sass, compiled natively by 11ty)
 ```
 
-Active rendering pipeline: `compiled-page.njk → page.njk → content-cell.njk → component includes`
+**Two active rendering pipelines:**
+
+Pipeline A — Chapter/Page/Mosaic (case study pages):
+`compiled-page.njk` → chapter/page layout → `components/mosaic.njk`
+
+Pipeline B — Executor (non-mosaic pages):
+`compiled-page.njk` → `page.njk` → `content-cell.njk` → component includes
 
 YAML lives in `src/_data/pages/<pageKey>/page.yml`. The data loader is `src/_data/pages.js`.
 
@@ -102,7 +101,7 @@ Read `CONTRACT.md` before modifying any template, executor, component, or data f
 
 ### No Invention
 
-Never invent copy, labels, alt text, captions, or URLs. All string content comes from Figma JSON or is marked `TODO:<field>`. This applies to YAML generation, template output, and any content-touching work.
+Never invent copy, labels, alt text, captions, or URLs. All string content comes from Figma or is marked `TODO:<field>`. This applies to YAML generation, template output, and any content-touching work.
 
 ### Deterministic Rendering
 
@@ -112,7 +111,7 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 - Missing required fields must emit visible error comments: `<!-- <SCOPE>_ERROR: <message> -->`
 - Unknown includes must emit: `<!-- UNKNOWN_INCLUDE: ... -->`
 
-### Executor Contract (content-cell.njk)
+### Executor Contract (Pipeline B only — content-cell.njk)
 
 - Each include receives a single `params` object and renders only that object.
 - Safelisted includes only: `figure.njk`, `header.njk`, `link-block.njk`, `richtext.njk`
@@ -120,8 +119,8 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
 
 ### CSS / Layout Rules
 
-- No `position: absolute`, no transform offsets, no negative margins.
-- Placement uses named grid lines (`grid-column`, `grid-row`).
+- No `position: absolute`, no transform offsets, no negative margins (except documented CONTRACT_EXCEPTION blocks in SCSS).
+- Placement uses `grid-column`, `grid-row`.
 - No `var(--token, fallback)` — fallback values in CSS custom properties are prohibited.
 - No magic numbers. Every spacing/typography/layout value must trace to a token.
 - Display typography (h1, h2) uses explicit grid-snapped line-height tokens, not multipliers.
@@ -134,7 +133,7 @@ Never invent copy, labels, alt text, captions, or URLs. All string content comes
   - `src/assets/scss/_tokens--semantic.scss`
   - `src/assets/scss/_tokens--component.scss`
 - Run `npm run tokens:build` after editing `tokens/tokens.json`.
-- Legacy tokens in `_tokens--legacy.scss` exist for backward compatibility until Token Studio pipeline is fully populated.
+- Token Studio is decommissioned. Do not reinstall.
 
 ## Development Workflow
 
@@ -174,12 +173,10 @@ Prefix signals intent; slug identifies subject. Format: `<prefix>/<short-slug>`
 
 | Prefix | Intent | Example |
 |---|---|---|
-| `rehab/` | Restore integrity, eliminate drift | `rehab/bento-grid-rename` |
+| `rehab/` | Restore integrity, eliminate drift | `rehab/mosaic-rename` |
 | `stabilize/` | Contract alignment, systemic corrections | `stabilize/executor-safelist` |
 | `build/` | New feature work | `build/inficon-impact-manager` |
 | `experiment/` | Prototypes and exploration | `experiment/grid-offset-layout` |
-
-`tokens/sync` is reserved for the Token Studio pipeline — do not use this prefix for manual branches.
 
 ## File Boundaries
 
@@ -190,25 +187,24 @@ Prefix signals intent; slug identifies subject. Format: `<prefix>/<short-slug>`
 ## Key Reference Files
 
 - `CONTRACT.md` — Normative render contract, component APIs, all invariants
-- `scripts/COMPILE_PROMPTS.md` — Full page compile prompt (Figma JSON → YAML + placements + report)
+- `scripts/COMPILE_PROMPTS.md` — Full page compile prompt (Figma → YAML + placements + report)
 
 ---
 
 ## Terminology
 
-**Layout grid names are canonical. Use these exactly. Do not invent synonyms.**
+**These names are canonical. Use them exactly. Do not invent synonyms.**
 
-- **Field and Frame Grid** (abbrev: **FF Grid**) — The full 5-IU macro page grid defined in `_layout.scss`. Five IUs, four gutters, named column and row lines, fixed geometry. Active at ≥ 1248px viewport. Any reference to "the macro grid", "the page grid", "the 5-col grid", or similar must use this name instead.
-- **2-col Grid** — The simplified two-column layout grid active at 640px–1247px. Columns: `1.5rem | 14rem text | 3rem gap | 1fr figure | 1.5rem`. `--scale-base` is overridden to 14px in this tier so columns and type shrink together. Any reference to "the mid-tier grid", "the responsive grid", "the text/figure grid", or similar must use this name instead.
-- **Mosaic** — The CSS Grid inside a `.mosaic` component instance. Tiles are `<article>` elements. Driven by container queries on the parent `content-cell`. Any reference to "the bento layout", "the bento grid", or similar must use "mosaic" instead. YAML key `tiles:` maps to HTML `<article>` elements — intentional split.
-- **Field** — Compositional lattice built from Interface Units. Provides rhythm and alignment.
-- **Frame** — Live area of the page where the main editorial point lives.
-- **Force** — Editorial posture of a page (Contextual, Interpretive, Authorial).
-- **Interface Unit (IU)** — Atomic building block. Two types: Wide (desktop) and Split (two mobiles).
-- **Offset** — Emergent condition when two Fields interact inside one Frame. Max one per Frame.
+- **Story** — The full case study page. CSS class `layout__story`.
+- **Chapter** — A narrative unit. Instance of `chapter-##`. Contains a skeleton (P00), pages (P01–PN), and a field text block.
+- **Page** — A scroll-stack unit within a chapter. Instance of `chapter--page-##`. Contains a mosaic grid.
+- **Field text** — Short editorial text above a chapter's mosaic. Instance of `chapter--content`.
+- **Mosaic** — The CSS Grid inside a `.mosaic` component instance. Tiles are `<article>` elements. Driven by container queries. Any reference to "bento", "bento grid", or "bento layout" must use "mosaic" instead. YAML key `tiles:` maps to `<article>` elements — intentional split.
+- **Mosaic tile** — Individual cell inside `.mosaic`.
+- **2-col Grid** — The simplified two-column layout grid active at 640px–1247px.
+- **FF Grid** — The full 5-IU macro page grid. Active at ≥ 1248px viewport for special-case page types. Not the default container for case study pages.
 - **pageKey** — Kebab-case slug identifying a page. Must match folder name in `src/_data/pages/`.
-- **sectionKey** — Identifies a narrative chapter. Drives heading ID derivation.
-- **Compiled page** — A page whose content is defined entirely in YAML and rendered through the executor pipeline. No inline content in `.njk` files.
+- **Compiled page** — A page whose content is defined entirely in YAML and rendered through a pipeline template. No inline content in `.njk` files.
 
 ---
 
@@ -220,15 +216,14 @@ Three tiers, small → large. Defined in `src/assets/scss/_layout.scss`.
 |---|---|---|---|
 | **Block** | `< 640px` | No grid — content stacks | 24px inline padding on `.layout__page` |
 | **2-col Grid** | `640px – 1247px` | `1.5rem | 14rem | 3rem | 1fr | 1.5rem` | `--scale-base: 14px` overridden here |
-| **FF Grid** | `≥ 1248px` | 5-IU Field and Frame, fixed 2016px | Centered via `left: 50% / translateX(-50%)` |
+| **FF Grid** | `≥ 1248px` | 5-IU Field and Frame, fixed 2016px | Special-case page types only |
 
 **FF Grid geometry:**
 - IU Wide: 384 × 240px
 - IU Split: 384 × 390px
 - Gutter: 24px
 - Field: 2016px (5 IUs + 4 gutters)
-- Frame: 1200px wide × 750px tall (3 IUs + 2 gutters; 16:10 aspect ratio)
-- Page height: 1182px (3 Wide + 1 Split + 3 gutters)
+- Frame: 1200px wide × 750px tall
 
 **FF Grid column lines (10 lines, px positions):**
 `1=0  2=384  3=408  4=792  5=816  6=1200  7=1224  8=1608  9=1632  10=2016`
@@ -236,23 +231,15 @@ Three tiers, small → large. Defined in `src/assets/scss/_layout.scss`.
 **FF Grid row lines (16 lines, px positions):**
 `1=0  2=216  3=240  4=264  5=390  6=414  7=504  8=528  9=654  10=678  11=768  12=792  13=918  14=942  15=966  16=1182`
 
-**Key named lines:**
-- `frame-start` = col line 3 (408px)
-- `frame-end` = col line 8 (1608px)
-- `frameTop` = row line 2 (216px)
-- `frameBottom` = row line 15 (966px)
-
 ---
 
 ## Typography System
 
 Type scales are controlled by `--scale-base` in `src/assets/scss/_tokens--primitives.scss`. All type tokens derive from it via `calc(var(--scale-base) * N)`.
 
-**Design philosophy:** Block (phone) and FF Grid (desktop) are the two primary designed states — both run at `--scale-base: 16px` (native). The 2-col Grid tier is the adaptation layer: `--scale-base` drops to 14px so columns and type shrink together, buying room for the figure column without the type feeling broken.
+**Design philosophy:** Block (phone) and FF Grid (desktop) are the two primary designed states — both run at `--scale-base: 16px`. The 2-col Grid tier is the adaptation layer: `--scale-base` drops to 14px so columns and type shrink together.
 
-**Block-tier overrides** are explicit in `src/assets/scss/_typography.scss` using `@media (max-width: 639px)`. The 2-col Grid tier adjustments fall through automatically from the `--scale-base: 14px` override in `_layout.scss` — no separate overrides needed for that tier.
-
-| Style | Element / Class | Block `< 640px` 🟢 native | 2-col Grid `640–1247px` ⚠️ adapted | FF Grid `≥ 1248px` 🟢 native |
+| Style | Element / Class | Block `< 640px` | 2-col Grid `640–1247px` | FF Grid `≥ 1248px` |
 |---|---|---|---|---|
 | **h1** Raleway Bold | `h1` | 40px / 48px | 49px / 56px | 56px / 64px |
 | **h2** Raleway Semibold | `h2` | 28px / 32px | 28px / 42px | 32px / 48px |
@@ -263,129 +250,81 @@ Type scales are controlled by `--scale-base` in `src/assets/scss/_tokens--primit
 | **fineprint** PT Sans Regular | `.fineprint` | 12px / 20px | 10.5px / 17.5px | 12px / 20px |
 | **CTA** Raleway | `.link__label` | 16px / 28px | 14px / 24.5px | 16px / 28px |
 
-**Notes:**
-- h2 quiet and h3 are intentionally identical at every tier. The semantic difference is the HTML element (`h2` vs `h3`), not the visual treatment. Use `h2` + `variant: "quiet"` on sub-pages where `h3` can't be used because there's no `h2` above it in the hierarchy.
-- The `headline` param on `components/header.njk` passes through `| safe`, permitting inline HTML. Use `<span class="nobr">...</span>` to prevent proper names or product names from breaking across lines.
-- Block-tier h1 override: `--scale-250` / `--scale-300` (40px / 48px at 16px base).
-- Block-tier h2 override: `--scale-175` / `--scale-200` (28px / 32px at 16px base).
-- Block-tier h3 and h2 quiet override: `--scale-125` / `--scale-175` (20px / 28px at 16px base).
-
 ---
 
 ## Image Handling
 
 - Using passthrough `<img>` only (`components/figure.njk`).
 - `src` must be a public path under `/assets/images/`.
-- `@11ty/eleventy-img` async shortcode is available but not yet wired in. Enable only after deterministic verification.
+- `@11ty/eleventy-img` async shortcode available but not yet wired. Enable only after deterministic verification.
 
 ## Data File Naming
 
-Data files referenced directly in Nunjucks templates (via `{{ varName.property }}`) must use **camelCase or single-hyphen names**. Double-hyphen names (e.g. `inficon--discovery-bento.yml`) are parsed by Nunjucks as arithmetic and will silently fail.
+Data files referenced in Nunjucks templates must use **camelCase or single-hyphen names**. Double-hyphen names are parsed by Nunjucks as arithmetic and will silently fail.
 
 - Safe: `bentoDiscovery.yml`, `bento-discovery.yml`
-- Unsafe: `inficon--discovery-bento.yml` (double-hyphen breaks template access)
-
-The current `inficon--discovery-bento.yml` is accessed via the `bentoDiscovery.js` wrapper, which renames it. New bento YAML files should follow camelCase naming from the start.
+- Unsafe: `inficon--discovery-bento.yml`
 
 ---
 
 ## Mosaic System
 
-The Mosaic is the grid composition component for case study pages. YAML key `tiles:` maps to HTML `<article>` elements — intentional split; document in CONTRACT.md.
+The Mosaic is the grid composition component for case study pages. Full contract in CONTRACT.md.
 
 **Files:**
-- Template: `src/_includes/components/mosaic.njk` — full API docs in the file header
+- Template: `src/_includes/components/mosaic.njk`
 - Styles: `src/assets/scss/components/_mosaic.scss`
-- Themes: `src/assets/scss/components/_mosaic.scss` (theme rulesets in the `// -- Themes` section)
-- Retired: `src/assets/scss/components/_bento-backgrounds.scss`, `src/_data/bentoDiscovery.js`, `src/_data/inficon--discovery-bento.yml`, `src/bento-test.njk`, `src/_includes/layouts/section.njk`
-- One-off overrides: `src/assets/scss/components/mosaic-tiles/` — add partials here, uncomment import in `main.scss`
+- Placements: `src/assets/scss/placements/_<pageKey>.scss`
 
-**Four named themes** (set via `theme:` in YAML):
-- `primary-dark` — primary/60 bg, primary/10 text, primary/80 border
-- `primary-light` — primary/20 bg, primary/60 text, primary/30 border
-- `secondary-dark` — secondary/50 bg, secondary/80 text, secondary/60 border
-- `secondary-light` — secondary/20 bg, secondary/70 text, secondary/30 border
+**Retired (do not reference):**
+- `src/assets/scss/components/_bento-backgrounds.scss`
+- `src/_data/bentoDiscovery.js`
+- `src/_data/inficon--discovery-bento.yml`
+- `src/bento-test.njk`
+- `src/_includes/layouts/section.njk`
 
-**Typography spans** (inline in any text field, all pass through `| safe`):
+**Five named themes:** `primary-dark`, `primary-light`, `secondary-dark`, `secondary-light`, `default`
 
-| Span | Font | Size `clamp` | Line-height `clamp` | Align |
-|------|------|-------------|---------------------|-------|
-| `mosaic-stat` | Tienne Bold | `50px → 72px` (`36cqi`) | `1` | center (axiomatic) |
-| `mosaic-lead` | Raleway Regular | `19px → 24px` (`13.2cqi`) | `24px → 30px` (`17cqi`) | center (axiomatic) |
-| `mosaic-lead-italic` | Raleway Italic | `19px → 24px` (`13.2cqi`) | `24px → 30px` (`17cqi`) | center (axiomatic) |
-| `mosaic-body` | PT Sans Regular | `13px → 16px` (`9.2cqi`) | `18px → 24px` (`13cqi`) | left (default) |
-| `mosaic-body-bold` | PT Sans Bold | `13px → 16px` (`9.2cqi`) | `18px → 24px` (`13cqi`) | left (default) |
+**Inline typography spans** (pass through `| safe`):
 
-**Axiomatic centering:** `.mosaic-tile:has(.mosaic-lead, .mosaic-lead-italic, .mosaic-stat)` sets `text-align: center` on the tile — all child spans inherit it. No per-span alignment needed. Body-only tiles stay left-aligned by default. Images unaffected.
+| Span | Font | Size `clamp` |
+|------|------|-------------|
+| `mosaic-stat` | Playfair Display Bold | `50px → 72px` |
+| `mosaic-lead` | Raleway Regular | `19px → 24px` |
+| `mosaic-lead-italic` | Raleway Italic | `19px → 24px` |
+| `mosaic-body` | PT Sans Regular | `13px → 16px` |
+| `mosaic-body-bold` | PT Sans Bold | `13px → 16px` |
 
-**Computed sizes across mosaic states:**
+**Responsive model — container-query driven:**
 
-| Style | 2-up MIN `~167px` | 2-up MAX `208px` | 5-up MIN `140px` | 5-up MAX `208px` |
-|-------|-------------------|------------------|------------------|------------------|
-| **stat** `size / lh` | `60px / 1` | `72px / 1` | `50px / 1` | `72px / 1` |
-| **lead** `size / lh` | `22px / 28px` | `24px / 30px` | `19px / 24px` | `24px / 30px` |
-| **body** `size / lh` | `15px / 22px` | `16px / 24px` | `13px / 18px` | `16px / 24px` |
-
-**Responsive model — container-query driven, small → large:**
-
-| Threshold | Layout | Tile size |
+| Container width | Layout | Cell size |
 |---|---|---|
-| Default (no query) | 2-up, `width: 100%` | fluid `min(1fr, 208px)` |
-| `content-cell ≥ 500px` | 2-up, `width: 100%` | 208px capped |
-| `content-cell ≥ 732px` | 5-up, `width: fit-content` | 140px min (reset) |
-| `content-cell ≥ 900px` | 5-up, `width: fit-content` | 208px max |
+| Default | 2-up, fluid | MIN → MAX (`minmax(144px, 208px)`) |
+| `content-cell ≥ 624px` | 4-up, `fit-content` | MIN (144px) |
+| `content-cell ≥ 752px` | 4-up, `fit-content` | MONEY (176px) — designed state |
 
-The Mosaic 5-up threshold (732px) fires at ~1052px viewport in the 2-col Grid tier. Below that it is always 2-up. In the FF Grid tier the figure content-cell is always ≥ 792px so 5-up is always active.
+**Tile types:** `content`, `image`, `image` + `artDirection`, `image` + `scrollable`, `graphic`, `custom`, `skeleton`
 
-**2-up layout model (content-driven rows):**
-`.mosaic-tile__inner` is always `position: relative`. In 2-up, content drives row height via normal flow — same-row tiles share height automatically via grid row track sizing. In 5-up, the grid track defines the tile height and `__inner` fills it via `height: 100%`. No `position: absolute` is used anywhere in the mosaic system.
-
-**Cascade note:** 2-up aspect-ratio rules (e.g. `aspect-ratio: 4/5` on `--image-directed`) are declared before the 5-up container query in `_mosaic.scss`. The 5-up unset uses a doubled class selector (`.mosaic-tile--image-directed.mosaic-tile--image-directed`) to beat the base rule on specificity, since container queries add no specificity and the base rule compiles after the container query block.
-
-**Tile types — full inventory:**
-
-| `type:` | Class | 2-up behavior | 5-up behavior | Use for |
-|---------|-------|---------------|---------------|---------|
-| `content` | `mosaic-tile--content` | content-driven height | fills grid track | text, stats, quotes |
-| `image` | `mosaic-tile--image` | fills width, content-driven height | fills grid track, `object-fit: cover` | photos that work at any ratio |
-| `image` + `artDirection: true` | `mosaic-tile--image-directed` | `aspect-ratio: 4/5`, viewport-switched `<picture>` | fills grid track, `object-fit: cover` | photos needing specific crops per context |
-| `image` + `scrollable: true` | two siblings: `--image-desktop` + `--image-scrollable` | scrollable window `2×tile` tall, 4-way scroll, no srcset | normal image tile | wide process artifacts, FigJam boards, diagrams |
-| `graphic` | `mosaic-tile--graphic` | `aspect-ratio: 1`, `object-fit: contain`, padded | fills grid track, `object-fit: contain` | square illustrations, diagrams, small graphics |
-
-**`type: graphic` replaces `isCustom`** — `isCustom` was a reserved escape hatch for tiles needing external CSS/JS. `graphic` is the semantic replacement. It is the correct hook for animated or externally-driven assets (Lottie, CSS animation, canvas). External asset wiring (via `cssClass:`, `jsInclude:`, or similar YAML fields) to be defined when first needed.
-
-TODO (future): define the external asset hook API on `graphic` tiles for animation/interactivity.
-
-**Art-directed image YAML example:**
+**Art-directed image YAML:**
 ```yaml
 - id: article-03
   type: image
   artDirection: true
   media:
-    src: "/assets/images/photo--landscape.jpg"      # 5-up (≥ 1052px)
-    mobileSrc: "/assets/images/photo--CROP.jpg"     # 2-up (< 1052px)
+    src: "/assets/images/photo--landscape.jpg"
+    mobileSrc: "/assets/images/photo--square.jpg"
     hasAlt: true
     alt: "Descriptive alt text"
 ```
 
-**Scrollable image YAML example:**
+**Scrollable image YAML:**
 ```yaml
 - id: article-07
   type: image
   scrollable: true
   media:
-    src: "/assets/images/figjam--wide.png"          # 5-up desktop instance
-    scrollSrc: "/assets/images/figjam--wide.png"    # 2-up scrollable instance (no srcset)
+    src: "/assets/images/figjam--wide.png"
+    scrollSrc: "/assets/images/figjam--wide.png"
     hasAlt: true
     alt: "Descriptive alt text"
 ```
-
-The 1052px breakpoint in `<source media>` (art direction) and the `732px` container query (scrollable show/hide) are both proxies for the 2-up → 5-up flip. Tightly coupled to the figure column layout — revisit if layout context changes.
-
-TODO (future): make `mobileSrc` crop generation programmable via Sharp at build time from a crop region defined in YAML, rather than requiring manual export.
-
-**Stat tile display font:** Tienne Bold (loaded via Google Fonts). Font family token: `--font-family-display`.
-
-**Token additions made manually** (pending Token Studio sync):
-- `scale.450` (72px), `font-family.display` (Tienne), `component.mosaic.theme.*`, `component.mosaic.type.*`
-- `--font-family-display` and `--scale-450` are now generated into `_tokens--primitives.scss`.

@@ -1,0 +1,20 @@
+{#
+  pill.njk
+  ─────────────────────────────────────────────────────────────────────────────
+  Small labeled badge. Taxonomy and categorization use only.
+  Not interactive — no click, select, or dismiss behavior.
+
+  Figma component: _pill (CGDC Components--Ready)
+  Figma prop: text#3183:15 (TEXT)
+
+  Expects (via pillParams):
+  - text: string (required)
+
+  DOM:
+    <span class="pill">text</span>
+  ─────────────────────────────────────────────────────────────────────────────
+#}
+
+{% if pillParams and pillParams.text %}
+<span class="pill">{{ pillParams.text }}</span>
+{% endif %}

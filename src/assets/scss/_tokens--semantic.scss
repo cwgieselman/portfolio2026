@@ -10,8 +10,28 @@
 
 :root {
   --color-bg: var(--color-neutral-20);
+  --color-body: var(--color-primary-70);
+
+  --color-button-primary-bg: var(--color-primary-60);
+  --color-button-primary-border: var(--color-primary-70);
+  --color-button-primary-text: var(--color-primary-10);
+
+  --color-button-secondary-bg: var(--color-primary-20);
+  --color-button-secondary-border: var(--color-primary-30);
+  --color-button-secondary-text: var(--color-primary-70);
+
+  --color-cta-primary: var(--color-primary-60);
+  --color-cta-secondary: var(--color-primary-50);
+
+  --color-eyebrow: var(--color-secondary-70);
   --color-focus: var(--color-primary-50);
-  --color-text: var(--color-primary-70);
+  --color-heading: var(--color-primary-60);
+
+  --color-link-default: var(--color-secondary-70);
+
+  --color-pill-bg: var(--color-neutral-20);
+  --color-pill-border: var(--color-neutral-50);
+  --color-pill-text: var(--color-secondary-80);
 
   --corner-none: 0px;
   --corner-xxs: var(--scale-25);
@@ -32,7 +52,6 @@
   --spacing-xxl: var(--scale-200);
   --spacing-xxxl: var(--scale-250);
 
-  --type-ctaLink-color: var(--color-secondary-40);
   --type-ctaLink-family: var(--font-family-brand);
   --type-ctaLink-lineHeight: var(--scale-175);
   --type-ctaLink-size: var(--scale-100);
@@ -40,10 +59,9 @@
   --type-ctaLink-weight-primary: var(--font-weight-bold);
   --type-ctaLink-weight-secondary: var(--font-weight-semibold);
 
-  --type-eyebrow-color: var(--color-secondary-80);
   --type-eyebrow-family: var(--font-family-brand);
   --type-eyebrow-letterSpacing: var(--scale-25);
-  --type-eyebrow-lineHeight: var(--scale-200);
+  --type-eyebrow-lineHeight: var(--scale-125);
   --type-eyebrow-size: var(--scale-100);
   --type-eyebrow-weight: var(--font-weight-regular);
 
@@ -52,28 +70,30 @@
   --type-fineprint-size: var(--scale-75);
   --type-fineprint-weight: var(--font-weight-regular);
 
-  --type-pageTitle-color: var(--color-primary-50);
   --type-pageTitle-family: var(--font-family-brand);
-  --type-pageTitle-lineHeight: var(--scale-400);
-  --type-pageTitle-size: var(--scale-350);
+  --type-pageTitle-lineHeight: var(--scale-300);
+  --type-pageTitle-size: var(--scale-175);
   --type-pageTitle-weight: var(--font-weight-bold);
 
   --type-paragraph-family: var(--font-family-plain);
   --type-paragraph-lineHeight: var(--scale-175);
   --type-paragraph-size: var(--scale-100);
   --type-paragraph-weight: var(--font-weight-regular);
+  --type-paragraph-weight-bold: var(--font-weight-bold);
 
-  --type-paragraphLead-weight: var(--font-weight-regular);
+  --type-pill-family: var(--font-family-brand);
+  --type-pill-letterSpacing: var(--scale-25);
+  --type-pill-lineHeight: var(--scale-125);
+  --type-pill-size: var(--scale-75);
+  --type-pill-weight: var(--font-weight-regular);
 
-  --type-sectionHeading-color: var(--color-primary-60);
   --type-sectionHeading-family: var(--font-family-brand);
   --type-sectionHeading-lineHeight: var(--scale-300);
   --type-sectionHeading-size: var(--scale-200);
   --type-sectionHeading-weight: var(--font-weight-semibold);
 
-  --type-subheading-color: var(--color-primary-70);
   --type-subheading-family: var(--font-family-brand);
-  --type-subheading-lineHeight: var(--scale-300);
-  --type-subheading-size: var(--scale-150);
-  --type-subheading-weight: var(--font-weight-semibold);
+  --type-subheading-lineHeight: var(--scale-250);
+  --type-subheading-size: var(--scale-125);
+  --type-subheading-weight: var(--font-weight-regular);
 }

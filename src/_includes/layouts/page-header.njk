@@ -1,9 +1,8 @@
 {#
   page-header — sticky page-level h1 header
 
-  Scope: one per page, always h1, always sticky position.
+  Scope: one per page, always h1, always sticky.
   Sibling to .layout__story and .page-header__frosting inside <main>.
-
   Carries .layout__chapter so it shares identical column tracks,
   padding, and named lines with the scrolling content below.
 
@@ -11,31 +10,50 @@
   a fixed sibling div in the page template (index.njk), not here.
   JS toggles .is-frosted on that element at the scroll threshold.
 
-  Expects (via data.header):
-  - eyebrow: string (· separated, split into chips)
-  - showEyebrow: boolean
-  - headline: string — the page h1
-  - subhead: string
-  - showSubhead: boolean
+  Figma component: page-header (CGDC Components--Ready, id: 3124:1147)
+
+  YAML shape (data.pageHeader):
+    pageHeader:
+      headline: string                  — required, the page h1
+      showEyebrow: boolean
+      eyebrowType: "text" | "pills"
+      eyebrow: string                   — only when eyebrowType=text
+      pills: [string, ...]              — only when eyebrowType=pills
+      showSubhead: boolean
+      subhead: string
+
+  Eyebrow variants:
+    text  — single string rendered as .page-header__eyebrow--text span
+    pills — array rendered as .pill spans via components/pill.njk
 #}
 
-{% set h = data.header %}
+{% set h = data.pageHeader %}
 
 {% if h %}
 <header class="page-header layout__chapter" aria-label="Page header">
   <div class="page-header__inner">
-    {% if h.showEyebrow and h.eyebrow %}
-    <div class="page-header__eyebrow">
-      {% set chips = h.eyebrow.split(' · ') %}
-      {% for chip in chips %}
-        <span class="page-header__chip">{{ chip }}</span>
-      {% endfor %}
-    </div>
+
+    {% if h.showEyebrow %}
+      {% if h.eyebrowType == "pills" and h.pills %}
+        <div class="page-header__eyebrow">
+          {% for pillText in h.pills %}
+            {% set pillParams = { text: pillText } %}
+            {% include "components/pill.njk" %}
+          {% endfor %}
+        </div>
+      {% elif h.eyebrowType == "text" and h.eyebrow %}
+        <div class="page-header__eyebrow">
+          <span class="page-header__eyebrow--text">{{ h.eyebrow }}</span>
+        </div>
+      {% endif %}
     {% endif %}
-    <h1 class="page-header__headline">{{ h.headline }}</h1>
+
+    <h1 class="page-header__headline">{{ h.headline | safe }}</h1>
+
     {% if h.showSubhead and h.subhead %}
-    <p class="page-header__subhead">{{ h.subhead }}</p>
+      <p class="page-header__subhead">{{ h.subhead }}</p>
     {% endif %}
+
   </div>
 </header>
 {% endif %}
