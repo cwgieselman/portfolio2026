@@ -25,7 +25,7 @@ This document is normative. If generated output conflicts with this contract, ei
 | **Richtext** | — | An ordered sequence of typed prose blocks (paragraphs, headings, lists). Figma component: `richtext`. Template: `components/richtext.njk`. Component tokens: `component/richtext/*`. |
 | **Mosaic** | — | The CSS Grid composition inside a chapter page. Tiles are `<article>` elements. |
 | **Mosaic tile** | — | Individual cell inside a mosaic. YAML key `tiles:` maps to HTML `<article>` elements — intentional split. |
-| **2-col Grid** | — | The simplified two-column layout grid active at 640px–1247px. |
+| **2-col Grid** | — | The simplified two-column layout grid active at 640px-1247px. |
 | **FF Grid** | **FF Grid** | The full 5-IU macro page grid. Preserved for special-case page types; not the default container for case study pages. |
 
 Do not use: "bento", "bento grid", "bento cell", "section", "macro grid", "page grid", "field text", "chapter--content", or any informal synonyms for the terms above.
@@ -33,7 +33,7 @@ Do not use: "bento", "bento grid", "bento cell", "section", "macro grid", "page 
 ---
 
 ## Deterministic Rendering Contract
-Figma → YAML → Eleventy → HTML → CSS
+Figma -> YAML -> Eleventy -> HTML -> CSS
 
 This file defines the non-negotiable structural and rendering rules for the active system.
 
@@ -57,7 +57,7 @@ layouts/page.njk  (chapter/page iteration)
 components/mosaic.njk  (tile rendering)
 ```
 
-YAML structure: `pageHeader → chapters → pages → mosaic → tiles`
+YAML structure: `pageHeader -> chapters -> pages -> mosaic -> tiles`
 
 Richtext blocks within a chapter compile to a `content:` array and render via `components/richtext.njk` directly — not via the executor.
 
@@ -79,7 +79,7 @@ layouts/content-cell.njk
 component include
 ```
 
-YAML structure: `sections → pages → cells → includes`
+YAML structure: `sections -> pages -> cells -> includes`
 
 **Do not mix pipelines.** A page uses one or the other. Never both.
 
@@ -140,9 +140,9 @@ Unknown include paths must render a non-fatal HTML comment in the DOM.
 Format: `<prefix>--<sectionKey>--<pageKey>--<cellName>`
 
 Prefix rules:
-- `header--` → cell contains exactly one child: `header`
-- `figure--` → cell contains exactly one child: `figure`
-- `content--` → everything else
+- `header--` -> cell contains exactly one child: `header`
+- `figure--` -> cell contains exactly one child: `figure`
+- `content--` -> everything else
 
 This convention does NOT apply to mosaic tiles. Mosaic tiles use `data-mosaic-tile` attributes as their CSS hook.
 
@@ -155,7 +155,7 @@ These props control where a content-cell sits within its grid slot when the cell
 | `Vert` | `Default` \| `Center` \| `End` | Vertical (block) |
 | `Horiz` | `Default` \| `Center` \| `End` | Horizontal (inline) |
 
-`Default` → emit nothing. `Center` and `End` produce output. Do not emit to YAML. Do not emit as inline styles.
+`Default` -> emit nothing. `Center` and `End` produce output. Do not emit to YAML. Do not emit as inline styles.
 
 | Prop | Figma value | CSS output |
 |---|---|---|
@@ -231,6 +231,25 @@ Rules:
 - Line-height must be snapped to the 4px metric scale.
 - Multiplier-based leading is not permitted.
 - No inline styles are permitted.
+
+---
+
+## 8. Figma Annotation Conventions
+
+Certain visual properties in Figma are working affordances for the designer only. They convey intent or structure within the design tool but have no CSS equivalent, no YAML representation, and must never be emitted to any output.
+
+**Component boundary outlines:**
+
+Components in the CGDC-DS library that participate in layout compositions carry a 1px dashed border on their outermost node. This is a Figma-only visual affordance — it makes component boundaries legible while composing layouts in the design file. It is not a design property and has no rendered equivalent.
+
+Specification: `stroke: 1px, dashed, outside, on topmost node of component`
+
+Current components carrying this treatment:
+- `richtext`
+- `chapter-##`
+- `chapter--page-##`
+
+The rule is universal and forward-looking: **any 1px dashed border on the topmost node of a CGDC-DS component is a boundary annotation.** When encountered during compile or code review, ignore it entirely. Do not emit it as a border, outline, box-shadow, or any other CSS property. Do not emit it to YAML. Do not log it as a warning.
 
 ---
 
@@ -422,7 +441,7 @@ Include: `components/link.njk`
 
 ### Rules
 
-- If `URL` exists → render `<a>`. If absent → render disabled `<span>`.
+- If `URL` exists -> render `<a>`. If absent -> render disabled `<span>`.
 - No defaults. Callers must provide explicit values.
 
 ---
@@ -436,7 +455,7 @@ Include: `components/link.njk`
 Component: `page-header` (CGDC library)
 Template context: direct child of the root story frame. Rendered once per case study page.
 
-### Figma Props → YAML
+### Figma Props -> YAML
 
 | YAML key | Figma prop | Notes |
 |---|---|---|
@@ -448,8 +467,8 @@ Template context: direct child of the root story frame. Rendered once per case s
 
 **Eyebrow variants** — `_page-header__eyebrow` has `type` VARIANT (`text` | `pills`):
 
-- `type=text` → emit `eyebrowType: "text"`, `eyebrow: "<string>"`
-- `type=pills` → emit `eyebrowType: "pills"`, `pills: ["text1", "text2", ...]` (extract `text#3183:15` from each `_pill` instance in the Slot)
+- `type=text` -> emit `eyebrowType: "text"`, `eyebrow: "<string>"`
+- `type=pills` -> emit `eyebrowType: "pills"`, `pills: ["text1", "text2", ...]` (extract `text#3183:15` from each `_pill` instance in the Slot)
 
 ### YAML Shape
 
@@ -473,7 +492,7 @@ pageHeader:
 Component: `heading` (CGDC library)
 Template context: used within richtext content sequences. Not used inside mosaic tiles.
 
-### Figma Props → YAML
+### Figma Props -> YAML
 
 | YAML key | Figma prop | Notes |
 |---|---|---|
@@ -503,7 +522,7 @@ Grid composition component for case study chapter pages. Renders a set of tiles 
 {{ mosaic(cell.mosaic) }}
 ```
 
-### Responsive Model — container-query driven, small → large
+### Responsive Model — container-query driven, small -> large
 
 Cell size has three authored states — it never interpolates between them:
 
@@ -518,8 +537,8 @@ Gap: `clamp(8px, 2cqi, 16px)` — fluid between states, 16px at designed states.
 | Container query threshold | Layout | Cell size |
 |---|---|---|
 | Default (no query) | 2-up, `width: 100%` | fluid `minmax(144px, 208px)` |
-| `content-cell ≥ 624px` | 4-up, `width: fit-content` | MIN (144px) |
-| `content-cell ≥ 752px` | 4-up, `width: fit-content` | MONEY (176px) |
+| `content-cell >= 624px` | 4-up, `width: fit-content` | MIN (144px) |
+| `content-cell >= 752px` | 4-up, `width: fit-content` | MONEY (176px) |
 
 ### Tile Types
 
@@ -529,9 +548,11 @@ Gap: `clamp(8px, 2cqi, 16px)` — fluid between states, 16px at designed states.
 | `image` | `mosaic-tile--image` | No padding. `object-fit: cover`. |
 | `image` + `artDirection: true` | `mosaic-tile--image-directed` | Art-directed `<picture>` with viewport-switched crops. |
 | `image` + `scrollable: true` | `--image-desktop` + `--image-scrollable` siblings | Wide process artifacts. Two article elements rendered. |
-| `graphic` | `mosaic-tile--graphic` | Square illustration/diagram. `object-fit: contain`, padded, `aspect-ratio: 1` in 2-up. |
 | `skeleton` | `mosaic-tile--skeleton` | P00 underlay. No content, no theme. `z-index: 0`. |
-| `custom` | `mosaic-tile--custom` | Extended behavior via `variant:` string. Requires SCSS + JS scaffolding. |
+
+**Custom tiles:** `custom: true` is an additive boolean on any base type (`content` or `image`). A companion `variant: "name"` string is required — it becomes `data-mosaic-variant` on the article. No extra CSS class is emitted. All extended behavior hangs off `[data-mosaic-variant]` selectors in the placements file.
+
+**Figma mapping:** Tiles are `frame`, `bleed`, or `skeleton` in Figma; `content`, `image`, or `skeleton` in YAML. `custom` corresponds to the Figma `custom` BOOLEAN prop — additive on `frame` or `bleed`, never a standalone type.
 
 ### Named Themes
 
@@ -547,11 +568,11 @@ Gap: `clamp(8px, 2cqi, 16px)` — fluid between states, 16px at designed states.
 
 | Class | Font | Size (clamp) | Alignment |
 |---|---|---|---|
-| `mosaic-stat` | Playfair Display Bold | `50px → 72px` (`36cqi`) | center (axiomatic) |
-| `mosaic-lead` | Raleway Regular | `19px → 24px` (`13.2cqi`) | center (axiomatic) |
-| `mosaic-lead-italic` | Raleway Italic | `19px → 24px` (`13.2cqi`) | center (axiomatic) |
-| `mosaic-body` | PT Sans Regular | `13px → 16px` (`9.2cqi`) | left (default) |
-| `mosaic-body-bold` | PT Sans Bold | `13px → 16px` (`9.2cqi`) | left (default) |
+| `mosaic-stat` | Playfair Display Bold | `50px -> 72px` (`36cqi`) | center (axiomatic) |
+| `mosaic-lead` | Raleway Regular | `19px -> 24px` (`13.2cqi`) | center (axiomatic) |
+| `mosaic-lead-italic` | Raleway Italic | `19px -> 24px` (`13.2cqi`) | center (axiomatic) |
+| `mosaic-body` | PT Sans Regular | `13px -> 16px` (`9.2cqi`) | left (default) |
+| `mosaic-body-bold` | PT Sans Bold | `13px -> 16px` (`9.2cqi`) | left (default) |
 
 Axiomatic centering: any tile containing `mosaic-lead`, `mosaic-lead-italic`, or `mosaic-stat` receives `text-align: center` via `:has()`. Body-only tiles remain left-aligned.
 
@@ -580,8 +601,8 @@ Axiomatic centering: any tile containing `mosaic-lead`, `mosaic-lead-italic`, or
            data-mosaic-tile="article-03"
            aria-hidden="true"></article>
 
-  <!-- custom tile -->
-  <article class="mosaic-tile mosaic-tile--custom mosaic-tile--theme-primary-dark"
+  <!-- custom tile: base type (content) + custom: true + variant name as data attribute -->
+  <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-primary-dark"
            data-mosaic-tile="article-04"
            data-mosaic-variant="selfie">
     <div class="mosaic-tile__inner">
@@ -611,6 +632,36 @@ Skeleton tiles: `#mosaic--<id>` carries `grid-template-columns/rows`; tiles get 
 
 ### Custom Tile Contract
 
+A `custom` tile is a `frame` or `bleed` tile with `custom=true` set in Figma and a non-empty `variant` string. The `variant` prop is only available in Figma when `custom=true`. The variant name is the semantic identifier for the tile's extended behavior.
+
+**Figma component props:**
+
+| Prop | Type | Notes |
+|---|---|---|
+| `type` | VARIANT | `frame` or `bleed` — base tile type |
+| `custom` | BOOLEAN | Must be `true` to expose the `variant` prop |
+| `variant` | TEXT | Only exposed when `custom=true`. Becomes `data-mosaic-variant` in HTML. |
+
+**Two-selector convention — these are separate concerns and must not be conflated:**
+
+| Hook | Selector | Purpose |
+|---|---|---|
+| Positional | `[data-mosaic-tile="article-NN"]` | Grid-area placement only. Authored by the compiler from tile position. |
+| Semantic | `[data-mosaic-variant="<variant>"]` | All extended behavior: overflow overrides, `::before` pseudo-elements, JS state classes (`.is-exiting`, etc.). Authored by the designer via the Figma variant prop. |
+
+These two selectors serve different concerns. Never use `[data-mosaic-tile]` for extended behavior, and never use `[data-mosaic-variant]` for grid placement.
+
+**Example — selfie tile:**
+```scss
+/* Placement — positional hook, authored by compiler */
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+
+/* Extended behavior — semantic hook, authored by designer */
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-variant="selfie"] { overflow: visible; }
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-variant="selfie"]::before { ... }
+#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-variant="selfie"].is-exiting::before { ... }
+```
+
 When a `custom` tile is encountered during compile, append to the report:
 
 ```
@@ -619,6 +670,8 @@ CUSTOM TILE SCAFFOLD — variant: <variant>
   JS:   add behavior keyed to document.querySelector('[data-mosaic-variant="<variant>"]')
   Note: <describe intended behavior from Figma>
 ```
+
+Do not attempt to author the extended CSS or JS — output the scaffold block and move on.
 
 ### YAML Shape
 
@@ -649,7 +702,8 @@ mosaic:
         alt: "TODO:alt"
 
     - id: article-03
-      type: custom
+      type: content
+      custom: true
       variant: "selfie"
       theme: primary-dark
       desktop:
