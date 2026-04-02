@@ -138,18 +138,22 @@ One bento cell. Corresponds to a `<article>` element with class `bento-cell`.
 | `theme` | string | yes | `primary-dark` · `primary-light` · `secondary-dark` · `secondary-light` · `default` |
 | `desktop` | object | yes | `col` and `row` — reference only, drives placements SCSS |
 
-### `type: content`
+### `type: frame`
+
+Padded tile. Maps to Figma `frame` tile type.
 
 | Key | Type | Notes |
 |-----|------|-------|
 | `content` | string (HTML block) | Raw HTML rendered via `\| safe`. Use inline type spans — see Typography below |
 
-### `type: image`
+### `type: bleed`
+
+No-padding tile. Media fills the tile. Maps to Figma `bleed` tile type.
 
 | Key | Type | Notes |
 |-----|------|-------|
-| `artDirection` | boolean | Opt-in. Renders `<picture>` with two `<source>` crops — `media.src` for desktop, `media.mobileSrc` for mobile |
-| `scrollable` | boolean | Opt-in. Renders two sibling articles sharing the same grid-area: a desktop image cell and a horizontally scrollable mobile version |
+| `artDirection` | boolean | Opt-in. Emits `data-mosaic-media="art-directed"` on article. Renders `<picture>` with two `<source>` crops — `media.src` for 4-up (≥ 624px), `media.mobileSrc` for 2-up (< 624px). CSS applies portrait aspect-ratio in 2-up via scoped container query. |
+| `scrollable` | boolean | Opt-in. Renders two sibling `mosaic-tile--bleed` articles sharing the same grid-area. `data-mosaic-media="desktop"` shown in 4-up; `data-mosaic-media="scrollable"` shown in 2-up. |
 | `media` | object | See Media below |
 
 ### `type: comparison`
@@ -162,7 +166,7 @@ Removed in `rehab/codebase-audit`. Will be replaced by a new semantic annotation
 
 ### `custom: true` (additive modifier)
 
-`custom` is not a tile type — it is an additive boolean on any base type (`content` or `image`). When `custom: true`, a `variant` string prop is also required. The template emits the base type class only; all extended behavior lives on `[data-mosaic-variant]` selectors in placements.
+`custom` is not a tile type — it is an additive boolean on any base type (`frame` or `bleed`). When `custom: true`, a `variant` string prop is also required. The template emits the base type class only; all extended behavior lives on `[data-mosaic-variant]` selectors in placements.
 
 | Key | Type | Notes |
 |-----|------|-------|

@@ -317,9 +317,10 @@ The `_mosaic-article__theme` sub-component carries:
 
 | Figma `type` | `custom` | YAML `type` |
 |---|---|---|
-| `frame` | false | `content` |
-| `bleed` | false | `image` |
-| `frame` | true | `custom` |
+| `frame` | false | `frame` |
+| `bleed` | false | `bleed` |
+| `frame` | true | `frame` + `custom: true` + `variant: "name"` |
+| `bleed` | true | `bleed` + `custom: true` + `variant: "name"` |
 | `skeleton` | -- | `skeleton` (P00 only) |
 
 #### Tile Content Extraction
@@ -330,7 +331,7 @@ The `_mosaic-article__theme` sub-component carries:
 
 **`type=bleed` (image tile):** No Slot content. Emit `media:` block with `src: "TODO:src"`, `hasAlt`, `alt`.
 
-**`type=frame` + `custom=true` (custom tile):** Read `variant` TEXT prop. Emit `type: content`, `custom: true`, `variant: "<value>"`. Append custom tile scaffold block to report.
+**`type=frame` + `custom=true` (custom tile):** Read `variant` TEXT prop. Emit `type: frame`, `custom: true`, `variant: "<value>"`. Append custom tile scaffold block to report.
 
 **`type=skeleton`:** No content. Emit SCSS placements only -- no YAML entry.
 

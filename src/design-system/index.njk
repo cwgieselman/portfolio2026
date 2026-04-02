@@ -239,16 +239,16 @@ const components = [
         preview: (theme) => {
           const t = theme || 'white';
           return `<div class="mosaic ds-mosaic-preview" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,80px);width:100%;max-width:480px;">
-            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
+            <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
               <div class="mosaic-tile__inner"><span class="mosaic-stat">3&times;</span><span class="mosaic-body">arrow attempts</span></div>
             </article>
-            <article class="mosaic-tile mosaic-tile--image" style="grid-column:3/6;grid-row:1/2;background:var(--color-neutral-50);">
+            <article class="mosaic-tile mosaic-tile--bleed" style="grid-column:3/6;grid-row:1/2;background:var(--color-neutral-50);">
               <div class="mosaic-tile__inner" style="align-items:center;justify-content:center;"><span class="mosaic-body" style="color:var(--color-neutral-60);">still no arrow</span></div>
             </article>
-            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
+            <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
               <div class="mosaic-tile__inner"><span class="mosaic-body">SVG partial: raster</span></div>
             </article>
-            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
+            <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
               <div class="mosaic-tile__inner"><span class="mosaic-body">::after: nope</span></div>
             </article>
           </div>`;
@@ -289,16 +289,16 @@ const components = [
         preview: (theme) => {
           const t = theme || 'primary-dark';
           return `<div class="mosaic ds-mosaic-preview" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,80px);width:100%;max-width:480px;">
-            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
+            <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-${t}" style="grid-column:1/3;grid-row:1/3;">
               <div class="mosaic-tile__inner"><span class="mosaic-stat">3</span><span class="mosaic-body">case studies queued</span></div>
             </article>
-            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:3/6;grid-row:1/2;">
+            <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-${t}" style="grid-column:3/6;grid-row:1/2;">
               <div class="mosaic-tile__inner"><span class="mosaic-lead">BMTx &middot; INFICON IMS &middot; Impact Mgr</span></div>
             </article>
-            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
+            <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-${t}" style="grid-column:3/5;grid-row:2/3;">
               <div class="mosaic-tile__inner"><span class="mosaic-body">slot-first contract</span></div>
             </article>
-            <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
+            <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-${t}" style="grid-column:5/6;grid-row:2/3;">
               <div class="mosaic-tile__inner"><span class="mosaic-body">TODO:src flagged</span></div>
             </article>
           </div>`;

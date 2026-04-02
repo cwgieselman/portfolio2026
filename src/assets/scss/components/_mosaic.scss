@@ -105,12 +105,6 @@
         margin-inline: auto;
     }
 
-    // 4-up: grid tracks define cell dimensions -- unset 2-up aspect-ratio constraints.
-    // Double-class selector raises specificity above single-class base rules,
-    // ensuring this wins regardless of cascade order.
-    .mosaic-tile--image-directed.mosaic-tile--image-directed {
-        aspect-ratio: unset;
-    }
 }
 
 // -- Container query: 4-up layout, MONEY cells (content-cell >= 752px) --------
@@ -127,25 +121,22 @@
         width: fit-content;
         margin-inline: auto;
     }
-
-    // 4-up: unset 2-up aspect-ratio constraints.
-    .mosaic-tile--image-directed.mosaic-tile--image-directed {
-        aspect-ratio: unset;
-    }
 }
 
-// -- Scrollable image tile visibility ----------------------------------------
-// Mirrors the 4-up threshold -- desktop instance shows in 4-up, hides in 2-up.
+// -- Scrollable tile visibility -----------------------------------------------
+// Two sibling articles share a grid area. data-mosaic-media drives show/hide.
+// desktop: normal bleed tile, shown in 4-up (>= 624px), hidden in 2-up.
+// scrollable: touch-scroll instance, shown in 2-up, hidden in 4-up.
 
-.mosaic-tile--image-desktop {
+.mosaic-tile[data-mosaic-media="desktop"] {
     display: none; // hidden by default (2-up context)
 }
 
 @container content-cell (min-width: 624px) {
-    .mosaic-tile--image-desktop {
+    .mosaic-tile[data-mosaic-media="desktop"] {
         display: block; // shown in 4-up
     }
-    .mosaic-tile--image-scrollable {
+    .mosaic-tile[data-mosaic-media="scrollable"] {
         display: none; // hidden in 4-up
     }
 }
@@ -216,24 +207,15 @@
     box-sizing: border-box;
 }
 
-// -- 2-up tile type modifiers -------------------------------------------------
-// aspect-ratio rules that constrain specific tile types in 2-up.
-// ALL of these must appear BEFORE the 4-up container queries so the
-// 4-up unset wins via cascade order at equal specificity.
+// -- Bleed tiles --------------------------------------------------------------
+// No padding -- media fills the tile. Covers all bleed variants:
+// plain image, art-directed image (two crops), desktop half of scrollable pair.
 
-// image-directed: portrait crop box in 2-up
-.mosaic-tile--image-directed {
-    aspect-ratio: 4 / 5;
-}
-
-// image / image-directed: __inner fills tile, no padding, picture fills inner
-.mosaic-tile--image .mosaic-tile__inner,
-.mosaic-tile--image-directed .mosaic-tile__inner {
+.mosaic-tile--bleed .mosaic-tile__inner {
     padding: 0;
 }
 
-.mosaic-tile--image picture,
-.mosaic-tile--image-directed picture {
+.mosaic-tile--bleed picture {
     display: block;
     width: 100%;
     height: 100%;
@@ -242,8 +224,7 @@
 // Override intrinsic width/height attributes set by the image transform.
 // The transform adds width="N" height="N" to <img> for CLS prevention,
 // but inside mosaic tiles these must yield to the CSS layout.
-.mosaic-tile--image .mosaic-tile__inner img,
-.mosaic-tile--image-directed .mosaic-tile__inner img {
+.mosaic-tile--bleed .mosaic-tile__inner img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -251,21 +232,29 @@
     display: block;
 }
 
-// -- Scrollable image tile ----------------------------------------------------
+// Art-directed: portrait crop box in 2-up. Scoped to max-width so no override
+// is needed in 4-up — the constraint simply does not apply above the threshold.
+@container content-cell (max-width: 623px) {
+    .mosaic-tile--bleed[data-mosaic-media="art-directed"] {
+        aspect-ratio: 4 / 5;
+    }
+}
+
+// -- Scrollable tile ----------------------------------------------------------
 // Use for wide process artifacts (FigJam boards, journey maps, diagrams) where
 // the breadth of the content is editorially meaningful.
 //
-// Two sibling <article> elements are rendered from YAML when scrollable: true:
-//   .mosaic-tile--image-desktop    -- shown in 4-up (>= 624px), hidden in 2-up
-//   .mosaic-tile--image-scrollable -- shown in 2-up, hidden in 4-up
+// Two sibling <article class="mosaic-tile mosaic-tile--bleed"> elements rendered
+// from YAML when scrollable: true. data-mosaic-media drives show/hide:
+//   data-mosaic-media="desktop"    -- normal bleed tile, 4-up only
+//   data-mosaic-media="scrollable" -- touch-scroll instance, 2-up only
 //
 // The scrollable instance uses a dedicated scrollSrc: image (no srcset),
 // fixed height, overflow: auto on both axes.
 //
-// YAML: type: image + scrollable: true + media.scrollSrc: path-to-scroll-image
+// YAML: type: bleed + scrollable: true + media.scrollSrc: path-to-scroll-image
 
-// Scrollable instance -- 2-up only
-.mosaic-tile--image-scrollable {
+.mosaic-tile[data-mosaic-media="scrollable"] {
     height: calc(var(--mosaic-cell-size) * 2 + var(--mosaic-gap));
     overflow: hidden; // border-radius clip
 
@@ -284,7 +273,7 @@
     }
 }
 
-.mosaic-tile--image-scrollable .mosaic-tile__inner {
+.mosaic-tile[data-mosaic-media="scrollable"] .mosaic-tile__inner {
     padding: 0;
     height: 100%;
     overflow: auto;
@@ -294,7 +283,7 @@
     align-items: flex-start;
 }
 
-.mosaic-tile--image-scrollable img {
+.mosaic-tile[data-mosaic-media="scrollable"] img {
     display: block;
     width: auto;
     height: 500px;     // CONTRACT_EXCEPTION: fixed scrollable window height -- design constant, no scale token maps
@@ -313,12 +302,12 @@
     object-position: center top;
 }
 
-// -- Content tiles ------------------------------------------------------------
+// -- Frame tiles --------------------------------------------------------------
 // Padded. Text, stats, quotes. Gap spaces multiple flex children (stat + body, etc.).
 // Centering is axiomatic — lives on .mosaic-tile__inner base. Override in
 // placements SCSS if a specific custom variant needs different alignment.
 
-.mosaic-tile--content .mosaic-tile__inner {
+.mosaic-tile--frame .mosaic-tile__inner {
     gap: var(--mosaic-gap);
 }
 

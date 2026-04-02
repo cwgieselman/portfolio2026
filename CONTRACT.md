@@ -544,15 +544,15 @@ Gap: `clamp(8px, 2cqi, 16px)` — fluid between states, 16px at designed states.
 
 | `type:` | Class | Notes |
 |---|---|---|
-| `content` | `mosaic-tile--content` | Padded. Text, stats, quotes. |
-| `image` | `mosaic-tile--image` | No padding. `object-fit: cover`. |
-| `image` + `artDirection: true` | `mosaic-tile--image-directed` | Art-directed `<picture>` with viewport-switched crops. |
-| `image` + `scrollable: true` | `--image-desktop` + `--image-scrollable` siblings | Wide process artifacts. Two article elements rendered. |
+| `frame` | `mosaic-tile--frame` | Padded (16px). Text, stats, quotes. Maps to Figma `frame` tile. |
+| `bleed` | `mosaic-tile--bleed` | No padding. Media fills the tile. Maps to Figma `bleed` tile. |
+| `bleed` + `artDirection: true` | `mosaic-tile--bleed` + `data-mosaic-media="art-directed"` | Art-directed `<picture>`. Portrait aspect-ratio in 2-up via scoped container query. |
+| `bleed` + `scrollable: true` | Two `mosaic-tile--bleed` siblings | Wide process artifacts. `data-mosaic-media="desktop"` and `data-mosaic-media="scrollable"` drive show/hide. |
 | `skeleton` | `mosaic-tile--skeleton` | P00 underlay. No content, no theme. `z-index: 0`. |
 
-**Custom tiles:** `custom: true` is an additive boolean on any base type (`content` or `image`). A companion `variant: "name"` string is required — it becomes `data-mosaic-variant` on the article. No extra CSS class is emitted. All extended behavior hangs off `[data-mosaic-variant]` selectors in the placements file.
+**Custom tiles:** `custom: true` is an additive boolean on any base type (`frame` or `bleed`). A companion `variant: "name"` string is required — it becomes `data-mosaic-variant` on the article. No extra CSS class is emitted. All extended behavior hangs off `[data-mosaic-variant]` selectors in the placements file.
 
-**Figma mapping:** Tiles are `frame`, `bleed`, or `skeleton` in Figma; `content`, `image`, or `skeleton` in YAML. `custom` corresponds to the Figma `custom` BOOLEAN prop — additive on `frame` or `bleed`, never a standalone type.
+**Figma mapping:** `frame` = Figma `frame` tile (padded). `bleed` = Figma `bleed` tile (no padding). `custom` = Figma `custom` BOOLEAN prop — additive on either base type.
 
 ### Named Themes
 
@@ -581,8 +581,8 @@ Axiomatic centering: any tile containing `mosaic-lead`, `mosaic-lead-italic`, or
 ```html
 <div class="mosaic" id="mosaic--{data.id}">
 
-  <!-- content tile -->
-  <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-primary-dark"
+  <!-- frame tile -->
+  <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-primary-dark"
            data-mosaic-tile="article-01">
     <div class="mosaic-tile__inner">
       <span class="mosaic-stat">1</span>
@@ -590,10 +590,17 @@ Axiomatic centering: any tile containing `mosaic-lead`, `mosaic-lead-italic`, or
     </div>
   </article>
 
-  <!-- image tile -->
-  <article class="mosaic-tile mosaic-tile--image"
+  <!-- bleed tile -->
+  <article class="mosaic-tile mosaic-tile--bleed"
            data-mosaic-tile="article-02">
     <div class="mosaic-tile__inner"><!-- media.njk --></div>
+  </article>
+
+  <!-- bleed tile, art-directed -->
+  <article class="mosaic-tile mosaic-tile--bleed"
+           data-mosaic-tile="article-03"
+           data-mosaic-media="art-directed">
+    <div class="mosaic-tile__inner"><!-- picture with source elements --></div>
   </article>
 
   <!-- skeleton tile (P00 only) -->
@@ -601,8 +608,8 @@ Axiomatic centering: any tile containing `mosaic-lead`, `mosaic-lead-italic`, or
            data-mosaic-tile="article-03"
            aria-hidden="true"></article>
 
-  <!-- custom tile: base type (content) + custom: true + variant name as data attribute -->
-  <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-primary-dark"
+  <!-- custom tile: base type (frame) + custom: true + variant name as data attribute -->
+  <article class="mosaic-tile mosaic-tile--frame mosaic-tile--theme-primary-dark"
            data-mosaic-tile="article-04"
            data-mosaic-variant="selfie">
     <div class="mosaic-tile__inner">
@@ -702,7 +709,7 @@ mosaic:
         alt: "TODO:alt"
 
     - id: article-03
-      type: content
+      type: frame
       custom: true
       variant: "selfie"
       theme: primary-dark

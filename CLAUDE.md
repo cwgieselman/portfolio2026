@@ -311,7 +311,12 @@ The Mosaic is the grid composition component for case study pages. Full contract
 | `content-cell >= 624px` | 4-up, `fit-content` | MIN (144px) |
 | `content-cell >= 752px` | 4-up, `fit-content` | MONEY (176px) -- designed state |
 
-**Tile types:** `content`, `image`, `image` + `artDirection`, `image` + `scrollable`, `skeleton`
+**Tile types:** `frame`, `bleed`, `bleed` + `artDirection`, `bleed` + `scrollable`, `skeleton`
+
+- `frame` — padded (16px), for text/stats/quotes. Maps to Figma `frame` tile.
+- `bleed` — no padding, media fills tile. Maps to Figma `bleed` tile.
+- `artDirection: true` — additive on `bleed`. Emits `data-mosaic-media="art-directed"` on the article. No extra class. `<picture>` with viewport-switched crops.
+- `scrollable: true` — additive on `bleed`. Renders two sibling articles with `data-mosaic-media="desktop"` and `data-mosaic-media="scrollable"`. CSS drives show/hide at the 624px threshold.
 
 **Custom tiles:** `custom: true` is an additive boolean on any base type. When set, a `variant: "name"` string prop is also required — it becomes `data-mosaic-variant` on the article element. No extra CSS class is emitted. All extended behavior (overflow overrides, `::before` pseudo-elements, JS state) hangs off `[data-mosaic-variant]` selectors in the placements file.
 

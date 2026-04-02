@@ -14,8 +14,8 @@
       rows: 5                        # reference only — drives placements SCSS
       tiles:
         - id: article-01
-          type: content              # content | image
-          theme: primary-dark        # omit for image tiles
+          type: frame                # frame | bleed | skeleton
+          theme: primary-dark        # omit for bleed tiles
           desktop:                   # reference only — drives placements SCSS
             col: "1 / 2"
             row: "1 / 2"
@@ -24,7 +24,7 @@
             <span class="mosaic-body">Week on-site...</span>
 
         - id: article-03
-          type: image                # image tiles use media: block, not content:
+          type: bleed                # bleed tiles use media: block, not content:
           desktop:                   # reference only — drives placements SCSS
             col: "4 / 6"
             row: "1 / 2"
@@ -36,14 +36,14 @@
             cssClass: "mosaic-tile__img"
 
         - id: article-04
-          type: image                # art-directed flavor: two crops, viewport-switched
-          artDirection: true         # triggers mosaic-tile--image-directed class + <picture> render
+          type: bleed                # art-directed: two crops, viewport-switched
+          artDirection: true         # emits data-mosaic-media="art-directed" on article
           desktop:
             col: "4 / 6"
             row: "1 / 2"
           media:
-            src: "/assets/images/photo--landscape.jpg"     # 5-up crop (>= 1052px)
-            mobileSrc: "/assets/images/photo--square.jpg"  # 2-up crop (< 1052px)
+            src: "/assets/images/photo--landscape.jpg"     # 4-up crop (>= 624px)
+            mobileSrc: "/assets/images/photo--square.jpg"  # 2-up crop (< 624px)
             hasAlt: true
             alt: "Descriptive alt text for assistive technology"
 
@@ -52,7 +52,7 @@
   theme: primary-light    → --cell-bg: primary/20, --cell-color: primary/60
   theme: secondary-dark   → --cell-bg: secondary/50, --cell-color: secondary/80
   theme: secondary-light  → --cell-bg: secondary/20, --cell-color: secondary/70
-  (omit theme for image-only tiles — transparent bg, no border)
+  (omit theme for bleed tiles — transparent bg, no border)
 
   ── Inline type spans ────────────────────────────────────────────────────────
   mosaic-stat           Tienne Bold, clamp 50px→72px
@@ -62,8 +62,8 @@
   mosaic-body-bold      PT Sans Bold, clamp 13px→16px
 
   ── Render paths ─────────────────────────────────────────────────────────────
-  type: image + media: block → media.njk include (img, alt, optimization pipeline)
-  type: content              → {{ tile.content | safe }} (raw HTML block)
+  type: bleed + media: block → media.njk include (img, alt, optimization pipeline)
+  type: frame                → {{ tile.content | safe }} (raw HTML block)
 
   ── Placement ──────────────────────────────────────────────────────────────────
   All placement lives in placements/_<pageKey>.scss — nothing inline.
@@ -94,19 +94,21 @@
       aria-hidden="true"
     ></article>
 
-  {% elif tile.type == "image" and tile.scrollable and tile.media %}
+  {% elif tile.type == "bleed" and tile.scrollable and tile.media %}
 
     {#
-      Scrollable image tile — two sibling <article> elements sharing the same grid-area.
-      Desktop instance: normal image tile, shown in 4-up (content-cell ≥ 624px), hidden below.
-      Scrollable instance: 500px tall, overflow: auto both axes, no srcset, shown in 2-up only.
+      Scrollable bleed tile — two sibling <article> elements sharing the same grid-area.
+      Both are mosaic-tile--bleed. data-mosaic-media drives show/hide via CSS.
+      Desktop: normal bleed tile, shown in 4-up (content-cell ≥ 624px), hidden below.
+      Scrollable: 500px tall, overflow: auto both axes, no srcset, shown in 2-up only.
       scrollSrc: is a dedicated image for the scroll context (no srcset processing).
     #}
 
     {# — Desktop instance — #}
     <article
-      class="mosaic-tile mosaic-tile--image mosaic-tile--image-desktop"
+      class="mosaic-tile mosaic-tile--bleed"
       data-mosaic-tile="{{ tile.id }}"
+      data-mosaic-media="desktop"
       aria-hidden="true"
     >
       <div class="mosaic-tile__inner">
@@ -117,8 +119,9 @@
 
     {# — Scrollable instance — #}
     <article
-      class="mosaic-tile mosaic-tile--image mosaic-tile--image-scrollable"
+      class="mosaic-tile mosaic-tile--bleed"
       data-mosaic-tile="{{ tile.id }}-scroll"
+      data-mosaic-media="scrollable"
       role="region"
       aria-label="{{ tile.media.alt if tile.media.hasAlt else 'Process artifact' }}"
     >
@@ -134,12 +137,7 @@
   {% else %}
 
     {# Standard tile render path #}
-    {# image-directed: opt-in art direction — <picture> with <source media> for 2-up vs 5-up crops. #}
-    {% set typeClass = tile.type %}
-    {% if tile.type == "image" and tile.artDirection %}
-      {% set typeClass = "image-directed" %}
-    {% endif %}
-    {% set tileClasses = "mosaic-tile mosaic-tile--" + typeClass %}
+    {% set tileClasses = "mosaic-tile mosaic-tile--" + tile.type %}
     {% if tile.theme %}
       {% set tileClasses = tileClasses + " mosaic-tile--theme-" + tile.theme %}
     {% endif %}
@@ -147,12 +145,13 @@
       class="{{ tileClasses }}"
       data-mosaic-tile="{{ tile.id }}"
       {% if tile.variant %}data-mosaic-variant="{{ tile.variant }}"{% endif %}
+      {% if tile.artDirection %}data-mosaic-media="art-directed"{% endif %}
     >
       <div class="mosaic-tile__inner">
-        {% if tile.type == "image" and tile.artDirection and tile.media %}
+        {% if tile.type == "bleed" and tile.artDirection and tile.media %}
           <picture class="mosaic-tile__img">
-            <source media="(min-width: 1052px)" srcset="{{ tile.media.src }}">
-            <source media="(max-width: 1051px)" srcset="{{ tile.media.mobileSrc }}">
+            <source media="(min-width: 624px)" srcset="{{ tile.media.src }}">
+            <source media="(max-width: 623px)" srcset="{{ tile.media.mobileSrc }}">
             <img
               src="{{ tile.media.mobileSrc }}"
               {% if tile.media.hasAlt %}alt="{{ tile.media.alt }}"{% else %}alt="" role="presentation"{% endif %}
@@ -160,7 +159,7 @@
               loading="lazy"
             />
           </picture>
-        {% elif tile.type == "image" and tile.media %}
+        {% elif tile.type == "bleed" and tile.media %}
           {% set mediaParams = tile.media %}
           {% include "components/media.njk" %}
         {% else %}
