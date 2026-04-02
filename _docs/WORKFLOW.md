@@ -1,45 +1,74 @@
 # Portfolio2026 — Development Workflow
 
-This document describes the two-phase development workflow used in this project.
-It exists because the tooling is unusual: design decisions, architectural reasoning,
-and implementation happen in a Claude chat session (Claude.ai), while code review,
-mechanical verification, and git operations happen in Claude Code (Zed).
+This document describes the two-tool workflow used in this project.
+Design decisions and Figma work happen in Claude.ai. Code changes, audits,
+and git operations happen in Claude Code (Zed). Both tools are typically
+open simultaneously, with the 11ty dev server running in the background.
 
 ---
 
-## The Two Phases
+## The Hard Rule
 
-### Phase 1 — Design & Build (Claude.ai chat)
+**Claude.ai produces documents. Claude Code produces file changes.**
 
-This is where thinking happens. The Claude.ai chat session has:
-- Full project context via the Global Context Doc and Portfolio Build 2026 doc
-- MCP access to the filesystem (read/write) and Figma
-- Conversational back-and-forth for architectural decisions
-- The ability to reason through tradeoffs before writing anything
+Claude.ai has filesystem MCP access and *can* write `.scss`, `.njk`, and
+`.yml` files — but doing so is where drift originates. Vibe coding in a chat
+session leads to contracts getting bent, dead code accumulating, and things
+named wrong. The PR doc + session state are the handoff artifacts. Claude Code
+is where files actually change.
 
-Work in this phase follows a deliberate pace:
-- Design the system before touching any files
-- Agree on numbers, naming, and approach before writing CSS
-- Make one discrete change at a time, each with defined checks
-- Verify in browser between steps
+---
 
-The output of Phase 1 is: changed files on a feature branch, plus either a PR summary
-document (if work is commit-ready) or an updated `session-state.md` (if not).
+## What Each Tool Does
 
-### Phase 2 — Review & Commit (Claude Code in Zed)
+### Claude.ai — Design & Decisions
 
-This is where mechanical verification happens. Claude Code has:
-- Terminal access to run build commands
-- Direct file access to check for drift against contracts
-- No conversational context — it works from the PR summary, `session-state.md`, and project docs
+Has Figma MCP access. Use it for:
 
-Claude Code reviews:
-- Does the build pass (`npm start`, `npm run tokens:build`)?
-- Do the changes match what the PR summary claims?
-- Is there any drift from `CONTRACT.md` or `CLAUDE.md`?
-- Are there stale references, orphaned values, or tidiness issues?
+- Reading Figma variables, components, and layouts
+- Generating YAML from Figma node trees
+- Architectural decisions and trade-offs
+- Drafting the PR summary document
+- Updating `session-state.md`
 
-The output of Phase 2 is: a clean commit pushed to the branch, ready to merge.
+**Does not write SCSS, Nunjucks templates, or JS.** If a session starts
+drifting into editing those files directly, stop and hand off to Claude Code.
+
+### Claude Code (Zed) — Implementation & Verification
+
+Has terminal access and direct file editing with read-first discipline. Use it for:
+
+- All SCSS, template, and JS file changes
+- Running `npm start`, `npm run tokens:build`, visual checks
+- Auditing changed files against `CONTRACT.md` and `CLAUDE.md`
+- Git staging and committing
+- Any refactor that touches multiple files in a coordinated way
+
+**Does not make design decisions.** Works from the PR summary,
+`session-state.md`, and project contracts. If something is ambiguous,
+it asks — it does not invent.
+
+---
+
+## When to Switch Tools
+
+Stop Claude.ai and open Zed when:
+
+- [ ] A PR summary document exists in `_docs/`
+- [ ] You're about to edit `.scss`, `.njk`, or `.js` files
+- [ ] You've agreed on an approach and just need to execute it
+- [ ] You need to run a build or check the 11ty log
+- [ ] You want to commit
+
+Stay in Claude.ai when:
+
+- [ ] You're reading from Figma
+- [ ] You're making or debating an architectural decision
+- [ ] You're generating or editing YAML data
+- [ ] You're writing the PR doc or session state
+
+**The practical trigger:** as soon as Claude.ai produces a PR summary doc,
+close it and switch to Zed. The design work is done.
 
 ---
 
@@ -47,110 +76,82 @@ The output of Phase 2 is: a clean commit pushed to the branch, ready to merge.
 
 `_docs/session-state.md` is the single source of truth for where the build stands.
 
-Both Claude.ai and Claude Code read it. It answers: what's the current problem, why
-are we working on it, what's working, what's deferred, what are the rules.
+Both Claude.ai and Claude Code read it at session start. It answers: what's
+the current state, what was just done, what's deferred, and what rules apply.
 
 **Every session ends one of two ways:**
-1. Work is commit-ready → write a PR doc, Claude Code handles the commit, update `session-state.md` to reflect the new baseline.
+1. Work is commit-ready → write a PR doc, hand off to Claude Code, update `session-state.md`.
 2. Work is not commit-ready → update `session-state.md` before closing. No exceptions.
-
-Keep it high-level. The PR docs carry commit-specific detail. `session-state.md` carries
-the why — enough context for a human or an AI starting fresh to understand the thread
-without reconstructing the conversation.
 
 ---
 
 ## The PR Summary Format
 
-Every branch submitted to Claude Code needs a PR summary. Write it at the end of
-the Claude.ai session before handing off. It should contain:
+Write it at the end of the Claude.ai session before handing off to Claude Code.
 
 ```
-## PR: `<branch>` → `main`
+## PR: <short description>
 
 ### What this does
-[One paragraph — the user-facing or architectural outcome]
+[One paragraph — the architectural or user-facing outcome]
 
 ### Why
 [Why the old approach was wrong or insufficient]
 
 ---
 
-### Changes by file
-[For each changed file: what changed and why]
+### Commits (in order)
+
+#### Commit 1: `<conventional commit message>`
+**Files:** list
+Description of what changed and why.
+
+#### Commit 2: ...
 
 ---
 
-### What to verify
-[Numbered checklist — mechanical checks Claude Code can run]
+### Testing checklist
+- [ ] `npm run tokens:build` runs clean
+- [ ] `npm start` builds with no SCSS errors
+- [ ] Browser: [specific thing to verify]
 
 ### What this does NOT change
 [Explicit scope boundary — what was deliberately deferred]
 ```
 
-The "What to verify" section is the most important part. It should be specific enough
-that Claude Code can run each check without interpretation. Examples:
-- "`npm start` builds without SCSS errors"
-- "No references to `1896` remain in any non-git file"
-- "DevTools → `.layout__page` computed width = 2016px at full viewport"
-
-The "What this does NOT change" section prevents scope creep during review.
-Claude Code should not fix things that were explicitly deferred.
+The commit list is the most important part. Claude Code commits exactly what
+the PR doc describes — no more, no less.
 
 ---
 
-## What a Good Review Looks Like
+## Branching
 
-The signal that Phase 2 is working correctly: Claude Code finds small tidiness issues
-(orphaned comments, inconsistent formatting, stale strings) but nothing broken.
+Commit directly to `main` by default. Branches are opt-in for:
+- Experimental work that may be thrown away (`experiment/`)
+- A large structural refactor where you want a clean revert point
 
-If Claude Code finds broken behavior, that's a Phase 1 failure — the checks in this
-session weren't thorough enough. Treat it as signal to tighten the verification steps.
-
-If Claude Code finds nothing at all, that's also fine — the PR summary's verify list
-was comprehensive and the work was clean.
+Branches are not required for normal feature work. Commits provide sufficient
+history for a solo, linear workflow.
 
 ---
 
-## Branch Naming
+## What a Good Handoff Looks Like
 
-Follows the convention in `CLAUDE.md`:
+Claude Code should find the PR doc, read it alongside `session-state.md`,
+and be able to commit without asking any questions. If Claude Code is
+interpreting or guessing, the PR doc wasn't specific enough.
 
-| Prefix | Intent |
-|--------|--------|
-| `rehab/` | Restore integrity, eliminate drift |
-| `stabilize/` | Contract alignment, systemic corrections |
-| `build/` | New feature work |
-| `experiment/` | Prototypes and exploration |
-
-One concern per branch. Compound changes make review harder and commits harder to
-bisect if something breaks later.
+The signal that the workflow is healthy: Claude Code finds small tidiness
+issues (stale comments, documentation drift) but nothing structurally broken.
+If it finds broken behavior, something was skipped in the Claude.ai session.
 
 ---
 
-## PR Summary Lifecycle
+## Why Two Tools
 
-PR summary files in `_docs/` are handoff artifacts — they exist solely to communicate Phase 1 intent to Phase 2. Once Claude Code has reviewed, committed, and written the GitHub commit message, the PR file has served its purpose and must be deleted.
+Claude.ai has Figma access, long conversational memory, and reasoning ability
+for trade-offs. Claude Code has terminal access, read-first file discipline,
+and no conversational baggage to drift from.
 
-The GitHub commit record is the permanent record. Do not maintain both.
-
-Naming convention: `PR--<branch-name>.md`
-Location: `_docs/`
-Lifetime: Phase 1 complete → Phase 2 review → merge → delete.
-
----
-
-## Why This Works
-
-Design decisions require context, memory, and reasoning — the chat session has all three.
-Mechanical verification requires precision and repeatability — Claude Code has those.
-Neither is trying to do the other's job.
-
-The PR summary is the handoff artifact. It translates the reasoning from Phase 1 into
-instructions Phase 2 can execute without needing to reconstruct the conversation.
-`session-state.md` is the continuity artifact — it keeps both Claudes oriented across
-sessions without requiring either one to reconstruct the conversation history.
-
-This is the same principle behind any good code review process: the author explains
-their intent, the reviewer checks the implementation. The unusual part is that both
-roles are played by AI instances with different capabilities and contexts.
+Neither is trying to do the other's job. The session state and PR doc are
+the interface between them.
