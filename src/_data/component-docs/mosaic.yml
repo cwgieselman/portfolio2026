@@ -118,7 +118,7 @@ contract:
   - field: "mosaic.tiles[].type"
     type: string
     required: true
-    desc: "content | image | graphic. Drives mosaic-tile--{type} class."
+    desc: "content | image | skeleton. Drives mosaic-tile--{type} class. custom: true is a separate additive boolean — not a type value."
   - field: "mosaic.tiles[].theme"
     type: string
     required: false

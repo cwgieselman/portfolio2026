@@ -160,15 +160,15 @@ Component built. Not yet wired to any page YAML. Reference: `components/comparis
 
 Removed in `rehab/codebase-audit`. Will be replaced by a new semantic annotation widget when BMTx page work begins. See CONTRACT.md breadcrumb.
 
-### `type: custom`
+### `custom: true` (additive modifier)
 
-One-off articles with bespoke CSS/JS behavior. No template rendering beyond the standard content path.
+`custom` is not a tile type — it is an additive boolean on any base type (`content` or `image`). When `custom: true`, a `variant` string prop is also required. The template emits the base type class only; all extended behavior lives on `[data-mosaic-variant]` selectors in placements.
 
 | Key | Type | Notes |
 |-----|------|-------|
-| `variant` | string | Human-readable label for the specific custom treatment (e.g. `"selfie"`) |
+| `custom` | boolean | Must be `true`. Exposes the `variant` prop. |
+| `variant` | string | Human-readable label for the specific custom treatment (e.g. `"selfie"`). Becomes `data-mosaic-variant` attribute. |
 | `description` | string | Brief for any Agent building or debugging the behavior. Not rendered. |
-| `content` | string (HTML block) | Rendered content, same as `type: content` |
 
 ---
 
