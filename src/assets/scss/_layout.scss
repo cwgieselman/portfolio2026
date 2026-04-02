@@ -17,7 +17,7 @@
 //     var(--spacing-xl) padding on each side. --grid-margin matches
 //     that padding, so non-grid elements align with the grid naturally.
 //
-//   FIXED  (viewport ≥ 1200px + 2×spacing-xl)
+//   FIXED  (viewport >= 1200px + 2×spacing-xl)
 //     The grid is centered at max-width 1200px with auto side margins.
 //     calc(50% - 600px) gives the exact pixel distance from the viewport
 //     center to the grid left edge, at any viewport width above this point.
@@ -47,7 +47,7 @@
     }
 }
 
-/* ── Navbar (global, fixed) ───────────────────────────────────────────────── */
+/* -- Navbar (global, fixed) ------------------------------------------------- */
 // Global site navigation. Fixed at top:0, full viewport width.
 // Height drives body padding-block-start and all sticky/fixed top offsets.
 // Content (logo, links) added when nav component is designed in Figma.
@@ -68,7 +68,7 @@ body {
 
 // Page header rules → _page-header.scss
 
-/* ── Base ────────────────────────────────────────────────────────────────────*/
+/* -- Base ------------------------------------------------------------------- */
 
 .layout {
     width: 100%;
@@ -82,7 +82,7 @@ body {
     display: block;
 }
 
-/* ── Block tier (< 640px) ────────────────────────────────────────────────────
+/* -- Block tier (< 640px) ---------------------------------------------------
  * No grid. Content stacks in document order.
  * Inline padding via layout__page. */
 
@@ -97,30 +97,30 @@ body {
     margin-block-end: var(--spacing-xxl);
 }
 
-/* ── Choreographed section (≥ 640px) ────────────────────────────────────────
+/* -- Choreographed section (>= 640px) ---------------------------------------
  * Layout hierarchy:
  *
  *   .layout__story--choreographed
  *     .layout__page--header          full width, above chapters
  *     .layout__chapter               text left | bento right
- *       .chapter__content            left column
+ *       .chapter__content            left column — richtext rendered here
  *       .chapter__bento              right column (bento column)
  *         .layout__page              one beat — sticky, stacks at origin
  *         .layout__page              ...
  *
  * Column system — derived from bento unit math (everything shares one token):
- *   Content column:  2 bento units  = 368px  (2×176 + 1×16)
- *   Gutter:          5 bento gaps   =  80px  (5×16)
- *   Bento column:    4 bento units  = 752px  (4×176 + 3×16)
+ *   Content column:  2 bento units  = 368px  (2x176 + 1x16)
+ *   Gutter:          5 bento gaps   =  80px  (5x16)
+ *   Bento column:    4 bento units  = 752px  (4x176 + 3x16)
  *   Total:                          1200px
  *
  * Chapter offset: chapters can overlap by N rows via data-chapter-offset.
  * JS in choreography.js reads this attribute and sets negative margin-top.
- * ─────────────────────────────────────────────────────────────────────────── */
+ * --------------------------------------------------------------------------- */
 
 @media (min-width: 640px) {
 
-    /* ── Section header ──────────────────────────────────────────────────── */
+    /* -- Section header ----------------------------------------------------- */
 
     .layout__page--header {
         display: block;
@@ -136,8 +136,8 @@ body {
         margin-block-end: 0;
     }
 
-    /* ── Chapter layout ──────────────────────────────────────────────────── */
-    /* Two-column layout: text left, bento right.
+    /* -- Chapter layout -----------------------------------------------------
+     * Two-column layout: text left, bento right.
      * Columns use named lines so placements SCSS can reference by name. */
 
     .layout__chapter {
@@ -171,7 +171,7 @@ body {
             [screenshot-start]    176px  /* content col right — 1 bento unit wide   */
             [content-end]          80px  /* gutter                                  */
             [bento-start]         176px  /* bento C1 — fixed header ends here       */
-            [header-end]          384px  /* bento C2–C3 — big screenshot ends here  */
+            [header-end]          384px  /* bento C2-C3 — big screenshot ends here  */
             [screenshot-end]      192px  /* bento C4 tail                           */
             [bento-end];           /* total: 192+176+80+176+384+192 = 1200px  */
         // No grid-template-areas — the gutter column has no area name, which
@@ -242,13 +242,17 @@ body {
         }
     }
 
+    // Text content in chapter left column renders via richtext.njk.
+    // Typography and spacing rules live in _richtext.scss.
+    // No layout-level type styles here — richtext is self-contained.
+
     .chapter__bento {
         grid-column: bento-start / bento-end;
         position: relative; // required: pages are position:absolute within this
         /* Height set by JS in choreography.js based on page count */
     }
 
-    /* ── Bento pages — sticky within chapter__bento ──────────────────────── */
+    /* -- Bento pages — sticky within chapter__bento ------------------------ */
     /* Each page stacks at the same origin. Later pages sit above earlier ones. */
 
     .chapter__bento .layout__page {
@@ -264,23 +268,9 @@ body {
     // .chapter__bento .layout__page .content-cell removed — mosaic is now
     // a direct child of layout__page, no content-cell wrapper in the mosaic path.
 
-
-
-    /* ── Field text style ────────────────────────────────────────────────── */
-    /* CONTRACT_EXCEPTION: font-size and line-height are provisional — no Figma
-     * token assigned yet. Replace with design tokens once spec is finalised. */
-
-    .chapter__content .field-text {
-        font-family: var(--font-family-brand);
-        font-size: clamp(1rem, 1.5vw, 1.25rem);
-        line-height: 1.6;
-        color: var(--color-primary-70);
-        margin: 0;
-    }
-
 }
 
-/* ── Designed section (≥ 1248px) ────────────────────────────────────────────
+/* -- Designed section (>= 1248px) -------------------------------------------
  * Field and Frame Grid — full 5-IU macro layout.
  * Opt-in via mode: designed in YAML. Used as first or last section only.
  * Fixed geometry. No scaling.

@@ -1,0 +1,136 @@
+// _richtext.scss
+// -----------------------------------------------------------------------------
+// Single long-form text rendering pattern. Used in both pipelines:
+//   Pipeline A: chapter left column (fieldText via compiled-page.njk)
+//   Pipeline B: executor content cells (via richtext.njk include)
+//
+// Source components: CGDC-DS / Components--Ready
+//   paragraph      (2781:453) — PT Sans Regular, type/paragraph/*, color/body
+//   unordered-list (2781:455) — PT Sans Regular, type/paragraph/*, color/body, list-disc
+//   ordered-list   (3277:2226) — PT Sans Regular, type/paragraph/*, color/body, list-decimal
+//   heading h2     (2466:1306) — Raleway SemiBold, type/sectionHeading/*, color/heading
+//   heading h3     (2780:439)  — Raleway Regular, type/subheading/*, color/heading
+//   h2 subhead (p) (2466:1309) — Raleway Regular, type/subheading/*, color/heading (non-semantic)
+//
+// Spacing between blocks governed by component tokens:
+//   --richtext-block        (= --spacing-xxl = 32px) — between different block types
+//   --richtext-continuation (= 0px)                  — between same-type siblings
+//   --richtext-list-indent  (= --spacing-l = 20px)   — list item indent
+//
+// Spacing implementation uses the lobotomized owl (* + *) to apply
+// --richtext-block between all siblings by default, then overrides to
+// --richtext-continuation for matching adjacent siblings.
+// -----------------------------------------------------------------------------
+
+.richtext {
+    // Paragraph — PT Sans Regular, color/body
+    // Source: paragraph component (2781:453)
+    font-family: var(--type-paragraph-family);
+    font-size: var(--type-paragraph-size);
+    font-weight: var(--type-paragraph-weight);
+    line-height: var(--type-paragraph-lineHeight);
+    color: var(--color-body);
+    margin: 0;
+}
+
+// Block spacing — lobotomized owl
+// Default: --richtext-block between all siblings
+.richtext + .richtext {
+    margin-block-start: var(--richtext-block);
+}
+
+// Continuation: same-type adjacent siblings get zero spacing
+.richtext--ul + .richtext--ul,
+.richtext--ol + .richtext--ol,
+.richtext--h2 + .richtext--h2,
+.richtext--h3 + .richtext--h3 {
+    margin-block-start: var(--richtext-continuation);
+}
+
+// h2 subhead follows immediately after h2 headline — zero gap
+.richtext--h2 .richtext__subhead {
+    margin-block-start: var(--richtext-continuation);
+}
+
+// -- h2 -----------------------------------------------------------------------
+// Source: heading level=h2 (2466:1306)
+// Raleway SemiBold, type/sectionHeading/*, color/heading
+
+.richtext--h2 {
+    margin: 0;
+}
+
+.richtext--h2 h2 {
+    font-family: var(--type-sectionHeading-family);
+    font-size: var(--type-sectionHeading-size);
+    font-weight: var(--type-sectionHeading-weight);
+    line-height: var(--type-sectionHeading-lineHeight);
+    color: var(--color-heading);
+    margin: 0;
+}
+
+// Non-semantic subhead below h2 headline
+// Source: subhead (p) node (2466:1309) — uses subheading tokens, color/heading
+.richtext--h2 .richtext__subhead {
+    font-family: var(--type-subheading-family);
+    font-size: var(--type-subheading-size);
+    font-weight: var(--type-subheading-weight);
+    line-height: var(--type-subheading-lineHeight);
+    color: var(--color-heading);
+    margin: 0;
+}
+
+// -- h3 -----------------------------------------------------------------------
+// Source: heading level=h3 (2780:439)
+// Raleway Regular, type/subheading/*, color/heading
+
+.richtext--h3 {
+    margin: 0;
+}
+
+.richtext--h3 h3 {
+    font-family: var(--type-subheading-family);
+    font-size: var(--type-subheading-size);
+    font-weight: var(--type-subheading-weight);
+    line-height: var(--type-subheading-lineHeight);
+    color: var(--color-heading);
+    margin: 0;
+}
+
+// -- Unordered list -----------------------------------------------------------
+// Source: unordered-list component (2781:455)
+// PT Sans Regular, type/paragraph/*, color/body, disc markers
+
+.richtext--ul {
+    font-family: var(--type-paragraph-family);
+    font-size: var(--type-paragraph-size);
+    font-weight: var(--type-paragraph-weight);
+    line-height: var(--type-paragraph-lineHeight);
+    color: var(--color-body);
+    list-style: disc;
+    padding-inline-start: var(--richtext-list-indent);
+    margin: 0;
+}
+
+.richtext--ul li {
+    margin: 0;
+}
+
+// -- Ordered list -------------------------------------------------------------
+// Source: ordered-list component (3277:2226)
+// Identical tokens to unordered-list — decimal markers only difference
+
+.richtext--ol {
+    font-family: var(--type-paragraph-family);
+    font-size: var(--type-paragraph-size);
+    font-weight: var(--type-paragraph-weight);
+    line-height: var(--type-paragraph-lineHeight);
+    color: var(--color-body);
+    list-style: decimal;
+    padding-inline-start: var(--richtext-list-indent);
+    margin: 0;
+}
+
+.richtext--ol li {
+    margin: 0;
+}

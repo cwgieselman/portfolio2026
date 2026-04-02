@@ -18,14 +18,15 @@
 
     <div class="layout__chapter" data-chapter-offset="{{ chapter.chapterOffset }}">
 
-      {# Left column — field text, animated in/out by choreography.js #}
+      {# Left column — richtext, animated in/out by choreography.js #}
       {% if chapter.fieldText %}
       <div class="chapter__content">
-        <p class="field-text">{{ chapter.fieldText }}</p>
+        {% set richtextParams = { kind: "p", text: chapter.fieldText } %}
+        {% include "components/richtext.njk" %}
       </div>
       {% endif %}
 
-      {# Right column — bento pages, stacked at same origin #}
+      {# Right column — pages stacked at same origin #}
       <div class="chapter__bento">
         {% for pageItem in chapter.pages %}
         {% set pageId = pageItem.pageKey %}

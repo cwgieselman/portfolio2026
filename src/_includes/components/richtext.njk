@@ -1,32 +1,76 @@
 {#
-  Richtext — deterministic param API
+  richtext.njk
+  ─────────────────────────────────────────────────────────────────────────────
+  Single long-form text rendering pattern. Both pipelines use this include.
+
+  Pipeline A (chapter/page): called from compiled-page.njk with fieldText
+  Pipeline B (executor):     called from content-cell.njk via includes array
+
+  Figma source components (CGDC-DS / Components--Ready):
+    paragraph      2781:453
+    unordered-list 2781:455
+    ordered-list   3277:2226
+    heading        2466:1305 (component set: level=h2, level=h3)
 
   Expects (via richtextParams):
-  - kind: "p" | "ul" | "ol"
-  - text: string (for kind "p")
-  - items: array of strings (for kind "ul" or "ol")
+    kind: "p" | "h2" | "h3" | "ul" | "ol"  — required
+
+    kind="p":
+      text: string
+
+    kind="h2":
+      headline: string
+      showSubhead: boolean
+      subhead: string  (only when showSubhead=true — non-semantic, styled as subheading)
+
+    kind="h3":
+      headline: string
+
+    kind="ul" | kind="ol":
+      items: [string, ...]
+
+  DOM output:
+    kind="p"  → <p class="richtext">
+    kind="h2" → <div class="richtext richtext--h2"><h2>...</h2>[<p class="richtext__subhead">]</div>
+    kind="h3" → <div class="richtext richtext--h3"><h3>...</h3></div>
+    kind="ul" → <ul class="richtext richtext--ul">
+    kind="ol" → <ol class="richtext richtext--ol">
+  ─────────────────────────────────────────────────────────────────────────────
 #}
 
 {% set p = richtextParams %}
+
 {% if not p.kind %}
   <!-- CONTENT_ERROR: missing kind (richtext include) -->
-{% endif %}
-{% set kind = p.kind %}
 
-{% if kind == "p" %}
+{% elif p.kind == "p" %}
   <p class="richtext">{{ p.text | safe }}</p>
 
-{% elseif kind == "ul" %}
-  <ul class="richtext richtext--list">
-    {% for li in p.items %}
-      <li>{{ li | safe }}</li>
+{% elif p.kind == "h2" %}
+  <div class="richtext richtext--h2">
+    <h2>{{ p.headline | safe }}</h2>
+    {% if p.showSubhead and p.subhead %}
+      <p class="richtext__subhead">{{ p.subhead | safe }}</p>
+    {% endif %}
+  </div>
+
+{% elif p.kind == "h3" %}
+  <div class="richtext richtext--h3">
+    <h3>{{ p.headline | safe }}</h3>
+  </div>
+
+{% elif p.kind == "ul" %}
+  <ul class="richtext richtext--ul">
+    {% for item in p.items %}
+      <li>{{ item | safe }}</li>
     {% endfor %}
   </ul>
 
-{% elseif kind == "ol" %}
-  <ol class="richtext richtext--list">
-    {% for li in p.items %}
-      <li>{{ li | safe }}</li>
+{% elif p.kind == "ol" %}
+  <ol class="richtext richtext--ol">
+    {% for item in p.items %}
+      <li>{{ item | safe }}</li>
     {% endfor %}
   </ol>
+
 {% endif %}
