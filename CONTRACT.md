@@ -689,7 +689,7 @@ mosaic:
   rows: 4
   tiles:
     - id: article-01
-      type: content
+      type: frame
       theme: primary-dark
       desktop:
         col: "1 / 2"
@@ -699,7 +699,7 @@ mosaic:
         <span class="mosaic-body">Week on-site at the pilot FAB in France</span>
 
     - id: article-02
-      type: image
+      type: bleed
       desktop:
         col: "2 / 5"
         row: "1 / 3"

@@ -323,7 +323,7 @@ The Mosaic is the grid composition component for case study pages. Full contract
 **Art-directed image YAML:**
 ```yaml
 - id: article-03
-  type: image
+  type: bleed
   artDirection: true
   media:
     src: "/assets/images/photo--landscape.jpg"
@@ -335,7 +335,7 @@ The Mosaic is the grid composition component for case study pages. Full contract
 **Scrollable image YAML:**
 ```yaml
 - id: article-07
-  type: image
+  type: bleed
   scrollable: true
   media:
     src: "/assets/images/figjam--wide.png"

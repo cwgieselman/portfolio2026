@@ -343,7 +343,7 @@ Each tile emits:
          data-mosaic-tile="article-NN">
 ```
 
-For custom tiles (`custom: true` on a `content` or `image` base):
+For custom tiles (`custom: true` on a `frame` or `bleed` base):
 ```html
 <article class="mosaic-tile mosaic-tile--{base-type} [mosaic-tile--theme-{theme}]"
          data-mosaic-tile="article-NN"
@@ -416,7 +416,7 @@ mosaic:
   rows: 4
   tiles:
     - id: article-01
-      type: content
+      type: frame
       theme: primary-dark
       desktop:
         col: "1 / 2"
@@ -426,7 +426,7 @@ mosaic:
         <span class="mosaic-body">Week on-site at the pilot FAB in France</span>
 
     - id: article-06
-      type: image
+      type: bleed
       desktop:
         col: "3 / 5"
         row: "2 / 4"
@@ -436,7 +436,7 @@ mosaic:
         alt: "TODO:alt"
 
     - id: article-07
-      type: content
+      type: frame
       custom: true
       variant: "selfie"
       theme: primary-dark
@@ -573,7 +573,7 @@ chapters:
           rows: 4
           tiles:
             - id: article-01
-              type: content
+              type: frame
               theme: primary-dark
               desktop:
                 col: "1 / 2"
@@ -640,7 +640,7 @@ Must include:
 - Chapters found
 - Pages found (total across all chapters)
 - Tiles found (total across all pages)
-- Tiles emitted by type (content / image / custom / skeleton)
+- Tiles emitted by type (frame / bleed / custom / skeleton)
 - Field text blocks found
 
 **TODO counts:**
