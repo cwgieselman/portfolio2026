@@ -167,12 +167,16 @@
 }
 
 // ── Caption ──────────────────────────────────────────────────────────────────
+// Placeholder treatment — not yet designed via the system.
+// --color-body and fineprint scale for now; revisit during BMTx page work.
 
 .comparison-slider__caption {
   display: block;
   margin-top: var(--spacing-s);
-  font-size: var(--scale-75);
-  color: var(--color-text-subtle);
+  font-family: var(--type-fineprint-family);
+  font-size: var(--type-fineprint-size);
+  line-height: var(--type-fineprint-lineHeight);
+  color: var(--color-body);
 }
 
 // ── Reduced motion ───────────────────────────────────────────────────────────

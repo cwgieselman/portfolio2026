@@ -1,5 +1,5 @@
 # Session State
-*Last updated: March 31, 2026 — Claude Code review pass*
+*Last updated: April 1, 2026*
 
 > **THIS FILE IS AUTHORITATIVE STATE — read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -7,42 +7,85 @@
 
 ---
 
-## Branches
+## Branch
 
-All previous branches — merged to main ✓
-`build/figma-pull-script` — committed, merge pending (Claude Code)
-`build/token-system-cleanup` — committed, merge pending (Craig)
+`build/subgrid-chapter-layout` — active, uncommitted
 
 ---
 
 ## Where We Are
 
-Long tokens session — complete. Craig is done for the night.
+Long documentation and token cleanup session. The token pipeline is clean and
+building correctly. CONTRACT.md, CLAUDE.md, and COMPILE_PROMPTS.md have all
+been substantially updated to reflect the current architecture.
 
-Figma variable layer is complete and clean. Craig can now go through
-and bind Text Styles and Color Styles to the variables without making
-decisions at the same time.
+The page-header include, pill component, and YAML shape have been updated and
+are ready to verify in the browser. `npm run tokens:build` needs to run before
+any browser verification.
 
 ---
 
 ## What Was Completed This Session
 
-- Token Studio fully decommissioned
-- Figma variables cleaned — no duplicates, correct structure
-- Font stack: Raleway · PT Sans · Playfair Display · Courier Prime
-- Vocabulary rename: bento→mosaic, layout__narrative→layout__story
-- Zed LSP config, tokens:pull placeholder
-- tokenDocs.js Eleventy data transform — token viewer wired
-- DESIGN-SYSTEM-HUB-VISION.md written
-- README.md rewritten with Style Dictionary decision record
-- figma-pull.mjs written (REST API blocked by Figma plan — Enterprise only)
-- Live Figma pull via Claude.ai + Figma MCP — proved working
-- tokens.json updated with live pull data
-- Semantic variables created in Figma: color/focus, type/subheading/*,
-  type/*/color tokens, type/ctaLink/weight/*
-- tokens.json: color/body canonical, pill tokens, subheading tokens,
-  button/CTA color tokens, accent/50 added
-- PR doc written for Claude Code: build/token-system-cleanup
+### Docs
+- CONTRACT.md rewritten — two-pipeline architecture, new Richtext shared
+  contract, Mosaic correct (4-up, MONEY/MIN/MAX, 5 themes, Playfair Display),
+  page-header and heading Pipeline A contracts, stale Bento Grid section
+  replaced with Mosaic, Chapter Semantics Contract removed, executor
+  content-cell section scoped to Pipeline B only
+- CLAUDE.md rewritten — Token Studio decommissioned, correct token sync
+  workflow, subheading tokens corrected, mosaic responsive model correct,
+  five themes documented, FF Grid scoped to special-case only
+- COMPILE_PROMPTS.md updated — §B rewritten for chapter/page/mosaic
+  hierarchy, §H added (page-header, richtext/chapter--content, heading),
+  executor pipeline explicitly scoped to Pipeline B only
+
+### Figma
+- `chapter--content` component renamed → `richtext`
+- `space/content-rhythm/*` tokens renamed → `richtext/*` (component collection)
+- Confirmed: all component references in INFI file point to CGDC library
+
+### tokens.json + build pipeline
+- Font primitives restructured: `font-family`/`font-weight`/`font-case`
+  → `font.family`/`font.weight`/`font.case` (dot-path, matches Figma slash convention)
+- All `{font-family.*}` and `{font-weight.*}` references updated throughout
+- `component.space.content-rhythm` → `component.richtext`
+- Four type token mismatches corrected to match Figma:
+  - `type/pageTitle/size`: `scale.350` → `scale.175` (28px)
+  - `type/pageTitle/lineHeight`: `scale.400` → `scale.300` (48px)
+  - `type/subheading/size`: `scale.150` → `scale.125` (20px)
+  - `type/subheading/weight`: `font.weight.semibold` → `font.weight.regular`
+  - `type/eyebrow/lineHeight`: `scale.200` → `scale.125` (20px)
+  - `type/subheading/lineHeight`: confirmed correct at `scale.250` (40px)
+- Build script: removed stale `content-rhythm` special case, added `/` → `-`
+  sanitization in fallback return (fixes `weight/bold` CSS var name)
+- `npm start` builds clean — no SCSS errors
+
+### Components
+- `pill.njk` created — `<span class="pill">{{ pillParams.text }}</span>`
+- `page-header.njk` rewritten:
+  - Data binding: `data.header` → `data.pageHeader`
+  - Eyebrow: handles `eyebrowType: "text"` and `eyebrowType: "pills"`
+  - Pills loop through `pill.njk` include
+- `_page-header.scss`:
+  - `.page-header__chip` → `.pill`
+  - Pill styles use `--type-pill-*` and `--color-pill-*` tokens
+  - Headline uses `--type-pageTitle-*` tokens
+  - Subhead corrected to Raleway Regular at `--type-subheading-*`
+    (was PT Sans 16px — now Raleway Regular 20px/40px matching Figma)
+- `_comparison-slider.scss`:
+  - `--color-text-subtle` → `--color-body` + fineprint tokens on caption
+  - Marked provisional — full design deferred to BMTx page work
+- `inficon-impact-manager/page.yml`:
+  - `header:` → `pageHeader:`
+  - `eyebrow:` dot-string → `eyebrowType: "pills"` + `pills:` array
+
+### Canonical vocabulary additions (locked)
+- `richtext` — ordered sequence of typed prose blocks. Figma component,
+  Nunjucks include, CSS class, component tokens all share this name.
+  Replaces `chapter--content` everywhere.
+- `pill` — small labeled badge. Taxonomy/categorization only.
+  Replaces `chip` everywhere. `.pill` CSS class. `pill.njk` include.
 
 ---
 
@@ -51,103 +94,57 @@ decisions at the same time.
 | Concept | Name | CSS / YAML |
 |---|---|---|
 | Whole case study | **story** | `layout__story` |
-| Narrative unit | **chapter** | unchanged |
-| Scroll stack unit | **page** | `pages:` in YAML |
+| Narrative unit | **chapter** | `chapter-##` |
+| Scroll stack unit | **page** | `chapter--page-##` |
+| Editorial text block | **richtext** | `richtext.njk` / `.richtext` |
 | Grid composition | **mosaic** | `.mosaic` |
 | Composition cell | **mosaic-tile** | `.mosaic-tile` / `tiles:` in YAML |
-
----
-
-## Token Architecture (locked)
-
-- Token Studio: gone
-- Pull script: `scripts/figma-pull.mjs` exists but REST API requires Enterprise plan
-- Working pull workflow: Claude.ai session → `use_figma` reads variables →
-  filesystem MCP writes tokens.json → `npm run tokens:build`
-- Direction: Figma owns color/semantic/component. Code owns scale math.
-- Font stack keys in tokens.json still use hyphenated format (`font-weight`,
-  `font-family`) — needs alignment with Figma slash-path convention next session
-
----
-
-## Figma Variable State (end of session)
-
-All three collections complete:
-
-**Primitives** — color ramps (primary 9, secondary 9, neutral 5, accent 1),
-scale math (hand-authored, never pulled), font families, font weights
-
-**Semantic** — space, radius, color (bg, body, focus, heading, eyebrow, link,
-pill*, button*, CTA*), type (paragraph, pageTitle, sectionHeading, subheading,
-fineprint, eyebrow, paragraphLead, ctaLink, pill)
-
-**Component** — mosaic themes (5), mosaic type, content-rhythm
-
-**Next step for Craig in Figma:**
-1. Create Text Styles, bind to semantic type variables
-2. Create Color Styles, bind to semantic color variables
-3. Then bind components to styles
+| Small labeled badge | **pill** | `.pill` / `pill.njk` |
 
 ---
 
 ## Open Priorities
 
-### 1. Font primitive key alignment (next tokens session)
-`font-weight` and `font-family` keys in tokens.json use hyphens.
-Figma slash-path convention translates to dots: `font.weight`, `font.family`.
-The pull script skip list uses `font` as the top-level skip — these are
-excluded from pulls. This naming drift means type tokens pulled from Figma
-that reference `{font.weight.regular}` won't resolve in the build script
-which looks for `{font-weight.regular}`.
+### Immediate (this branch, before merge)
+1. Run `npm run tokens:build` — regenerate SCSS from updated tokens.json
+2. Run `npm start` — verify page-header renders correctly in browser:
+   - Three pills in eyebrow
+   - Headline at 28px Raleway Bold
+   - Subhead at 20px Raleway Regular in secondary/70 yellow
+3. `_typography.scss` block-tier h1 override — currently 40px/48px, sized for old
+   56px desktop h1. With 28px desktop this makes mobile larger than desktop.
+   Deferred pending mobile design pass — flag for next session.
+4. CLAUDE.md typography table still documents h1 as 56px/64px — needs updating
+   to reflect actual 28px/48px values now in tokens.
 
-Fix: rename keys in tokens.json + update all internal references +
-update `refToCssVar()` in build-tokens-scss.mjs. Then remove font/* from
-pull skip list so font primitives can be pulled too.
+### Build priorities (after branch merge)
+- Complete chapter-02 in INFI Figma, then fresh compile attempt
+- Resolve bento page stacking/accumulation in choreography
+  (pages translate in but don't lock to build composite)
+- Container query / responsiveness pass on mosaic
 
-### 2. Type token size alignment (needs Craig decision in Figma)
-
-Four type tokens in tokens.json do not match what the PR doc says Figma holds.
-Claude Code left these as-is because the Figma values conflict with the CLAUDE.md
-typography table and applying them would visually break h1 (28px vs 56px).
-
-**Suspected mismatches — verify in Figma variable panel:**
-- `type/eyebrow/lineHeight` — SCSS: `scale/200` (32px), PR doc says Figma: `scale/125` (20px)
-- `type/pageTitle/size` — SCSS: `scale/350` (56px), PR doc says Figma: `scale/175` (28px) ⚠️
-- `type/pageTitle/lineHeight` — SCSS: `scale/400` (64px), PR doc says Figma: `scale/300` (48px) ⚠️
-- `type/subheading/lineHeight` — SCSS: `scale/300` (48px), PR doc says Figma: `scale/250` (40px)
-
-The pageTitle values are especially suspect — 28px h1 would be a major regression.
-Check the Figma variable panel and update tokens.json accordingly, then `npm run tokens:build`.
-
-### 3. Orphaned token — `--color-text-subtle`
-
-`src/assets/scss/components/_comparison-slider.scss:175` references `--color-text-subtle`
-but this token is not in tokens.json and is not emitted by the build. It silently fails.
-Either add it to tokens.json or replace the reference with an existing token.
-
-### 4. Token backlog items (need Figma design decisions)
-- Shadow system (item 1)
-- Alpha/overlay color (item 2)
-- Frosted glass bg token (item 3)
-- Scale/275 line-height (item 4)
-- Em-based letter-spacing (item 5)
-- DS hub UI redesign (item 6 — defer)
-
-### 4. Build priorities
-- Micro-alignment inside mosaic + chapter gap
-- Field text extended page approach
-- Section 2 content
+### Deferred
+- Token backlog: shadow system, alpha/overlay, frosted glass bg, scale/275
+  line-height, em-based letter-spacing
+- Mobile typography pass (block tier overrides)
+- Comparison slider full design (BMTx page)
+- Arrow indicator system on mosaic tiles
+- Sticky-stack section navigation
+- Playwright visual regression suite — maintain as changes land
 
 ---
 
-## Deferred
+## Token Architecture (locked)
 
-- DS hub component gallery revival
-- DS hub YAML builder
-- Page header detached-on-load behavior
-- Sticky-stack section navigation
-- Section 2 content
-- Skeletons re-enabled
+- Token Studio: gone. Do not reinstall.
+- Pull workflow: Claude.ai session + Figma MCP → write tokens.json →
+  `npm run tokens:build`
+- Font primitives: dot-path convention (`font.family.*`, `font.weight.*`,
+  `font.case.*`) matching Figma slash convention
+- `component.richtext.*` — spacing tokens for richtext component
+- `component.mosaic.*` — theme and type tokens for mosaic
+- Generated CSS vars: `--richtext-block`, `--richtext-continuation`,
+  `--richtext-list-indent`, `--type-subheading-*`, `--type-pageTitle-*`
 
 ---
 
@@ -155,14 +152,16 @@ Either add it to tokens.json or replace the reference with an existing token.
 
 | File | State |
 |------|-------|
-| `tokens/tokens.json` | Updated tonight — commit pending (Claude Code) |
-| `scripts/figma-pull.mjs` | Written — REST API requires Enterprise plan |
-| `scripts/build-tokens-scss.mjs` | Working |
-| `src/_data/tokenDocs.js` | Live — token viewer works |
-| `src/design-system/index.njk` | Token viewer wired |
-| `src/_includes/layouts/base.njk` | Playfair Display + Courier Prime |
-| `README.md` | Rewritten — Style Dictionary decision record |
-| `_docs/DESIGN-SYSTEM-HUB-VISION.md` | Written |
+| `tokens/tokens.json` | Updated this session — needs `npm run tokens:build` |
+| `scripts/build-tokens-scss.mjs` | Updated — slash sanitization + stale special case removed |
+| `CONTRACT.md` | Rewritten this session |
+| `CLAUDE.md` | Rewritten this session |
+| `scripts/COMPILE_PROMPTS.md` | Updated this session |
+| `src/_includes/components/pill.njk` | New |
+| `src/_includes/layouts/page-header.njk` | Rewritten |
+| `src/assets/scss/components/_page-header.scss` | Updated |
+| `src/assets/scss/components/_comparison-slider.scss` | Updated |
+| `src/_data/pages/inficon-impact-manager/page.yml` | Updated |
 
 ---
 
@@ -178,11 +177,11 @@ Either add it to tokens.json or replace the reference with an existing token.
 
 ## Rules
 
-- Read Figma metadata before writing CSS. One change at a time. Verify in Chrome.
+- Read Figma before writing CSS. One change at a time. Verify in Chrome.
 - Session ends: PR doc → Claude Code commits, OR this file updated.
-- Scale tokens stay as math expressions. Figma pull skips scale.
+- Scale tokens stay as math expressions.
 - Token Studio is gone. Do not reinstall.
-- Style Dictionary evaluated and deliberately not adopted — see README.
-- `--color-text` is retired. Use `--color-body`.
+- `--color-text` and `--color-text-subtle` are retired. Use `--color-body`.
 - YAML `tiles:` → HTML `<article>`. In CONTRACT.
-- Figma pull (Enterprise-gated REST API) → use Claude.ai + Figma MCP instead.
+- Figma REST API is Enterprise-gated. Use Claude.ai + Figma MCP instead.
+- `str_replace` unreliable on tokens.json — use `write_file` as fallback.

@@ -1,250 +1,220 @@
 # Portfolio2026 — Deterministic Render Contract
-A formal specification of the render model, routing behavior, component contracts, and system invariants governing Portfolio2026.
+A formal specification of the render model, component contracts, and system invariants governing Portfolio2026.
 
 Scope of this document:
-- Defines the deterministic render model: YAML → executor → component params → DOM.
-- Specifies routing behavior and include execution rules within `layouts/content-cell.njk`.
+- Defines the two active rendering pipelines and when each applies.
+- Specifies the chapter/page/mosaic pipeline for case study pages.
+- Specifies the executor pipeline for non-mosaic pages.
 - Establishes component boundaries, required params, and prohibition of implicit defaults or global hydration.
-- Governs image handling policy (passthrough baseline vs. future optimized mode) and prevents mixed render paths.
+- Governs image handling policy and prevents mixed render paths.
 - Protects architectural integrity by prohibiting inference, param reshaping, silent fallbacks, and undocumented behavior.
 
-This document is normative. Generated documentation in `_docs/generated/` is descriptive only.
-
----
-
-## Relationship to Generated Docs
-
-The `_docs/generated/` folder contains snapshots of the current repository state.
-Those files are descriptive only and must not be manually edited.
-
-If generated output conflicts with this contract, either:
-- Update the code to match the contract, or
-- Intentionally revise the contract.
+This document is normative. If generated output conflicts with this contract, either update the code to match the contract, or intentionally revise the contract.
 
 ---
 
 ## Canonical Terminology
 
-**Layout grid names are canonical. Use these exactly — in code comments, SCSS, docs, and conversation. Do not invent synonyms.**
+**These names are canonical. Use them exactly — in code comments, SCSS, docs, and conversation.**
 
 | Canonical name | Abbreviation | What it is |
 |---|---|---|
-| **Field and Frame Grid** | **FF Grid** | The full 5-IU macro page grid in `_layout.scss`. Active at ≥ 1248px viewport. |
+| **Story** | — | A full case study page. CSS class `layout__story`. |
+| **Chapter** | — | A narrative unit within a story. Instance of `chapter-##` component. |
+| **Page** | — | A scroll-stack unit within a chapter. Instance of `chapter--page-##` component. |
+| **Richtext** | — | An ordered sequence of typed prose blocks (paragraphs, headings, lists). Figma component: `richtext`. Template: `components/richtext.njk`. Component tokens: `component/richtext/*`. |
+| **Mosaic** | — | The CSS Grid composition inside a chapter page. Tiles are `<article>` elements. |
+| **Mosaic tile** | — | Individual cell inside a mosaic. YAML key `tiles:` maps to HTML `<article>` elements — intentional split. |
 | **2-col Grid** | — | The simplified two-column layout grid active at 640px–1247px. |
-| **Mosaic** | — | The CSS Grid inside a `.mosaic` component instance. Container-query driven. |
-| **Mosaic tile** | — | Individual cell inside `.mosaic`. YAML key `tiles:` maps to HTML `<article>` elements — intentional split. |
+| **FF Grid** | **FF Grid** | The full 5-IU macro page grid. Preserved for special-case page types; not the default container for case study pages. |
 
-Any use of "macro grid", "page grid", "5-col grid", "mid-tier grid", "responsive grid", "bento layout", "bento grid", or similar informal names is incorrect. Use the canonical names above.
+Do not use: "bento", "bento grid", "bento cell", "section", "macro grid", "page grid", "field text", "chapter--content", or any informal synonyms for the terms above.
 
 ---
 
-## Deterministic Rendering Contract  
-Figma → YAML → Eleventy → HTML → CSS  
+## Deterministic Rendering Contract
+Figma → YAML → Eleventy → HTML → CSS
 
 This file defines the non-negotiable structural and rendering rules for the active system.
 
 ---
 
-## 1. Single Active Rendering System
+## 1. Two Active Rendering Pipelines
 
-Only the compiled-page pipeline is valid.
+**Pipeline A — Chapter/Page/Mosaic (case study pages)**
 
-Active flow:
+The active pipeline for all case study pages. Data flows through:
 
-pages.js  
-↓  
-_data/pages/<pageKey>/page.yml  
-↓  
-layouts/compiled-page.njk  
-↓  
-layouts/page.njk  
-↓  
-layouts/content-cell.njk  
-↓  
-component include  
+```
+pages.js
+↓
+_data/pages/<pageKey>/page.yml
+↓
+layouts/compiled-page.njk
+↓
+layouts/page.njk  (chapter/page iteration)
+↓
+components/mosaic.njk  (tile rendering)
+```
 
-No alternative front-matter rendering systems are permitted.
+YAML structure: `pageHeader → chapters → pages → mosaic → tiles`
+
+Richtext blocks within a chapter compile to a `content:` array and render via `components/richtext.njk` directly — not via the executor.
+
+**Pipeline B — Executor (non-mosaic pages)**
+
+Used for pages with content-cell layouts. Data flows through:
+
+```
+pages.js
+↓
+_data/pages/<pageKey>/page.yml
+↓
+layouts/compiled-page.njk
+↓
+layouts/page.njk
+↓
+layouts/content-cell.njk
+↓
+component include
+```
+
+YAML structure: `sections → pages → cells → includes`
+
+**Do not mix pipelines.** A page uses one or the other. Never both.
 
 ---
 
 ## 2. Data Ownership
 
-Figma JSON  
-- Represents design intent only.  
+Figma JSON
+- Represents design intent only.
 - Not consumed directly by templates.
 
-YAML  
-- Is the implementation contract.  
+YAML
+- Is the implementation contract.
 - Is the only source of structure and content.
 
 Templates must NOT:
-
 - Reach into global collections implicitly
 - Access `page.*` unless explicitly passed
 - Access `site.data` unless explicitly passed
 - Infer structure from content
 - Reshape parameter objects
 
-Each include receives a single `params` object and renders only that object.
-
 ---
 
-## 3. Layout Contract — content-cell Executor
+## 3. Executor Contract — content-cell.njk (Pipeline B only)
 
-### `Vert` and `Horiz` positioning props on content-cells
+File: `src/_includes/layouts/content-cell.njk`
 
-These props control **where a content-cell sits within its grid slot** when the cell's content is smaller than the slot. They are not a layout engine — they answer one question: when there is extra space in my grid area, where do I position myself?
+Purpose:
+- Executes each include exactly once.
+- Prevents scope leakage.
+- Does not reshape or hydrate globals.
 
-**Figma prop names are intentionally non-CSS.** They describe spatial intent, not implementation. The compile contract maps intent to the correct CSS mechanism depending on context.
+Input shape:
+
+```
+cell:
+  wrapper: string
+  includes:
+    - include: string
+      params: object
+```
+
+Execution rules:
+- Each include MUST render exactly once.
+- No global variable hydration is permitted.
+- No param reshaping is permitted.
+- Params must be passed as explicit component-specific objects.
+
+Safelisted includes: `figure.njk`, `header.njk`, `link-block.njk`, `richtext.njk`
+
+Adding a new include requires: (1) update executor safelist, (2) add CONTRACT.md section, (3) update docs.
+
+Unknown include paths must render a non-fatal HTML comment in the DOM.
+
+### Wrapper ID Convention (Pipeline B only)
+
+Format: `<prefix>--<sectionKey>--<pageKey>--<cellName>`
+
+Prefix rules:
+- `header--` → cell contains exactly one child: `header`
+- `figure--` → cell contains exactly one child: `figure`
+- `content--` → everything else
+
+This convention does NOT apply to mosaic tiles. Mosaic tiles use `data-mosaic-tile` attributes as their CSS hook.
+
+### Vert / Horiz Positioning Props (Pipeline B only)
+
+These props control where a content-cell sits within its grid slot when the cell's content is smaller than the slot.
 
 | Figma prop | Values | Axis |
 |---|---|---|
 | `Vert` | `Default` \| `Center` \| `End` | Vertical (block) |
 | `Horiz` | `Default` \| `Center` \| `End` | Horizontal (inline) |
 
-**`Default` means emit nothing.** The CSS default (`stretch`) governs. Only `Center` and `End` produce output.
+`Default` → emit nothing. `Center` and `End` produce output. Do not emit to YAML. Do not emit as inline styles.
 
-**Value mapping:**
+| Prop | Figma value | CSS output |
+|---|---|---|
+| `Vert` | `Center` | `align-self: center;` |
+| `Vert` | `End` | `align-self: end;` |
+| `Horiz` | `Center` | `justify-self: center;` |
+| `Horiz` | `End` | `justify-self: end;` |
 
-| Figma value | CSS output |
-|---|---|
-| `Default` | *(nothing emitted)* |
-| `Center` | `align-self: center` (Vert) / `justify-self: center` (Horiz) |
-| `End` | `align-self: end` (Vert) / `justify-self: end` (Horiz) |
-
-**Important:** `Horiz: Center` (`justify-self: center`) causes a grid item to shrink to its intrinsic width. Only use it on cells whose content has a defined width (e.g. a Bento Grid with `width: fit-content`). Do not use on cells containing block-level text content — those rely on `stretch` to fill the grid track.
-
-**Output target:** Placements SCSS only — in the same selector as `grid-column` and `grid-row`:
-
-```scss
-.content-cell[data-cell="content--section-01--page-01--content-cell-03"] {
-    grid-column: 5 / 8;
-    grid-row: 6 / 16;
-    align-self: center; /* Vert=Center */
-}
-```
-
-**Product note:** The `Vert`/`Horiz` naming is pragmatic for a portfolio build. If this system were ever developed into a product, the naming convention, prop vocabulary, and compile contract would need more rigorous design — particularly around `Horiz: Center` and its interaction with block-level content sizing.
-
-
-File  
-`src/_includes/layouts/content-cell.njk`
-
-Purpose  
-- Executes each include exactly once.
-- Prevents scope leakage.
-- Injects derived chapter semantics deterministically.
-- Does not reshape or hydrate globals.
-
-Input Shape
-
-cell:  
-- wrapper: string  
-- includes:  
-  - include: string  
-  - params: object  
-
-Execution Rules
-
-- Each include MUST render exactly once.
-- No global variable hydration is permitted.
-- No param reshaping is permitted.
-- Params must be passed as explicit component-specific objects:
-  - headerParams
-  - textBlockParams
-  - figureParams
-  - linkBlockParams
-  - linkParams
-
-Unknown include paths must render a non-fatal HTML comment in the DOM.
+Output target: placements SCSS only, in the same selector as `grid-column` and `grid-row`.
 
 ---
 
-## 4. Chapter Semantics Contract
-
-Sections represent narrative chapters.
-
-Each `<section.layout__section>` must:
-
-- Include `aria-labelledby="<sectionKey>__title"`
-- Contain a header component as the first semantic heading
-
-Derived ID Rule:
-
-- Derived ID: `${sectionKey}__title`
-- Applied only when:
-  - First page in section
-  - First cell on page
-  - First include in cell
-  - Include path == `components/header.njk`
-
-YAML must NOT:
-
-- Define heading IDs
-- Emit aria attributes
-- Infer labeling behavior
-
-Section labeling is deterministic and derived from `section.sectionKey`.
-
----
-
-## 5. Structural Determinism
+## 4. Structural Determinism
 
 Templates must:
-
 - Render exactly what YAML defines.
 - Fail visibly when required fields are missing.
 - Never silently omit required structure.
 
 ### Error Marker Convention
 
-If required component data is missing, templates MUST render a structured HTML comment marker in the format:
+If required component data is missing, templates MUST render:
 
 `<!-- <SCOPE>_ERROR: <message> -->`
 
-Where `<SCOPE>` identifies the source of the failure (e.g., `FIGURE`, `CONTENT`, `EXECUTOR`).
-
 Examples:
-
-~~~html
+```html
 <!-- FIGURE_ERROR: missing src -->
 <!-- CONTENT_ERROR: missing kind (richtext include) -->
 <!-- EXECUTOR_ERROR: missing params -->
-~~~
+```
 
 Silent failure is not permitted.
 
 ---
 
-## 6. Layout Rules
+## 5. Layout Rules
 
 No offset positioning:
-
-- No `position: absolute`
-- No transform offsets
+- No `position: absolute` (except documented CONTRACT_EXCEPTION cases in SCSS)
+- No transform offsets for placement
 - No negative margins
 
 Placement must use:
-
 - Named grid lines
 - `grid-column`
 - `grid-row`
 - `align-self`
 - `justify-self`
 
-Spacing must be controlled by grid and gap.  
-Margin stacking is not permitted inside structural components.
+Spacing must be controlled by grid and gap. Margin stacking is not permitted inside structural components.
 
 ---
 
-## 7. CSS Loading Contract
+## 6. CSS Loading Contract
 
-`base.njk` must load:
-
-`/assets/scss/main.css`
+`base.njk` must load: `/assets/scss/main.css`
 
 If styling appears incorrect, verify in order:
-
 1. CSS file exists at `_site/assets/scss/main.css`
 2. CSS file is loaded in browser (href must match)
 3. Class names match rendered DOM
@@ -252,418 +222,465 @@ If styling appears incorrect, verify in order:
 
 ---
 
-## 8. Display Typography Contract (H1 / H2)
+## 7. Display Typography Contract
 
 Display typography uses explicit grid-snapped line-height tokens.
 
 Rules:
-
-- Font-size uses semantic tokens:
-  - `--web---title`
-  - `--web---sectionHeading`
-
-- Line-height uses explicit tokens:
-  - `--web---title--lh`
-  - `--web---sectionHeading--lh`
-
+- Font-size and line-height use semantic CSS custom property tokens.
 - Line-height must be snapped to the 4px metric scale.
 - Multiplier-based leading is not permitted.
 - No inline styles are permitted.
 
-Example:
-
-```css
---web---title: var(--scale-350);
---web---title--lh: var(--scale-400);
-
 ---
 
-# Component Contracts (Active Route)
-
----
-
-## Header
-
-include: `components/header.njk`
-
-### Inputs (`headerParams`)
-
-- level: `"h1" | "h2" | "h3"`
-- variant: `"quiet"` (optional — reduces visual weight without changing semantic level)
-- headline: string — rendered via `| safe`. May contain inline HTML (e.g. `<span class="nobr">...</span>`)
-- showEyebrow: boolean
-- eyebrow: string
-- showSubhead: boolean
-- subhead: string
-
-### Inputs (`headerParamsId`)
-
-- Derived heading ID for chapter semantics injection
-
-### Rules
-
-- No inferred flags.
-- YAML must not define heading IDs.
-- ID is applied only when `headerParamsId` is provided.
-- When `variant` is `"quiet"`, the heading element is unchanged (still `h2`) but receives an additional CSS class `header__headline--quiet` for reduced visual weight. Visual result matches `h3` sizing at all tiers.
-- When `variant` is absent or not `"quiet"`, the heading renders with default visual treatment.
-- Use `<span class="nobr">product name</span>` in `headline` to prevent proper names breaking across lines.
-
-### DOM Shape
-
-~~~html
-<header class="header">
-  <p class="header__eyebrow"></p> <!-- optional -->
-  <h1|h2|h3 class="header__headline [header__headline--quiet]" id=""></h1|h2|h3>
-  <p class="header__subhead"></p> <!-- optional -->
-</header>
-~~~
+# Component Contracts — Shared (Both Pipelines)
 
 ---
 
 ## Richtext
 
-include: `components/richtext.njk`
+Figma component: `richtext` (CGDC library)
+Template: `components/richtext.njk`
+Component tokens: `component/richtext/block`, `component/richtext/continuation`, `component/richtext/list-indent`
 
-### Inputs (`richtextParams`)
-- kind: `"p" | "ul" | "ol"` (required)
-- text: string — required when `kind == "p"`
-- items: array[string] — required when `kind == "ul" or kind == "ol"`
+### What it is
+
+An ordered sequence of typed prose blocks. The `richtext` Figma component is a Slot-based container — its content is composed from `paragraph`, `heading`, and `list` child component instances dropped into the Slot. This is the same component used in both pipelines:
+
+- **Pipeline B (executor):** routed through `content-cell.njk` with `richtextParams`
+- **Pipeline A (chapter/page):** invoked directly by the chapter layout template; the `richtext` Slot in Figma compiles to a `content:` array in YAML
+
+The YAML shape and template include are identical in both cases. The only difference is the call site.
+
+### YAML Shape
+
+```yaml
+# Single block (Pipeline B, inside a cell)
+- include: "components/richtext.njk"
+  params:
+    kind: "p"
+    text: "Four weeks into the role, I was on a plane to Grenoble, France."
+
+# Multiple blocks (Pipeline A, chapter content array)
+content:
+  - kind: "p"
+    text: "Four weeks into the role, I was on a plane to Grenoble, France."
+  - kind: "ul"
+    items:
+      - "The customer had withheld their signature."
+      - "They wanted to see what professional design involvement looked like."
+  - kind: "h2"
+    headline: "What I found"
+    showSubhead: false
+```
+
+### Template Inputs (`richtextParams`)
+
+- `kind`: `"p" | "ul" | "ol" | "h2" | "h3"` (required)
+- `text`: string — required when `kind == "p"`
+- `items`: array[string] — required when `kind == "ul"` or `"ol"`
+- `headline`: string — required when `kind == "h2"` or `"h3"`
+- `showSubhead`: boolean — for h2 only
+- `subhead`: string — for h2 only when showSubhead is true
 
 ### Constraints
 
-- `kind` MUST be provided.
-- When `kind == "p"`, text MUST be provided.
-- When `kind == "ul"` or `"ol"`, items MUST be provided.
-- `items` MUST be an array of strings.
-- Template must not derive `kind`.
-- Template must not transform, split, or reshape `text` or `items`.
-- Template must not coerce between paragraph and list modes.
+- `kind` MUST be provided. Missing kind MUST emit `<!-- CONTENT_ERROR: missing kind (richtext include) -->`.
+- Template must not derive `kind`, transform `text`, or coerce between modes.
+- `items` MUST be an array of strings for list kinds.
 
-### Error Behavior
+### Component Tokens
 
-- Missing kind MUST emit:
-~~~html
-<!-- CONTENT_ERROR: missing kind (richtext include) -->
-~~~
-No other implicit fallbacks are permitted.
+The lobotomized owl spacing between `.richtext` sibling elements is governed by:
+
+| Token | Key | Value |
+|---|---|---|
+| Block spacing | `component/richtext/block` | `space/xxl` (32px) — between distinct block types |
+| Continuation spacing | `component/richtext/continuation` | `0` — between same-type siblings |
+| List indent | `component/richtext/list-indent` | `space/l` (20px) |
 
 ### DOM Shape
 
-Paragraph Mode
+```html
+<!-- Paragraph -->
+<p class="richtext">...</p>
 
-~~~html
-<p class="richtext"></p>
-~~~
-
-Unordered List Mode
-
-~~~html
+<!-- Unordered list -->
 <ul class="richtext richtext--list">
-    <li></li>
-    <li></li>
+    <li>...</li>
 </ul>
-~~~
 
-Ordered List Mode
-
-~~~html
+<!-- Ordered list -->
 <ol class="richtext richtext--list">
-    <li></li>
-    <li></li>
+    <li>...</li>
 </ol>
-~~~
+```
 
 ---
 
-## Figure (Temporary Passthrough v1)
+# Component Contracts — Pipeline B (Executor)
 
-include: `components/figure.njk`
+---
+
+## Header
+
+Include: `components/header.njk`
+
+### Inputs (`headerParams`)
+
+- `level`: `"h1" | "h2" | "h3"`
+- `variant`: `"quiet"` (optional — reduces visual weight without changing semantic level)
+- `headline`: string — rendered via `| safe`. May contain inline HTML (e.g. `<span class="nobr">...</span>`)
+- `showEyebrow`: boolean
+- `eyebrow`: string
+- `showSubhead`: boolean
+- `subhead`: string
+
+### Rules
+
+- No inferred flags.
+- YAML must not define heading IDs.
+- When `variant: "quiet"`, the heading receives `header__headline--quiet` class. Visual result matches h3 sizing at all tiers.
+- Use `<span class="nobr">product name</span>` to prevent proper names breaking across lines.
+
+### DOM Shape
+
+```html
+<header class="header">
+  <p class="header__eyebrow"></p> <!-- optional -->
+  <h1|h2|h3 class="header__headline [header__headline--quiet]" id=""></h1|h2|h3>
+  <p class="header__subhead"></p> <!-- optional -->
+</header>
+```
+
+---
+
+## Figure
+
+Include: `components/figure.njk`
 
 ### Inputs (`figureParams`)
 
-- type: `"desktop" | "mobile" | "composite"`
-- showCaption: boolean
-- caption: string
-- src: string (public path)
-- hasAlt: boolean
-- alt: string
+- `type`: `"desktop" | "mobile" | "composite"`
+- `showCaption`: boolean
+- `caption`: string
+- `src`: string (public path under `/assets/images/`)
+- `hasAlt`: boolean
+- `alt`: string
 
 ### Rules
 
 - `src` MUST be a public URL path under `/assets/images/`.
-- Eleventy Image plugin is not used in this component during stabilize.
-- No inferred flags.
+- Eleventy Image plugin is not used in this component. Future optimized path: `components/figure-optimized.njk` (not active).
 - If `hasAlt === false`, alt must be empty and image is presentational.
 
 ### DOM Shape
 
-~~~html
+```html
 <figure class="figure figure--{type}">
   <div class="figure__media">
     <img src="" alt="" />
   </div>
   <figcaption class="figure__caption"></figcaption> <!-- optional -->
 </figure>
-~~~
-
-### Future Optimized Figure (NOT ACTIVE during stabilize)
-
-A separate include will be introduced later:
-
-- `components/figure-optimized.njk`
-
-Contract split:
-- `src` → passthrough only (public `/assets/images/...`)
-- `srcFile` → optimized only (filesystem path, used exclusively by the optimized include)
-
-Optimization may only be reintroduced after deterministic verification.
-No mixed modes in a single include.
-
-### Figure Modes
-
-Baseline (ACTIVE):
-- components/figure.njk
-- Uses <img>
-- src must be public path under /assets/images/
-
-Optimized (NOT ACTIVE during stabilize):
-- components/figure-optimized.njk
-- Uses srcFile (filesystem path)
-- Uses @11ty/eleventy-img
-- Must not be mixed inside the same include
-
-Optimization will only be enabled after:
-- Deterministic verification passes
-- Executor remains thin
+```
 
 ---
 
 ## Link Block
 
-include: `components/link-block.njk`
+Include: `components/link-block.njk`
 
 ### Inputs (`linkBlockParams`)
 
-- hasSecondary: boolean
-- primary:
-  - priority
-  - label
-  - URL
-  - link
-- secondary:
-  - priority
-  - label
-  - URL
-  - link
-
-### Rules
-
-- `primary` renders if present.
-- `secondary` renders only when `hasSecondary === true`.
-- YAML must not contain placeholder values.
-- No param reshaping into globals.
+- `hasSecondary`: boolean
+- `primary`: `{ priority, label, URL, link }`
+- `secondary`: `{ priority, label, URL, link }` (only when `hasSecondary === true`)
 
 ### DOM Shape
 
-~~~html
+```html
 <div class="link-block">
   <a|span class="link ..."></a|span>
-  <a|span class="link ..."></a|span <!-- optional -->
+  <a|span class="link ..."></a|span> <!-- optional -->
 </div>
-~~~
+```
 
 ---
 
 ## Link
 
-include: `components/link.njk`
+Include: `components/link.njk`
 
 ### Inputs (`linkParams`)
 
-- priority: `"Primary" | "Secondary"`
-- label: string
-- URL: string
-- link: string
+- `priority`: `"Primary" | "Secondary"`
+- `label`: string
+- `URL`: string
+- `link`: string
 
 ### Rules
 
-- If `URL` exists → render `<a>`
-- If `URL` is absent → render disabled `<span>`
-- No defaults during stabilize.
-- Callers must provide explicit values.
+- If `URL` exists → render `<a>`. If absent → render disabled `<span>`.
+- No defaults. Callers must provide explicit values.
+
+---
+
+# Component Contracts — Pipeline A (Chapter/Page/Mosaic)
+
+---
+
+## page-header
+
+Component: `page-header` (CGDC library)
+Template context: direct child of the root story frame. Rendered once per case study page.
+
+### Figma Props → YAML
+
+| YAML key | Figma prop | Notes |
+|---|---|---|
+| `headline` | `headline#445:1` (TEXT) | Required. If missing: `TODO:headline` |
+| `showEyebrow` | `showEyebrow#447:6` (BOOLEAN) | Emit as boolean |
+| `showSubhead` | `showSubhead#458:2` (BOOLEAN) | Emit as boolean |
+| `subhead` | `subhead#458:5` (TEXT) | Only when showSubhead is true |
+| — | `stuck#3124:2` (BOOLEAN) | Visual state flag — ignore at compile, do not emit |
+
+**Eyebrow variants** — `_page-header__eyebrow` has `type` VARIANT (`text` | `pills`):
+
+- `type=text` → emit `eyebrowType: "text"`, `eyebrow: "<string>"`
+- `type=pills` → emit `eyebrowType: "pills"`, `pills: ["text1", "text2", ...]` (extract `text#3183:15` from each `_pill` instance in the Slot)
+
+### YAML Shape
+
+```yaml
+pageHeader:
+  headline: "INFICON Intelligent Manufacturing Systems"
+  showEyebrow: true
+  eyebrowType: "pills"
+  pills:
+    - "UX/UI Design"
+    - "Design Systems"
+    - "Product Strategy"
+  showSubhead: true
+  subhead: "13 months as the first UX designer..."
+```
+
+---
+
+## heading
+
+Component: `heading` (CGDC library)
+Template context: used within richtext content sequences. Not used inside mosaic tiles.
+
+### Figma Props → YAML
+
+| YAML key | Figma prop | Notes |
+|---|---|---|
+| `level` | `level` VARIANT | `"h2"` \| `"h3"` |
+| `headline` | `headline#445:3` (TEXT) | Required |
+| `showSubhead` | `showSubhead#458:0` (BOOLEAN) | h3 variant ignores subhead |
+| `subhead` | `subhead#458:3` (TEXT) | Only when showSubhead=true and level=h2 |
+
+Note: `heading` has no eyebrow — eyebrow is a `page-header` concern only. No `h1` variant — h1 is exclusively `page-header`.
+
+---
+
+## Mosaic
+
+Template: `src/_includes/components/mosaic.njk`
+Styles: `src/assets/scss/components/_mosaic.scss`
+Placements: `src/assets/scss/placements/_<pageKey>.scss`
+
+### Purpose
+
+Grid composition component for case study chapter pages. Renders a set of tiles from compiled YAML. Not part of the executor pipeline.
+
+### Invocation
+
+```njk
+{% from "components/mosaic.njk" import mosaic %}
+{{ mosaic(cell.mosaic) }}
+```
+
+### Responsive Model — container-query driven, small → large
+
+Cell size has three authored states — it never interpolates between them:
+
+| State | Size | Notes |
+|---|---|---|
+| MIN | 144px | Default 2-up and 4-up narrow |
+| MONEY | 176px | Primary desktop designed state |
+| MAX | 208px | 2-up wide only |
+
+Gap: `clamp(8px, 2cqi, 16px)` — fluid between states, 16px at designed states.
+
+| Container query threshold | Layout | Cell size |
+|---|---|---|
+| Default (no query) | 2-up, `width: 100%` | fluid `minmax(144px, 208px)` |
+| `content-cell ≥ 624px` | 4-up, `width: fit-content` | MIN (144px) |
+| `content-cell ≥ 752px` | 4-up, `width: fit-content` | MONEY (176px) |
+
+### Tile Types
+
+| `type:` | Class | Notes |
+|---|---|---|
+| `content` | `mosaic-tile--content` | Padded. Text, stats, quotes. |
+| `image` | `mosaic-tile--image` | No padding. `object-fit: cover`. |
+| `image` + `artDirection: true` | `mosaic-tile--image-directed` | Art-directed `<picture>` with viewport-switched crops. |
+| `image` + `scrollable: true` | `--image-desktop` + `--image-scrollable` siblings | Wide process artifacts. Two article elements rendered. |
+| `graphic` | `mosaic-tile--graphic` | Square illustration/diagram. `object-fit: contain`, padded, `aspect-ratio: 1` in 2-up. |
+| `skeleton` | `mosaic-tile--skeleton` | P00 underlay. No content, no theme. `z-index: 0`. |
+| `custom` | `mosaic-tile--custom` | Extended behavior via `variant:` string. Requires SCSS + JS scaffolding. |
+
+### Named Themes
+
+| Theme | Background | Text | Border |
+|---|---|---|---|
+| `primary-dark` | primary/60 | primary/10 | primary/80 |
+| `primary-light` | primary/20 | primary/60 | primary/30 |
+| `secondary-dark` | secondary/50 | secondary/80 | secondary/60 |
+| `secondary-light` | secondary/20 | secondary/70 | secondary/30 |
+| `default` | neutral/10 | primary/60 | neutral/60 |
+
+### Inline Typography Spans
+
+| Class | Font | Size (clamp) | Alignment |
+|---|---|---|---|
+| `mosaic-stat` | Playfair Display Bold | `50px → 72px` (`36cqi`) | center (axiomatic) |
+| `mosaic-lead` | Raleway Regular | `19px → 24px` (`13.2cqi`) | center (axiomatic) |
+| `mosaic-lead-italic` | Raleway Italic | `19px → 24px` (`13.2cqi`) | center (axiomatic) |
+| `mosaic-body` | PT Sans Regular | `13px → 16px` (`9.2cqi`) | left (default) |
+| `mosaic-body-bold` | PT Sans Bold | `13px → 16px` (`9.2cqi`) | left (default) |
+
+Axiomatic centering: any tile containing `mosaic-lead`, `mosaic-lead-italic`, or `mosaic-stat` receives `text-align: center` via `:has()`. Body-only tiles remain left-aligned.
+
+### DOM Shape
+
+```html
+<div class="mosaic" id="mosaic--{data.id}">
+
+  <!-- content tile -->
+  <article class="mosaic-tile mosaic-tile--content mosaic-tile--theme-primary-dark"
+           data-mosaic-tile="article-01">
+    <div class="mosaic-tile__inner">
+      <span class="mosaic-stat">1</span>
+      <span class="mosaic-body">Week on-site at the pilot FAB</span>
+    </div>
+  </article>
+
+  <!-- image tile -->
+  <article class="mosaic-tile mosaic-tile--image"
+           data-mosaic-tile="article-02">
+    <div class="mosaic-tile__inner"><!-- media.njk --></div>
+  </article>
+
+  <!-- skeleton tile (P00 only) -->
+  <article class="mosaic-tile mosaic-tile--skeleton"
+           data-mosaic-tile="article-03"
+           aria-hidden="true"></article>
+
+  <!-- custom tile -->
+  <article class="mosaic-tile mosaic-tile--custom mosaic-tile--theme-primary-dark"
+           data-mosaic-tile="article-04"
+           data-mosaic-variant="selfie">
+    <div class="mosaic-tile__inner">
+      <span class="mosaic-lead-italic">TODO:quote</span>
+    </div>
+  </article>
+
+</div>
+```
+
+`data-mosaic-tile` is the CSS placement hook — used in placements SCSS as `[data-mosaic-tile="article-NN"]`.
+`data-mosaic-variant` is emitted only when `tile.variant` is set.
+
+### Placement
+
+All placement in `placements/_<pageKey>.scss`. Nothing inline.
+
+Real tiles: `#mosaic--<id>` carries `grid-template-areas`; `[data-mosaic-tile="article-NN"]` gets `grid-area: aNN`.
+Skeleton tiles: `#mosaic--<id>` carries `grid-template-columns/rows`; tiles get `grid-column`/`grid-row`.
+`desktop.col` / `desktop.row` in YAML are reference only.
+`z-index`: base `.mosaic-tile` has `z-index: 1`; skeleton tiles have `z-index: 0`. Additional per-tile z-index from Figma layer order in placements SCSS only.
+
+### Choreography States
+
+`.mosaic--pending` — hidden, skeleton underlay shows through. JS-driven.
+`.mosaic--visible` — revealed, triggers `mosaic-reveal` animation.
+
+### Custom Tile Contract
+
+When a `custom` tile is encountered during compile, append to the report:
+
+```
+CUSTOM TILE SCAFFOLD — variant: <variant>
+  SCSS: add ruleset for [data-mosaic-variant="<variant>"] in placements/_<pageKey>.scss
+  JS:   add behavior keyed to document.querySelector('[data-mosaic-variant="<variant>"]')
+  Note: <describe intended behavior from Figma>
+```
+
+### YAML Shape
+
+```yaml
+mosaic:
+  id: inficon-ims--chapter-01--p01
+  cols: 4
+  rows: 4
+  tiles:
+    - id: article-01
+      type: content
+      theme: primary-dark
+      desktop:
+        col: "1 / 2"
+        row: "1 / 3"
+      content: |
+        <span class="mosaic-stat">1</span>
+        <span class="mosaic-body">Week on-site at the pilot FAB in France</span>
+
+    - id: article-02
+      type: image
+      desktop:
+        col: "2 / 5"
+        row: "1 / 3"
+      media:
+        src: "TODO:src"
+        hasAlt: true
+        alt: "TODO:alt"
+
+    - id: article-03
+      type: custom
+      variant: "selfie"
+      theme: primary-dark
+      desktop:
+        col: "1 / 2"
+        row: "3 / 5"
+      content: |
+        <span class="mosaic-lead-italic">TODO:quote</span>
+```
+
+### Rules
+
+- Template renders exactly what YAML defines. No implicit defaults.
+- `theme:` is optional. Omitting produces transparent, borderless tile.
+- The Mosaic is NOT permitted in the executor safelist.
+- Structural changes require a CONTRACT.md update.
+- Arrow indicators (`_mosaic-article__frame Arrow` prop) are deferred. Do not scaffold.
 
 ---
 
 ## Debug Method
 
 When a mismatch occurs:
-
 1. Confirm YAML structure.
-2. Confirm executor passes correct param object.
+2. Confirm template receives correct data.
 3. Confirm component renders expected markup.
 4. Confirm CSS selector matches rendered markup.
 5. Confirm CSS file is loaded.
 
-Each fix must:
-
-- Address exactly one failure.
-- Be committed independently.
-- Be logged in README.
+Each fix must address exactly one failure and be committed independently.
 
 ## Review Gate
 
 No branch merges to `main` without a Claude Code review pass.
-See `_docs/WORKFLOW.md` for the two-phase workflow, PR summary template,
-and what a correct review looks like.
-
----
-
-# Standalone Component Contracts
-
-Standalone components operate outside the executor pipeline. They are invoked directly via Nunjucks macro calls in page templates or test pages. The executor rules (single params object, safelist enforcement, chapter semantics) do not apply to standalone components.
-
-Standalone components may NOT be added to the executor safelist without a corresponding CONTRACT.md update.
-
----
-
-## Bento Grid
-
-Template: `src/_includes/components/bento-grid.njk`  
-Styles: `src/assets/scss/components/_bento-grid.scss`  
-Theme tokens: `src/assets/scss/_tokens--component.scss` (generated); rulesets in `src/assets/scss/components/_bento-grid.scss`
-One-off overrides: `src/assets/scss/components/bento-cells/`
-
-### Purpose
-
-Editorial grid for process and discovery layouts inside case study pages. Not part of the compiled-page executor pipeline.
-
-### Invocation
-
-~~~njk
-{% from "components/bento-grid.njk" import bentoGrid %}
-{{ bentoGrid(bento) }}
-~~~
-
-Where `bento` is the top-level key from a YAML data file.
-
-### YAML Shape
-
-~~~yaml
-bento:
-  id: inficon--discovery       # drives CSS id and data-bento attribute
-  cols: 5                      # reference only — drives placements SCSS
-  rows: 5                      # reference only — drives placements SCSS
-  cells:
-    - id: article-01
-      type: content            # content | image | custom
-      theme: primary-dark      # named theme — see themes below; omit for image cells
-      desktop:
-        col: "1 / 2"           # reference only — drives placements SCSS
-        row: "1 / 2"           # reference only — drives placements SCSS
-      content: |               # raw HTML from Figma Slot — rendered via | safe
-        <span class="bento-stat">1</span>
-        <span class="bento-body">Week on-site at the pilot FAB in France:</span>
-~~~
-
-### Named Themes
-
-Set via `theme:` on a cell. Defaults to `white` when omitted.
-
-| Theme | Background | Text | Border |
-|---|---|---|---|
-| `white` *(default)* | neutral/10 | primary/60 | neutral/60 |
-| `primary-dark` | primary/60 | primary/10 | primary/80 |
-| `primary-light` | primary/20 | primary/60 | primary/30 |
-| `secondary-dark` | secondary/50 | secondary/80 | secondary/60 |
-| `secondary-light` | secondary/20 | secondary/70 | secondary/30 |
-
-### Cell Types
-
-**content** — cell has padding. Use for text, stats, mixed content.
-**image** — no padding; content bleeds to cell edge.
-**graphic** — square illustration/diagram. `object-fit: contain`, padded, `aspect-ratio: 1` in 2-up.
-**skeleton** — bare outline cell for P00 underlay. No content, no theme.
-**custom** — extended behavior cell. Requires `variant:` string. See below.
-
-#### Arrow Indicators (planned, not yet implemented)
-
-Directional arrow indicators between bento cells are a planned feature. When implemented, they will be keyed by `cell.arrow` in YAML (e.g. `arrow: "right"`). The template, SCSS, and SVG sprite were removed in `rehab/codebase-audit` — the prior implementation never worked correctly and will be rebuilt from Figma when needed.
-
-#### Annotation Toggle (removed, to be replaced)
-
-A macro-based component (`annotation-toggle.njk`) for toggling between a raw artifact image and an annotated version via a button. Removed in `rehab/codebase-audit` — the implementation was functional but will be replaced with a more semantic and accessible annotation widget designed specifically for the BMTx case study. A design thread with pseudo-code and examples exists in Claude.ai. Files removed: `annotation-toggle.njk`, `_annotation-toggle.scss`. JS was bundled in `comparison-components.js` (still present). Rebuild from the new design when the BMTx page work begins.
-
-#### Custom Cell Contract
-
-A `custom` cell has two Figma boolean/text props that must be read from the article's `componentProperties`:
-
-| Figma prop | Type | YAML key |
-|---|---|---|
-| `custom` | boolean | `type: custom` |
-| `variant` | text | `variant: "<string>"` |
-
-The `variant` string is the canonical key for all extended behavior tied to that cell. The template emits it as `data-bento-variant` on the `<article>` element — this is the CSS and JS hook.
-
-**Template output (bento-grid.njk):**
-```html
-<article class="bento-cell bento-cell--custom [bento-cell--theme-*]"
-         data-bento-cell="article-NN"
-         data-bento-variant="<variant>">
-```
-
-**CSS hook** (in placements SCSS):
-```scss
-[data-bento-variant="<variant>"] { ... }
-```
-
-**JS hook** (in choreography.js or a dedicated script):
-```js
-document.querySelector('[data-bento-variant="<variant>"]')
-```
-
-**Compile scaffolding rule:** When a `custom` cell is encountered during compilation, emit the YAML and then output a scaffolding block in the compile report:
-
-```
-CUSTOM CELL SCAFFOLD — variant: <variant>
-  SCSS: add ruleset for [data-bento-variant="<variant>"] in placements/_<pageKey>.scss
-  JS:   add behavior keyed to document.querySelector('[data-bento-variant="<variant>"]')
-        in choreography.js or a dedicated <variant>.js partial
-  Note: <describe the intended visual/interactive behavior from Figma>
-```
-
-Content in `content:` renders via `| safe` as with `content` cells. Padding is not assumed — add via the variant's SCSS ruleset if needed.
-
-### Inline Typography Spans
-
-| Class | Family | Style | Size |
-|---|---|---|---|
-| `bento-stat` | Tienne | Bold | clamp(50px → 72px) |
-| `bento-lead` | Raleway | Regular | clamp(19px → 24px) |
-| `bento-lead-italic` | Raleway | Italic | clamp(19px → 24px) |
-| `bento-body` | PT Sans | Regular | clamp(13px → 16px) |
-| `bento-body-bold` | PT Sans | Bold | clamp(13px → 16px) |
-
-### Responsive Model — container-query driven, small → large
-
-| Threshold | Layout | Cell size |
-|---|---|---|
-| Default (no query) | 2-up, `width: 100%` | 140px min |
-| `content-cell ≥ 500px` | 2-up, `width: 100%` | 208px max |
-| `content-cell ≥ 732px` | 5-up, `width: fit-content` | 140px min (reset) |
-| `content-cell ≥ 900px` | 5-up, `width: fit-content` | 208px max |
-
-5-up fires at ~1052px viewport in the 2-col Grid tier. Always 5-up in the FF Grid tier.
-
-### Placement Model
-
-Cell placement uses CSS Grid named areas. Each `<article>` element receives `style="grid-area: aNN"` inline (derived from `cell.id` by fixed transform — `article-01` → `a01`). The `grid-template-areas` maps live in `placements/_<pageKey>.scss` — default 2-up map as a bare selector, 5-up map inside `@container content-cell (min-width: 732px)`.
-
-`grid-area` inline styles are a CONTRACT_EXCEPTION — they register names for the CSS area map, not placement values. See full rationale in CLAUDE.md.
-
-### Rules
-
-- Template renders exactly what YAML defines. No implicit defaults.
-- `theme:` is optional. Omitting produces transparent, borderless cell (correct for image cells).
-- The Bento Grid is NOT permitted in the executor safelist.
-- Structural changes require a CONTRACT.md update.
+See `_docs/WORKFLOW.md` for the two-phase workflow and PR summary template.

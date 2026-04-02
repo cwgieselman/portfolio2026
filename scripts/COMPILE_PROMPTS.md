@@ -13,6 +13,9 @@ Use these names exactly. Do not use synonyms.
 | **Field and Frame Grid** (abbrev: **FF Grid**) | The full 5-IU macro page grid. Active at ≥ 1248px viewport. |
 | **2-col Grid** | The simplified two-column layout grid. Active at 640px–1247px. |
 | **Mosaic** | The CSS Grid inside a `.mosaic` component instance. Tiles are `<article>` elements. |
+| **Chapter** | A narrative unit. Instance of `chapter-##`. Contains a skeleton (P00), one or more pages (P01–PN), and a `chapter--content` field text block. |
+| **Page** | A scroll-stack unit within a chapter. Instance of `chapter--page-##`. Contains a mosaic grid. |
+| **Field text** | The short editorial text above a chapter's mosaic. Instance of `chapter--content`. Contains a `paragraph` instance in its Slot. |
 
 ## INPUTS
 
@@ -27,45 +30,42 @@ Use these names exactly. Do not use synonyms.
 
 **Phase 1 — Scaffold (one-time setup)**
 
-1. Call `get_metadata` on `rootNodeId` to get the full section/page/content-cell tree.
+1. Call `get_metadata` on `rootNodeId` to get the full chapter/page/mosaic tree.
    This returns node IDs, names, positions (x, y, width, height), and hierarchy.
    From this single call, you have:
-   - All section names and IDs
-   - All page names and IDs within each section
-   - All content-cell names, IDs, and bounding boxes within each page
-   - The grid-tracks sibling instance ID on each page
+   - All chapter names and IDs
+   - All page names and IDs within each chapter
+   - The skeleton (P00) mosaic per chapter
+   - The `chapter--content` field text instance per chapter
+   - All mosaic tile instances and their bounding boxes within each page
    Save this tree as your working manifest. Sort per §E.
 
-2. Call `get_design_context` (with `excludeScreenshot: true`) on **one** `grid-tracks` instance.
-   Extract the `grid-template-columns` and `grid-template-rows` values.
-   Build the grid line lookup table per §D. This is reused for all pages.
-
-3. Initialize the output files:
-   - Begin writing the YAML file header (`pageKey`, `meta`, `sections:`)
+2. Initialize the output files:
+   - Begin writing the YAML file header (`pageKey`, `meta`, `chapters:`)
    - Begin the placements SCSS file
    - Begin the extract report
 
-**Phase 2 — Compile section by section**
+**Phase 2 — Compile chapter by chapter**
 
-For each section (in order):
+For each chapter (in order):
 
-4. Open the section in YAML (`- sectionKey: "section-NN"`).
-   Set `mode: "composite"` if the section has >1 page, else `"normal"`.
+3. Open the chapter in YAML (`- chapterKey: "chapter-NN"`).
 
-5. For each page in the section (in order):
+4. Extract the `chapter--content` field text:
+   - Find the `chapter--content` instance in the chapter's wrapper Slot.
+   - Find the `paragraph` instance in the `chapter--content` Slot.
+   - Extract `Text#466:0` from the paragraph's componentProperties.
+   - Emit as `fieldText:` in YAML.
+
+5. Emit the skeleton (P00) mosaic placements block to the SCSS file (see §G).
+
+6. For each page in the chapter (in order, P01–PN):
    Open the page in YAML (`- pageKey: "page-NN"`).
+   Compile the mosaic per §G.
+   Close the page.
 
-6. For each content-cell on the page (sorted per §E):
-   - You already have x, y, width, height from the Phase 1 metadata call.
-   - Compute grid placement per §D and write to the placements SCSS.
-   - Call `get_design_context` (with `excludeScreenshot: true`) on this content-cell's node ID.
-   - Extract the payload: identify includes, extract params per §PARAM EXTRACTION RULES.
-   - Write the cell's YAML entry (wrapper ID, includes, params).
-   - Log the cell in the extract report.
-
-7. After completing all cells on a page, close the page in YAML.
-   After completing all pages in a section, close the section in YAML.
-   **Confirm with the user before proceeding to the next section.**
+7. Close the chapter.
+   **Confirm with the user before proceeding to the next chapter.**
 
 **Phase 3 — Finalize**
 
@@ -75,11 +75,11 @@ For each section (in order):
 
 #### Mode A Constraints
 
-- **One `get_design_context` call per content-cell.** Do not batch. Do not call on sections or pages.
+- **One `get_design_context` call per mosaic frame.** Do not batch. Do not call on chapters or pages.
 - **Do not write scripts** to parse, transform, or fetch Figma data. The MCP calls are the parser.
 - **Write output incrementally.** Do not accumulate the entire page in memory before writing.
 - **If a `get_design_context` call returns unexpected data,** log it in the extract report and move on. Do not retry repeatedly or attempt workarounds.
-- **Stop and ask the user** if: a content-cell has no recognizable children, a coordinate doesn't snap to any grid line, or any other ambiguity arises.
+- **Stop and ask the user** if: a tile has no recognizable children, a coordinate doesn't snap to any grid line, or any other ambiguity arises.
 
 **Mode B (deprecated — do not use unless explicitly instructed by the user)**
 Local JSON already fetched. Only use if the user says "use the local JSON."
@@ -121,61 +121,49 @@ If missing, output TODO tokens (e.g. `TODO:headline`, `TODO:body`, `TODO:src`, `
 
 ### B) Node Tree Navigation
 
-The Figma node tree has this hierarchy:
+**Case study pages use the chapter/page hierarchy. This is the active pipeline.**
 
 ```
-<pageKey> [FRAME]
-  section-NN [FRAME]
-    page-NN [INSTANCE]             ← live grid-tracks component instance
-      guides [FRAME]               ← hidden; contains COL-- and ROW-- guide instances
-      grid [SLOT]                  ← Slot where content-cells live
-        content-cell-NN [INSTANCE] ← positioned via snap to grid lines
-          Slot [SLOT]
-            <child-1> [INSTANCE]   ← determines include type
-            <child-2> [INSTANCE]   ← additional include if stacked
-            ...
+<pageKey> [FRAME]                          ← root compile target
+  navbar [INSTANCE]                        ← structural, skip
+  page-header [INSTANCE]                  ← h1 + eyebrow + subhead (compile separately — see §H)
+  chapter-01 [INSTANCE of chapter-##]
+    wrapper [SLOT]
+      mosaic--skeleton [INSTANCE]          ← P00 skeleton (compile per §G)
+      page-01 [INSTANCE of chapter--page-##]
+        wrapper [SLOT]
+          mosaic-grid [FRAME]              ← contains article-NN tiles (compile per §G)
+      page-02 [INSTANCE of chapter--page-##]
+        wrapper [SLOT]
+          mosaic-grid [FRAME]
+      chapter--content [INSTANCE]         ← field text block (compile per §H)
+        content [SLOT]
+          paragraph [INSTANCE]            ← Text#466:0 = field text string
+  chapter-02 [INSTANCE of chapter-##]
+    wrapper [SLOT]
+      ...
 ```
 
-**Key structural note:** The page frame is now a live instance of the grid-tracks component. Content-cells are placed inside the `grid` Slot — not as free siblings. The `guides` frame contains named COL-- and ROW-- guide instances whose x/y positions encode the grid line lookup table directly — read guide positions rather than computing from track sizes. The guides frame has `hidden="true"` and does not render.
+**Structural components — skip, do not compile:**
+- `navbar` — rendered by the layout template, not YAML-authored
+- `mosaic--skeleton` — compile its tiles to SCSS placements only; no YAML content
+- `chapter-##`, `chapter--page-##` — scaffolding wrappers; no content props to extract
 
-**Payload resolution — Slot-first with fallback:**
+**Content-bearing components — compile:**
+- `page-header` — h1 headline, eyebrow (text or pills), subhead
+- `chapter--content` — field text (paragraph instance in Slot)
+- `mosaic-grid` children (`article-NN` tiles) — mosaic content
 
-For each content-cell, resolve the payload using this priority order:
-
-1. **Slot (preferred):** Look for a direct child node with `name="Slot"` and type `SLOT`. If found, use its children as the ordered payload sequence.
-2. **Fallback:** If no `Slot` node is found, look for a child instance named `content-cell--payload-wrapper`. Use its children as the payload sequence.
-3. **Error:** If neither is found, log a `CONTENT_ERROR` in the extract report and emit `includes: []` for that cell.
-
-Each child node's `name` determines the template include:
-
-| Figma child name | Include |
-|------------------|---------|
-| `header` | `components/header.njk` |
-| `paragraph` | `components/richtext.njk` (kind: `"p"`) |
-| `list` | `components/richtext.njk` (kind: `"ul"`) |
-| `figure` | `components/figure.njk` |
-| `link-block` | `components/link-block.njk` |
-
-If a child name doesn't match this table, log a warning in the extract report and emit an empty `includes: []` for that cell.
-
-**Stacking:** A single content-cell may contain multiple children. Each child becomes a separate entry in the YAML `includes[]` array, ordered by their position in the Figma children array.
+**Legacy hierarchy (content-cell pipeline) — DO NOT USE for case study pages:**
+The old `section-NN → page-NN → content-cell-NN` hierarchy and `components/header.njk`,
+`components/richtext.njk` etc. are the executor pipeline for non-mosaic pages. Case study
+pages use the chapter/page/mosaic hierarchy documented here. Do not mix the two.
 
 ### C) Wrapper ID Convention
 
-Each content-cell gets a wrapper ID for the YAML and placements SCSS.
-
-**Format:** `<prefix>--<sectionKey>--<pageKey>--<cellName>`
-
-**Prefix rules:**
-- `header--` → cell contains exactly one child, and it is `header`
-- `figure--` → cell contains exactly one child, and it is `figure`
-- `content--` → everything else (single richtext, single link-block, or any stacked combination)
-
-**Examples:**
-- `header--section-01--page-01--content-cell-01`
-- `content--section-01--page-01--content-cell-02`
-- `figure--section-01--page-02--content-cell-02`
-- `content--section-02--page-01--content-cell-02` (stacked: richtext + list + link-block)
+Mosaic tiles do not use the wrapper ID convention — they use `data-mosaic-tile` attributes.
+The wrapper ID convention (`content--`, `header--`, `figure--`) applies only to
+executor pipeline content-cells. It is NOT used in the chapter/page/mosaic pipeline.
 
 ### D) Grid Placement Contract
 
@@ -251,81 +239,91 @@ grid-column: [column-start-line] / [column-end-line];
 grid-row: [row-start-line] / [row-end-line];
 ```
 
-**Validation example 1 — full-frame figure cell** (BMTx section-02/page-01/content-cell-03):
-- Figma: `x=816, y=216, width=792, height=750`
-- Grid-relative y: `216` (no offset adjustment needed)
-- x=816 → column line 5, x+width=1608 → column line 8
-- y=216 → row line 2, y+height=966 → row line 15
-- **Result:** `grid-column: 5 / 8; grid-row: 2 / 15;`
-
-**Validation example 2 — header cell** (BMTx section-02/page-01/content-cell-01):
-- Figma: `x=408, y=264, width=1200, height=126`
-- Grid-relative y: `264` (no offset adjustment needed)
-- x=408 → column line 3, x+width=1608 → column line 8
-- y=264 → row line 4, y+height=390 → row line 5
-- **Result:** `grid-column: 3 / 8; grid-row: 4 / 5;`
-
-**COMMON ERROR:** Do not confuse column span count with column end line. The end value in `grid-column: start / end` is a **line number**, not a span. Always compute the end line from `x + width` matched to the lookup table. A 384px-wide cell starting at line 3 (408px) ends at line 4 (792px), NOT line 4 counting from the start.
+**COMMON ERROR:** Do not confuse column span count with column end line. The end value in `grid-column: start / end` is a **line number**, not a span. Always compute the end line from `x + width` matched to the lookup table.
 
 Numeric grid placement only. DO NOT use absolute positioning, transforms, negative margins, top/left, etc.
 Emit placements SCSS only (no inline styles).
 
 ### E) Ordering Contract
 
-- Ignore JSON child order for sections and pages.
-- Sort sections by numeric suffix (`section-01`, `section-02`…).
-- Sort pages by numeric suffix within each section (`page-01`, `page-02`…).
-- Sort content-cells within a page by visual position using bounding box:
+- Sort chapters by numeric suffix (`chapter-01`, `chapter-02`…).
+- Sort pages by numeric suffix within each chapter (`page-01`, `page-02`…).
+- Sort mosaic tiles within a page by visual position using bounding box:
   - Primary: y (top)
   - Secondary: x (left)
 - For ties, use node id ascending as stable fallback and report ties.
-- Within a content-cell, preserve Figma children order (do not re-sort).
+- Within a tile, preserve Figma children order (do not re-sort).
 
 ### F) Layout Contract
 
-Global centering/clipping is already handled by `layout__section` + `layout__page`.
+Global centering/clipping is already handled by `layout__story` + layout wrappers.
 Do not change global layout in this compile step. Only generate placements + data.
 
 ---
 
 ### G) Mosaic Compile Rules
 
-Mosaic frames are identified by their direct children being named `article-NN` (e.g. `article-01`, `article-02`). When the compiler encounters a frame whose children follow this naming pattern, apply the Mosaic compile rules below instead of the standard content-cell rules.
+Mosaic frames are identified by their direct children being named `article-NN` (e.g. `article-01`, `article-02`). When the compiler encounters a `mosaic-grid` frame whose children follow this naming pattern, apply the Mosaic compile rules below.
 
 **Key vocabulary:** YAML key `tiles:` maps to HTML `<article>` elements — intentional split. The semantic HTML element is `<article>`; the YAML array key is `tiles:`.
 
-#### Mosaic Node Tree
+#### Mosaic Component Anatomy
 
-```
-<mosaicKey> [FRAME]
-  grid-tracks [INSTANCE]     ← sibling; carries grid definition (same §D inference logic)
-  article-01 [INSTANCE]      ← ordered top-left to bottom-right (reading order)
-  article-02 [INSTANCE]
-  article-03 [INSTANCE]
-  ...
-```
+Each `article-NN` tile is a `mosaic-article` instance with these props:
+
+| Figma prop | Key | Type | Notes |
+|-----------|-----|------|-------|
+| `type` | VARIANT | `skeleton` \| `bleed` \| `frame` | `frame` = content tile (padded), `bleed` = image tile (no padding), `skeleton` = P00 underlay |
+| `custom#3129:0` | BOOLEAN | — | True = custom/variant tile |
+| `variant#3129:4` | TEXT | — | Variant name for custom tiles |
+| `Slot#2914:54` | SLOT | — | Content slot (present on `frame` and `bleed` types) |
+
+The `_mosaic-article__frame` sub-component carries:
+- `Arrow` VARIANT: `Up` \| `Down` \| `Left` \| `Right` \| `None`
+  - **Arrow indicators are deferred.** Always emit `Arrow=None`. Do not scaffold arrow behavior.
+
+The `_mosaic-article__theme` sub-component carries:
+- `theme` VARIANT: `primary-dark` \| `primary-light` \| `secondary-dark` \| `secondary-light` \| `default`
+- `points-to#2918:55` TEXT: the `#ID` of the target `<article>` element this arrow points at
+  - **Arrow targets are deferred.** Do not emit `points-to` to YAML.
+
+**Type → YAML tile type mapping:**
+
+| Figma `type` | `custom` | YAML `type` |
+|---|---|---|
+| `frame` | false | `content` |
+| `bleed` | false | `image` |
+| `frame` | true | `custom` |
+| `skeleton` | — | `skeleton` (P00 only) |
+
+#### Tile Content Extraction
+
+**`type=frame` (content tile):** Content lives in the `Slot`. The Slot may contain:
+- Text nodes with inline spans (`mosaic-stat`, `mosaic-lead`, `mosaic-lead-italic`, `mosaic-body`, `mosaic-body-bold`) — emit as `content: |` HTML block
+- Mixed HTML — emit verbatim via `| safe`
+
+**`type=bleed` (image tile):** No Slot content. Emit `media:` block with `src: "TODO:src"`, `hasAlt`, `alt`.
+
+**`type=frame` + `custom=true` (custom tile):** Read `variant` TEXT prop. Emit `type: custom`, `variant: "<value>"`. Append custom tile scaffold block to report.
+
+**`type=skeleton`:** No content. Emit SCSS placements only — no YAML entry.
 
 #### Tile Naming and HTML
 
-Tiles are named numerically from top-left to bottom-right in reading order. This naming order is canonical — it defines the semantic sequence in the HTML output.
-
-Each tile emits only:
+Each tile emits:
 ```html
-<article class="mosaic-tile mosaic-tile--{type} [mosaic-tile--theme-{theme}]" data-mosaic-tile="article-NN">
+<article class="mosaic-tile mosaic-tile--{type} [mosaic-tile--theme-{theme}]"
+         data-mosaic-tile="article-NN">
 ```
 
-For `custom` tiles, also emit `data-mosaic-variant`:
+For custom tiles:
 ```html
 <article class="mosaic-tile mosaic-tile--custom [mosaic-tile--theme-{theme}]"
          data-mosaic-tile="article-NN"
          data-mosaic-variant="{variant}">
 ```
 
-The `data-mosaic-tile` attribute is the CSS hook for per-tile placement. `data-mosaic-variant` is the hook for extended CSS and JS behavior. No numeric index class. No inline styles. No id attributes.
-
 #### Z-Index from Figma Layer Order
-
-Figma layer order (document order in the node tree) represents back-to-front stacking. The compiler derives `z-index` values from this order automatically.
 
 **Rule:** For each `article-NN` sibling, read its index position in the Figma node tree (0-based). Emit `z-index` equal to that index + 1. Emit in the placements SCSS only — never as a YAML field or inline style.
 
@@ -333,7 +331,7 @@ Figma layer order (document order in the node tree) represents back-to-front sta
 
 Use the same §D grid inference logic (grid-tracks sibling, bounding box matching, ±2px tolerance). The grid-tracks instance for a Mosaic frame uses uniform square tracks with a common gutter — simpler than the FF Grid but the same algorithm applies.
 
-All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`, in the same file as the content-cell placements. Structure:
+All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`. Structure:
 
 ```scss
 /* ─── mosaic--<id> — tile area map (default 2-up, no query) ─── */
@@ -362,22 +360,15 @@ All placement output goes to `src/assets/scss/placements/_<pageKey>.scss`, in th
 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; z-index: 11; }
 ```
 
-The `desktop.col` / `desktop.row` values in YAML are human-readable reference only — the template does not read them. The placements SCSS is the single source of truth for Mosaic placement.
-
 #### Skeleton P00 Block (required per chapter)
 
-Every chapter has a P00 skeleton page. Its mosaic must emit a dedicated placements block — no inline styles, same file as the real pages. Skeleton tiles use `grid-column`/`grid-row` directly (no named areas):
+Every chapter has a P00 `mosaic--skeleton` instance. Its tiles must emit SCSS placements only — no YAML. Skeleton tiles use `grid-column`/`grid-row` directly (no named areas):
 
 ```scss
 // ─────────────────────────────────────────────────────────────────────────────
-// S0N C0N P00 — mosaic--<pageKey>--s0N-c0N-p00
+// Chapter NN P00 — mosaic--<chapterKey>--p00
 // Skeleton underlay — always visible at z-index 0, never animated.
 // <cols> cols × <rows> rows. Marks composite mosaic area for Chapter N (P01–PN).
-//
-// Skeleton map:
-//   col:  1    2    3    4
-//   row1: .    s01  s02  s03
-//   ...
 // ─────────────────────────────────────────────────────────────────────────────
 
 #mosaic--<id>--p00 {
@@ -385,10 +376,8 @@ Every chapter has a P00 skeleton page. Its mosaic must emit a dedicated placemen
     grid-template-rows:    repeat(<rows>, var(--mosaic-cell-size));
 }
 
-/* ─── skeleton tile placements ─── */
 #mosaic--<id>--p00 .mosaic-tile[data-mosaic-tile="article-01"] { grid-column: 2 / 3; grid-row: 1 / 2; }
 #mosaic--<id>--p00 .mosaic-tile[data-mosaic-tile="article-02"] { grid-column: 3 / 4; grid-row: 1 / 2; }
-// ... one line per skeleton tile
 ```
 
 Place the P00 block immediately before the P01 block for its chapter.
@@ -397,23 +386,22 @@ Place the P00 block immediately before the P01 block for its chapter.
 
 ```yaml
 mosaic:
-  id: inficon--discovery
+  id: inficon--chapter-01--p01
   cols: 5
   rows: 5
   tiles:
     - id: article-01
-      type: content              # content | image | custom
-      theme: primary-dark        # omit for image tiles
+      type: content
+      theme: primary-dark
       desktop:
         col: "1 / 2"
         row: "1 / 2"
       content: |
         <span class="mosaic-stat">1</span>
-        <span class="mosaic-body">Week on-site at the pilot FAB in France:</span>
+        <span class="mosaic-body">Week on-site at the pilot FAB in France</span>
 
     - id: article-06
       type: image
-      # theme omitted — defaults to white
       desktop:
         col: "3 / 6"
         row: "2 / 4"
@@ -421,13 +409,11 @@ mosaic:
         src: "TODO:src"
         hasAlt: true
         alt: "TODO:alt"
-        sizes: "40vw"
-        cssClass: "mosaic-tile__img"
 
     - id: article-07
       type: custom
-      variant: "selfie"          # Figma: custom=true, variant="selfie"
-      theme: primary-dark        # omit if no theme
+      variant: "selfie"
+      theme: primary-dark
       desktop:
         col: "1 / 3"
         row: "4 / 5"
@@ -435,13 +421,12 @@ mosaic:
         <span class="mosaic-lead-italic">TODO:quote</span>
 ```
 
-**Custom tile scaffolding rule:** When a `custom` tile is encountered, emit the YAML above and then append a scaffolding block to the compile report:
+**Custom tile scaffolding rule:** When a `custom` tile is encountered, append to the compile report:
 
 ```
-CUSTOM TILE SCAFFOLD — variant: selfie
-  SCSS: add ruleset for [data-mosaic-variant="selfie"] in placements/_<pageKey>.scss
-  JS:   add behavior keyed to document.querySelector('[data-mosaic-variant="selfie"]')
-        in choreography.js or a dedicated selfie.js partial
+CUSTOM TILE SCAFFOLD — variant: <variant>
+  SCSS: add ruleset for [data-mosaic-variant="<variant>"] in placements/_<pageKey>.scss
+  JS:   add behavior keyed to document.querySelector('[data-mosaic-variant="<variant>"]')
   Note: <describe the intended visual/interactive behavior from Figma>
 ```
 
@@ -449,241 +434,126 @@ Do not attempt to author the extended CSS or JS — output the scaffold block an
 
 ---
 
-## CONTENT-CELL POSITIONING PROPS
+### H) Chapter/Page Hierarchy — Compile Rules
 
-Each `content-cell-NN` instance carries two optional positioning props. Read them from Figma `componentProperties` on the content-cell instance itself (not its children).
+#### `page-header` (h1 block at the top of the case study page)
 
-| Figma prop | Figma values | Axis |
-|-----------|--------------|------|
-| `Vert` (VARIANT) | `Default` \| `Center` \| `End` | Vertical |
-| `Horiz` (VARIANT) | `Default` \| `Center` \| `End` | Horizontal |
+Source: `page-header` instance, direct child of the root `<pageKey>` frame.
 
-**Purpose:** Where the cell sits within its grid slot when the cell is smaller than the slot. Not a layout engine — just spatial positioning within available space. Prop names are intentionally non-CSS.
-
-**Emit rule:** `Default` → emit nothing. `Center` and `End` only produce output. Do not emit to YAML. Do not emit as inline styles.
-
-**Value mapping:**
-
-| Prop | Figma value | CSS output |
-|------|------------|------------|
-| `Vert` | `Center` | `align-self: center;` |
-| `Vert` | `End` | `align-self: end;` |
-| `Horiz` | `Center` | `justify-self: center;` |
-| `Horiz` | `End` | `justify-self: end;` |
-
-**Warning:** `Horiz: Center` emits `justify-self: center` which shrinks the cell to its intrinsic width. Only safe on cells whose content has a defined width (e.g. a Bento Grid with `width: fit-content`). Never use on text/richtext cells.
-
-**Output target:** Placements SCSS only — in the same selector as `grid-column` and `grid-row`:
-
-```scss
-.content-cell[data-cell="content--section-01--page-01--content-cell-03"] {
-    grid-column: 5 / 8;
-    grid-row: 6 / 16;
-    align-self: center; /* Vert=Center */
-}
-```
-
----
-
-## PARAM EXTRACTION RULES
-
-Extract component properties from Figma `componentProperties` on each child instance. Property keys use the format `name#id`.
-
-### 1) `components/header.njk`
-
-Source: child instance named `header`
+The `stuck` BOOLEAN prop is a visual state flag — **ignore at compile, do not emit to YAML.**
 
 | YAML param | Figma property | Notes |
 |------------|---------------|-------|
-| `level` | `level` (VARIANT) | Values: `"h1"`, `"h2"`, `"h3"`, `"quiet-h2"`. See below for `"quiet-h2"` mapping. |
-| `variant` | — | `"quiet"` or omit. Derived from Figma `level` value. See below. |
-| `headline` | `headline#445:3` (TEXT) | Required. If missing: `"TODO:headline"` |
-| `showEyebrow` | `showEyebrow#447:4` (BOOLEAN) | Emit as boolean |
-| `eyebrow` | `eyebrow#445:2` (TEXT) | Only relevant when showEyebrow is true |
-| `showSubhead` | `showSubhead#458:0` (BOOLEAN) | Emit as boolean |
-| `subhead` | `subhead#458:3` (TEXT) | Only relevant when showSubhead is true |
+| `headline` | `headline#445:1` (TEXT) | Required. If missing: `"TODO:headline"` |
+| `showEyebrow` | `showEyebrow#447:6` (BOOLEAN) | Emit as boolean |
+| `showSubhead` | `showSubhead#458:2` (BOOLEAN) | Emit as boolean |
+| `subhead` | `subhead#458:5` (TEXT) | Only when showSubhead is true |
 
-**Figma `level: "quiet-h2"` mapping:** When Figma reports `level: "quiet-h2"`, emit:
-- `level: "h2"`
-- `variant: "quiet"`
+**Eyebrow extraction — two variants:**
 
-For all other level values (`h1`, `h2`, `h3`), do not emit `variant`.
+The eyebrow is a `_page-header__eyebrow` instance with `type` VARIANT (`text` | `pills`):
 
-### 2) `components/richtext.njk` (paragraph mode)
+- `type=text`: Read `eyebrow#3183:9` TEXT prop. Emit as `eyebrow: "<string>"`.
+- `type=pills`: Read each `_pill` instance in the Slot. Extract `text#3183:15` from each. Emit as `pills: ["text1", "text2", ...]`.
 
-Source: child instance named `paragraph`
-
-| YAML param | Figma property | Notes |
-|------------|---------------|-------|
-| `kind` | — | Always `"p"` for paragraph instances |
-| `text` | `Text#466:0` (TEXT) | Required. If missing: `"TODO:body"` |
-
-**Multiple paragraphs:** If a content-cell contains multiple `paragraph` children, emit each as a separate `include` entry with `kind: "p"`.
-
-### 3) `components/richtext.njk` (list mode)
-
-Source: child instance named `list`
-
-| YAML param | Figma property | Notes |
-|------------|---------------|-------|
-| `kind` | — | Default `"ul"`. Use `"ol"` only if explicitly indicated. |
-| `items` | `items#472:0` (TEXT) | Split on newlines into array. |
-
-### 4) `components/figure.njk`
-
-Source: child instance named `figure`
-
-Figure properties are split between the figure instance and its nested `media` child instance.
-
-**From figure instance:**
-
-| YAML param | Figma property | Notes |
-|------------|---------------|-------|
-| `showCaption` | `showCaption#663:4` (BOOLEAN) | Emit as boolean |
-| `caption` | `Caption#663:3` (TEXT) | Only relevant when showCaption is true |
-
-**From nested `media` child instance:**
-
-| YAML param | Figma property | Notes |
-|------------|---------------|-------|
-| `type` | `type` (VARIANT) | Values: `"desktop"`, `"mobile"`, `"composite"` |
-| `hasAlt` | `hasAlt#2793:1` (BOOLEAN) | Emit as boolean |
-| `alt` | `alt#2793:0` (TEXT) | Only relevant when hasAlt is true. If the text matches the Figma placeholder string, emit `"TODO:alt"` |
-| `src` | — | ALWAYS `"TODO:src"` unless a real image path exists |
-
-**Figma placeholder detection for alt:** If `alt` value is `"Image description for assistive technology. If this is blank the image will be marked as role=\"presentation\"."` or similar boilerplate, treat it as missing and emit `"TODO:alt"`.
-
-### 5) `components/link-block.njk`
-
-Source: child instance named `link-block`
-
-| YAML param | Figma property | Notes |
-|------------|---------------|-------|
-| `hasSecondary` | `hasSecondary#616:6` (BOOLEAN) | Emit as boolean |
-
-**Primary link** — from nested `link--primary` child:
-
-| YAML param | Figma property | Notes |
-|------------|---------------|-------|
-| `primary.priority` | `priority` (VARIANT) | Should be `"Primary"` |
-| `primary.label` | `label#616:0` (TEXT) | |
-| `primary.link` | `link#902:0` (TEXT) | The descriptive link text |
-| `primary.URL` | `url#616:3` (TEXT) | If absent, omit URL (renders disabled span) |
-
-**Secondary link** — from nested `link--secondary` child (only when `hasSecondary` is true):
-
-Same param shape as primary, with `secondary.` prefix.
-
-**Do not emit placeholder strings** like `"TODO:href"`. If URL is missing, omit the `URL` key entirely so `components/link.njk` renders the disabled span.
-
----
-
-## TARGET YAML SHAPE
-
-File: `src/_data/pages/<pageKey>/page.yml`
+**YAML shape:**
 
 ```yaml
-pageKey: "<pageKey>"
-sections:
-  - sectionKey: "section-01"
-    mode: "composite"       # "composite" if section has >1 page, else "normal"
+pageHeader:
+  headline: "INFICON Intelligent Manufacturing Systems"
+  showEyebrow: true
+  eyebrowType: "pills"         # "text" | "pills"
+  pills:                       # only when eyebrowType=pills
+    - "UX/UI Design"
+    - "Design Systems"
+    - "Product Strategy"
+  # eyebrow: "..."             # only when eyebrowType=text
+  showSubhead: true
+  subhead: "13 months as the first UX designer in the IMS Group..."
+```
+
+#### `chapter--content` (field text above each chapter's mosaic)
+
+Source: `chapter--content` instance inside the chapter's `wrapper` Slot.
+
+The content Slot contains a `paragraph` instance. Extract `Text#466:0` from its componentProperties.
+
+**YAML shape:**
+
+```yaml
+- chapterKey: "chapter-01"
+  fieldText: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
+  pages:
+    - pageKey: "page-01"
+      mosaic:
+        ...
+```
+
+#### `heading` component (h2/h3 within mosaic content or field text)
+
+Source: `heading` instance — used within content cells in non-mosaic contexts.
+
+| YAML param | Figma property | Notes |
+|------------|---------------|-------|
+| `level` | `level` VARIANT | `"h2"` \| `"h3"` |
+| `headline` | `headline#445:3` (TEXT) | Required |
+| `showSubhead` | `showSubhead#458:0` (BOOLEAN) | h3 variant ignores subhead |
+| `subhead` | `subhead#458:3` (TEXT) | Only when showSubhead=true and level=h2 |
+
+Note: `heading` has no eyebrow — eyebrow is a `page-header` concern only. No `h1` variant — h1 is exclusively `page-header`.
+
+#### Full page YAML shape (chapter/page/mosaic pipeline)
+
+```yaml
+pageKey: "inficon-ims"
+
+pageHeader:
+  headline: "INFICON Intelligent Manufacturing Systems"
+  showEyebrow: true
+  eyebrowType: "pills"
+  pills:
+    - "UX/UI Design"
+    - "Design Systems"
+    - "Product Strategy"
+  showSubhead: true
+  subhead: "13 months as the first UX designer in the IMS Group building the next generation of software for semiconductor fabrication."
+
+chapters:
+  - chapterKey: "chapter-01"
+    fieldText: "Four weeks into the role, I was on a plane to Grenoble, France..."
     pages:
       - pageKey: "page-01"
-        cells:
-          - wrapper: "header--section-01--page-01--content-cell-01"
-            includes:
-              - include: "components/header.njk"
-                params:
-                  level: "h1"
-                  headline: "Raw Figma text"
-                  showEyebrow: false
-                  showSubhead: true
-                  subhead: "Raw Figma text"
-
-          - wrapper: "content--section-01--page-01--content-cell-02"
-            includes:
-              - include: "components/richtext.njk"
-                params:
-                  kind: "p"
-                  text: "Raw Figma text"
+        mosaic:
+          id: "inficon-ims--chapter-01--p01"
+          cols: 5
+          rows: 5
+          tiles:
+            - id: article-01
+              type: content
+              theme: primary-dark
+              desktop:
+                col: "1 / 2"
+                row: "1 / 3"
+              content: |
+                <span class="mosaic-stat">1</span>
+                <span class="mosaic-body">Week on-site at the pilot FAB in France</span>
+            ...
 
       - pageKey: "page-02"
-        cells:
-          - wrapper: "content--section-01--page-02--content-cell-01"
-            includes:
-              - include: "components/header.njk"
-                params:
-                  level: "h2"
-                  variant: "quiet"
-                  headline: "Raw Figma text"
-                  showEyebrow: true
-                  showSubhead: true
-                  subhead: "Raw Figma text"
-              - include: "components/richtext.njk"
-                params:
-                  kind: "p"
-                  text: "Raw Figma text paragraph 1"
-              - include: "components/richtext.njk"
-                params:
-                  kind: "p"
-                  text: "Raw Figma text paragraph 2"
+        mosaic:
+          id: "inficon-ims--chapter-01--p02"
+          cols: 5
+          rows: 5
+          tiles:
+            ...
 
-          - wrapper: "figure--section-01--page-02--content-cell-02"
-            includes:
-              - include: "components/figure.njk"
-                params:
-                  type: "desktop"
-                  showCaption: true
-                  caption: "Raw Figma text"
-                  src: "TODO:src"
-                  hasAlt: true
-                  alt: "Raw Figma text"
+  - chapterKey: "chapter-02"
+    fieldText: "The FAB was the brief. Before designing anything..."
+    pages:
+      - pageKey: "page-01"
+        mosaic:
+          ...
 ```
-
-Rules:
-- Must be valid YAML.
-- Use YAML block scalars (`|`) for multiline strings.
-- Boolean values must be actual YAML booleans (`true`/`false`), not strings.
-
----
-
-## PLACEMENTS SCSS OUTPUT
-
-File: `src/assets/scss/placements/_<pageKey>.scss`
-
-For each content-cell, emit a placement rule using the wrapper ID.
-
-**FF Grid placements use `@media (min-width: 1248px)`.**
-**2-col Grid placements use `@media (min-width: 640px) and (max-width: 1247px)`.**
-**Bento Grid area maps use `@container content-cell` queries — see §G.**
-
-```scss
-/* section-01 / page-01 — FF Grid */
-@media (min-width: 1248px) {
-    .content-cell[data-cell="header--section-01--page-01--content-cell-01"] {
-        grid-column: 3 / 12;
-        grid-row: 5 / 8;
-    }
-
-    .content-cell[data-cell="content--section-01--page-01--content-cell-02"] {
-        grid-column: 5 / 8;
-        grid-row: 9 / 13;
-    }
-}
-
-/* section-01 / page-01 — 2-col Grid */
-@media (min-width: 640px) and (max-width: 1247px) {
-    .content-cell[data-cell="header--section-01--page-01--content-cell-01"] {
-        grid-column: 2 / 5;
-        grid-row: 1;
-    }
-}
-```
-
-Rules:
-- Group placements by section/page with comment headers.
-- All numbers are CSS grid lines (Figma anchor + 1).
-- Do not include unrelated styles.
 
 ---
 
@@ -694,12 +564,12 @@ File: `src/<pageKey>/index.njk`
 Create folder if missing. If file exists, only update front matter fields if missing.
 Content must remain empty — rendering happens via `layouts/compiled-page.njk`.
 
-The `title` field should be derived from the h1 headline text found in section-01/page-01 during compilation. This is the page's public-facing title used in `<title>` and meta tags.
+The `title` field is derived from `pageHeader.headline` found during compilation.
 
 ```njk
 ---
 layout: layouts/base.njk
-title: "<h1 headline text from Figma>"
+title: "<pageHeader.headline from Figma>"
 permalink: "/portfolio/<pageKey>/"
 pageKey: "<pageKey>"
 mainClass: "layout--case-study"
@@ -710,7 +580,7 @@ mainClass: "layout--case-study"
 </main>
 ```
 
-If no h1 is found, use `"TODO:title"`.
+If no headline is found, use `"TODO:title"`.
 
 ---
 
@@ -723,11 +593,11 @@ Must include:
 **Summary header** with pageKey and timestamp.
 
 **Counts:**
-- Sections found
-- Pages found
-- Cells found
-- Wrappers emitted
-- Includes emitted (by type)
+- Chapters found
+- Pages found (total across all chapters)
+- Tiles found (total across all pages)
+- Tiles emitted by type (content / image / custom / skeleton)
+- Field text blocks found
 
 **TODO counts:**
 - `TODO:headline`
@@ -738,14 +608,14 @@ Must include:
 - Any other `TODO:*` encountered
 
 **Warnings:**
-- Unrecognized child instance names (list node ids and names)
+- Unrecognized tile types or child names
 - Figma placeholder text detected and replaced with TODO
 - Bounding box tie-breaks applied
 - Any nodes skipped and why
+- Custom tile scaffold blocks emitted (list variant names)
 
-**Wrapper Manifest:**
-- Wrapper ID → includes list (in order)
-- This helps diff stability
+**Tile Manifest:**
+- Chapter → Page → tile id, type, theme
 
 ---
 
@@ -755,6 +625,7 @@ Must include:
 - Do not change global layouts or component templates.
 - Only touch the four outputs listed.
 - Use deterministic formatting: stable key ordering in YAML, stable sorting rules.
+- Arrow indicators (`_mosaic-article__frame Arrow` prop, `_mosaic-article__theme points-to` prop) are deferred. Always treat as `Arrow=None`. Do not scaffold.
 
 ---
 
@@ -762,6 +633,7 @@ Must include:
 
 Given:
 - pageKey: `<PAGE_KEY>`
-- figmaJsonPath OR figmaFrameUrl (Mode A or B)
+- figmaFileKey: `<FILE_KEY>`
+- rootNodeId: `<NODE_ID>`
 
 Perform the compile and write the outputs exactly as specified.
