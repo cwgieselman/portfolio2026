@@ -498,17 +498,20 @@ pageHeader:
   subhead: "13 months as the first UX designer in the IMS Group..."
 ```
 
-#### `richtext` (field text above each chapter's mosaic)
+#### `richtext` (left-column content for each chapter)
 
 Source: `richtext` instance inside the chapter's `wrapper` Slot.
 
-The content Slot contains a `paragraph` instance. Extract `Text#466:0` from its componentProperties.
+The `richtext` Slot may contain one or more child instances (`paragraph`, `heading`, `unordered-list`, `ordered-list`). Compile each child as a block object and emit the array as `content:` on the chapter. Uses the same shape as Pipeline B richtext — one `{ kind, text/headline/items }` object per block.
 
 **YAML shape:**
 
 ```yaml
 - chapterKey: "chapter-01"
-  fieldText: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
+  chapterOffset: 0
+  content:
+    - kind: "p"
+      text: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
   pages:
     - pageKey: "page-01"
       mosaic:
@@ -550,6 +553,7 @@ Typography tokens (all from CGDC-DS variables — do not hardcode values):
 
 ```yaml
 pageKey: "inficon-ims"
+mode: "choreographed"
 
 pageHeader:
   headline: "INFICON Intelligent Manufacturing Systems"
@@ -564,8 +568,27 @@ pageHeader:
 
 chapters:
   - chapterKey: "chapter-01"
-    fieldText: "Four weeks into the role, I was on a plane to Grenoble, France..."
+    chapterOffset: 0
+    skeleton:
+      - ".  s  s  s"
+      - "s  s  s  s"
+    content:
+      - kind: "p"
+        text: "Four weeks into the role, I was on a plane to Grenoble, France..."
     pages:
+      - pageKey: "page-00"
+        mosaic:
+          id: "inficon-ims--chapter-01--p00"
+          cols: 4
+          rows: 2
+          tiles:
+            - id: article-01
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "1 / 2"
+            ...
+
       - pageKey: "page-01"
         mosaic:
           id: "inficon-ims--chapter-01--p01"
@@ -583,18 +606,16 @@ chapters:
                 <span class="mosaic-body">Week on-site at the pilot FAB in France</span>
             ...
 
-      - pageKey: "page-02"
-        mosaic:
-          id: "inficon-ims--chapter-01--p02"
-          cols: 4
-          rows: 4
-          tiles:
-            ...
-
   - chapterKey: "chapter-02"
-    fieldText: "The FAB was the brief. Before designing anything..."
+    chapterOffset: 1
+    skeleton:
+      - ".  .  s  s"
+      - "s  s  s  s"
+    content:
+      - kind: "p"
+        text: "The FAB was the brief. Before designing anything..."
     pages:
-      - pageKey: "page-01"
+      - pageKey: "page-00"
         mosaic:
           ...
 ```

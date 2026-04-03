@@ -59,7 +59,7 @@ components/mosaic.njk  (tile rendering)
 
 YAML structure: `pageHeader -> chapters -> pages -> mosaic -> tiles`
 
-Richtext blocks within a chapter compile to a `content:` array and render via `components/richtext.njk` directly — not via the executor.
+Each chapter has a `content:` array of richtext block objects rendered via `components/richtext.njk` — same shape as Pipeline B richtext. A top-level `mode:` string drives the `layout__story--{mode}` class.
 
 **Pipeline B — Executor (non-mosaic pages)**
 
@@ -344,11 +344,11 @@ The lobotomized owl spacing between `.richtext` sibling elements is governed by:
 
 ## Header
 
-Include: `components/header.njk`
+Include: `components/content-header.njk`
 
 ### Inputs (`headerParams`)
 
-- `level`: `"h1" | "h2" | "h3"`
+- `level`: `"h2" | "h3"` (h1 is not permitted — use `page-header.njk`)
 - `variant`: `"quiet"` (optional — reduces visual weight without changing semantic level)
 - `headline`: string — rendered via `| safe`. May contain inline HTML (e.g. `<span class="nobr">...</span>`)
 - `showEyebrow`: boolean

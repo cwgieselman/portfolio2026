@@ -1,4 +1,5 @@
 pageKey: "inficon-impact-manager"
+mode: "choreographed"
 
 pageHeader:
   headline: "INFICON Intelligent Manufacturing Systems"
@@ -11,340 +12,333 @@ pageHeader:
   showSubhead: true
   subhead: "13 months as the first UX designer in the IMS Group building the next generation of software for semiconductor fabrication."
 
-sections:
-  - sectionKey: "section-01"
-    mode: "choreographed"
+chapters:
+  - chapterKey: "chapter-01"
+    chapterOffset: 0
+    skeleton:
+      - ".  s  s  s"
+      - "s  s  s  s"
+      - "s  s  s  s"
+      - "s  s  .  ."
+    content:
+      - kind: "p"
+        text: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
 
-    chapters:
-      - chapterKey: "chapter-01"
-        chapterOffset: 0
-        skeleton:
-          - ".  s  s  s"
-          - "s  s  s  s"
-          - "s  s  s  s"
-          - "s  s  .  ."
-        fieldText: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
+    pages:
+      - pageKey: "page-00"
+        mosaic:
+          id: "inficon--im--s01-c01-p00"
+          cols: 4
+          rows: 4
+          tiles:
+            - id: article-01
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "1 / 2"
+            - id: article-02
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "1 / 2"
+            - id: article-03
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "1 / 2"
+            - id: article-04
+              type: skeleton
+              desktop:
+                col: "1 / 2"
+                row: "2 / 3"
+            - id: article-05
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "2 / 3"
+            - id: article-06
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "2 / 3"
+            - id: article-07
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "2 / 3"
+            - id: article-08
+              type: skeleton
+              desktop:
+                col: "1 / 2"
+                row: "3 / 4"
+            - id: article-09
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "3 / 4"
+            - id: article-10
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "3 / 4"
+            - id: article-11
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "3 / 4"
+            - id: article-12
+              type: skeleton
+              desktop:
+                col: "1 / 2"
+                row: "4 / 5"
+            - id: article-13
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "4 / 5"
 
-        pages:
-          - pageKey: "page-00"
-            wrapper: "content--section-01--chapter-01--page-00--cell-01"
-            mosaic:
-              id: "inficon--im--s01-c01-p00"
-              cols: 4
-              rows: 4
-              tiles:
-                - id: article-01
-                  type: skeleton
-                  desktop:
-                    col: "2 / 3"
-                    row: "1 / 2"
-                - id: article-02
-                  type: skeleton
-                  desktop:
-                    col: "3 / 4"
-                    row: "1 / 2"
-                - id: article-03
-                  type: skeleton
-                  desktop:
-                    col: "4 / 5"
-                    row: "1 / 2"
-                - id: article-04
-                  type: skeleton
-                  desktop:
-                    col: "1 / 2"
-                    row: "2 / 3"
-                - id: article-05
-                  type: skeleton
-                  desktop:
-                    col: "2 / 3"
-                    row: "2 / 3"
-                - id: article-06
-                  type: skeleton
-                  desktop:
-                    col: "3 / 4"
-                    row: "2 / 3"
-                - id: article-07
-                  type: skeleton
-                  desktop:
-                    col: "4 / 5"
-                    row: "2 / 3"
-                - id: article-08
-                  type: skeleton
-                  desktop:
-                    col: "1 / 2"
-                    row: "3 / 4"
-                - id: article-09
-                  type: skeleton
-                  desktop:
-                    col: "2 / 3"
-                    row: "3 / 4"
-                - id: article-10
-                  type: skeleton
-                  desktop:
-                    col: "3 / 4"
-                    row: "3 / 4"
-                - id: article-11
-                  type: skeleton
-                  desktop:
-                    col: "4 / 5"
-                    row: "3 / 4"
-                - id: article-12
-                  type: skeleton
-                  desktop:
-                    col: "1 / 2"
-                    row: "4 / 5"
-                - id: article-13
-                  type: skeleton
-                  desktop:
-                    col: "2 / 3"
-                    row: "4 / 5"
+      - pageKey: "page-01"
+        mosaic:
+          id: "inficon--im--s01-c01-p01"
+          cols: 4
+          rows: 2
+          tiles:
+            - id: article-01
+              type: bleed
+              theme: default
+              artDirection: true
+              desktop:
+                col: "2 / 4"
+                row: "1 / 2"
+              media:
+                src: "/assets/images/inficon--photo--st-facility-france.jpg"
+                mobileSrc: "/assets/images/inficon--photo--st-facility-france--CROP.jpg"
+                hasAlt: true
+                alt: "The ST Microelectronics facility in Crolles, France — a large semiconductor FAB with the French Alps visible in the background."
+                sizes: "40vw"
+                cssClass: "mosaic-tile__img"
 
-          - pageKey: "page-01"
-            wrapper: "content--section-01--chapter-01--page-01--cell-01"
-            mosaic:
-              id: "inficon--im--s01-c01-p01"
-              cols: 4
-              rows: 2
-              tiles:
-                - id: article-01
-                  type: bleed
-                  theme: default
-                  artDirection: true
-                  desktop:
-                    col: "2 / 4"
-                    row: "1 / 2"
-                  media:
-                    src: "/assets/images/inficon--photo--st-facility-france.jpg"
-                    mobileSrc: "/assets/images/inficon--photo--st-facility-france--CROP.jpg"
-                    hasAlt: true
-                    alt: "The ST Microelectronics facility in Crolles, France — a large semiconductor FAB with the French Alps visible in the background."
-                    sizes: "40vw"
-                    cssClass: "mosaic-tile__img"
+            - id: article-02
+              type: bleed
+              theme: default
+              desktop:
+                col: "4 / 5"
+                row: "1 / 3"
+              media:
+                src: "/assets/images/inficon--photo--me-in-cleansuit.jpg"
+                hasAlt: true
+                alt: "Craig in a full cleanroom suit, ready to make some chips. At the pilot FAB in Crolles, France."
+                sizes: "20vw"
+                cssClass: "mosaic-tile__img"
 
-                - id: article-02
-                  type: bleed
-                  theme: default
-                  desktop:
-                    col: "4 / 5"
-                    row: "1 / 3"
-                  media:
-                    src: "/assets/images/inficon--photo--me-in-cleansuit.jpg"
-                    hasAlt: true
-                    alt: "Craig in a full cleanroom suit, ready to make some chips. At the pilot FAB in Crolles, France."
-                    sizes: "20vw"
-                    cssClass: "mosaic-tile__img"
+      - pageKey: "page-02"
+        mosaic:
+          id: "inficon--im--s01-c01-p02"
+          cols: 4
+          rows: 3
+          tiles:
+            - id: article-01
+              type: bleed
+              theme: default
+              desktop:
+                col: "1 / 3"
+                row: "2 / 4"
+              media:
+                src: "/assets/images/inficon--photo--rocc-rendering.jpg"
+                hasAlt: true
+                alt: "An artist's rendering of the new control center the new software would operate in."
+                sizes: "40vw"
+                cssClass: "mosaic-tile__img"
 
-          - pageKey: "page-02"
-            wrapper: "content--section-01--chapter-01--page-02--cell-01"
-            mosaic:
-              id: "inficon--im--s01-c01-p02"
-              cols: 4
-              rows: 3
-              tiles:
-                - id: article-01
-                  type: bleed
-                  theme: default
-                  desktop:
-                    col: "1 / 3"
-                    row: "2 / 4"
-                  media:
-                    src: "/assets/images/inficon--photo--rocc-rendering.jpg"
-                    hasAlt: true
-                    alt: "An artist's rendering of the new control center the new software would operate in."
-                    sizes: "40vw"
-                    cssClass: "mosaic-tile__img"
+            - id: article-02
+              type: frame
+              theme: primary-dark
+              desktop:
+                col: "3 / 4"
+                row: "2 / 3"
+              content: |
+                <span class="mosaic-stat">1</span>
+                <span class="mosaic-body">Week on-site at the pilot facility:</span>
 
-                - id: article-02
-                  type: frame
-                  theme: primary-dark
-                  desktop:
-                    col: "3 / 4"
-                    row: "2 / 3"
-                  content: |
-                    <span class="mosaic-stat">1</span>
-                    <span class="mosaic-body">Week on-site at the pilot facility:</span>
+            - id: article-03
+              type: bleed
+              theme: default
+              artDirection: true
+              desktop:
+                col: "3 / 5"
+                row: "3 / 4"
+              media:
+                src: "/assets/images/inficon--photo--rocc-workshop-island.jpg"
+                mobileSrc: "/assets/images/inficon--photo--rocc-workshop-island--CROP.jpg"
+                hasAlt: true
+                alt: "A Workshop Island in the control room with wall-mounted screens showing localized production data and individual workstations."
+                sizes: "40vw"
+                cssClass: "mosaic-tile__img"
 
-                - id: article-03
-                  type: bleed
-                  theme: default
-                  artDirection: true
-                  desktop:
-                    col: "3 / 5"
-                    row: "3 / 4"
-                  media:
-                    src: "/assets/images/inficon--photo--rocc-workshop-island.jpg"
-                    mobileSrc: "/assets/images/inficon--photo--rocc-workshop-island--CROP.jpg"
-                    hasAlt: true
-                    alt: "A Workshop Island in the control room with wall-mounted screens showing localized production data and individual workstations."
-                    sizes: "40vw"
-                    cssClass: "mosaic-tile__img"
+      - pageKey: "page-03"
+        mosaic:
+          id: "inficon--im--s01-c01-p03"
+          cols: 4
+          rows: 4
+          tiles:
+            - id: article-01
+              type: frame
+              custom: true
+              variant: selfie
+              theme: default
+              desktop:
+                col: "1 / 3"
+                row: "4 / 5"
+              description: "Decorative portrait photo rendered as a CSS ::before pseudo-element on the quote cell. Positioned left of the cell at desktop, below at mobile, bridging rows 3–4. Image path and placement in placements SCSS."
+              content: |
+                <span class="mosaic-lead-italic">"How can we make THIS</span>
+                <span class="mosaic-body">&lt;waves hand at the room as it is today&gt;</span>
+                <span class="mosaic-lead-italic">more useful to you?"</span>
 
-          - pageKey: "page-03"
-            wrapper: "content--section-01--chapter-01--page-03--cell-01"
-            mosaic:
-              id: "inficon--im--s01-c01-p03"
-              cols: 4
-              rows: 4
-              tiles:
-                - id: article-01
-                  type: frame
-                  custom: true
-                  variant: selfie
-                  theme: default
-                  desktop:
-                    col: "1 / 3"
-                    row: "4 / 5"
-                  description: "Decorative portrait photo rendered as a CSS ::before pseudo-element on the quote cell. Positioned left of the cell at desktop, below at mobile, bridging rows 3–4. Image path and placement in placements SCSS."
-                  content: |
-                    <span class="mosaic-lead-italic">"How can we make THIS</span>
-                    <span class="mosaic-body">&lt;waves hand at the room as it is today&gt;</span>
-                    <span class="mosaic-lead-italic">more useful to you?"</span>
+  - chapterKey: "chapter-02"
+    chapterOffset: 1
+    skeleton:
+      - ".  .  s  s"
+      - ".  s  s  s"
+      - "s  s  s  s"
+      - "s  s  s  s"
+    content:
+      - kind: "p"
+        text: "The FAB was the brief. Before designing anything, I needed to understand how the people inside it actually worked — and what the tools they were using were failing to do."
 
-      - chapterKey: "chapter-02"
-        chapterOffset: 1
-        skeleton:
-          - ".  .  s  s"
-          - ".  s  s  s"
-          - "s  s  s  s"
-          - "s  s  s  s"
-        fieldText: "The FAB was the brief. Before designing anything, I needed to understand how the people inside it actually worked — and what the tools they were using were failing to do."
+    pages:
+      - pageKey: "page-00"
+        mosaic:
+          id: "inficon--im--s01-c02-p00"
+          cols: 4
+          rows: 4
+          tiles:
+            - id: article-01
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "1 / 2"
+            - id: article-02
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "1 / 2"
+            - id: article-03
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "2 / 3"
+            - id: article-04
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "2 / 3"
+            - id: article-05
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "2 / 3"
+            - id: article-06
+              type: skeleton
+              desktop:
+                col: "1 / 2"
+                row: "3 / 4"
+            - id: article-07
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "3 / 4"
+            - id: article-08
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "3 / 4"
+            - id: article-09
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "3 / 4"
+            - id: article-10
+              type: skeleton
+              desktop:
+                col: "1 / 2"
+                row: "4 / 5"
+            - id: article-11
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "4 / 5"
+            - id: article-12
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "4 / 5"
+            - id: article-13
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "4 / 5"
 
-        pages:
-          - pageKey: "page-00"
-            wrapper: "content--section-01--chapter-02--page-00--cell-01"
-            mosaic:
-              id: "inficon--im--s01-c02-p00"
-              cols: 4
-              rows: 4
-              tiles:
-                - id: article-01
-                  type: skeleton
-                  desktop:
-                    col: "3 / 4"
-                    row: "1 / 2"
-                - id: article-02
-                  type: skeleton
-                  desktop:
-                    col: "4 / 5"
-                    row: "1 / 2"
-                - id: article-03
-                  type: skeleton
-                  desktop:
-                    col: "2 / 3"
-                    row: "2 / 3"
-                - id: article-04
-                  type: skeleton
-                  desktop:
-                    col: "3 / 4"
-                    row: "2 / 3"
-                - id: article-05
-                  type: skeleton
-                  desktop:
-                    col: "4 / 5"
-                    row: "2 / 3"
-                - id: article-06
-                  type: skeleton
-                  desktop:
-                    col: "1 / 2"
-                    row: "3 / 4"
-                - id: article-07
-                  type: skeleton
-                  desktop:
-                    col: "2 / 3"
-                    row: "3 / 4"
-                - id: article-08
-                  type: skeleton
-                  desktop:
-                    col: "3 / 4"
-                    row: "3 / 4"
-                - id: article-09
-                  type: skeleton
-                  desktop:
-                    col: "4 / 5"
-                    row: "3 / 4"
-                - id: article-10
-                  type: skeleton
-                  desktop:
-                    col: "1 / 2"
-                    row: "4 / 5"
-                - id: article-11
-                  type: skeleton
-                  desktop:
-                    col: "2 / 3"
-                    row: "4 / 5"
-                - id: article-12
-                  type: skeleton
-                  desktop:
-                    col: "3 / 4"
-                    row: "4 / 5"
-                - id: article-13
-                  type: skeleton
-                  desktop:
-                    col: "4 / 5"
-                    row: "4 / 5"
+      - pageKey: "page-01"
+        mosaic:
+          id: "inficon--im--s01-c02-p01"
+          cols: 4
+          rows: 2
+          tiles:
+            - id: article-01
+              type: frame
+              theme: primary-light
+              desktop:
+                col: "3 / 5"
+                row: "1 / 3"
+              content: |
+                <span class="mosaic-body">Each <span class="mosaic-body-bold">Workshop</span> in the FAB has its own 'Island' with a central display of localized data and individual workstations for the <span class="mosaic-body-bold">Actors</span> assigned to that Workshop</span>
+                <img class="mosaic-tile__screenshot" src="/assets/images/inficon--screen--anomaly-ui-st.png" alt="" role="presentation" />
 
-          - pageKey: "page-01"
-            wrapper: "content--section-01--chapter-02--page-01--cell-01"
-            mosaic:
-              id: "inficon--im--s01-c02-p01"
-              cols: 4
-              rows: 2
-              tiles:
-                - id: article-01
-                  type: frame
-                  theme: primary-light
-                  desktop:
-                    col: "3 / 5"
-                    row: "1 / 3"
-                  content: |
-                    <span class="mosaic-body">Each <span class="mosaic-body-bold">Workshop</span> in the FAB has its own 'Island' with a central display of localized data and individual workstations for the <span class="mosaic-body-bold">Actors</span> assigned to that Workshop</span>
-                    <img class="mosaic-tile__screenshot" src="/assets/images/inficon--screen--anomaly-ui-st.png" alt="" role="presentation" />
+      - pageKey: "page-02"
+        mosaic:
+          id: "inficon--im--s01-c02-p02"
+          cols: 4
+          rows: 4
+          tiles:
+            - id: article-01
+              type: frame
+              theme: secondary-dark
+              desktop:
+                col: "2 / 3"
+                row: "2 / 3"
+              content: |
+                <span class="mosaic-body">Replacing this interface from the Island workstations was the focus of <span class="mosaic-body-bold">Phase 1</span>.</span>
 
-          - pageKey: "page-02"
-            wrapper: "content--section-01--chapter-02--page-02--cell-01"
-            mosaic:
-              id: "inficon--im--s01-c02-p02"
-              cols: 4
-              rows: 4
-              tiles:
-                - id: article-01
-                  type: frame
-                  theme: secondary-dark
-                  desktop:
-                    col: "2 / 3"
-                    row: "2 / 3"
-                  content: |
-                    <span class="mosaic-body">Replacing this interface from the Island workstations was the focus of <span class="mosaic-body-bold">Phase 1</span>.</span>
+            - id: article-02
+              type: bleed
+              theme: default
+              scrollable: true
+              desktop:
+                col: "1 / 4"
+                row: "3 / 5"
+              media:
+                src: "/assets/images/inficon--screen--anomaly-app-figjam.png"
+                scrollSrc: "/assets/images/inficon--screen--anomaly-app-figjam.png"
+                hasAlt: true
+                alt: "FigJam mapping of the legacy anomaly workstation interface — inputs, workflows, and display states documented in collaboration with Actors during discovery."
+                sizes: "55vw"
+                cssClass: "mosaic-tile__img"
 
-                - id: article-02
-                  type: bleed
-                  theme: default
-                  scrollable: true
-                  desktop:
-                    col: "1 / 4"
-                    row: "3 / 5"
-                  media:
-                    src: "/assets/images/inficon--screen--anomaly-app-figjam.png"
-                    scrollSrc: "/assets/images/inficon--screen--anomaly-app-figjam.png"
-                    hasAlt: true
-                    alt: "FigJam mapping of the legacy anomaly workstation interface — inputs, workflows, and display states documented in collaboration with Actors during discovery."
-                    sizes: "55vw"
-                    cssClass: "mosaic-tile__img"
+            - id: article-03
+              type: frame
+              theme: secondary-light
+              desktop:
+                col: "4 / 5"
+                row: "3 / 4"
+              content: |
+                <span class="mosaic-body">We saw the tool reporting data and spreadsheets used to identify anomalies manually.</span>
 
-                - id: article-03
-                  type: frame
-                  theme: secondary-light
-                  desktop:
-                    col: "4 / 5"
-                    row: "3 / 4"
-                  content: |
-                    <span class="mosaic-body">We saw the tool reporting data and spreadsheets used to identify anomalies manually.</span>
-
-                - id: article-04
-                  type: frame
-                  theme: primary-light
-                  desktop:
-                    col: "4 / 5"
-                    row: "4 / 5"
-                  content: |
-                    <span class="mosaic-body">and I mapped the functionality of the interface technicians used to assign and log the fixes.</span>
+            - id: article-04
+              type: frame
+              theme: primary-light
+              desktop:
+                col: "4 / 5"
+                row: "4 / 5"
+              content: |
+                <span class="mosaic-body">and I mapped the functionality of the interface technicians used to assign and log the fixes.</span>

@@ -5,31 +5,29 @@
   <pre>Missing compiled data for pageKey="{{ pageKey }}"</pre>
 {% else %}
 
-  {% for section in data.sections %}
-  {% set sectionKey = section.sectionKey %}
+  {% if not data.mode %}<!-- PAGE_ERROR: mode required on {{ pageKey }} -->{% endif %}
+  <div class="layout__story layout__story--{{ data.mode }}">
 
-  {% if not section.mode %}<!-- SECTION_ERROR: mode required on {{ sectionKey }} -->{% endif %}
-  <div class="layout__story layout__story--{{ section.mode }}">
-
-    {% for chapter in section.chapters %}
+    {% for chapter in data.chapters %}
     {% set chapterKey = chapter.chapterKey %}
 
     {% if chapter.chapterOffset is not defined %}<!-- CHAPTER_ERROR: chapterOffset required on {{ chapterKey }} -->{% endif %}
 
     <div class="layout__chapter" data-chapter-offset="{{ chapter.chapterOffset }}">
 
-      {# Left column — richtext, animated in/out by choreography.js #}
-      {% if chapter.fieldText %}
+      {# Left column — richtext blocks, animated in/out by choreography.js #}
+      {% if chapter.content %}
       <div class="chapter__content">
-        {% set richtextParams = { kind: "p", text: chapter.fieldText } %}
-        {% include "components/richtext.njk" %}
+        {% for block in chapter.content %}
+          {% set richtextParams = block %}
+          {% include "components/richtext.njk" %}
+        {% endfor %}
       </div>
       {% endif %}
 
       {# Right column — pages stacked at same origin #}
       <div class="chapter__bento">
         {% for pageItem in chapter.pages %}
-        {% set pageId = pageItem.pageKey %}
         {% set cell = pageItem %}
         {% include "layouts/page.njk" %}
         {% endfor %}
@@ -39,6 +37,5 @@
     {% endfor %}
 
   </div>
-  {% endfor %}
 
 {% endif %}
