@@ -266,9 +266,9 @@
         // 184px = 176px (tile height) + 8px gap below tile bottom edge
         // right: 232px = 1 cell (176px) + 1 gap (16px) + half-gutter offset (40px)
         // The 40px offset is half the 80px gutter between content and mosaic columns.
-        top: 184px;
+        top: 184px; /* CONTRACT_EXCEPTION: pixel constant — mosaic MONEY cell (176px) + gap (8px) */
         left: auto;
-        right: 232px;
+        right: 232px; /* CONTRACT_EXCEPTION: pixel constant — cell (176px) + gap (16px) + half-gutter (40px) */
         transform: none;
         margin-top: 0;
     }

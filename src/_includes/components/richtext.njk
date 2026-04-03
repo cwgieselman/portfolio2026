@@ -3,7 +3,7 @@
   ─────────────────────────────────────────────────────────────────────────────
   Single long-form text rendering pattern. Both pipelines use this include.
 
-  Pipeline A (chapter/page): called from compiled-page.njk with fieldText
+  Pipeline A (chapter/page): called from compiled-page.njk iterating chapter.content[]
   Pipeline B (executor):     called from content-cell.njk via includes array
 
   Figma source components (CGDC-DS / Components--Ready):
