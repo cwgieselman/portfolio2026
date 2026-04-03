@@ -223,8 +223,8 @@ body {
         // Animation states — driven by choreography.js class toggling.
         // Default: hidden below, ready to animate in.
         opacity: 0;
-        transform: translateY(24px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
+        transform: translateY(24px); // TODO: animation token — translate distance; see animation token backlog
+        transition: opacity 0.5s ease, transform 0.5s ease; // TODO: animation token — duration and easing; see animation token backlog
         pointer-events: none;
 
         // Visible — slides up and fades in.
@@ -237,7 +237,7 @@ body {
         // Exiting — slides up and fades out.
         &.is-exiting {
             opacity: 0;
-            transform: translateY(-24px);
+            transform: translateY(-24px); // TODO: animation token — translate distance; see animation token backlog
             pointer-events: none;
         }
     }

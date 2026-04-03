@@ -30,8 +30,8 @@ a.link:hover {
     color: var(--type-cta-color);
 
     .link__icon {
-        transform: translateY(1px);
-        transition: transform 150ms ease;
+        transform: translateY(1px); // TODO: animation token — icon baseline nudge; see animation token backlog
+        transition: transform 150ms ease; // TODO: animation token — duration and easing; see animation token backlog
     }
 }
 
@@ -48,12 +48,12 @@ a.link:hover {
     grid-area: icon;
     flex: none;
     align-self: center;
-    transform: translateY(1px);
-    transition: transform 150ms ease;
+    transform: translateY(1px); // TODO: animation token — icon baseline nudge; see animation token backlog
+    transition: transform 150ms ease; // TODO: animation token — duration and easing; see animation token backlog
 }
 
 a.link:hover .link__icon {
-    transform: translate(2px, 1px);
+    transform: translate(2px, 1px); // TODO: animation token — icon hover translate; see animation token backlog
 }
 
 .link--primary {
@@ -65,10 +65,10 @@ a.link:hover .link__icon {
 }
 
 .link--disabled {
-    opacity: 0.55;
+    opacity: 0.55; // TODO: token — disabled opacity; see animation token backlog
     cursor: default;
 }
 
 .link--disabled .link__icon {
-    transform: translateY(1px);
+    transform: translateY(1px); // TODO: animation token — icon baseline nudge; see animation token backlog
 }

@@ -3,7 +3,7 @@
  * Eleventy global data loader for design system component documentation.
  *
  * Reads src/_data/component-docs/*.yml and exposes them as componentDocs.
- * Each file maps to componentDocs[id] — e.g. componentDocs['bento-article'].
+ * Each file maps to componentDocs[id] — e.g. componentDocs['mosaic'].
  *
  * Consumed by src/design-system/index.njk.
  * Follows the same pattern as pages.js.

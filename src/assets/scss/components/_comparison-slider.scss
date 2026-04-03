@@ -4,6 +4,10 @@
 // Mechanism: range input sits invisibly over the stage, full width/height.
 // Its value drives --comparison-pos via JS (one listener, no framework).
 // clip-path on the before image does all the visual work.
+//
+// TODO: component not yet designed in Figma. All sizing, color, and motion
+// values (--handle-size, blur, aspect-ratio, etc.) are provisional.
+// Revisit during BMTx page work — see session-state.md deferred list.
 // ─────────────────────────────────────────────────────────────────────────────
 
 .comparison-slider {

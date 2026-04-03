@@ -444,6 +444,7 @@
     font-family: var(--font-family-brand);
     font-size: var(--scale-75);
     letter-spacing: 0.1em; // CONTRACT_EXCEPTION: em-based tracking -- no em tracking token exists; see Tier 3 token backlog
+    // TODO: scroll indicator needs full design pass — type, animation, and interaction are all provisional
     text-transform: uppercase;
     color: var(--color-primary-60);
     white-space: nowrap;
