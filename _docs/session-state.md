@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 2, 2026*
+*Last updated: April 2, 2026 (session 2)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -15,11 +15,25 @@
 
 ## Where We Are
 
-`rehab/frame-bleed-rename` merged to main. Full architecture audit complete and all items resolved.
+Full static analysis sweep complete. All findings resolved or flagged with TODOs. Everything is on `main` and pushed to GitHub.
+
+**Next session:** Apply Claude.ai's chapter-02 YAML verification diff. Claude.ai will have read Figma and returned a delta report against current `page.yml`. Claude Code applies confirmed changes only — do NOT do a fresh full compile.
 
 ---
 
 ## What Was Completed This Session
+
+### Session 2 — Static analysis sweep + cleanup
+
+- 6-check static analysis: stale terminology, CONTRACT violations, `position: absolute`, YAML↔placements, image assets, choreography.js integrity
+- All findings resolved or annotated:
+  - `richtext.njk` comment corrected (`fieldText` → `content[]`)
+  - Selfie placement offsets (`184px`, `232px`) annotated with `CONTRACT_EXCEPTION`
+  - Two missing mobileSrc CROP files flagged with TODO in `page.yml`
+  - Animation magic numbers in `_layout.scss` and `_link.scss` annotated with TODO (animation token system not yet built)
+  - Scroll indicator in `_mosaic.scss` annotated with TODO (needs design pass)
+  - Comparison slider annotated with top-level TODO (not yet designed in Figma)
+  - `componentDocs.js` JSDoc example updated from `bento-article` to `mosaic`
 
 ### rehab/frame-bleed-rename — full tile type rename + audit
 
@@ -72,11 +86,10 @@
 
 ## Open Priorities
 
-### Figma → YAML verification (next Claude.ai session)
-- Finish chapter-02 rebuild in Figma (Layouts--INFI)
-- Claude.ai verification diff: read Figma, compare to current `page.yml`, return delta report
-- Do NOT do a fresh full compile — page.yml is working, protect it
-- After delta is reviewed, Claude Code applies confirmed changes
+### Figma → YAML verification diff (next session — results incoming)
+- Claude.ai has done (or will do) the verification diff: read Figma chapter-02, compare to current `page.yml`, return delta report
+- Claude Code applies confirmed changes only — do NOT do a fresh full compile
+- `page.yml` is working; protect it
 
 ### Build priorities
 - Resolve bento page stacking/accumulation in choreography
