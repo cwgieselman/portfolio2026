@@ -311,11 +311,6 @@
     gap: var(--mosaic-gap);
 }
 
-.mosaic-tile--composite .mosaic-tile__inner {
-    justify-content: space-between;
-    gap: var(--mosaic-gap);
-}
-
 .mosaic-tile__screenshot {
     display: block;
     width: 100%;

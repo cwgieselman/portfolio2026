@@ -67,14 +67,12 @@
 
     const chapterData = chapterList.map((chapter, chapterIdx) => {
       const pages = Array.from(
-        chapter.querySelectorAll(".chapter__bento .layout__page"),
+        chapter.querySelectorAll(".chapter__mosaic .layout__page"),
       );
-      const bentos = Array.from(chapter.querySelectorAll(".mosaic"));
+      // Mosaic height — constant from CSS grid (4 rows × 176px + 3 gaps × 16px = 752px).
+      const bentoH = 752; // CONTRACT_EXCEPTION: pixel constant from mosaic MONEY geometry
 
-      // Bento height — constant from CSS grid (4 rows × 176px + 3 gaps × 16px = 752px).
-      const bentoH = 752; // CONTRACT_EXCEPTION: pixel constant from bento MONEY geometry
-
-      return { chapter, pages, bentos, bentoH, chapterIdx };
+      return { chapter, pages, bentoH, chapterIdx };
     });
 
     // -- Apply chapter overlap (negative margin) --------------------------
@@ -94,9 +92,9 @@
       chapter.style.height = h + "px";
     });
 
-    // -- Stick chapter__bento ---------------------------------------------
+    // -- Stick chapter__mosaic ---------------------------------------------
     chapterList.forEach((chapter) => {
-      const bento = chapter.querySelector(".chapter__bento");
+      const bento = chapter.querySelector(".chapter__mosaic");
       if (bento) {
         const data = chapterData.find((d) => d.chapter === chapter);
         if (!data) return;

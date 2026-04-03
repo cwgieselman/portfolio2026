@@ -104,7 +104,7 @@ body {
  *     .layout__page--header          full width, above chapters
  *     .layout__chapter               text left | bento right
  *       .chapter__content            left column — richtext rendered here
- *       .chapter__bento              right column (bento column)
+ *       .chapter__mosaic              right column (bento column)
  *         .layout__page              one beat — sticky, stacks at origin
  *         .layout__page              ...
  *
@@ -191,7 +191,7 @@ body {
     }
 
     // position: relative is required for skeleton underlay (position:absolute
-    // within .chapter__bento) but must NOT apply to .page-header.layout__chapter
+    // within .chapter__mosaic) but must NOT apply to .page-header.layout__chapter
     // since that element needs position: fixed. Scoped to narratives only.
     .layout__story .layout__chapter {
         position: relative;
@@ -246,16 +246,16 @@ body {
     // Typography and spacing rules live in _richtext.scss.
     // No layout-level type styles here — richtext is self-contained.
 
-    .chapter__bento {
+    .chapter__mosaic {
         grid-column: bento-start / bento-end;
         position: relative; // required: pages are position:absolute within this
         /* Height set by JS in choreography.js based on page count */
     }
 
-    /* -- Bento pages — sticky within chapter__bento ------------------------ */
+    /* -- Bento pages — sticky within chapter__mosaic ------------------------ */
     /* Each page stacks at the same origin. Later pages sit above earlier ones. */
 
-    .chapter__bento .layout__page {
+    .chapter__mosaic .layout__page {
         // Position and z-index set by choreography.js
         width: 100%;
         padding-inline: 0;
@@ -265,7 +265,7 @@ body {
         container-name: content-cell;
     }
 
-    // .chapter__bento .layout__page .content-cell removed — mosaic is now
+    // .chapter__mosaic .layout__page .content-cell removed — mosaic is now
     // a direct child of layout__page, no content-cell wrapper in the mosaic path.
 
 }
