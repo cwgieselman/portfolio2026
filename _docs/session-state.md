@@ -9,17 +9,13 @@
 
 ## Branch
 
-`rehab/frame-bleed-rename` — committed, pushed, ready to merge to main
+`main` — all work merged and pushed
 
 ---
 
 ## Where We Are
 
-Full architecture audit complete. Branch carries two commits:
-1. The frame/bleed rename + artDirection/scrollable data-attribute refactor
-2. Doc fixes: purge stale `type: content/image` from all compile-facing docs
-
-Remaining audit items tracked in Open Priorities below.
+`rehab/frame-bleed-rename` merged to main. Full architecture audit complete and all items resolved.
 
 ---
 
@@ -50,13 +46,13 @@ Remaining audit items tracked in Open Priorities below.
 - YAML-architecture.md: Full rewrite — hierarchy correct, Section removed, Chapter updated
   with `content:` array, Page updated (no wrapper), Mosaic/Tile sections accurate
 
-### Remaining audit items (in priority order)
+### All audit items resolved
 
-- [ ] `media.njk` comment: "image-type tiles" → "bleed tiles" (trivial)
-- [ ] `compiled-page.njk` + `_layout.scss` + `choreography.js`: rename `chapter__bento` → `chapter__mosaic` (coordinated 3-file change)
-- [ ] `choreography.js` line 72: dead `bentos` variable — remove
-- [ ] `_mosaic.scss`: dead `.mosaic-tile--composite` block — remove
-- [ ] YAML-architecture.md + page.yml: `wrapper:` field on pages is never read by Pipeline A templates — verify whether intentional or vestigial
+- [x] `media.njk` comment corrected
+- [x] `chapter__bento` → `chapter__mosaic` across compiled-page.njk, _layout.scss, choreography.js, placements
+- [x] Dead `bentos` variable removed from choreography.js
+- [x] Dead `.mosaic-tile--composite` block removed from _mosaic.scss
+- [x] `wrapper:` field removed from Pipeline A pages (vestigial)
 
 ---
 
