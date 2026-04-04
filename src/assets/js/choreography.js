@@ -56,7 +56,9 @@
     // ── Tuneable constants ───────────────────────────────────────────────
     const BEAT_PX    = 300;  // scroll pixels to complete one beat transition
     const OVERLAP    = 0.5;  // fraction into beat N when beat N+1 starts moving
-    const CHROME_TOP = 64;   // navbar(48) + gap(16) — bento sticks just below navbar
+    const CHROME_TOP = 64;   // navbar(48) + gap(16) — mosaic sticks just below navbar
+    const mosaicH    = 752;  // CONTRACT_EXCEPTION: MONEY mosaic height (4×176 + 3×16)
+    const GAP_PX     = 16;   // px offset between stacked page landing positions
     // ────────────────────────────────────────────────────────────────────
 
     const chapterList = Array.from(
@@ -69,10 +71,7 @@
       const pages = Array.from(
         chapter.querySelectorAll(".chapter__mosaic .layout__page"),
       );
-      // Mosaic height — constant from CSS grid (4 rows × 176px + 3 gaps × 16px = 752px).
-      const bentoH = 752; // CONTRACT_EXCEPTION: pixel constant from mosaic MONEY geometry
-
-      return { chapter, pages, bentoH, chapterIdx };
+      return { chapter, pages, mosaicH, chapterIdx };
     });
 
     // -- Apply chapter overlap (negative margin) --------------------------
@@ -80,41 +79,48 @@
     chapterList.forEach((chapter) => {
       const offset = parseInt(chapter.dataset.chapterOffset || "0", 10);
       if (offset > 0) {
-        chapter.style.marginTop = -1 * offset * ROW_UNIT + "px";
+        // FIX: use -mosaicH instead of -(offset * ROW_UNIT).
+        // The row-based value (-192px) left a 644px dead zone between chapters —
+        // ch1's mosaic unstuck and scrolled away before ch2's appeared.
+        // -mosaicH (-752px) pulls ch2's container up far enough that its mosaic
+        // sticks at exactly the scrollY where ch1's mosaic unsticks. Gap = 0.
+        // Note: chapterOffset in YAML still governs the visual skeleton row overlap;
+        // it is a design value and does not determine this margin.
+        chapter.style.marginTop = -1 * mosaicH + "px";
       }
     });
 
     // -- Set chapter scroll heights ---------------------------------------
-    chapterData.forEach(({ chapter, pages, bentoH }) => {
+    chapterData.forEach(({ chapter, pages, mosaicH }) => {
       // pages includes P00 (skeleton) — subtract 1 for beat count
       const beatCount = pages.length - 1;
-      const h = bentoH + beatCount * BEAT_PX + CHROME_TOP;
+      const h = mosaicH + beatCount * BEAT_PX + CHROME_TOP;
       chapter.style.height = h + "px";
     });
 
     // -- Stick chapter__mosaic ---------------------------------------------
     chapterList.forEach((chapter) => {
-      const bento = chapter.querySelector(".chapter__mosaic");
-      if (bento) {
+      const mosaic = chapter.querySelector(".chapter__mosaic");
+      if (mosaic) {
         const data = chapterData.find((d) => d.chapter === chapter);
         if (!data) return;
-        bento.style.position  = "sticky";
-        bento.style.top       = CHROME_TOP + "px";
-        bento.style.height    = data.bentoH + "px";
-        bento.style.alignSelf = "start";
+        mosaic.style.position  = "sticky";
+        mosaic.style.top       = CHROME_TOP + "px";
+        mosaic.style.height    = data.mosaicH + "px";
+        mosaic.style.alignSelf = "start";
       }
     });
 
     // -- Stack pages at origin --------------------------------------------
     // P00 (skeleton): permanent underlay — z-index 0, never translated.
     // P01+: start off-screen, translate in as beats.
-    chapterData.forEach(({ pages, bentoH }) => {
+    chapterData.forEach(({ pages, mosaicH }) => {
       pages.forEach((page, i) => {
         page.style.position = "absolute";
         page.style.top      = "0";
         page.style.left     = "0";
-        page.style.width    = "752px"; // CONTRACT_EXCEPTION: MONEY bento width
-        page.style.height   = bentoH + "px";
+        page.style.width    = "752px"; // CONTRACT_EXCEPTION: MONEY mosaic width
+        page.style.height   = mosaicH + "px";
         page.style.zIndex   = String(pages.length - 1 - i);
         if (i === 0) {
           // P00 — skeleton underlay, always visible
@@ -132,10 +138,10 @@
     const beats = [];
     const contentRanges = [];
 
-    chapterData.forEach(({ chapter, pages, chapterIdx, bentoH }) => {
+    chapterData.forEach(({ chapter, pages, chapterIdx, mosaicH }) => {
       const chapterStart = chapter.offsetTop;
       const beatCount    = pages.length - 1;
-      const chapterEnd   = chapterStart + bentoH + beatCount * BEAT_PX + CHROME_TOP;
+      const chapterEnd   = chapterStart + mosaicH + beatCount * BEAT_PX + CHROME_TOP;
 
       // pages[0] is skeleton — skip it. Beats start at pages[1].
       pages.forEach((page, pageIdx) => {
@@ -155,7 +161,11 @@
           }
         }
 
-        beats.push({ chapterIdx, pageIdx, page, scrollStart, scrollEnd });
+        // landY: the resting translateY for this page once it has fully arrived.
+        // P01 (beatIdx 0) lands at 0. P02 lands at -GAP_PX. P03 at -2*GAP_PX.
+        // This creates a visible sliver of the page beneath at the bottom edge.
+        beats.push({ chapterIdx, pageIdx, page, scrollStart, scrollEnd,
+                     landY: -(beatIdx * GAP_PX) });
       });
     });
 
@@ -184,16 +194,18 @@
       });
 
       // Beat translations
-      beats.forEach(({ page, scrollStart, scrollEnd }) => {
+      beats.forEach(({ page, scrollStart, scrollEnd, landY }) => {
         if (scrollY <= scrollStart) {
           page.style.transform = "translateY(110vh)";
         } else if (scrollY >= scrollEnd) {
-          page.style.transform = "translateY(0)";
+          page.style.transform = `translateY(${landY}px)`;
         } else {
-          const progress   = (scrollY - scrollStart) / (scrollEnd - scrollStart);
-          const eased      = 1 - Math.pow(1 - progress, 2);
-          const translateY = (1 - eased) * 110;
-          page.style.transform = "translateY(" + translateY + "vh)";
+          const progress  = (scrollY - scrollStart) / (scrollEnd - scrollStart);
+          const eased     = 1 - Math.pow(1 - progress, 2);
+          // Interpolate from 110vh down to landY in px (avoids vh/px unit mixing mid-tween)
+          const vhPx      = window.innerHeight * 1.1;
+          const currentPx = vhPx + (landY - vhPx) * eased;
+          page.style.transform = `translateY(${currentPx.toFixed(1)}px)`;
         }
       });
     }
