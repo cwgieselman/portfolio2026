@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 2, 2026 (session 2)*
+*Last updated: April 4, 2026 (session 3)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -15,13 +15,37 @@
 
 ## Where We Are
 
-Full static analysis sweep complete. All findings resolved or flagged with TODOs. Everything is on `main` and pushed to GitHub.
+Three PRs applied and pushed to `main`. YAML is now verified against Figma for chapters 01 and 02. The delta workflow has been identified as a recognized second compile mode and needs to be formalized.
 
-**Next session:** Apply Claude.ai's chapter-02 YAML verification diff. Claude.ai will have read Figma and returned a delta report against current `page.yml`. Claude Code applies confirmed changes only — do NOT do a fresh full compile.
+**Next session options (either order):**
+1. Formalize the delta compile mode — add a Delta Mode section to `COMPILE_PROMPTS.md` (output format spec, comparison logic, stacking/nested span distinction).
+2. Run a **first-compile experiment**: ask Claude.ai to compile `inficon-impact-manager` from Figma cold (Mode 1, ignoring the existing `page.yml`) and compare the output against current YAML. Goal: pressure-test COMPILE_PROMPTS.md and surface anything the delta pass may have normalized away.
 
 ---
 
 ## What Was Completed This Session
+
+### Session 3 — Three PRs + Figma delta applied
+
+**PR: fix/choreography-chapter-gap**
+- `bentoH` → `mosaicH` throughout; `bento` local var → `mosaic`
+- `mosaicH` (752) and `GAP_PX` (16) hoisted to constants block
+- Chapter overlap margin: `-(offset × ROW_UNIT)` → `-mosaicH` — eliminates 644px dead zone between chapters
+- Beat `landY` added: pages stack with 16px sliver between them instead of collapsing flush
+- Scroll tween rewritten in px throughout (no vh/px unit jump at `scrollEnd`)
+
+**PR: build/tile-typography**
+- `font.family.display`: Playfair Display → Merriweather (lining figures stable at display size)
+- `type.statLabel` semantic tokens added (Raleway Bold, 20px/20px, 4px tracking)
+- Google Fonts: Merriweather in, Playfair out; PT Sans Bold Italic (`1,700`) added
+- `_mosaic.scss` type block: `font-variant-numeric: lining-nums` on `mosaic-stat`; `mosaic-stat-label` and `mosaic-body-italic` added as new classes
+- Docs: CONTRACT.md Tile Content Model section, COMPILE_PROMPTS.md Span Vocabulary, mosaic.njk comment all updated to 7-class vocabulary
+
+**Figma delta: chapters 01 & 02** (`figma-yaml-delta--chapters-01-02.md`)
+- 11 changes applied to `page.yml` — alt text corrections, skeleton tile fixes (ch01 +2 tiles, ch02 full pattern replaced), stat tile 3-span content, bold spans removed where Figma is plain text, screenshot alt text made meaningful
+- Delta identified two compile modes (see Compilation Workflow below)
+
+---
 
 ### Session 2 — Static analysis sweep + cleanup
 
@@ -84,17 +108,40 @@ Full static analysis sweep complete. All findings resolved or flagged with TODOs
 
 ---
 
+## Compilation Workflow (emerging — not yet fully formalized)
+
+Two recognized modes. Neither has a complete prompt spec yet.
+
+**Mode 1 — First compile** (cold read, YAML generated from scratch)
+- Prompt: `COMPILE_PROMPTS.md` (exists, but stacking/nested span distinction not yet in it)
+- Output: full `page.yml` + placements SCSS
+- When to use: new page, no existing YAML
+
+**Mode 2 — Delta / verification** (re-read against existing YAML)
+- Prompt: not yet formalized — Claude.ai improvised the output format this session
+- Output: `_docs/extract/figma-yaml-delta--<slug>.md` change document
+- Claude Code applies confirmed changes only; never overwrites YAML wholesale
+- When to use: design has evolved, YAML exists and is working
+- Output format from session 3 was good — should be spec'd
+
+**Gap: stacking vs nested span patterns** — documented in the delta doc but not yet in `COMPILE_PROMPTS.md`. Both modes need this.
+
+---
+
 ## Open Priorities
 
-### Figma → YAML verification diff (next session — results incoming)
-- Claude.ai has done (or will do) the verification diff: read Figma chapter-02, compare to current `page.yml`, return delta report
-- Claude Code applies confirmed changes only — do NOT do a fresh full compile
-- `page.yml` is working; protect it
+### Formalize compilation workflow
+- Add Delta Mode section to `COMPILE_PROMPTS.md` (output format, comparison logic)
+- Promote stacking/nested span distinction into existing compile rules
+
+### First-compile experiment
+- Run Claude.ai on `inficon-impact-manager` cold (Mode 1, ignore existing `page.yml`)
+- Compare output vs current YAML
+- Goal: pressure-test `COMPILE_PROMPTS.md`, surface gaps the delta pass normalized away
 
 ### Build priorities
-- Resolve bento page stacking/accumulation in choreography
 - Container query / responsiveness pass on mosaic
-- Complete chapter-02 YAML once Figma is ready
+- Verify choreography fixes in browser at 1248px (both Chromium and WebKit)
 
 ### Deferred
 - Token backlog: shadow system, alpha/overlay, frosted glass bg
