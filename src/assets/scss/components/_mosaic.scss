@@ -322,13 +322,18 @@
 // -- Type styles --------------------------------------------------------------
 
 // Axiomatic centering -- if a tile contains a lead or stat, center all text.
-// Body-only tiles stay left-aligned by default. Images unaffected.
+// Body-only tiles stay left-aligned by default.
 .mosaic-tile:has(.mosaic-lead, .mosaic-lead-italic, .mosaic-stat) {
     text-align: center;
 }
 
+// Source: Mosaic/Stat (CGDC-DS) -- Merriweather Bold, 64px/64px
 .mosaic-tile .mosaic-stat {
     font-family: var(--font-family-display);
+    font-variant-numeric: lining-nums; /* OpenType lnum -- Merriweather old-style numerals
+                                        * drop below baseline at display sizes. lining-nums
+                                        * corrects baseline alignment. Apply this rule to any
+                                        * future selector that uses --font-family-display. */
     font-size: clamp(3.125rem, 36cqi, 4.5rem);
     font-weight: 700;
     line-height: 1;
@@ -336,15 +341,33 @@
     display: block;
 }
 
+// Source: Mosaic/Stat Label (CGDC-DS) -- Raleway Bold, 20px/20px, 4px tracking, small-caps
+// Used when a stat value is too wide for the tile at display size
+// (e.g. "100 PERCENT", "$6 MILLION" instead of a raw numeral).
+.mosaic-tile .mosaic-stat-label {
+    font-family: var(--type-statLabel-family);
+    font-size: var(--type-statLabel-size);
+    font-weight: var(--type-statLabel-weight);
+    line-height: var(--type-statLabel-lineHeight);
+    letter-spacing: var(--type-statLabel-letterSpacing);
+    font-variant: small-caps; /* SMALL_CAPS_FORCED in Figma -- not tokenizable;
+                               * font-variant is not a bindable Figma variable property. */
+    color: inherit;
+    display: block;
+}
+
+// Source: Mosaic/Lead (CGDC-DS) -- Raleway Regular, 20px/32px
 .mosaic-tile .mosaic-lead {
     font-family: var(--font-family-brand);
     font-size: clamp(1.1875rem, 13.2cqi, 1.5rem);
     font-weight: 400;
-    font-style: normal;
     line-height: clamp(1.5rem, 17cqi, 1.875rem);
     color: inherit;
 }
 
+// Source: Mosaic/Lead Italic (CGDC-DS) -- Raleway Regular Italic, 20px/32px
+// font-style not tokenizable -- italic is a font file mode, not a Figma
+// variable property. Captured here as the sole source of truth.
 .mosaic-tile .mosaic-lead-italic {
     font-family: var(--font-family-brand);
     font-size: clamp(1.1875rem, 13.2cqi, 1.5rem);
@@ -354,20 +377,32 @@
     color: inherit;
 }
 
+// Source: Mosaic/Body (CGDC-DS) -- PT Sans Regular, 16px/24px
 .mosaic-tile .mosaic-body {
     font-family: var(--font-family-plain);
     font-size: clamp(0.8125rem, 9.2cqi, 1rem);
     font-weight: 400;
-    font-style: normal;
     line-height: clamp(1.125rem, 13cqi, 1.5rem);
     color: inherit;
 }
 
+// Source: Mosaic/Body Bold (CGDC-DS) -- PT Sans Bold, 16px/24px
 .mosaic-tile .mosaic-body-bold {
     font-family: var(--font-family-plain);
     font-size: clamp(0.8125rem, 9.2cqi, 1rem);
     font-weight: 700;
-    font-style: normal;
+    line-height: clamp(1.125rem, 13cqi, 1.5rem);
+    color: inherit;
+}
+
+// Source: Mosaic/Body Italic (CGDC-DS) -- PT Sans Regular Italic, 16px/24px
+// font-style not tokenizable -- italic is a font file mode, not a Figma
+// variable property. Captured here as the sole source of truth.
+.mosaic-tile .mosaic-body-italic {
+    font-family: var(--font-family-plain);
+    font-size: clamp(0.8125rem, 9.2cqi, 1rem);
+    font-weight: 400;
+    font-style: italic;
     line-height: clamp(1.125rem, 13cqi, 1.5rem);
     color: inherit;
 }
