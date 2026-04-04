@@ -564,17 +564,27 @@ Gap: `clamp(8px, 2cqi, 16px)` — fluid between states, 16px at designed states.
 | `secondary-light` | secondary/20 | secondary/70 | secondary/30 |
 | `default` | neutral/10 | primary/60 | neutral/60 |
 
-### Inline Typography Spans
+### Tile Content Model
 
-| Class | Font | Size (clamp) | Alignment |
-|---|---|---|---|
-| `mosaic-stat` | Playfair Display Bold | `50px -> 72px` (`36cqi`) | center (axiomatic) |
-| `mosaic-lead` | Raleway Regular | `19px -> 24px` (`13.2cqi`) | center (axiomatic) |
-| `mosaic-lead-italic` | Raleway Italic | `19px -> 24px` (`13.2cqi`) | center (axiomatic) |
-| `mosaic-body` | PT Sans Regular | `13px -> 16px` (`9.2cqi`) | left (default) |
-| `mosaic-body-bold` | PT Sans Bold | `13px -> 16px` (`9.2cqi`) | left (default) |
+Frame tiles use a typed span vocabulary in their `content: |` HTML block. Each Figma text layer in the `_mosaic-tile__richtext` content slot maps to a `<span>` with the class below. Multiple spans stack as direct children — no wrapper element. `color: inherit` is the rule; theme drives color via `--cell-color`. Never set color directly on span classes.
+
+`font-style` (italic) and `font-variant` (small-caps) are not tokenizable — Figma variables cannot bind to these properties. CSS is the sole source of truth for those declarations.
+
+| Figma style name | CSS class | Family | Size | Notes |
+|---|---|---|---|---|
+| `Mosaic/Stat` | `mosaic-stat` | Merriweather Bold | `50px -> 72px` (`36cqi`) | center (axiomatic); `font-variant-numeric: lining-nums` applied |
+| `Mosaic/Stat Label` | `mosaic-stat-label` | Raleway Bold | 20px fixed | small-caps, 4px tracking; use when numeral + unit too wide for display size |
+| `Mosaic/Lead` | `mosaic-lead` | Raleway Regular | `19px -> 24px` (`13.2cqi`) | center (axiomatic) |
+| `Mosaic/Lead Italic` | `mosaic-lead-italic` | Raleway Italic | `19px -> 24px` (`13.2cqi`) | center (axiomatic); `font-style: italic` in CSS only |
+| `Mosaic/Body` | `mosaic-body` | PT Sans Regular | `13px -> 16px` (`9.2cqi`) | left (default) |
+| `Mosaic/Body Bold` | `mosaic-body-bold` | PT Sans Bold | `13px -> 16px` (`9.2cqi`) | left (default) |
+| `Mosaic/Body Italic` | `mosaic-body-italic` | PT Sans Italic | `13px -> 16px` (`9.2cqi`) | left (default); `font-style: italic` in CSS only |
 
 Axiomatic centering: any tile containing `mosaic-lead`, `mosaic-lead-italic`, or `mosaic-stat` receives `text-align: center` via `:has()`. Body-only tiles remain left-aligned.
+
+`mosaic-stat-label` use case: when a numeral value with a spelled-out unit (e.g. "100 PERCENT", "$6 MILLION") is too wide for the tile at display size. Use instead of `mosaic-stat` in those cases.
+
+List tiles are not yet designed in Figma. Do not pre-build compile rules for content that doesn't exist.
 
 ### DOM Shape
 

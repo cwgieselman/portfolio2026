@@ -54,12 +54,19 @@
   theme: secondary-light  → --cell-bg: secondary/20, --cell-color: secondary/70
   (omit theme for bleed tiles — transparent bg, no border)
 
-  ── Inline type spans ────────────────────────────────────────────────────────
-  mosaic-stat           Tienne Bold, clamp 50px→72px
-  mosaic-lead           Raleway Regular, clamp 19px→24px
-  mosaic-lead-italic    Raleway Italic, clamp 19px→24px
-  mosaic-body           PT Sans Regular, clamp 13px→16px
-  mosaic-body-bold      PT Sans Bold, clamp 13px→16px
+  ── Inline type spans (frame tiles only) ─────────────────────────────────────
+  Figma style name       → span class           Source
+  Mosaic/Stat            → mosaic-stat          Merriweather Bold, 64px/64px (clamp 50px→72px)
+  Mosaic/Stat Label      → mosaic-stat-label    Raleway Bold, 20px/20px, 4px tracking, small-caps
+  Mosaic/Lead            → mosaic-lead          Raleway Regular, 20px/32px (clamp 19px→24px)
+  Mosaic/Lead Italic     → mosaic-lead-italic   Raleway Italic, 20px/32px (clamp 19px→24px)
+  Mosaic/Body            → mosaic-body          PT Sans Regular, 16px/24px (clamp 13px→16px)
+  Mosaic/Body Bold       → mosaic-body-bold     PT Sans Bold, 16px/24px (clamp 13px→16px)
+  Mosaic/Body Italic     → mosaic-body-italic   PT Sans Italic, 16px/24px (clamp 13px→16px)
+
+  Rules: color: inherit always — theme drives color via --cell-color. Never set color on span
+  classes. font-style (italic) and font-variant (small-caps) are not tokenizable — CSS is the
+  sole source of truth for those properties.
 
   ── Render paths ─────────────────────────────────────────────────────────────
   type: bleed + media: block → media.njk include (img, alt, optimization pipeline)

@@ -326,8 +326,27 @@ The `_mosaic-article__theme` sub-component carries:
 #### Tile Content Extraction
 
 **`type=frame` (content tile):** Content lives in the `Slot`. The Slot may contain:
-- Text nodes with inline spans (`mosaic-stat`, `mosaic-lead`, `mosaic-lead-italic`, `mosaic-body`, `mosaic-body-bold`) — emit as `content: |` HTML block
+- Text nodes with inline spans — emit as `content: |` HTML block (see Span Vocabulary below)
 - Mixed HTML — emit verbatim via `| safe`
+
+**Span Vocabulary (frame tiles):** Each Figma text layer in the `_mosaic-tile__richtext` content slot maps to a `<span>` using this table. Use Figma style name as the key — do not infer from font properties alone.
+
+| Figma style name | Span class |
+|---|---|
+| `Mosaic/Stat` | `mosaic-stat` |
+| `Mosaic/Stat Label` | `mosaic-stat-label` |
+| `Mosaic/Lead` | `mosaic-lead` |
+| `Mosaic/Lead Italic` | `mosaic-lead-italic` |
+| `Mosaic/Body` | `mosaic-body` |
+| `Mosaic/Body Bold` | `mosaic-body-bold` |
+| `Mosaic/Body Italic` | `mosaic-body-italic` |
+
+Rules:
+- Multiple spans stack as direct children inside the `content: |` block — no wrapper element.
+- `color: inherit` always — never set color on span classes.
+- `itemSpacing: 0` in Figma means line-height does all spacing. No CSS gap or margin between spans.
+- Use `mosaic-stat-label` instead of `mosaic-stat` when the numeral + unit is too wide for the tile at display size (e.g. "100 PERCENT", "$6 MILLION").
+- List tiles are not yet designed. Do not pre-build compile rules for content that doesn't exist.
 
 **`type=bleed` (image tile):** No Slot content. Emit `media:` block with `src: "TODO:src"`, `hasAlt`, `alt`.
 
