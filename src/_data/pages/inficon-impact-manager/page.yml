@@ -19,7 +19,7 @@ chapters:
       - ".  s  s  s"
       - "s  s  s  s"
       - "s  s  s  s"
-      - "s  s  .  ."
+      - "s  s  s  s"
     content:
       - kind: "p"
         text: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
@@ -96,6 +96,16 @@ chapters:
               desktop:
                 col: "2 / 3"
                 row: "4 / 5"
+            - id: article-14
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "4 / 5"
+            - id: article-15
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "4 / 5"
 
       - pageKey: "page-01"
         mosaic:
@@ -114,7 +124,7 @@ chapters:
                 src: "/assets/images/inficon--photo--st-facility-france.jpg"
                 mobileSrc: "/assets/images/inficon--photo--st-facility-france--CROP.jpg" # TODO: file missing — create square/portrait crop for mobile
                 hasAlt: true
-                alt: "The ST Microelectronics facility in Crolles, France — a large semiconductor FAB with the French Alps visible in the background."
+                alt: "The ST Microelectronics facility in Crolles, France is a large semiconductor FAB with the French Alps visible in the background."
                 sizes: "40vw"
                 cssClass: "mosaic-tile__img"
 
@@ -127,7 +137,7 @@ chapters:
               media:
                 src: "/assets/images/inficon--photo--me-in-cleansuit.jpg"
                 hasAlt: true
-                alt: "Craig in a full cleanroom suit, ready to make some chips. At the pilot FAB in Crolles, France."
+                alt: "Craig in a full cleanroom suit, ready to make some chips... At the pilot FAB in Crolles, France."
                 sizes: "20vw"
                 cssClass: "mosaic-tile__img"
 
@@ -158,7 +168,8 @@ chapters:
                 row: "2 / 3"
               content: |
                 <span class="mosaic-stat">1</span>
-                <span class="mosaic-body">Week on-site at the pilot facility:</span>
+                <span class="mosaic-stat-label">Week</span>
+                <span class="mosaic-body">on-site at the pilot facility in France</span>
 
             - id: article-03
               type: bleed
@@ -171,7 +182,7 @@ chapters:
                 src: "/assets/images/inficon--photo--rocc-workshop-island.jpg"
                 mobileSrc: "/assets/images/inficon--photo--rocc-workshop-island--CROP.jpg" # TODO: file missing — create square/portrait crop for mobile
                 hasAlt: true
-                alt: "A Workshop Island in the control room with wall-mounted screens showing localized production data and individual workstations."
+                alt: "A Workshop Island in control room with wall-mounted screens showing specific localized production data and individual workstations."
                 sizes: "40vw"
                 cssClass: "mosaic-tile__img"
 
@@ -198,8 +209,8 @@ chapters:
   - chapterKey: "chapter-02"
     chapterOffset: 1
     skeleton:
-      - ".  .  s  s"
       - ".  s  s  s"
+      - "s  s  s  s"
       - "s  s  s  s"
       - "s  s  s  s"
     content:
@@ -216,64 +227,74 @@ chapters:
             - id: article-01
               type: skeleton
               desktop:
-                col: "3 / 4"
+                col: "2 / 3"
                 row: "1 / 2"
             - id: article-02
               type: skeleton
               desktop:
-                col: "4 / 5"
+                col: "3 / 4"
                 row: "1 / 2"
             - id: article-03
               type: skeleton
               desktop:
-                col: "2 / 3"
-                row: "2 / 3"
+                col: "4 / 5"
+                row: "1 / 2"
             - id: article-04
               type: skeleton
               desktop:
-                col: "3 / 4"
+                col: "1 / 2"
                 row: "2 / 3"
             - id: article-05
               type: skeleton
               desktop:
-                col: "4 / 5"
+                col: "2 / 3"
                 row: "2 / 3"
             - id: article-06
               type: skeleton
               desktop:
-                col: "1 / 2"
-                row: "3 / 4"
+                col: "3 / 4"
+                row: "2 / 3"
             - id: article-07
               type: skeleton
               desktop:
-                col: "2 / 3"
-                row: "3 / 4"
+                col: "4 / 5"
+                row: "2 / 3"
             - id: article-08
               type: skeleton
               desktop:
-                col: "3 / 4"
+                col: "1 / 2"
                 row: "3 / 4"
             - id: article-09
               type: skeleton
               desktop:
-                col: "4 / 5"
+                col: "2 / 3"
                 row: "3 / 4"
             - id: article-10
               type: skeleton
               desktop:
+                col: "3 / 4"
+                row: "3 / 4"
+            - id: article-11
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "3 / 4"
+            - id: article-12
+              type: skeleton
+              desktop:
                 col: "1 / 2"
                 row: "4 / 5"
-            - id: article-11
+            - id: article-13
               type: skeleton
               desktop:
                 col: "2 / 3"
                 row: "4 / 5"
-            - id: article-12
+            - id: article-14
               type: skeleton
               desktop:
                 col: "3 / 4"
                 row: "4 / 5"
-            - id: article-13
+            - id: article-15
               type: skeleton
               desktop:
                 col: "4 / 5"
@@ -292,8 +313,8 @@ chapters:
                 col: "3 / 5"
                 row: "1 / 3"
               content: |
-                <span class="mosaic-body">Each <span class="mosaic-body-bold">Workshop</span> in the FAB has its own 'Island' with a central display of localized data and individual workstations for the <span class="mosaic-body-bold">Actors</span> assigned to that Workshop</span>
-                <img class="mosaic-tile__screenshot" src="/assets/images/inficon--screen--anomaly-ui-st.png" alt="" role="presentation" />
+                <span class="mosaic-body">Each Workshop in the FAB has its own 'Island' with a central display of localized data and individual workstations for the Actors assigned to that Workshop</span>
+                <img class="mosaic-tile__screenshot" src="/assets/images/inficon--screen--anomaly-ui-st.png" alt="A screenshot of the customer-created Anomaly Tracking page Phase 1 of our project would replace." />
 
       - pageKey: "page-02"
         mosaic:
@@ -321,7 +342,7 @@ chapters:
                 src: "/assets/images/inficon--screen--anomaly-app-figjam.png"
                 scrollSrc: "/assets/images/inficon--screen--anomaly-app-figjam.png"
                 hasAlt: true
-                alt: "FigJam mapping of the legacy anomaly workstation interface — inputs, workflows, and display states documented in collaboration with Actors during discovery."
+                alt: "A screenshot of a FigJam file that maps UI elements from the Anomaly Tracking page to the actions and workflows they triggered."
                 sizes: "55vw"
                 cssClass: "mosaic-tile__img"
 
