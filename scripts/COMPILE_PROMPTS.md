@@ -348,7 +348,35 @@ Rules:
 - Use `mosaic-stat-label` instead of `mosaic-stat` when the numeral + unit is too wide for the tile at display size (e.g. "100 PERCENT", "$6 MILLION").
 - List tiles are not yet designed. Do not pre-build compile rules for content that doesn't exist.
 
-**`type=bleed` (image tile):** No Slot content. Emit `media:` block with `src: "TODO:src"`, `hasAlt`, `alt`.
+**Two span patterns — both are valid:**
+
+- **Stacking spans** — multiple separate text nodes in the content slot. Each node is its own typographic role. Emit one `<span>` per node, using the Figma style name → class table above.
+
+- **Nested spans** — a single text node with mixed font runs within one continuous sentence. Signal: `getStyledTextSegments()` on that node returns segments with different `fontName` values. Emit an outer `<span>` for the whole string (establishing the block-level role), with inner `<span>` wrapping only the styled segment(s). Neither span gets `display: block` — the inner span is inline within the outer text flow.
+
+  Example: `<span class="mosaic-body">Focus of <span class="mosaic-body-bold">Phase 1</span>.</span>`
+
+**`type=bleed` (image tile):** No Slot content. Emit `media:` block with `src: "TODO:src"`, `hasAlt`, `alt`, and `sizes` (derived from col span — see sizes table below). Emit `theme:` when Figma sets it, including `default`. Do not omit theme from bleed tiles.
+
+**`type=frame` with mixed text + image Slot:** When a `frame` tile's Slot contains both a `_mosaic-tile__richtext` instance and a `media` instance, emit both inline in the `content: |` block. **Order follows visual (y-position) order in Figma, not node list order.** Figma may return nodes bottom-up or top-down depending on context — always sort by y-coordinate to determine output order.
+
+- Text content: emit spans per the Span Vocabulary above.
+- Screenshot image: emit as `<img class="mosaic-tile__screenshot" src="TODO:src" alt="{alt text from media instance}" />`
+
+Example (text above image):
+```html
+<span class="mosaic-body">Each Workshop in the FAB has its own 'Island'...</span>
+<img class="mosaic-tile__screenshot" src="TODO:src" alt="A screenshot of..." />
+```
+
+**`sizes` derivation (bleed tiles and screenshot images):** Derive from the tile's `desktop.col` span. Do not emit `TODO:sizes` — use this table:
+
+| Col span | `sizes` value |
+|---|---|
+| 1 col | `"20vw"` |
+| 2 cols | `"31vw"` |
+| 3 cols | `"47vw"` |
+| 4 cols | `"63vw"` |
 
 **`type=frame` + `custom=true` (custom tile):** Read `variant` TEXT prop. Emit `type: frame`, `custom: true`, `variant: "<value>"`. Append custom tile scaffold block to report.
 
@@ -426,11 +454,25 @@ Every chapter has a P00 `mosaic--skeleton` instance. Its tiles must emit SCSS pl
 
 Place the P00 block immediately before the P01 block for its chapter.
 
+#### Mosaic ID Format
+
+IDs are derived deterministically from the page hierarchy:
+
+```
+{pageKey}--{chapterKey}--{pageKey}
+```
+
+Examples:
+- `inficon-impact-manager--chapter-01--page-01`
+- `inficon-impact-manager--chapter-02--page-00`
+
+No shorthand abbreviations. No `s01` section prefixes. No `cNN` or `pNN` abbreviations. Spell out `chapter-NN` and `page-NN` in full. This format is stable across re-compiles and can be derived without prior knowledge of the file.
+
 #### Mosaic YAML Shape
 
 ```yaml
 mosaic:
-  id: inficon--chapter-01--p01
+  id: inficon-impact-manager--chapter-01--page-01
   cols: 4
   rows: 4
   tiles:
