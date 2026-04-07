@@ -121,7 +121,7 @@
         page.style.left     = "0";
         page.style.width    = "752px"; // CONTRACT_EXCEPTION: MONEY mosaic width
         page.style.height   = mosaicH + "px";
-        page.style.zIndex   = String(pages.length - 1 - i);
+        page.style.zIndex   = String(i);
         if (i === 0) {
           // P00 — skeleton underlay, always visible
           page.style.transform = "translateY(0)";
