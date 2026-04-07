@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 4, 2026 (session 3)*
+*Last updated: April 6, 2026 (session 6 — Claude Code cleanup)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -15,140 +15,113 @@
 
 ## Where We Are
 
-Three PRs applied and pushed to `main`. YAML is now verified against Figma for chapters 01 and 02. The delta workflow has been identified as a recognized second compile mode and needs to be formalized.
+Mosaic Builder sandbox tool is the active focus. Steps 1 and 2 are fully
+functional. The tool lives at:
 
-**Next session options (either order):**
-1. Formalize the delta compile mode — add a Delta Mode section to `COMPILE_PROMPTS.md` (output format spec, comparison logic, stacking/nested span distinction).
-2. Run a **first-compile experiment**: ask Claude.ai to compile `inficon-impact-manager` from Figma cold (Mode 1, ignoring the existing `page.yml`) and compare the output against current YAML. Goal: pressure-test COMPILE_PROMPTS.md and surface anything the delta pass may have normalized away.
+```
+/Users/craiggieselman/Projects/portfolio-sandbox/src/mosaic-builder.html
+```
+
+Served at `localhost:8080/mosaic-builder/` (sandbox runs on 8080 when the
+real project is not running; bumps to 8082 when both are running).
+
+Full tool state documented in `portfolio-sandbox/EXPERIMENTS.md` under
+"Mosaic Builder / YAML Builder."
+
+**Next session — two options, decide before starting:**
+1. **Step 3 — Pages:** assign saved tiles to beats (P01, P02...). More workflow
+   value; unlocks the full chapter-definition loop.
+2. **YAML export refinement:** tighten the output to match full contract shape,
+   include skeleton cell map, surface page assignments once step 3 exists.
+
+Craig's instinct leaning toward Pages first. Either is valid.
 
 ---
 
 ## What Was Completed This Session
 
-### Session 3 — Three PRs + Figma delta applied
+### Session 5 — Mosaic Builder sandbox tool
 
-**PR: fix/choreography-chapter-gap**
-- `bentoH` → `mosaicH` throughout; `bento` local var → `mosaic`
-- `mosaicH` (752) and `GAP_PX` (16) hoisted to constants block
-- Chapter overlap margin: `-(offset × ROW_UNIT)` → `-mosaicH` — eliminates 644px dead zone between chapters
-- Beat `landY` added: pages stack with 16px sliver between them instead of collapsing flush
-- Scroll tween rewritten in px throughout (no vh/px unit jump at `scrollEnd`)
+**Workflow formalization**
+- Two-tool division of labor documented in `_docs/WORKFLOW.md`
+- Claude.ai: Figma reads, YAML generation, architectural decisions, PR doc drafting
+- Claude Code: all file changes, build verification, git commits
 
-**PR: build/tile-typography**
-- `font.family.display`: Playfair Display → Merriweather (lining figures stable at display size)
-- `type.statLabel` semantic tokens added (Raleway Bold, 20px/20px, 4px tracking)
-- Google Fonts: Merriweather in, Playfair out; PT Sans Bold Italic (`1,700`) added
-- `_mosaic.scss` type block: `font-variant-numeric: lining-nums` on `mosaic-stat`; `mosaic-stat-label` and `mosaic-body-italic` added as new classes
-- Docs: CONTRACT.md Tile Content Model section, COMPILE_PROMPTS.md Span Vocabulary, mosaic.njk comment all updated to 7-class vocabulary
+**Choreography debugger**
+- `portfolio-sandbox/src/choreography-test.html`
+- Loads real CSS from live project server
+- Verbatim markup from `_site/portfolio/inficon-impact-manager/index.html`
+- Images suppressed to labeled color blocks
+- Debug panel + constants tuner, both in bottom-left corner
+- marginTop fix proven: `-(offset * ROW_UNIT)` → `-MOSAIC_H`
+- Inter-page gap fix: `landY = -(beatIdx * GAP_PX)`
+- These fixes are pending in `choreography.js` in the real project
 
-**Figma delta: chapters 01 & 02** (`figma-yaml-delta--chapters-01-02.md`)
-- 11 changes applied to `page.yml` — alt text corrections, skeleton tile fixes (ch01 +2 tiles, ch02 full pattern replaced), stat tile 3-span content, bold spans removed where Figma is plain text, screenshot alt text made meaningful
-- Delta identified two compile modes (see Compilation Workflow below)
+**Mosaic Builder — Step 1 (Skeleton)**
+- 4×4 grid, click to toggle cells off, lock skeleton
+- Minimap + stats in right panel
+- Brand tokens: Raleway/PT Sans/Courier Prime, primary navy, yellow #FFCD00
 
----
+**Mosaic Builder — Step 2 (Tiles)**
+- Click-drag to draw tiles, release opens config panel
+- Config: type (frame/bleed), theme (5 swatches, always visible), label
+- Theme applies to both tile types (matches production contract)
+- Save / Redraw / Delete workflow
+- One pending tile at a time enforced
+- Invalid drag flashes red and aborts
+- Tile list in left panel
 
-### Session 2 — Static analysis sweep + cleanup
+**Mosaic Builder — Edit Skeleton**
+- '← Edit Skeleton' button enters amber edit mode
+- Tiles dim to 35%, pointer-events:none on tile layer
+- All cells interactive (no cell--occupied in edit mode)
+- Conflict warning when toggling OFF a cell under a saved tile
+- Lists affected tile IDs by name, confirm/cancel
+- 'Done Editing →' returns to draw mode
 
-- 6-check static analysis: stale terminology, CONTRACT violations, `position: absolute`, YAML↔placements, image assets, choreography.js integrity
-- All findings resolved or annotated:
-  - `richtext.njk` comment corrected (`fieldText` → `content[]`)
-  - Selfie placement offsets (`184px`, `232px`) annotated with `CONTRACT_EXCEPTION`
-  - Two missing mobileSrc CROP files flagged with TODO in `page.yml`
-  - Animation magic numbers in `_layout.scss` and `_link.scss` annotated with TODO (animation token system not yet built)
-  - Scroll indicator in `_mosaic.scss` annotated with TODO (needs design pass)
-  - Comparison slider annotated with top-level TODO (not yet designed in Figma)
-  - `componentDocs.js` JSDoc example updated from `bento-article` to `mosaic`
-
-### rehab/frame-bleed-rename — full tile type rename + audit
-
-- `content` → `frame`, `image` → `bleed` throughout: YAML, template, CSS, all docs
-- `artDirection`/`scrollable` refactored from class-based to `data-mosaic-media` attribute selectors
-- `<picture>` source breakpoints corrected from 1052px → 624px (actual mosaic 2-up threshold)
-- Art-directed portrait aspect-ratio: `@container (max-width: 623px)` scoped rule
-- `justify-content: center` on `.mosaic-tile__inner` base (axiomatic)
-- `.mosaic-tile--custom` class removed; all extended behavior on `[data-mosaic-variant]`
-- All compile-facing docs purged of stale `type: content/image` references
-
-### Architecture audit — discrepancies found and fixed
-
-- Sections array removed from Pipeline A YAML — chapters are now top-level. A top-level
-  `mode: "choreographed"` drives the `layout__story--{mode}` class instead.
-- `fieldText: string` replaced by `content: [{kind, text}]` array on each chapter.
-  compiled-page.njk now iterates the array and includes richtext.njk per block — same
-  mechanism as Pipeline B. One rendering path for all long-form text.
-- `wrapper:` field removed from Pipeline A page objects — never read by page.njk (vestigial).
-- CONTRACT.md: Header include corrected to `content-header.njk`; h1 explicitly excluded
-- CONTRACT.md + COMPILE_PROMPTS.md: YAML Shape examples now use `frame`/`bleed`
-- COMPILE_PROMPTS.md: Report output type names corrected; tile naming HTML corrected;
-  full page YAML shape and chapter richtext compile rules updated
-- YAML-architecture.md: Full rewrite — hierarchy correct, Section removed, Chapter updated
-  with `content:` array, Page updated (no wrapper), Mosaic/Tile sections accurate
-
-### All audit items resolved
-
-- [x] `media.njk` comment corrected
-- [x] `chapter__bento` → `chapter__mosaic` across compiled-page.njk, _layout.scss, choreography.js, placements
-- [x] Dead `bentos` variable removed from choreography.js
-- [x] Dead `.mosaic-tile--composite` block removed from _mosaic.scss
-- [x] `wrapper:` field removed from Pipeline A pages (vestigial)
+**Key bug fix during session**
+- `write_file` with partial content corrupted the file mid-session
+- Rule established: never use `write_file` with partial content on existing files
+- Always read first, always write the complete file
+- `filesystem:edit_file` is the correct tool for targeted changes
 
 ---
 
-## Canonical Vocabulary (locked)
+## Canonical Vocabulary (locked — mosaic builder additions)
 
-| Concept | Name | CSS / YAML |
-|---|---|---|
-| Whole case study | **story** | `layout__story` |
-| Narrative unit | **chapter** | `chapter-##` |
-| Scroll stack unit | **page** | `chapter--page-##` |
-| Editorial text block | **richtext** | `richtext.njk` / `.richtext` |
-| Grid composition | **mosaic** | `.mosaic` |
-| Composition cell | **mosaic tile** | `.mosaic-tile` / `tiles:` in YAML |
-| Small labeled badge | **pill** | `.pill` / `pill.njk` |
+| Concept | Name |
+|---|---|
+| One 176×176px grid position | **cell** |
+| Unique content component spanning cells | **tile** |
+| P00 / full cell footprint of chapter | **skeleton** |
+| A beat within a chapter | **page** |
 
----
-
-## Compilation Workflow (emerging — not yet fully formalized)
-
-Two recognized modes. Neither has a complete prompt spec yet.
-
-**Mode 1 — First compile** (cold read, YAML generated from scratch)
-- Prompt: `COMPILE_PROMPTS.md` (exists, but stacking/nested span distinction not yet in it)
-- Output: full `page.yml` + placements SCSS
-- When to use: new page, no existing YAML
-
-**Mode 2 — Delta / verification** (re-read against existing YAML)
-- Prompt: not yet formalized — Claude.ai improvised the output format this session
-- Output: `_docs/extract/figma-yaml-delta--<slug>.md` change document
-- Claude Code applies confirmed changes only; never overwrites YAML wholesale
-- When to use: design has evolved, YAML exists and is working
-- Output format from session 3 was good — should be spec'd
-
-**Gap: stacking vs nested span patterns** — documented in the delta doc but not yet in `COMPILE_PROMPTS.md`. Both modes need this.
+Full portfolio vocabulary in session-state from session 4 (below) still applies.
 
 ---
 
 ## Open Priorities
 
-### Formalize compilation workflow
-- Add Delta Mode section to `COMPILE_PROMPTS.md` (output format, comparison logic)
-- Promote stacking/nested span distinction into existing compile rules
+### Mosaic Builder (active)
+- Step 3 — Pages: assign tiles to beats
+- Step 4 — Choreography: pacing controls + live preview
+- YAML export refinement: skeleton cell map, page assignments
 
-### First-compile experiment
-- Run Claude.ai on `inficon-impact-manager` cold (Mode 1, ignore existing `page.yml`)
-- Compare output vs current YAML
-- Goal: pressure-test `COMPILE_PROMPTS.md`, surface gaps the delta pass normalized away
-
-### Build priorities
-- Container query / responsiveness pass on mosaic
-- Verify choreography fixes in browser at 1248px (both Chromium and WebKit)
+### Real project — choreography (partially resolved)
+- `marginTop` and `landY` fixes were promoted in `f6590b9` (April 4) — done
+- `bento` vocabulary cleanup was done in `f6590b9` — done
+- **z-index stacking order** was wrong: `pages.length - 1 - i` → `i` so later
+  pages render on top of earlier ones. Fixed in session 6 — committed.
+- **Scroll choreography still has issues** (beyond z-index). Being debugged in
+  sandbox. Root cause not yet confirmed. Next session: bring sandbox fix here.
+- Promote COMPILE_PROMPTS gap resolutions (all 9 from session 4)
+- Add artDirection / scrollable / mobileSrc props to CGDC-DS media component
 
 ### Deferred
-- Token backlog: shadow system, alpha/overlay, frosted glass bg
+- Token backlog: shadow, alpha/overlay, frosted glass bg
 - Mobile typography pass
-- `_typography.scss` block-tier h1 override
-- Comparison slider full design (BMTx)
-- Arrow indicator system on mosaic tiles
+- Comparison slider (BMTx)
+- Arrow indicator system
 - Sticky-stack section navigation
 - Playwright visual regression suite
 
@@ -164,7 +137,7 @@ Two recognized modes. Neither has a complete prompt spec yet.
 
 ---
 
-## Rules
+## Rules (carried forward from session 4)
 
 - Read Figma before writing CSS. One change at a time. Verify in Chrome.
 - Session ends: PR doc → Claude Code commits, OR this file updated.
@@ -181,4 +154,15 @@ Two recognized modes. Neither has a complete prompt spec yet.
 - No `.mosaic-tile--custom` class. Extended behavior lives on `[data-mosaic-variant]`.
 - `justify-content: center` is axiomatic on `.mosaic-tile__inner`. Override in placements only.
 - Claude.ai produces documents. Claude Code produces file changes.
-- First Figma→YAML run for INFICON: verification diff only — do not overwrite page.yml.
+- Mosaic ID format (new standard): `<pageKey>--<chapterKey>--<pageKey>`
+  e.g. `inficon-impact-manager--chapter-01--page-01`
+  Legacy shorthand form (`inficon--im--s01-c01-p01`) is deprecated.
+- `theme:` may be set on bleed tiles when Figma explicitly sets it.
+- `font-style: italic` and `font-variant: small-caps` are not tokenizable in Figma
+  variables. Both live as direct CSS declarations with explanatory comments.
+
+### Sandbox-specific rules
+- Never use `write_file` with partial content on an existing file. Always write the full file.
+- `filesystem:edit_file` is the correct tool for targeted line-level changes.
+- Mosaic Builder is ES5-style JS only (var, function callbacks, no arrow functions,
+  no const/let) for maximum browser compatibility.

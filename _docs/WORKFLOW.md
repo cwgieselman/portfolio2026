@@ -135,6 +135,21 @@ history for a solo, linear workflow.
 
 ---
 
+## PR Doc Lifecycle
+
+PR docs in `_docs/` are handoff artifacts, not permanent records. Once all
+commits described in a PR doc are in the git history, the file must be deleted.
+
+**Rule:** When Claude Code finishes the final commit for a PR doc, it deletes
+the PR doc file in the same commit or the immediately following cleanup commit.
+Do not leave stale PR docs in `_docs/`. Git history is the record.
+
+Stale PR docs cause confusion about what is done vs. pending. When in doubt,
+check git log against the commit list in the PR doc — if all commits are
+present, the file is stale and must go.
+
+---
+
 ## What a Good Handoff Looks Like
 
 Claude Code should find the PR doc, read it alongside `session-state.md`,
