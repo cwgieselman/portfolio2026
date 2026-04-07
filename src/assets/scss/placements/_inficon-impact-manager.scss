@@ -28,7 +28,7 @@
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// S01 C01 P00 -- inficon--im--s01-c01-p00
+// Chapter 01 P00 -- inficon-impact-manager--chapter-01--page-00
 // Skeleton underlay -- always visible at z-index 0, never animated.
 // 4 cols x 4 rows. Marks composite mosaic area for Chapter 01 (P01-P03).
 //
@@ -37,64 +37,68 @@
 //   row1: .    s01  s02  s03
 //   row2: s04  s05  s06  s07
 //   row3: s08  s09  s10  s11
-//   row4: s12  s13  .    .
+//   row4: s12  s13  s14  s15
 // -----------------------------------------------------------------------------
 
-#mosaic--inficon--im--s01-c01-p00 {
+#mosaic--inficon-impact-manager--chapter-01--page-00 {
     grid-template-columns: repeat(4, var(--mosaic-cell-size));
     grid-template-rows:    repeat(4, var(--mosaic-cell-size));
 }
 
 /* --- skeleton cell placements --- */
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-01"]  { grid-column: 2 / 3; grid-row: 1 / 2; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-02"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-03"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-04"]  { grid-column: 1 / 2; grid-row: 2 / 3; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-05"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-06"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-07"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-08"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-09"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-10"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-11"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-12"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
-#mosaic--inficon--im--s01-c01-p00 .mosaic-tile[data-mosaic-tile="article-13"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-01"]  { grid-column: 2 / 3; grid-row: 1 / 2; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-02"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-03"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-04"]  { grid-column: 1 / 2; grid-row: 2 / 3; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-05"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-06"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-07"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-08"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-09"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-10"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-11"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-12"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-13"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-14"]  { grid-column: 3 / 4; grid-row: 4 / 5; }
+#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-15"]  { grid-column: 4 / 5; grid-row: 4 / 5; }
 
 // -----------------------------------------------------------------------------
-// S01 C02 P00 -- inficon--im--s01-c02-p00
+// Chapter 02 P00 -- inficon-impact-manager--chapter-02--page-00
 // Skeleton underlay -- always visible at z-index 0, never animated.
 // 4 cols x 4 rows. Marks composite mosaic area for Chapter 02 (P01-P02).
 //
 // Skeleton map:
 //   col:  1    2    3    4
-//   row1: .    .    s01  s02
-//   row2: .    s03  s04  s05
-//   row3: s06  s07  s08  s09
-//   row4: s10  s11  s12  s13
+//   row1: .    s01  s02  s03
+//   row2: s04  s05  s06  s07
+//   row3: s08  s09  s10  s11
+//   row4: s12  s13  s14  s15
 // -----------------------------------------------------------------------------
 
-#mosaic--inficon--im--s01-c02-p00 {
+#mosaic--inficon-impact-manager--chapter-02--page-00 {
     grid-template-columns: repeat(4, var(--mosaic-cell-size));
     grid-template-rows:    repeat(4, var(--mosaic-cell-size));
 }
 
 /* --- skeleton cell placements --- */
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-01"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-02"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-03"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-04"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-05"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-06"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-07"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-08"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-09"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-10"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-11"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-12"]  { grid-column: 3 / 4; grid-row: 4 / 5; }
-#mosaic--inficon--im--s01-c02-p00 .mosaic-tile[data-mosaic-tile="article-13"]  { grid-column: 4 / 5; grid-row: 4 / 5; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-01"]  { grid-column: 2 / 3; grid-row: 1 / 2; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-02"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-03"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-04"]  { grid-column: 1 / 2; grid-row: 2 / 3; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-05"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-06"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-07"]  { grid-column: 4 / 5; grid-row: 2 / 3; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-08"]  { grid-column: 1 / 2; grid-row: 3 / 4; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-09"]  { grid-column: 2 / 3; grid-row: 3 / 4; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-10"]  { grid-column: 3 / 4; grid-row: 3 / 4; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-11"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-12"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-13"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-14"]  { grid-column: 3 / 4; grid-row: 4 / 5; }
+#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-15"]  { grid-column: 4 / 5; grid-row: 4 / 5; }
 
 // -----------------------------------------------------------------------------
-// S01 C01 P01 -- inficon--im--s01-c01-p01
+// S01 C01 P01 -- inficon-impact-manager--chapter-01--page-01
 // Section 01, Chapter 01, Page 01.
 // 4 cols x 2 rows. Alps photo (2x1), cleanroom full (1x2).
 // Col 1 rows 1-2 intentionally empty -- reserved for future cell or whitespace.
@@ -110,14 +114,14 @@
 //   row2: a02  .
 // -----------------------------------------------------------------------------
 
-#mosaic--inficon--im--s01-c01-p01 {
+#mosaic--inficon-impact-manager--chapter-01--page-01 {
     grid-template-areas:
         ". a01 a01 a02"
         ". .   .   a02";
 }
 
 @container content-cell (min-width: 624px) {
-    #mosaic--inficon--im--s01-c01-p01 {
+    #mosaic--inficon-impact-manager--chapter-01--page-01 {
         grid-template-columns: repeat(4, var(--mosaic-cell-size));
         grid-template-rows:    repeat(2, var(--mosaic-cell-size));
         grid-template-areas:
@@ -127,11 +131,11 @@
 }
 
 /* --- cell areas --- */
-#mosaic--inficon--im--s01-c01-p01 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
-#mosaic--inficon--im--s01-c01-p01 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
+#mosaic--inficon-impact-manager--chapter-01--page-01 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+#mosaic--inficon-impact-manager--chapter-01--page-01 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
 
 // -----------------------------------------------------------------------------
-// S01 C01 P02 -- inficon--im--s01-c01-p02
+// S01 C01 P02 -- inficon-impact-manager--chapter-01--page-02
 // Section 01, Chapter 01, Page 02.
 // 4 cols x 3 rows. ROCC rendering (2x2), stat (1x1), island photo (2x1).
 //
@@ -148,7 +152,7 @@
 //   row3: a02  a03
 // -----------------------------------------------------------------------------
 
-#mosaic--inficon--im--s01-c01-p02 {
+#mosaic--inficon-impact-manager--chapter-01--page-02 {
     grid-template-areas:
         "a01 a01"
         "a01 a01"
@@ -156,7 +160,7 @@
 }
 
 @container content-cell (min-width: 624px) {
-    #mosaic--inficon--im--s01-c01-p02 {
+    #mosaic--inficon-impact-manager--chapter-01--page-02 {
         grid-template-columns: repeat(4, var(--mosaic-cell-size));
         grid-template-rows:    repeat(3, var(--mosaic-cell-size));
         grid-template-areas:
@@ -167,12 +171,12 @@
 }
 
 /* --- cell areas --- */
-#mosaic--inficon--im--s01-c01-p02 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
-#mosaic--inficon--im--s01-c01-p02 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
-#mosaic--inficon--im--s01-c01-p02 .mosaic-tile[data-mosaic-tile="article-03"] { grid-area: a03; }
+#mosaic--inficon-impact-manager--chapter-01--page-02 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+#mosaic--inficon-impact-manager--chapter-01--page-02 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
+#mosaic--inficon-impact-manager--chapter-01--page-02 .mosaic-tile[data-mosaic-tile="article-03"] { grid-area: a03; }
 
 // -----------------------------------------------------------------------------
-// S01 C01 P03 -- inficon--im--s01-c01-p03
+// S01 C01 P03 -- inficon-impact-manager--chapter-01--page-03
 // Section 01, Chapter 01, Page 03.
 // 4 cols x 4 rows. Quote cell (2x1) at row 4.
 // Selfie is a ::before pseudo-element on the custom tile -- no DOM node.
@@ -189,13 +193,13 @@
 //   row1: a01  a01
 // -----------------------------------------------------------------------------
 
-#mosaic--inficon--im--s01-c01-p03 {
+#mosaic--inficon-impact-manager--chapter-01--page-03 {
     grid-template-areas:
         "a01 a01";
 }
 
 @container content-cell (min-width: 624px) {
-    #mosaic--inficon--im--s01-c01-p03 {
+    #mosaic--inficon-impact-manager--chapter-01--page-03 {
         grid-template-columns: repeat(4, var(--mosaic-cell-size));
         grid-template-rows:    repeat(4, var(--mosaic-cell-size));
         grid-template-areas:
@@ -207,7 +211,7 @@
 }
 
 /* --- cell areas --- */
-#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+#mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
 
 // --- Selfie custom tile ------------------------------------------------------
 // Custom tile -- variant: "selfie".
@@ -231,20 +235,20 @@
 
 // CONTRACT_EXCEPTION: overflow: visible required on both the mosaic and the
 // custom tile so the selfie ::before pseudo-element can escape the mosaic bounds.
-#mosaic--inficon--im--s01-c01-p03 { overflow: visible; }
-#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-variant="selfie"] { overflow: visible; }
+#mosaic--inficon-impact-manager--chapter-01--page-03 { overflow: visible; }
+#mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"] { overflow: visible; }
 
 // Fade transition -- driven by choreography.js .is-exiting class
-#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-variant="selfie"]::before {
+#mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"]::before {
     opacity: 1;
     transition: opacity 0.5s ease;
 }
 
-#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-variant="selfie"].is-exiting::before {
+#mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"].is-exiting::before {
     opacity: 0;
 }
 
-#mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-variant="selfie"]::before {
+#mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"]::before {
     content: "";
     position: absolute; /* CONTRACT_EXCEPTION: decorative pseudo-element -- no DOM node */
     width: var(--mosaic-cell-size);
@@ -262,7 +266,7 @@
 }
 
 @container content-cell (min-width: 624px) {
-    #mosaic--inficon--im--s01-c01-p03 .mosaic-tile[data-mosaic-variant="selfie"]::before {
+    #mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"]::before {
         // 184px = 176px (tile height) + 8px gap below tile bottom edge
         // right: 232px = 1 cell (176px) + 1 gap (16px) + half-gutter offset (40px)
         // The 40px offset is half the 80px gutter between content and mosaic columns.
@@ -275,7 +279,7 @@
 }
 
 // -----------------------------------------------------------------------------
-// S01 C02 P01 -- inficon--im--s01-c02-p01
+// S01 C02 P01 -- inficon-impact-manager--chapter-02--page-01
 // Section 01, Chapter 02, Page 01.
 // 4 cols x 2 rows. Workshop text+UI composite (2x2) in cols 3-4, rows 1-2.
 //
@@ -285,14 +289,14 @@
 //   row2: .    .    a01  a01
 // -----------------------------------------------------------------------------
 
-#mosaic--inficon--im--s01-c02-p01 {
+#mosaic--inficon-impact-manager--chapter-02--page-01 {
     grid-template-areas:
         ". . a01 a01"
         ". . a01 a01";
 }
 
 @container content-cell (min-width: 624px) {
-    #mosaic--inficon--im--s01-c02-p01 {
+    #mosaic--inficon-impact-manager--chapter-02--page-01 {
         grid-template-columns: repeat(4, var(--mosaic-cell-size));
         grid-template-rows:    repeat(2, var(--mosaic-cell-size));
         grid-template-areas:
@@ -302,10 +306,10 @@
 }
 
 /* --- cell areas --- */
-#mosaic--inficon--im--s01-c02-p01 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+#mosaic--inficon-impact-manager--chapter-02--page-01 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
 
 // -----------------------------------------------------------------------------
-// S01 C02 P02 -- inficon--im--s01-c02-p02
+// S01 C02 P02 -- inficon-impact-manager--chapter-02--page-02
 // Section 01, Chapter 02, Page 02.
 // 4 cols x 4 rows. FigJam (3x2) + text cells.
 //
@@ -317,7 +321,7 @@
 //   row4: a02  a02  a02  a04
 // -----------------------------------------------------------------------------
 
-#mosaic--inficon--im--s01-c02-p02 {
+#mosaic--inficon-impact-manager--chapter-02--page-02 {
     grid-template-areas:
         "a01 ."
         "a02 a02"
@@ -326,7 +330,7 @@
 }
 
 @container content-cell (min-width: 624px) {
-    #mosaic--inficon--im--s01-c02-p02 {
+    #mosaic--inficon-impact-manager--chapter-02--page-02 {
         grid-template-columns: repeat(4, var(--mosaic-cell-size));
         grid-template-rows:    repeat(4, var(--mosaic-cell-size));
         grid-template-areas:
@@ -338,7 +342,7 @@
 }
 
 /* --- cell areas --- */
-#mosaic--inficon--im--s01-c02-p02 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
-#mosaic--inficon--im--s01-c02-p02 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
-#mosaic--inficon--im--s01-c02-p02 .mosaic-tile[data-mosaic-tile="article-03"] { grid-area: a03; }
-#mosaic--inficon--im--s01-c02-p02 .mosaic-tile[data-mosaic-tile="article-04"] { grid-area: a04; }
+#mosaic--inficon-impact-manager--chapter-02--page-02 .mosaic-tile[data-mosaic-tile="article-01"] { grid-area: a01; }
+#mosaic--inficon-impact-manager--chapter-02--page-02 .mosaic-tile[data-mosaic-tile="article-02"] { grid-area: a02; }
+#mosaic--inficon-impact-manager--chapter-02--page-02 .mosaic-tile[data-mosaic-tile="article-03"] { grid-area: a03; }
+#mosaic--inficon-impact-manager--chapter-02--page-02 .mosaic-tile[data-mosaic-tile="article-04"] { grid-area: a04; }

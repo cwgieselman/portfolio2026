@@ -27,7 +27,7 @@ chapters:
     pages:
       - pageKey: "page-00"
         mosaic:
-          id: "inficon--im--s01-c01-p00"
+          id: "inficon-impact-manager--chapter-01--page-00"
           cols: 4
           rows: 4
           tiles:
@@ -109,7 +109,7 @@ chapters:
 
       - pageKey: "page-01"
         mosaic:
-          id: "inficon--im--s01-c01-p01"
+          id: "inficon-impact-manager--chapter-01--page-01"
           cols: 4
           rows: 2
           tiles:
@@ -143,7 +143,7 @@ chapters:
 
       - pageKey: "page-02"
         mosaic:
-          id: "inficon--im--s01-c01-p02"
+          id: "inficon-impact-manager--chapter-01--page-02"
           cols: 4
           rows: 3
           tiles:
@@ -188,7 +188,7 @@ chapters:
 
       - pageKey: "page-03"
         mosaic:
-          id: "inficon--im--s01-c01-p03"
+          id: "inficon-impact-manager--chapter-01--page-03"
           cols: 4
           rows: 4
           tiles:
@@ -220,7 +220,7 @@ chapters:
     pages:
       - pageKey: "page-00"
         mosaic:
-          id: "inficon--im--s01-c02-p00"
+          id: "inficon-impact-manager--chapter-02--page-00"
           cols: 4
           rows: 4
           tiles:
@@ -302,7 +302,7 @@ chapters:
 
       - pageKey: "page-01"
         mosaic:
-          id: "inficon--im--s01-c02-p01"
+          id: "inficon-impact-manager--chapter-02--page-01"
           cols: 4
           rows: 2
           tiles:
@@ -318,7 +318,7 @@ chapters:
 
       - pageKey: "page-02"
         mosaic:
-          id: "inficon--im--s01-c02-p02"
+          id: "inficon-impact-manager--chapter-02--page-02"
           cols: 4
           rows: 4
           tiles:
