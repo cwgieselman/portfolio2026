@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 8, 2026 (session 9)*
+*Last updated: April 8, 2026 (session 10)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -9,7 +9,7 @@
 
 ## Branch
 
-`main` — all work committed through session 9.
+`experiment/inter-chapter-transition` — branched from `main` (session 10). Spike for the designed inter-chapter transition. `main` is the safe fallback at session 9 state.
 
 ---
 
@@ -113,13 +113,42 @@ Skeletons hand-maintained in YAML. Should be computed in `pages.js` from beat un
 
 ---
 
-## Plan for Next Session
+## Inter-Chapter Transition Design (session 10 — full concept)
 
-1. Craig explains the inter-chapter transition design
-2. Pull Figma keyframes if needed
-3. Implement the designed transition (replacing placeholder opacity mechanics)
-4. Remove the 1000px padding-bottom TODO
-5. Commit
+This is the designed transition replacing the placeholder scroll-tied fade. Applies when editorial goals call for chapter separation — not required when mosaics are flush.
+
+### The "half note" metaphor
+- Beats arrive as **quarter notes** — regular rhythm, same scroll budget each
+- Chapter transitions arrive as **half notes** — longer breath, clears the deck
+
+### Sequence
+1. **C(N) last beat lands** → C(N+1) skeleton fades in, scroll-bound (subtle, not dead scroll). C(N+1) skeleton positioned so its top row overlaps C(N)'s bottom row by 1 row — grids interlock like puzzle pieces / Tetris.
+2. **Brief scroll-bound pause** — holds the interlocked state. Maintains assembly rhythm.
+3. **C(N+1) B01 scrolls in** over the skeleton. As it scrolls, it physically pushes C(N) upward — C(N) still sticky, but scroll budget shared between C(N+1) arriving and C(N) moving up.
+4. **C(N+1) B01 lands** → this is C(N)'s release point. C(N) unsticks and scrolls off.
+5. **C(N+1) B01 sticks** at CHROME_TOP. C(N) finishes scrolling off the page.
+6. **At ~90% of C(N+1) B01's final position** → C(N+1) B02 starts scrolling in, back into quarter-note beat rhythm.
+
+### Key mechanical changes from current implementation
+- C(N) release is no longer a fixed scroll formula — triggered by C(N+1) B01 landing
+- `rowOverlap` in YAML drives C(N+1) skeleton Y offset relative to C(N) (interlock geometry anchor)
+- Transition has its own scroll budget (the "half note") — longer than a beat, shorter than a chapter. Exact px TBD.
+- C(N+1) B01 scroll-in must drive C(N) upward simultaneously (shared scroll phase)
+
+### Implementation status
+Not yet implemented. Spike on `experiment/inter-chapter-transition`. Current placeholder (scroll-tied fade) remains on `main` as safe fallback.
+
+---
+
+## Plan for This Session (session 10)
+
+1. Branch: `experiment/inter-chapter-transition` ✓
+2. Design the scroll math for the half-note transition budget
+3. Implement skeleton fade-in tied to C(N) last beat landing (scroll-bound)
+4. Implement the push phase — C(N+1) B01 arrival drives C(N) upward
+5. Implement C(N) release at C(N+1) B01 landing
+6. Verify in browser — one phase at a time
+7. Remove 1000px padding-bottom TODO when transition is stable
 
 **Start by reading this file. One change at a time. Verify before reporting.**
 
