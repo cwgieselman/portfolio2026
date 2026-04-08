@@ -80,6 +80,8 @@ body {
     max-width: 100vw;
     overflow-x: clip;
     display: block;
+    // TODO: REMOVE — temporary scroll spacer for inter-chapter transition testing.
+    padding-bottom: 1000px;
 }
 
 /* -- Block tier (< 640px) ---------------------------------------------------

@@ -19,7 +19,7 @@ chapters:
       - ".  s  s  s"
       - "s  s  s  s"
       - "s  s  s  s"
-      - "s  s  s  s"
+      - "s  s  .  ."
     content:
       - kind: "p"
         text: "Four weeks into the role, I was on a plane to Grenoble, France. The customer had withheld their signature. They wanted to see what professional design involvement actually looked like."
@@ -95,16 +95,6 @@ chapters:
               type: skeleton
               desktop:
                 col: "2 / 3"
-                row: "4 / 5"
-            - id: article-14
-              type: skeleton
-              desktop:
-                col: "3 / 4"
-                row: "4 / 5"
-            - id: article-15
-              type: skeleton
-              desktop:
-                col: "4 / 5"
                 row: "4 / 5"
 
       - pageKey: "page-01"
@@ -209,8 +199,8 @@ chapters:
   - chapterKey: "chapter-02"
     chapterOffset: 1
     skeleton:
+      - ".  .  s  s"
       - ".  s  s  s"
-      - "s  s  s  s"
       - "s  s  s  s"
       - "s  s  s  s"
     content:
@@ -224,11 +214,6 @@ chapters:
           cols: 4
           rows: 4
           tiles:
-            - id: article-01
-              type: skeleton
-              desktop:
-                col: "2 / 3"
-                row: "1 / 2"
             - id: article-02
               type: skeleton
               desktop:
@@ -239,11 +224,6 @@ chapters:
               desktop:
                 col: "4 / 5"
                 row: "1 / 2"
-            - id: article-04
-              type: skeleton
-              desktop:
-                col: "1 / 2"
-                row: "2 / 3"
             - id: article-05
               type: skeleton
               desktop:

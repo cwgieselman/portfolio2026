@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 8, 2026 (session 8)*
+*Last updated: April 8, 2026 (session 9)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -9,108 +9,119 @@
 
 ## Branch
 
-`main` — all work in progress, uncommitted
+`main` — all work committed through session 9.
 
 ---
 
 ## Where We Are
 
 ### Real project
-`localhost:8080/portfolio/inficon-impact-manager/` — Firefox now in parity with Chrome and Safari.
-Chapter 01 beat animation is working. Some values need fine-tuning (user's words: "off by a little").
-Chapter 02 is still hidden for isolation.
+`localhost:8080/portfolio/inficon-impact-manager/` — Both chapters rendering. Chapter handoff working (seamless sticky release/start). Beat alignment correct. Skeleton tiles accurate for both chapters.
+
+Chapter 01 and Chapter 02 are both enabled. Scroll behavior is mechanically correct. Inter-chapter transition is a placeholder (scroll-tied fade) pending Craig's designed transition.
 
 ### Sandbox
 `portfolio-sandbox/` — abandoned. Not a reliable reference.
 
 ---
 
-## What Was Done This Session (session 8)
+## What Was Done This Session (session 9)
 
-### Root cause found and fixed: mosaic width:0 bug
-`width: fit-content` + `container-type: inline-size` = computed width of 0.
-CSS containment suppresses intrinsic sizing, so `fit-content` resolved to 0.
-`overflow: hidden` on `.mosaic` then clipped all tile content to invisible.
-This was the root cause of the "grid floating in wrong place" and invisible skeleton tiles
-that had been misdiagnosed for multiple sessions.
+### Beat alignment fix
+`landY: 0` for all beats. The negative `landY` offsets were fighting the empty rows
+at the top of each beat's tile placement (which already encode the 16px gap). With
+`landY: 0`, beats land exactly on the skeleton and grid gaps align correctly.
+Removed unused `GAP_PX` constant.
 
-**Fix:** `src/assets/scss/components/_mosaic.scss` — both container query states changed
-`width: fit-content` → `width: 100%`. Result: mosaic renders at correct width.
+### Chapter z-index stacking
+Set `z-index` on `.chapter__mosaic` elements in decreasing order (C01=2, C02=1).
+Earlier chapters always paint above later ones during the overlap zone.
 
-### CSS Grid stacking architecture implemented
-Replaced `position: absolute` on beat pages with CSS Grid single-cell stacking.
-- `.chapter__mosaic` now has `display: grid; grid-template-columns: 752px; grid-template-rows: 752px`
-- All `.layout__page` children get `grid-column: 1; grid-row: 1`
-- Removed `contain: layout` (not needed, was clipping off-screen beats)
-- Removed `position`, `top`, `left` from JS page setup loop
-- Eliminates Firefox sticky-in-grid containing block bug entirely
+### pointer-events scaffold
+`pointer-events: none` on `.mosaic-tile` in `_mosaic.scss`. Re-enable per custom
+tile via `[data-mosaic-variant]` selectors in placements. No interactive tiles yet.
 
-### Partnership and process documents added
-- `CRAIG.md` created at project root — Craig's side of the working guidelines
-- `CLAUDE.md` updated with non-negotiable verification rules at the top
-- `_docs/session-state.md` rules section updated
-- Memory: `feedback_verify-before-report.md` added
+### Chapter handoff margin corrected
+Changed from `-(mosaicH - CHROME_TOP)` to `-mosaicH`. With the current chapter height
+formula, `-mosaicH` gives a seamless handoff: C(N).release = C(N+1).stickyStart.
+The old comment claiming -752 caused overlap was wrong (based on a previous implementation).
 
-### Verification rule (now in all docs, non-negotiable)
-Diagnose with real data (JS diagnostics) before touching code.
-One change → verify it took effect → report result.
-Never report fixed without measuring. MCP screenshots are unreliable.
+### Inter-chapter opacity transitions (placeholder)
+- Non-first chapters: fade in over one BEAT_PX before their sticky phase starts
+  (hides them in normal flow before they're needed).
+- Non-last chapters: scroll-tied fade out after release — opacity tracks mosaic's
+  upward travel from CHROME_TOP to off-screen over (CHROME_TOP + mosaicH) px of scroll.
+- These are placeholder mechanics. Craig has a designed inter-chapter transition in
+  mind — this will be replaced next session.
+
+### Skeleton tile accuracy
+C01 skeleton: removed article-14/15 (row4-cols3-4 — never populated by any C01 beat).
+C02 skeleton: removed article-01 (row1-col2) and article-04 (row2-col1) — never
+populated by any C02 beat. YAML tile lists and placements CSS both corrected.
+Skeleton map comments updated in both places.
+
+**Open architectural item:** skeleton should be auto-derived from beat tile union
+at 11ty compile time (in `pages.js`), not hand-maintained. Deferred to its own session.
+
+### Scroll runway
+Added `padding-bottom: 1000px` to `.layout__story` in `_layout.scss` with a
+`TODO: REMOVE` comment. Temporary — gives enough scroll space to test the full
+C01→C02 transition during design iteration.
+
+### Scroll restoration fix (from PR doc, now committed)
+`history.scrollRestoration = 'manual'` + `window.scrollTo(0,0)` on init.
+PR doc deleted (stale).
 
 ---
 
 ## Uncommitted Changes
 
-All session 7 + session 8 changes are in `src/` but NOT committed. Files changed:
-- `src/assets/js/choreography.js`
-- `src/assets/scss/_layout.scss`
-- `src/assets/scss/components/_mosaic.scss`
-- `src/assets/scss/components/_page-header.scss`
-- `src/assets/scss/components/_content-cell.scss`
-- `src/assets/scss/_shame.scss`
-- `src/assets/scss/placements/_inficon-impact-manager.scss`
-- `_docs/WORKFLOW.md`
-- `CLAUDE.md`
-- `CRAIG.md`
-- `.zed/tasks.json`
+None — all committed.
 
 ---
 
 ## What Is Currently Broken / Unresolved
 
-### Needs fine-tuning (next session priority)
-Beat animation values are "off by a little" — user's assessment after Firefox fix.
-Specific issues to verify in Chapter 01:
-1. Beat timing / overlap (BEAT_PX=300, OVERLAP=0.5 — may need adjustment)
-2. Inter-beat 16px gap (known issue from session 6, still unresolved)
-3. Frosted glass on page-header (still missing)
-4. Chapter 02 hidden — needs re-enable after Chapter 01 verified end-to-end
+### Inter-chapter transition (next session priority)
+Craig has a specific design in mind for how C01→C02 should feel. The current
+scroll-tied fade is a mechanical placeholder. Bring Figma keyframes next session.
 
-### Deferred
+### Dead scroll after last beat
+Chapter height formula: `mosaicH + beatCount * BEAT_PX + CHROME_TOP`.
+With OVERLAP=0.5, beats consume `(beatCount-1)*OVERLAP*BEAT_PX + BEAT_PX` of scroll.
+Over-allocates by `(beatCount-1)*BEAT_PX*(1-OVERLAP)` = 300px for 3 beats.
+Result: 300px of extra dead scroll after last beat lands before chapter releases.
+Not fixed — deferred. May be moot once transition is designed.
+
+### Skeleton auto-derivation
+Skeletons hand-maintained in YAML. Should be computed in `pages.js` from beat union.
+
+### Deferred (unchanged from session 8)
 - Beat vocabulary rename (page → beat) in codebase
-- Speed throttle — make BEAT_PX viewport-relative (discussed, not yet implemented)
+- Speed throttle — make BEAT_PX viewport-relative
 - Per-chapter beat tuning (data-beat-factor attribute)
 - Inter-chapter skeleton fade / transition variants
 - Token backlog: shadow, alpha/overlay, frosted glass bg
+- Frosted glass on page-header (initFrosting() exists, CSS may be missing)
 - Mobile typography pass
 - Comparison slider (BMTx)
 - Arrow indicator system
 - Sticky-stack section navigation
 - Playwright visual regression suite
 - Mosaic Builder YAML export refinement
+- Remove temporary 1000px padding-bottom once transition is designed
 
 ---
 
 ## Plan for Next Session
 
-1. Run JS diagnostic on beat animation state (scrollY ranges, actual transforms during scroll)
-2. Fine-tune BEAT_PX and OVERLAP values for Chapter 01
-3. Fix inter-beat 16px gap
-4. Fix frosted glass
-5. Verify Chapter 01 end-to-end in Firefox + Safari
-6. Re-enable Chapter 02
-7. Commit everything
+1. Craig explains the inter-chapter transition design
+2. Pull Figma keyframes if needed
+3. Implement the designed transition (replacing placeholder opacity mechanics)
+4. Remove the 1000px padding-bottom TODO
+5. Commit
 
-**Start with a diagnostic. One change at a time. Verify before reporting.**
+**Start by reading this file. One change at a time. Verify before reporting.**
 
 ---
 
@@ -128,14 +139,13 @@ Specific issues to verify in Chapter 01:
 
 ## Open Priorities
 
-### Chapter 01 fine-tuning (next session)
-- Beat timing, overlap, inter-beat gap
-- Frosted glass
-- End-to-end scroll verification
+### Next session
+- Inter-chapter transition design (Craig's vision)
+- Remove 1000px padding-bottom
 
-### Post-Chapter-01
-- Re-enable Chapter 02
-- Commit all session 7+8 changes
+### Post-transition
+- Re-verify Chapter 01 end-to-end
+- Skeleton auto-derivation in pages.js
 
 ### Deferred
 (see list above)
@@ -181,3 +191,9 @@ Specific issues to verify in Chapter 01:
 - Never report a fix as working without measuring it in the browser.
 - MCP screenshots are not reliable verification — use JS diagnostics.
 - One change → verify the change took effect → report result. No chaining.
+
+### Skeleton rules (session 9)
+- Skeleton tiles must match the union of all beat tile positions in the chapter.
+- Both YAML tile list and placements CSS must agree.
+- Skeleton map in YAML and placements comments are documentation only — not used by templates.
+- Auto-derivation in pages.js is the target architecture (not yet implemented).

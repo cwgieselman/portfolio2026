@@ -37,7 +37,7 @@
 //   row1: .    s01  s02  s03
 //   row2: s04  s05  s06  s07
 //   row3: s08  s09  s10  s11
-//   row4: s12  s13  s14  s15
+//   row4: s12  s13  .    .
 // -----------------------------------------------------------------------------
 
 #mosaic--inficon-impact-manager--chapter-01--page-00 {
@@ -59,8 +59,6 @@
 #mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-11"]  { grid-column: 4 / 5; grid-row: 3 / 4; }
 #mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-12"]  { grid-column: 1 / 2; grid-row: 4 / 5; }
 #mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-13"]  { grid-column: 2 / 3; grid-row: 4 / 5; }
-#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-14"]  { grid-column: 3 / 4; grid-row: 4 / 5; }
-#mosaic--inficon-impact-manager--chapter-01--page-00 .mosaic-tile[data-mosaic-tile="article-15"]  { grid-column: 4 / 5; grid-row: 4 / 5; }
 
 // -----------------------------------------------------------------------------
 // Chapter 02 P00 -- inficon-impact-manager--chapter-02--page-00
@@ -69,8 +67,8 @@
 //
 // Skeleton map:
 //   col:  1    2    3    4
-//   row1: .    s01  s02  s03
-//   row2: s04  s05  s06  s07
+//   row1: .    .    s02  s03
+//   row2: .    s05  s06  s07
 //   row3: s08  s09  s10  s11
 //   row4: s12  s13  s14  s15
 // -----------------------------------------------------------------------------
@@ -81,10 +79,8 @@
 }
 
 /* --- skeleton cell placements --- */
-#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-01"]  { grid-column: 2 / 3; grid-row: 1 / 2; }
 #mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-02"]  { grid-column: 3 / 4; grid-row: 1 / 2; }
 #mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-03"]  { grid-column: 4 / 5; grid-row: 1 / 2; }
-#mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-04"]  { grid-column: 1 / 2; grid-row: 2 / 3; }
 #mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-05"]  { grid-column: 2 / 3; grid-row: 2 / 3; }
 #mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-06"]  { grid-column: 3 / 4; grid-row: 2 / 3; }
 #mosaic--inficon-impact-manager--chapter-02--page-00 .mosaic-tile[data-mosaic-tile="article-07"]  { grid-column: 4 / 5; grid-row: 2 / 3; }

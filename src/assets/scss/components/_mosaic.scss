@@ -195,6 +195,7 @@
     z-index: 1;                        /* sits above skeleton tiles (z-index: 0) */
     overflow: hidden;
     border-radius: var(--mosaic-radius);
+    pointer-events: none;              /* scaffold: re-enable per-tile in placements via [data-mosaic-variant] */
 }
 
 .mosaic-tile__inner {

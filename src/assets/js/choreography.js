@@ -79,20 +79,15 @@
       return { chapter, pages, mosaicH, chapterIdx };
     });
 
-    // DEBUG: hide all chapters past C01 to isolate C01 behavior.
-    // Remove this block when C01 is verified and C02 debugging begins.
-    chapterList.slice(1).forEach((ch) => { ch.style.display = "none"; });
 
     // -- Apply chapter overlap (negative margin) --------------------------
     const ROW_UNIT = 192; // 176px cell + 16px gap
     chapterList.forEach((chapter) => {
       const offset = parseInt(chapter.dataset.chapterOffset || "0", 10);
       if (offset > 0) {
-        // FIX: -(mosaicH - CHROME_TOP) = -688px.
-        // -mosaicH (-752px) caused C02 to stick 64px before C01 unstuck —
-        // the mosaic sticks at CHROME_TOP inside the sticky container, so
-        // the pull must account for that offset to align the two events.
-        chapter.style.marginTop = -(mosaicH - CHROME_TOP) + "px";
+        // Pull each chapter up by exactly mosaicH so C(N+1).stickyStart
+        // equals C(N).release — seamless sticky handoff between chapters.
+        chapter.style.marginTop = -mosaicH + "px";
       }
     });
 
@@ -108,13 +103,26 @@
     // position:sticky, top, and align-self live in CSS (_layout.scss) so that
     // Firefox correctly establishes .chapter__mosaic as a containing block for
     // the position:absolute .layout__page children.
-    chapterList.forEach((chapter) => {
+    chapterList.forEach((chapter, chapterIdx) => {
       const mosaic = chapter.querySelector(".chapter__mosaic");
       if (mosaic) {
         const data = chapterData.find((d) => d.chapter === chapter);
         if (!data) return;
         mosaic.style.height = data.mosaicH + "px";
+        // Earlier chapters sit above later ones — prevents C02 skeleton from
+        // painting over C01's sticky mosaic in the chapter overlap zone.
+        mosaic.style.zIndex = String(chapterList.length - chapterIdx);
       }
+    });
+
+    // -- Hide non-first chapter mosaics until they approach sticky -----------
+    // Chapters after C01 are in normal document flow and enter the viewport
+    // long before their sticky phase. Start them at opacity:0 and fade them
+    // in via the scroll update loop.
+    chapterData.forEach(({ chapter, chapterIdx }) => {
+      if (chapterIdx === 0) return;
+      const mosaic = chapter.querySelector(".chapter__mosaic");
+      if (mosaic) mosaic.style.opacity = "0";
     });
 
     // -- Stack pages at origin --------------------------------------------
@@ -193,6 +201,32 @@
           content.classList.add("is-visible");
           content.classList.remove("is-exiting");
           if (selfieCell) selfieCell.classList.remove("is-exiting");
+        }
+      });
+
+      // Chapter mosaic opacity — fade-out after release, fade-in before sticky
+      chapterData.forEach(({ chapter, chapterIdx }) => {
+        const mosaic = chapter.querySelector(".chapter__mosaic");
+        if (!mosaic) return;
+        const h           = parseInt(chapter.style.height);
+        const release     = chapter.offsetTop + h - mosaicH - CHROME_TOP;
+        const stickyStart = chapter.offsetTop - CHROME_TOP;
+        const fadeStart   = stickyStart - BEAT_PX;
+        const isLast      = chapterIdx === chapterData.length - 1;
+        const isFirst     = chapterIdx === 0;
+
+        if (!isLast && scrollY > release) {
+          // Fade out tied to scroll — opacity tracks the mosaic's upward travel
+          // from viewport-y=CHROME_TOP (just released) to viewport-y=-mosaicH
+          // (fully off screen). Feels continuous, not timed.
+          const exitDistance = CHROME_TOP + mosaicH;
+          const opacity = Math.max(0, 1 - (scrollY - release) / exitDistance);
+          mosaic.style.opacity = String(opacity);
+        } else if (!isFirst) {
+          // Fade in before sticky start — hides chapter in normal flow
+          // until it's close enough to begin its sticky phase.
+          const opacity = Math.min(1, Math.max(0, (scrollY - fadeStart) / BEAT_PX));
+          mosaic.style.opacity = String(opacity);
         }
       });
 
