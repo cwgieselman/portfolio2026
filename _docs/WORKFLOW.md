@@ -1,93 +1,88 @@
 # Portfolio2026 — Development Workflow
 
-This document describes the two-tool workflow used in this project.
-Design decisions and Figma work happen in Claude.ai. Code changes, audits,
-and git operations happen in Claude Code (Zed). Both tools are typically
-open simultaneously, with the 11ty dev server running in the background.
+---
+
+## Tool Roles (current — as of April 2026)
+
+### Claude Code — Primary Development Tool
+
+Claude Code is the primary tool for all development work. It has terminal
+access, direct file editing, Firefox DevTools MCP for visual verification,
+and no conversational drift.
+
+Use Claude Code for:
+- All `.scss`, `.njk`, `.js`, `.yml` file changes
+- Visual verification via Firefox MCP (navigate, screenshot, read console)
+- Running `npm start`, `npm run tokens:build`, build checks
+- Auditing changed files against `CONTRACT.md` and `CLAUDE.md`
+- Git staging and committing
+- Any refactor that touches multiple files in a coordinated way
+
+### Claude.ai — Design & Figma Only
+
+Claude.ai's role is now narrow. Without a working browser MCP it cannot
+visually verify changes, so it must not author code.
+
+Use Claude.ai for:
+- Reading Figma variables, components, and layouts
+- Generating YAML from Figma node trees
+- Verifying YAML against Figma (delta docs)
+- Architectural decisions that do not require browser verification
+- Drafting PR summary documents
+
+**Claude.ai must not write to `.scss`, `.njk`, or `.js` files.**
+If a session drifts toward editing those files directly, stop immediately
+and hand off to Claude Code with a PR doc. No exceptions for "just a small
+fix." This is the rule that was broken in session 6 and caused the
+choreography regression.
 
 ---
 
 ## The Hard Rule
 
-**Claude.ai produces documents. Claude Code produces file changes.**
-
-Claude.ai has filesystem MCP access and *can* write `.scss`, `.njk`, and
-`.yml` files — but doing so is where drift originates. Vibe coding in a chat
-session leads to contracts getting bent, dead code accumulating, and things
-named wrong. The PR doc + session state are the handoff artifacts. Claude Code
-is where files actually change.
+**Claude Code makes file changes. Claude.ai produces documents.**
 
 ---
 
-## What Each Tool Does
+## One Change at a Time — Non-Negotiable
 
-### Claude.ai — Design & Decisions
+This rule applies to all work but is especially critical for choreography,
+scroll math, and any JS that depends on DOM geometry.
 
-Has Figma MCP access. Use it for:
+1. **Describe** the proposed change and its expected observable effect.
+   Wait for explicit approval before touching any file.
+2. **Make exactly one change.** One logical unit — one constant, one
+   selector, one function. Not "these two lines go together."
+3. **Stop.** Do not chain to the next change. Do not pre-emptively fix
+   anything that looks related.
+4. **Verify.** Claude Code screenshots the result via Firefox MCP.
+   Craig verifies in his own browser.
+5. **Confirm.** Craig says "confirmed, next" or describes what's wrong.
+6. **Repeat.**
 
-- Reading Figma variables, components, and layouts
-- Generating YAML from Figma node trees
-- Architectural decisions and trade-offs
-- Drafting the PR summary document
-- Updating `session-state.md`
+A change is not done until Craig confirms it in browser. "It looks right
+to me from the code" is not confirmation. Obvious is how things compound.
 
-**Does not write SCSS, Nunjucks templates, or JS.** If a session starts
-drifting into editing those files directly, stop and hand off to Claude Code.
-
-### Claude Code (Zed) — Implementation & Verification
-
-Has terminal access and direct file editing with read-first discipline. Use it for:
-
-- All SCSS, template, and JS file changes
-- Running `npm start`, `npm run tokens:build`, visual checks
-- Auditing changed files against `CONTRACT.md` and `CLAUDE.md`
-- Git staging and committing
-- Any refactor that touches multiple files in a coordinated way
-
-**Does not make design decisions.** Works from the PR summary,
-`session-state.md`, and project contracts. If something is ambiguous,
-it asks — it does not invent.
-
----
-
-## When to Switch Tools
-
-Stop Claude.ai and open Zed when:
-
-- [ ] A PR summary document exists in `_docs/`
-- [ ] You're about to edit `.scss`, `.njk`, or `.js` files
-- [ ] You've agreed on an approach and just need to execute it
-- [ ] You need to run a build or check the 11ty log
-- [ ] You want to commit
-
-Stay in Claude.ai when:
-
-- [ ] You're reading from Figma
-- [ ] You're making or debating an architectural decision
-- [ ] You're generating or editing YAML data
-- [ ] You're writing the PR doc or session state
-
-**The practical trigger:** as soon as Claude.ai produces a PR summary doc,
-close it and switch to Zed. The design work is done.
+This workflow exists because choreography.js is complex positional math.
+The cost of one unverified change compounding on another is a session of
+debugging to undo what took two minutes to break.
 
 ---
 
 ## Session State
 
-`_docs/session-state.md` is the single source of truth for where the build stands.
+`_docs/session-state.md` is the single source of truth for where the
+build stands. Read it at session start. Update it at session end.
 
-Both Claude.ai and Claude Code read it at session start. It answers: what's
-the current state, what was just done, what's deferred, and what rules apply.
-
-**Every session ends one of two ways:**
-1. Work is commit-ready → write a PR doc, hand off to Claude Code, update `session-state.md`.
-2. Work is not commit-ready → update `session-state.md` before closing. No exceptions.
+Both Claude.ai and Claude Code read this file. Every session ends by
+updating it. No exceptions.
 
 ---
 
 ## The PR Summary Format
 
-Write it at the end of the Claude.ai session before handing off to Claude Code.
+Write at the end of a Claude.ai session before handing off to Claude Code,
+or when Claude Code needs to stage work for review.
 
 ```
 ## PR: <short description>
@@ -112,15 +107,12 @@ Description of what changed and why.
 
 ### Testing checklist
 - [ ] `npm run tokens:build` runs clean
-- [ ] `npm start` builds with no SCSS errors
+- [ ] `npm start` builds with no errors
 - [ ] Browser: [specific thing to verify]
 
 ### What this does NOT change
 [Explicit scope boundary — what was deliberately deferred]
 ```
-
-The commit list is the most important part. Claude Code commits exactly what
-the PR doc describes — no more, no less.
 
 ---
 
@@ -130,43 +122,27 @@ Commit directly to `main` by default. Branches are opt-in for:
 - Experimental work that may be thrown away (`experiment/`)
 - A large structural refactor where you want a clean revert point
 
-Branches are not required for normal feature work. Commits provide sufficient
-history for a solo, linear workflow.
+Branches are not required for normal feature work.
 
 ---
 
 ## PR Doc Lifecycle
 
 PR docs in `_docs/` are handoff artifacts, not permanent records. Once all
-commits described in a PR doc are in the git history, the file must be deleted.
+commits described in a PR doc are in the git history, delete the file in
+the same commit or the immediately following cleanup commit.
 
-**Rule:** When Claude Code finishes the final commit for a PR doc, it deletes
-the PR doc file in the same commit or the immediately following cleanup commit.
-Do not leave stale PR docs in `_docs/`. Git history is the record.
-
-Stale PR docs cause confusion about what is done vs. pending. When in doubt,
-check git log against the commit list in the PR doc — if all commits are
-present, the file is stale and must go.
+Stale PR docs cause confusion about what is done vs. pending. Git history
+is the record.
 
 ---
 
-## What a Good Handoff Looks Like
+## What a Good Session Looks Like
 
-Claude Code should find the PR doc, read it alongside `session-state.md`,
-and be able to commit without asking any questions. If Claude Code is
-interpreting or guessing, the PR doc wasn't specific enough.
+Claude Code finds the PR doc (if one exists), reads it alongside
+`session-state.md`, and can execute without asking questions. If Claude
+Code is interpreting or guessing, the PR doc wasn't specific enough.
 
 The signal that the workflow is healthy: Claude Code finds small tidiness
-issues (stale comments, documentation drift) but nothing structurally broken.
-If it finds broken behavior, something was skipped in the Claude.ai session.
-
----
-
-## Why Two Tools
-
-Claude.ai has Figma access, long conversational memory, and reasoning ability
-for trade-offs. Claude Code has terminal access, read-first file discipline,
-and no conversational baggage to drift from.
-
-Neither is trying to do the other's job. The session state and PR doc are
-the interface between them.
+issues but nothing structurally broken. If it finds broken behavior,
+something was skipped upstream.

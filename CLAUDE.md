@@ -2,6 +2,14 @@
 
 UX/Design Systems portfolio for Craig Gieselman. Built with 11ty (v3), Nunjucks, Sass, and a deterministic Figma->YAML->template->DOM pipeline.
 
+## Non-Negotiable Working Rules
+
+- **Diagnose before touching code.** When something looks wrong, run a JS diagnostic (`getBoundingClientRect`, `getComputedStyle`, `console.log`) first. Never guess or reason from source code about what "should" be correct.
+- **One change, then verify.** Make one change, confirm the build updated, verify the result in the browser with a diagnostic. Do not chain changes before checking.
+- **Never report a fix as working without measuring it.** Code reading is not verification.
+- **MCP screenshots are not reliable.** The MCP Firefox instance may differ from the user's browser. Use JS diagnostics for computed values.
+- **Trust the user's visual report.** If Craig says something looks wrong, it is wrong. Run a diagnostic — do not argue from code.
+
 ## Commands
 
 - `npm start` -- Build tokens, serve 11ty (Sass compiled natively by 11ty)

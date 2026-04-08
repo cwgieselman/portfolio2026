@@ -53,12 +53,17 @@
     const section = document.querySelector(".layout__story--choreographed");
     if (!section) return;
 
+    // Disable browser scroll restoration — Chrome restores scroll position
+    // across reloads, which causes update() to fire mid-scroll on init and
+    // places beats at wrong translateY values before the user has scrolled.
+    history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+
     // ── Tuneable constants ───────────────────────────────────────────────
     const BEAT_PX    = 300;  // scroll pixels to complete one beat transition
     const OVERLAP    = 0.5;  // fraction into beat N when beat N+1 starts moving
     const CHROME_TOP = 64;   // navbar(48) + gap(16) — mosaic sticks just below navbar
     const mosaicH    = 752;  // CONTRACT_EXCEPTION: MONEY mosaic height (4×176 + 3×16)
-    const GAP_PX     = 16;   // px offset between stacked page landing positions
     // ────────────────────────────────────────────────────────────────────
 
     const chapterList = Array.from(
@@ -74,19 +79,20 @@
       return { chapter, pages, mosaicH, chapterIdx };
     });
 
+    // DEBUG: hide all chapters past C01 to isolate C01 behavior.
+    // Remove this block when C01 is verified and C02 debugging begins.
+    chapterList.slice(1).forEach((ch) => { ch.style.display = "none"; });
+
     // -- Apply chapter overlap (negative margin) --------------------------
     const ROW_UNIT = 192; // 176px cell + 16px gap
     chapterList.forEach((chapter) => {
       const offset = parseInt(chapter.dataset.chapterOffset || "0", 10);
       if (offset > 0) {
-        // FIX: use -mosaicH instead of -(offset * ROW_UNIT).
-        // The row-based value (-192px) left a 644px dead zone between chapters —
-        // ch1's mosaic unstuck and scrolled away before ch2's appeared.
-        // -mosaicH (-752px) pulls ch2's container up far enough that its mosaic
-        // sticks at exactly the scrollY where ch1's mosaic unsticks. Gap = 0.
-        // Note: chapterOffset in YAML still governs the visual skeleton row overlap;
-        // it is a design value and does not determine this margin.
-        chapter.style.marginTop = -1 * mosaicH + "px";
+        // FIX: -(mosaicH - CHROME_TOP) = -688px.
+        // -mosaicH (-752px) caused C02 to stick 64px before C01 unstuck —
+        // the mosaic sticks at CHROME_TOP inside the sticky container, so
+        // the pull must account for that offset to align the two events.
+        chapter.style.marginTop = -(mosaicH - CHROME_TOP) + "px";
       }
     });
 
@@ -98,16 +104,16 @@
       chapter.style.height = h + "px";
     });
 
-    // -- Stick chapter__mosaic ---------------------------------------------
+    // -- Set chapter__mosaic height ------------------------------------------
+    // position:sticky, top, and align-self live in CSS (_layout.scss) so that
+    // Firefox correctly establishes .chapter__mosaic as a containing block for
+    // the position:absolute .layout__page children.
     chapterList.forEach((chapter) => {
       const mosaic = chapter.querySelector(".chapter__mosaic");
       if (mosaic) {
         const data = chapterData.find((d) => d.chapter === chapter);
         if (!data) return;
-        mosaic.style.position  = "sticky";
-        mosaic.style.top       = CHROME_TOP + "px";
-        mosaic.style.height    = data.mosaicH + "px";
-        mosaic.style.alignSelf = "start";
+        mosaic.style.height = data.mosaicH + "px";
       }
     });
 
@@ -116,9 +122,6 @@
     // P01+: start off-screen, translate in as beats.
     chapterData.forEach(({ pages, mosaicH }) => {
       pages.forEach((page, i) => {
-        page.style.position = "absolute";
-        page.style.top      = "0";
-        page.style.left     = "0";
         page.style.width    = "752px"; // CONTRACT_EXCEPTION: MONEY mosaic width
         page.style.height   = mosaicH + "px";
         page.style.zIndex   = String(i);
@@ -165,7 +168,7 @@
         // P01 (beatIdx 0) lands at 0. P02 lands at -GAP_PX. P03 at -2*GAP_PX.
         // This creates a visible sliver of the page beneath at the bottom edge.
         beats.push({ chapterIdx, pageIdx, page, scrollStart, scrollEnd,
-                     landY: -(beatIdx * GAP_PX) });
+                     landY: 0 });
       });
     });
 

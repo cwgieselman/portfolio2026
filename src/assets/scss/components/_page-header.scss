@@ -13,7 +13,7 @@
 
 .page-header {
     position: sticky;
-    top: $chrome-navbar-height + $chrome-content-gap;      // 64px — flush with bento sticky top
+    top: $chrome-navbar-height + $chrome-content-gap;      // 64px — flush with mosaic sticky top
     margin-block-start: $chrome-header-height - $chrome-content-gap; // 176px — load position offset
     left: 0;
     right: 0;
@@ -48,7 +48,7 @@
     justify-content: center;
     gap: var(--scale-25);
     height: 100%;
-    padding-block: $chrome-content-gap;  // 16px — aligns content with bento row 1
+    padding-block: $chrome-content-gap;  // 16px — aligns content with mosaic row 1
     padding-inline-start: var(--spacing-xl);
     position: relative;
 }

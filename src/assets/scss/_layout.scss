@@ -27,8 +27,8 @@
 //   right: var(--grid-margin)        — align right edge to grid right
 //   width: calc(100% - 2 * var(--grid-margin))  — span the full grid width
 //
-// This is the same relationship the bento container queries use internally:
-// the bento fires at 624px and 752px relative to its content-cell container,
+// This is the same relationship the mosaic container queries use internally:
+// the mosaic fires at 624px and 752px relative to its content-cell container,
 // which is itself a grid column. --grid-margin is the equivalent mechanism
 // for elements that live outside the grid but must track its geometry.
 
@@ -102,16 +102,16 @@ body {
  *
  *   .layout__story--choreographed
  *     .layout__page--header          full width, above chapters
- *     .layout__chapter               text left | bento right
+ *     .layout__chapter               text left | mosaic right
  *       .chapter__content            left column — richtext rendered here
- *       .chapter__mosaic              right column (bento column)
+ *       .chapter__mosaic              right column (mosaic column)
  *         .layout__page              one beat — sticky, stacks at origin
  *         .layout__page              ...
  *
- * Column system — derived from bento unit math (everything shares one token):
- *   Content column:  2 bento units  = 368px  (2x176 + 1x16)
- *   Gutter:          5 bento gaps   =  80px  (5x16)
- *   Bento column:    4 bento units  = 752px  (4x176 + 3x16)
+ * Column system — derived from mosaic cell math (everything shares one token):
+ *   Content column:  2 mosaic units  = 368px  (2x176 + 1x16)
+ *   Gutter:          5 mosaic gaps   =  80px  (5x16)
+ *   Mosaic column:    4 mosaic units  = 752px  (4x176 + 3x16)
  *   Total:                          1200px
  *
  * Chapter offset: chapters can overlap by N rows via data-chapter-offset.
@@ -137,7 +137,7 @@ body {
     }
 
     /* -- Chapter layout -----------------------------------------------------
-     * Two-column layout: text left, bento right.
+     * Two-column layout: text left, mosaic right.
      * Columns use named lines so placements SCSS can reference by name. */
 
     .layout__chapter {
@@ -151,35 +151,36 @@ body {
         box-sizing: border-box;
         // Layout grid — 6 named tracks, 1200px total.
         // All named lines are the single source of truth for grid-informed
-        // elements — fixed header, big screenshots, bento column.
+        // elements — fixed header, big screenshots, mosaic column.
         // See wireframe: Figma node 2554:1203.
         //
         // Line positions (from grid left):
         //   content-start    :    0px
-        //   screenshot-start :  192px  (1 bento unit in from grid left)
-        //   content-end      :  368px  (2 bento units)
-        //   bento-start      :  448px  (content + gutter)
-        //   header-end       :  624px  (bento-start + 1 bento unit)
-        //   screenshot-end   : 1008px  (bento-start + 3 bento units + 3 gaps + 8px padding)
-        //   bento-end        : 1200px
+        //   screenshot-start :  192px  (1 mosaic unit in from grid left)
+        //   content-end      :  368px  (2 mosaic units)
+        //   mosaic-start      :  448px  (content + gutter)
+        //   header-end       :  624px  (mosaic-start + 1 mosaic unit)
+        //   screenshot-end   : 1008px  (mosaic-start + 3 mosaic units + 3 gaps + 8px padding)
+        //   mosaic-end        : 1200px
         //
         // CONTRACT_EXCEPTION: track widths 192px, 176px, 152px, 384px, 192px
-        // are Figma pixel constants derived from bento MONEY cell (176px) and
+        // are Figma pixel constants derived from mosaic MONEY cell (176px) and
         // mosaic gap (16px). Update if --mosaic-cell-size token changes.
         grid-template-columns:
-            [content-start]       192px  /* content col left                        */
-            [screenshot-start]    176px  /* content col right — 1 bento unit wide   */
-            [content-end]          80px  /* gutter                                  */
-            [bento-start]         176px  /* bento C1 — fixed header ends here       */
-            [header-end]          384px  /* bento C2-C3 — big screenshot ends here  */
-            [screenshot-end]      192px  /* bento C4 tail                           */
-            [bento-end];           /* total: 192+176+80+176+384+192 = 1200px  */
-        // No grid-template-areas — the gutter column has no area name, which
-        // causes browsers to collapse it. All placement uses named lines
-        // (content-start/content-end, bento-start/bento-end) directly.
+            [content-start]                      192px  /* content col left                        */
+            [screenshot-start]                   176px  /* content col right — 1 mosaic unit wide   */
+            [content-end gutter-start]            80px  /* gutter                                  */
+            [gutter-end mosaic-start]            176px  /* mosaic C1 — fixed header ends here      */
+            [header-end]                         384px  /* mosaic C2-C3 — big screenshot ends here */
+            [screenshot-end]                     192px  /* mosaic C4 tail                          */
+            [mosaic-end];                               /* total: 192+176+80+176+384+192 = 1200px  */
+        // Named lines on every track boundary — all placement uses named lines
+        // (content-start/content-end, gutter-start/gutter-end, mosaic-start/mosaic-end).
+        // Multiple names on a single line are additive; e.g. [content-end gutter-start]
+        // keeps existing references intact while making the gutter explicitly addressable.
         // Row tracks — 4 rows at MONEY cell height (176px) with 16px gaps between.
         // Maximum chapter depth is 4 rows — content requiring more should be refactored.
-        // CONTRACT_EXCEPTION: pixel values from bento MONEY cell (176px) and gap (16px).
+        // CONTRACT_EXCEPTION: pixel values from mosaic MONEY cell (176px) and gap (16px).
         grid-template-rows:
             [row-1-start] 176px [row-1-end]
             16px
@@ -199,7 +200,7 @@ body {
 
     // Pull choreographed sections up to overlap the sticky header vertically.
     // The header is 192px tall and sticky in normal flow above the section.
-    // This negative margin pulls the section up so bento row 1 aligns with
+    // This negative margin pulls the section up so mosaic row 1 aligns with
     // the header's content area (which starts 16px into the header).
     .layout__story--choreographed {
         margin-block-start: -$chrome-header-height;
@@ -247,20 +248,32 @@ body {
     // No layout-level type styles here — richtext is self-contained.
 
     .chapter__mosaic {
-        grid-column: bento-start / bento-end;
-        position: relative; // required: pages are position:absolute within this
-        /* Height set by JS in choreography.js based on page count */
+        grid-column: mosaic-start / mosaic-end;
+        grid-row: row-1-start / row-4-end;
+        position: sticky;
+        top: 64px; // CONTRACT_EXCEPTION: CHROME_TOP — navbar(48) + gap(16)
+        align-self: start;
+        // CSS Grid stacking — all beat pages share grid-column:1 / grid-row:1.
+        // Eliminates position:absolute on pages and the Firefox containing-block bug.
+        // No contain:layout — not needed without absolute children, and it clips
+        // off-screen beats at translateY(110vh).
+        display: grid;
+        grid-template-columns: 752px; // CONTRACT_EXCEPTION: MONEY mosaic width
+        grid-template-rows: 752px;    // CONTRACT_EXCEPTION: MONEY mosaic height
+        /* Height set by JS in choreography.js based on beat count */
     }
 
-    /* -- Bento pages — sticky within chapter__mosaic ------------------------ */
+    /* -- Mosaic pages — stacked at origin within chapter__mosaic ----------- */
     /* Each page stacks at the same origin. Later pages sit above earlier ones. */
 
     .chapter__mosaic .layout__page {
-        // Position and z-index set by choreography.js
+        // All pages stack at same origin via CSS Grid — no position:absolute needed.
+        // z-index and transform set by choreography.js.
+        grid-column: 1;
+        grid-row: 1;
         width: 100%;
         padding-inline: 0;
         // Container query host — mosaic fires container queries against this element.
-        // name matches the former content-cell container so placements SCSS needs no changes.
         container-type: inline-size;
         container-name: content-cell;
     }

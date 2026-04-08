@@ -1,5 +1,5 @@
 .content-cell {
-    // Container context for child components (bento, figure, etc.)
+    // Container context for child components (mosaic, figure, etc.)
     // that need to respond to the content-cell's rendered width,
     // not the viewport width.
     container-type: inline-size;

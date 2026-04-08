@@ -6,4 +6,11 @@
     "cwd": "$ZED_WORKTREE_ROOT",
     "reveal": "always",
   },
+  {
+    "label": "Session Start: Open Partner Docs",
+    "command": "zed",
+    "args": ["CRAIG.md", "_docs/session-state.md"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "never",
+  },
 ]

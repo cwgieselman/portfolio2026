@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 6, 2026 (session 6 — Claude Code cleanup)*
+*Last updated: April 8, 2026 (session 8)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -9,121 +9,136 @@
 
 ## Branch
 
-`main` — all work merged and pushed
+`main` — all work in progress, uncommitted
 
 ---
 
 ## Where We Are
 
-Mosaic Builder sandbox tool is the active focus. Steps 1 and 2 are fully
-functional. The tool lives at:
+### Real project
+`localhost:8080/portfolio/inficon-impact-manager/` — Firefox now in parity with Chrome and Safari.
+Chapter 01 beat animation is working. Some values need fine-tuning (user's words: "off by a little").
+Chapter 02 is still hidden for isolation.
 
-```
-/Users/craiggieselman/Projects/portfolio-sandbox/src/mosaic-builder.html
-```
-
-Served at `localhost:8080/mosaic-builder/` (sandbox runs on 8080 when the
-real project is not running; bumps to 8082 when both are running).
-
-Full tool state documented in `portfolio-sandbox/EXPERIMENTS.md` under
-"Mosaic Builder / YAML Builder."
-
-**Next session — two options, decide before starting:**
-1. **Step 3 — Pages:** assign saved tiles to beats (P01, P02...). More workflow
-   value; unlocks the full chapter-definition loop.
-2. **YAML export refinement:** tighten the output to match full contract shape,
-   include skeleton cell map, surface page assignments once step 3 exists.
-
-Craig's instinct leaning toward Pages first. Either is valid.
+### Sandbox
+`portfolio-sandbox/` — abandoned. Not a reliable reference.
 
 ---
 
-## What Was Completed This Session
+## What Was Done This Session (session 8)
 
-### Session 5 — Mosaic Builder sandbox tool
+### Root cause found and fixed: mosaic width:0 bug
+`width: fit-content` + `container-type: inline-size` = computed width of 0.
+CSS containment suppresses intrinsic sizing, so `fit-content` resolved to 0.
+`overflow: hidden` on `.mosaic` then clipped all tile content to invisible.
+This was the root cause of the "grid floating in wrong place" and invisible skeleton tiles
+that had been misdiagnosed for multiple sessions.
 
-**Workflow formalization**
-- Two-tool division of labor documented in `_docs/WORKFLOW.md`
-- Claude.ai: Figma reads, YAML generation, architectural decisions, PR doc drafting
-- Claude Code: all file changes, build verification, git commits
+**Fix:** `src/assets/scss/components/_mosaic.scss` — both container query states changed
+`width: fit-content` → `width: 100%`. Result: mosaic renders at correct width.
 
-**Choreography debugger**
-- `portfolio-sandbox/src/choreography-test.html`
-- Loads real CSS from live project server
-- Verbatim markup from `_site/portfolio/inficon-impact-manager/index.html`
-- Images suppressed to labeled color blocks
-- Debug panel + constants tuner, both in bottom-left corner
-- marginTop fix proven: `-(offset * ROW_UNIT)` → `-MOSAIC_H`
-- Inter-page gap fix: `landY = -(beatIdx * GAP_PX)`
-- These fixes are pending in `choreography.js` in the real project
+### CSS Grid stacking architecture implemented
+Replaced `position: absolute` on beat pages with CSS Grid single-cell stacking.
+- `.chapter__mosaic` now has `display: grid; grid-template-columns: 752px; grid-template-rows: 752px`
+- All `.layout__page` children get `grid-column: 1; grid-row: 1`
+- Removed `contain: layout` (not needed, was clipping off-screen beats)
+- Removed `position`, `top`, `left` from JS page setup loop
+- Eliminates Firefox sticky-in-grid containing block bug entirely
 
-**Mosaic Builder — Step 1 (Skeleton)**
-- 4×4 grid, click to toggle cells off, lock skeleton
-- Minimap + stats in right panel
-- Brand tokens: Raleway/PT Sans/Courier Prime, primary navy, yellow #FFCD00
+### Partnership and process documents added
+- `CRAIG.md` created at project root — Craig's side of the working guidelines
+- `CLAUDE.md` updated with non-negotiable verification rules at the top
+- `_docs/session-state.md` rules section updated
+- Memory: `feedback_verify-before-report.md` added
 
-**Mosaic Builder — Step 2 (Tiles)**
-- Click-drag to draw tiles, release opens config panel
-- Config: type (frame/bleed), theme (5 swatches, always visible), label
-- Theme applies to both tile types (matches production contract)
-- Save / Redraw / Delete workflow
-- One pending tile at a time enforced
-- Invalid drag flashes red and aborts
-- Tile list in left panel
-
-**Mosaic Builder — Edit Skeleton**
-- '← Edit Skeleton' button enters amber edit mode
-- Tiles dim to 35%, pointer-events:none on tile layer
-- All cells interactive (no cell--occupied in edit mode)
-- Conflict warning when toggling OFF a cell under a saved tile
-- Lists affected tile IDs by name, confirm/cancel
-- 'Done Editing →' returns to draw mode
-
-**Key bug fix during session**
-- `write_file` with partial content corrupted the file mid-session
-- Rule established: never use `write_file` with partial content on existing files
-- Always read first, always write the complete file
-- `filesystem:edit_file` is the correct tool for targeted changes
+### Verification rule (now in all docs, non-negotiable)
+Diagnose with real data (JS diagnostics) before touching code.
+One change → verify it took effect → report result.
+Never report fixed without measuring. MCP screenshots are unreliable.
 
 ---
 
-## Canonical Vocabulary (locked — mosaic builder additions)
+## Uncommitted Changes
 
-| Concept | Name |
-|---|---|
-| One 176×176px grid position | **cell** |
-| Unique content component spanning cells | **tile** |
-| P00 / full cell footprint of chapter | **skeleton** |
-| A beat within a chapter | **page** |
-
-Full portfolio vocabulary in session-state from session 4 (below) still applies.
+All session 7 + session 8 changes are in `src/` but NOT committed. Files changed:
+- `src/assets/js/choreography.js`
+- `src/assets/scss/_layout.scss`
+- `src/assets/scss/components/_mosaic.scss`
+- `src/assets/scss/components/_page-header.scss`
+- `src/assets/scss/components/_content-cell.scss`
+- `src/assets/scss/_shame.scss`
+- `src/assets/scss/placements/_inficon-impact-manager.scss`
+- `_docs/WORKFLOW.md`
+- `CLAUDE.md`
+- `CRAIG.md`
+- `.zed/tasks.json`
 
 ---
 
-## Open Priorities
+## What Is Currently Broken / Unresolved
 
-### Mosaic Builder (active)
-- Step 3 — Pages: assign tiles to beats
-- Step 4 — Choreography: pacing controls + live preview
-- YAML export refinement: skeleton cell map, page assignments
-
-### Real project — choreography (partially resolved)
-- `marginTop` and `landY` fixes were promoted in `f6590b9` (April 4) — done
-- `bento` vocabulary cleanup was done in `f6590b9` — done
-- **z-index stacking order** was wrong: `pages.length - 1 - i` → `i` so later
-  pages render on top of earlier ones. Fixed in session 6 — committed.
-- **Scroll choreography still has issues** (beyond z-index). Being debugged in
-  sandbox. Root cause not yet confirmed. Next session: bring sandbox fix here.
-- Promote COMPILE_PROMPTS gap resolutions (all 9 from session 4)
-- Add artDirection / scrollable / mobileSrc props to CGDC-DS media component
+### Needs fine-tuning (next session priority)
+Beat animation values are "off by a little" — user's assessment after Firefox fix.
+Specific issues to verify in Chapter 01:
+1. Beat timing / overlap (BEAT_PX=300, OVERLAP=0.5 — may need adjustment)
+2. Inter-beat 16px gap (known issue from session 6, still unresolved)
+3. Frosted glass on page-header (still missing)
+4. Chapter 02 hidden — needs re-enable after Chapter 01 verified end-to-end
 
 ### Deferred
+- Beat vocabulary rename (page → beat) in codebase
+- Speed throttle — make BEAT_PX viewport-relative (discussed, not yet implemented)
+- Per-chapter beat tuning (data-beat-factor attribute)
+- Inter-chapter skeleton fade / transition variants
 - Token backlog: shadow, alpha/overlay, frosted glass bg
 - Mobile typography pass
 - Comparison slider (BMTx)
 - Arrow indicator system
 - Sticky-stack section navigation
 - Playwright visual regression suite
+- Mosaic Builder YAML export refinement
+
+---
+
+## Plan for Next Session
+
+1. Run JS diagnostic on beat animation state (scrollY ranges, actual transforms during scroll)
+2. Fine-tune BEAT_PX and OVERLAP values for Chapter 01
+3. Fix inter-beat 16px gap
+4. Fix frosted glass
+5. Verify Chapter 01 end-to-end in Firefox + Safari
+6. Re-enable Chapter 02
+7. Commit everything
+
+**Start with a diagnostic. One change at a time. Verify before reporting.**
+
+---
+
+## Canonical Vocabulary (locked)
+
+| Concept | Name |
+|---|---|
+| One 176×176px grid position | **cell** |
+| Unique content component spanning cells | **tile** |
+| B00 / full cell footprint of chapter | **skeleton** |
+| A beat within a chapter | **beat** (B01, B02...) — codebase still uses "page", rename deferred |
+| One chapter's full mosaic composite | **mosaic** |
+
+---
+
+## Open Priorities
+
+### Chapter 01 fine-tuning (next session)
+- Beat timing, overlap, inter-beat gap
+- Frosted glass
+- End-to-end scroll verification
+
+### Post-Chapter-01
+- Re-enable Chapter 02
+- Commit all session 7+8 changes
+
+### Deferred
+(see list above)
 
 ---
 
@@ -137,32 +152,32 @@ Full portfolio vocabulary in session-state from session 4 (below) still applies.
 
 ---
 
-## Rules (carried forward from session 4)
+## Rules (carried forward)
 
-- Read Figma before writing CSS. One change at a time. Verify in Chrome.
-- Session ends: PR doc → Claude Code commits, OR this file updated.
+- Read Figma before writing CSS. One change at a time. Verify in browser.
+- Session ends: update this file. No exceptions.
 - Scale tokens stay as math expressions.
 - Token Studio is gone. Do not reinstall.
 - `--color-text` and `--color-text-subtle` are retired. Use `--color-body`.
 - YAML `tiles:` → HTML `<article>`. In CONTRACT.
-- Figma REST API is Enterprise-gated. Use Claude.ai + Figma MCP instead.
-- Custom tile extended behavior uses `[data-mosaic-variant]` not `[data-mosaic-tile]`.
-- 1px dashed border on topmost node of any CGDC component = Figma annotation. Never compile.
 - Figma is source of truth. Codebase must match Figma, not the other way around.
-- `richtext.njk` is the single rendering path for all long-form text. No raw `<p>` in templates.
+- `richtext.njk` is the single rendering path for all long-form text.
 - `custom: true` is an additive boolean on `type: frame | bleed`. Not a standalone type.
 - No `.mosaic-tile--custom` class. Extended behavior lives on `[data-mosaic-variant]`.
 - `justify-content: center` is axiomatic on `.mosaic-tile__inner`. Override in placements only.
 - Claude.ai produces documents. Claude Code produces file changes.
-- Mosaic ID format (new standard): `<pageKey>--<chapterKey>--<pageKey>`
-  e.g. `inficon-impact-manager--chapter-01--page-01`
-  Legacy shorthand form (`inficon--im--s01-c01-p01`) is deprecated.
 - `theme:` may be set on bleed tiles when Figma explicitly sets it.
-- `font-style: italic` and `font-variant: small-caps` are not tokenizable in Figma
-  variables. Both live as direct CSS declarations with explanatory comments.
+- `font-style: italic` and `font-variant: small-caps` are not tokenizable in Figma variables.
 
-### Sandbox-specific rules
-- Never use `write_file` with partial content on an existing file. Always write the full file.
-- `filesystem:edit_file` is the correct tool for targeted line-level changes.
-- Mosaic Builder is ES5-style JS only (var, function callbacks, no arrow functions,
-  no const/let) for maximum browser compatibility.
+### Claude Code workflow rules
+- Claude Code is the PRIMARY development tool for .scss/.js/.njk files
+- Claude.ai is restricted to Figma reading and YAML generation only
+- One change at a time. Describe → approve → change → stop → verify → confirm → repeat
+- Never patch a Firefox-specific bug without understanding the root cause in Figma first
+- The sandbox is abandoned. All work happens in the real project.
+
+### Verification rules (session 8 — non-negotiable)
+- When something looks wrong: run a JS diagnostic FIRST. Never guess.
+- Never report a fix as working without measuring it in the browser.
+- MCP screenshots are not reliable verification — use JS diagnostics.
+- One change → verify the change took effect → report result. No chaining.
