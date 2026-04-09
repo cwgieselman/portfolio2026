@@ -80,8 +80,6 @@ body {
     max-width: 100vw;
     overflow-x: clip;
     display: block;
-    // TODO: REMOVE — temporary scroll spacer for inter-chapter transition testing.
-    padding-bottom: 1000px;
 }
 
 /* -- Block tier (< 640px) ---------------------------------------------------
@@ -157,19 +155,21 @@ body {
         // See wireframe: Figma node 2554:1203.
         //
         // Line positions (from grid left):
-        //   content-start    :    0px
-        //   screenshot-start :  192px  (1 mosaic unit in from grid left)
-        //   content-end      :  368px  (2 mosaic units)
-        //   mosaic-start      :  448px  (content + gutter)
-        //   header-end       :  624px  (mosaic-start + 1 mosaic unit)
-        //   screenshot-end   : 1008px  (mosaic-start + 3 mosaic units + 3 gaps + 8px padding)
-        //   mosaic-end        : 1200px
+        //   content-start       :    0px
+        //   content-narrow-end  :  176px  (1 mosaic unit — narrow content width in screenshot chapters)
+        //   screenshot-start    :  192px  (1 mosaic unit + 1 gap in from grid left)
+        //   content-end         :  368px  (2 mosaic units)
+        //   mosaic-start         :  448px  (content + gutter)
+        //   header-end          :  624px  (mosaic-start + 1 mosaic unit)
+        //   screenshot-end      : 1008px  (mosaic-start + 3 mosaic units + 3 gaps + 8px padding)
+        //   mosaic-end           : 1200px
         //
-        // CONTRACT_EXCEPTION: track widths 192px, 176px, 152px, 384px, 192px
+        // CONTRACT_EXCEPTION: track widths 176px, 16px, 176px, 80px, 176px, 384px, 192px
         // are Figma pixel constants derived from mosaic MONEY cell (176px) and
         // mosaic gap (16px). Update if --mosaic-cell-size token changes.
         grid-template-columns:
-            [content-start]                      192px  /* content col left                        */
+            [content-start]                      176px  /* content col left — 1 mosaic unit        */
+            [content-narrow-end]                  16px  /* gap — screenshot chapters use this line  */
             [screenshot-start]                   176px  /* content col right — 1 mosaic unit wide   */
             [content-end gutter-start]            80px  /* gutter                                  */
             [gutter-end mosaic-start]            176px  /* mosaic C1 — fixed header ends here      */
@@ -245,9 +245,82 @@ body {
         }
     }
 
+    // In screenshot chapters, content text narrows to 1 mosaic unit (176px).
+    // The extra space between content-narrow-end and screenshot-start (16px gap)
+    // is absorbed into the screenshot panel's left padding visually.
+    .layout__chapter--screenshot .chapter__content {
+        grid-column: content-start / content-narrow-end;
+    }
+
     // Text content in chapter left column renders via richtext.njk.
     // Typography and spacing rules live in _richtext.scss.
     // No layout-level type styles here — richtext is self-contained.
+
+    /* -- Screenshot panel --------------------------------------------------- */
+    /* Chapter-level element. Sibling to chapter__content and chapter__mosaic.  */
+    /* Fixed geometry — image is always 800×500 (16:10) with 8px top/side pad.  */
+    /* Bottom reserve is derived: tile height - top pad - image height.         */
+    /* Visibility owned by choreography.js via is-visible / is-exiting.         */
+    /* z-index set by choreography.js (must exceed chapter__mosaic z-index).    */
+
+    .chapter__screenshot {
+        grid-column: screenshot-start / screenshot-end;
+        grid-row: row-2-start / row-4-end;  // rows 2–4: 3 rows + 2 gaps = 560px
+        position: sticky;
+        // Same sticky offset as chapter__content — both live below the page header.
+        top: $chrome-navbar-height + $chrome-header-height + $chrome-content-gap; // 256px
+        align-self: start;
+        padding: var(--spacing-xs) var(--spacing-xs) 0; // 8px top + sides; bottom is derived residual
+
+        display: flex;
+        flex-direction: column;
+
+        // Animation states — identical to chapter__content.
+        // Default: hidden below, ready to animate in.
+        opacity: 0;
+        transform: translateY(24px); // TODO: animation token — translate distance; see animation token backlog
+        transition: opacity 0.5s ease, transform 0.5s ease; // TODO: animation token — duration and easing; see animation token backlog
+        pointer-events: none;
+
+        // Visible — slides up and fades in.
+        &.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        // Exiting — slides up and fades out.
+        &.is-exiting {
+            opacity: 0;
+            transform: translateY(-24px); // TODO: animation token — translate distance; see animation token backlog
+            pointer-events: none;
+        }
+    }
+
+    // eleventy-img replaces <img> with <picture><source>...<img>, stripping the
+    // original class and adding width/height HTML attributes from the largest
+    // generated size (2000px). Target picture and its img directly.
+    .chapter__screenshot picture {
+        // CONTRACT_EXCEPTION: 800×500 — fixed 16:10 screenshot image dimensions.
+        display: block;
+        width: 800px;
+        height: 500px;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .chapter__screenshot picture img {
+        // Override the width="2000" HTML attribute set by eleventy-img.
+        // CONTRACT_EXCEPTION: 800×500 — fixed 16:10 screenshot image dimensions.
+        width: 800px;
+        height: 500px;
+        display: block;
+        object-fit: cover;
+    }
+
+    .chapter__screenshot__footer {
+        flex: 1; // fills remaining space below image — caption and controls, future
+    }
 
     .chapter__mosaic {
         grid-column: mosaic-start / mosaic-end;

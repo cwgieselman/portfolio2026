@@ -1,0 +1,54 @@
+{#
+  screenshot.njk
+  ─────────────────────────────────────────────────────────────────────────────
+  Chapter-level screenshot panel. Sibling to chapter__content and
+  chapter__mosaic — NOT a mosaic tile. Rendered by compiled-page.njk when
+  chapter.screenshot is defined.
+
+  Uses media.njk as a sub-include for the image (no figcaption inside).
+  The __footer area is the bottom reserve below the image — holds future
+  caption text and interactivity controls. Its height is derived (tile height
+  minus top padding minus image height), never hardcoded.
+
+  Visibility (opacity + transform) is owned by choreography.js via the same
+  is-visible / is-exiting classes used on chapter__content.
+
+  Usage (compiled-page.njk):
+    {% set screenshotParams = chapter.screenshot %}
+    {% include "components/screenshot.njk" %}
+
+  YAML shape (chapter level in page.yml):
+    screenshot:
+      src: "/assets/images/impact-feed-v01.png"
+      hasAlt: true
+      alt: "Descriptive alt text"
+
+  Required: src
+  Optional: alt (required when hasAlt: true), hasAlt (default false)
+  Future:   caption, controls
+  ─────────────────────────────────────────────────────────────────────────────
+#}
+
+{% set sp = screenshotParams %}
+
+{% if not sp %}
+  <!-- SCREENSHOT_ERROR: screenshotParams not set -->
+{% elif not sp.src %}
+  <!-- SCREENSHOT_ERROR: screenshot.src is required -->
+{% else %}
+
+<div class="chapter__screenshot">
+  {% set mediaParams = {
+    src: sp.src,
+    hasAlt: sp.hasAlt,
+    alt: sp.alt,
+    cssClass: "chapter__screenshot__img",
+    sizes: "800px"
+  } %}
+  {% include "components/media.njk" %}
+  <div class="chapter__screenshot__footer">
+    {# caption and controls — future #}
+  </div>
+</div>
+
+{% endif %}

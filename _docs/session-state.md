@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 9, 2026 (session 12)*
+*Last updated: April 9, 2026 (session 13)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -9,59 +9,27 @@
 
 ## Branch
 
-`experiment/inter-chapter-transition` — branched from `main` (session 10). Spike for the designed inter-chapter transition. `main` is the safe fallback at session 9 state.
+`experiment/inter-chapter-transition` — all session 13 work committed here. Half-note transition merged to `main` (session 12). This branch continues with C03 screenshot chapter work.
 
 ---
 
 ## Where We Are
 
 ### Real project
-`localhost:8080/portfolio/inficon-impact-manager/` — Both chapters rendering. The designed "half note" inter-chapter transition is implemented and mechanically correct.
+`localhost:8080/portfolio/inficon-impact-manager/` — C01, C02, C03 all rendering. C03 is the first "screenshot chapter" — uses a new `chapter__screenshot` panel element.
 
-**Transition working:**
-- C02 skeleton fades in at 1-row interlock with C01 bottom (col 3–4 in row 1)
-- Brief scroll-bound pause holds the interlock
-- C02 B01 scrolls in from below; skeleton holds at interlockTop during push
-- C01 releases when B01 lands; both chapters scroll together (push travel)
-- C02 goes sticky at CHROME_TOP; B02 starts at 90% through push travel
-- C01 scrolls off page naturally — no fade after release
+**What's working:**
+- C01 → C02 half-note transition: mechanically correct, visually confirmed
+- C03 screenshot panel: fades in/out with content text (choreography.js chorus)
+- C03 real YAML content from Figma: 5 beats, stats tiles, image panel
+- Content text narrows to 176px (1 mosaic unit) in screenshot chapters via `.layout__chapter--screenshot`
+- Screenshot image constrained to 800×500 with object-fit:cover (eleventy-img blowout fixed)
 
-### Sandbox
-`portfolio-sandbox/` — abandoned. Not a reliable reference.
-
----
-
-## What Was Done This Session (sessions 10–11)
-
-#### Session 9 (reference)
-Beat alignment (`landY: 0`), z-index stacking, pointer-events scaffold, chapter
-handoff margin, placeholder opacity transitions, skeleton tile accuracy, scroll
-runway padding, scroll restoration fix. All committed.
-
-### Session 10–11: Half-note inter-chapter transition
-
-**Architecture:**
-- `transition:` entry in YAML between chapters carries `forChapter`, `rowOverlap`, `fadePx`, `pausePx`
-- `pages.js` pre-processes: extracts C(N+1) P00 as `skeletonPage`, sets `skeletonExtracted: true` on C(N+1)
-- `compiled-page.njk`: renders skeleton as `<div class="chapter__skeleton">` fixed sibling; skips P00 from C(N+1)'s mosaic
-- `_layout.scss`: `.chapter__skeleton` is `position: fixed; width: 752px; height: 752px`; left/top/z-index owned by JS
-- `choreography.js`: full transition sequencing — fade, pause, push, push travel, B02 start
-
-**Key geometry:**
-- `interlockTop = CHROME_TOP + mosaicH - rowOverlap * ROW_UNIT + GAP_PX` (640px for rowOverlap=1)
-- `pushTravelPx = mosaicH - rowOverlap * ROW_UNIT + GAP_PX` (576px for rowOverlap=1) — derived, not tunable
-- C(N+1) `marginTop = -(mosaicH - pushTravelPx)` → C(N+1) goes sticky pushTravelPx after B01 lands
-- B02 starts at `pushEnd + TRANSITION_OVERLAP * pushTravelPx` (90% through push travel)
-
-**YAML tuning knobs:** `fadePx`, `pausePx` (per-transition overrides of globals; defaults 50/50)
-
-**Fixes applied this session:**
-- Gutter offset (+GAP_PX in interlockTop formula)
-- Skeleton holds at interlockTop during push phase (not sliding)
-- C(N+1) marginTop correctly delays sticky point by pushTravelPx
-- pushTravelPx accounts for rowOverlap (not a global constant)
-- B02 timing tied to push travel (not push beat)
-- C01 fade-out after release removed — C01 scrolls off naturally
+**What needs browser verification / tuning (not confirmed this session):**
+- Screenshot sticky positioning (top: 256px, grid-row: row-2-start / row-4-end)
+- Content text width at 176px in browser
+- C03 skeleton accuracy vs. designed tile positions
+- C03 mosaic beat sequencing end-to-end
 
 ---
 
@@ -69,45 +37,80 @@ runway padding, scroll restoration fix. All committed.
 
 ### Skeleton horizontal alignment fix (`choreography.js`)
 - **Bug:** C02 skeleton was shifted ~60px right of the mosaic column.
-- **Root cause:** `getBoundingClientRect().left` was read at `DOMContentLoaded`, mid-reflow (chapter heights/marginTops set by JS hadn't fully settled). Also would drift on viewport resize since `margin-inline: auto` recenters the chapter grid.
-- **Fix:** Extracted skeleton positioning into `positionSkeletons()`. Deferred to `window.load` (settled layout). Also attached debounced `window.resize` handler so it tracks on resize.
-- **Verified:** Diagnostic confirmed skeleton `left` now matches C02 mosaic `left` at 604px.
+- **Root cause:** `getBoundingClientRect().left` read at `DOMContentLoaded`, mid-reflow.
+- **Fix:** Extracted `positionSkeletons()`, deferred to `window.load`, added debounced `window.resize` handler.
 
-### WORKFLOW.md — Session Startup Checklist added
-Documented the two-Firefox-instance behavior (MCP debug instance vs. Craig's browser) and the startup steps.
+### Merged `experiment/inter-chapter-transition` → `main`, pushed to GitHub.
+
+---
+
+## What Was Done This Session (session 13)
+
+### C03 "Screenshot Chapter" — new architecture
+
+**New element: `chapter__screenshot`**
+- Chapter-level sibling to `chapter__content` and `chapter__mosaic` (not a mosaic tile)
+- Defined in YAML as `chapter.screenshot: { src, hasAlt, alt }`
+- Rendered via `src/_includes/components/screenshot.njk` → `components/media.njk`
+- Fixed geometry: 800×500 image (16:10) with 8px top/side padding, footer reserve below
+- Fades in/out in chorus with `chapter__content` via choreography.js class toggling
+- z-index set by choreography.js above chapter__mosaic
+
+**`_layout.scss` changes:**
+- Added full `.chapter__screenshot` rule block (grid placement, sticky, animation states)
+- Added `.chapter__screenshot picture` and `.chapter__screenshot picture img` rules to fix eleventy-img blowout
+- Added `.chapter__screenshot__footer` flex-grow rule
+- Split chapter grid first track: `192px [screenshot-start]` → `176px [content-narrow-end] 16px [screenshot-start]`
+  - `content-narrow-end` named line at 176px (1 mosaic unit)
+  - `screenshot-start` remains at 192px (unchanged position)
+- Added `.layout__chapter--screenshot .chapter__content { grid-column: content-start / content-narrow-end; }` — narrows content text to 1 mosaic unit in screenshot chapters
+
+**`compiled-page.njk` changes:**
+- Renders `chapter__screenshot` between content and mosaic when `chapter.screenshot` is defined
+- Adds `layout__chapter--screenshot` modifier class when `chapter.screenshot` is defined
+
+**`choreography.js` changes:**
+- Extended `contentRanges` to include `screenshot` alongside `content`
+- `update()` loop toggles both panels in chorus (same `showAt`/`hideAt`)
+- Sets screenshot z-index above mosaic (`mosaicZ + 1`)
+
+**`CONTRACT.md`:** Added full `chapter__screenshot` specification section.
+
+**`page.yml` — C03 real content:**
+- `screenshot`: Impact Manager Feed image
+- `skeleton`: 5 tiles (cols 2–4 row 1, col 4 rows 2–3)
+- 5 beats: B00 skeleton, B01 empty (screenshot/richtext enter), B02–B04 stat tiles
+- Full content from Figma: stats (3 iterations, 12 weeks, 6 FABs, $6M, ~18 months)
+
+**`transition:` between C02 and C03** — standard rowOverlap: 1, fadePx/pausePx: 50.
 
 ---
 
 ## Uncommitted Changes
 
-`choreography.js` — skeleton positioning fix
-`_docs/WORKFLOW.md` — session startup checklist
-`_docs/session-state.md` — this update
+None — all changes committed this session.
 
 ---
 
 ## What Is Currently Broken / Unresolved
 
-### Needs visual confirmation
-Craig needs to verify the transition end-to-end in his own browser. The MCP Firefox
-instance confirmed correct geometry but the user's viewport/timing experience is
-the true test.
+### Needs browser verification (session 14 start)
+- Screenshot sticky position: top 256px, grid-row rows 2–4 — confirm in browser
+- Content text narrowing to 176px in C03 — confirm in browser
+- C03 mosaic beat sequencing — verify all 5 beats animate correctly
+- C03 skeleton accuracy (col 2–4 row 1 + col 4 rows 2–3) — confirm tiles match design
 
 ### Dead scroll after last beat
-Chapter height formula: `mosaicH + beatCount * BEAT_PX + CHROME_TOP`.
-With OVERLAP=0.5, beats consume `(beatCount-1)*OVERLAP*BEAT_PX + BEAT_PX` of scroll.
-Over-allocates by `(beatCount-1)*BEAT_PX*(1-OVERLAP)` = 300px for 3 beats.
-Result: 300px of extra dead scroll after last beat lands before chapter releases.
-Not fixed — deferred. May be moot now that transition consumes that budget.
+Chapter height formula over-allocates by ~300px (3 beats × BEAT_PX × (1-OVERLAP)).
+Result: dead scroll after last beat before chapter releases. Deferred — may be absorbed by C02→C03 transition budget.
 
 ### Skeleton auto-derivation
 Skeletons hand-maintained in YAML. Should be computed in `pages.js` from beat union.
 
-### Deferred (unchanged from session 8)
+### Deferred (unchanged)
 - Beat vocabulary rename (page → beat) in codebase
 - Speed throttle — make BEAT_PX viewport-relative
 - Per-chapter beat tuning (data-beat-factor attribute)
-- Inter-chapter skeleton fade / transition variants
 - Token backlog: shadow, alpha/overlay, frosted glass bg
 - Frosted glass on page-header (initFrosting() exists, CSS may be missing)
 - Mobile typography pass
@@ -116,7 +119,6 @@ Skeletons hand-maintained in YAML. Should be computed in `pages.js` from beat un
 - Sticky-stack section navigation
 - Playwright visual regression suite
 - Mosaic Builder YAML export refinement
-- Remove temporary 1000px padding-bottom once transition is designed
 
 ---
 
@@ -136,23 +138,17 @@ This is the designed transition replacing the placeholder scroll-tied fade. Appl
 5. **C(N+1) B01 sticks** at CHROME_TOP. C(N) finishes scrolling off the page.
 6. **At ~90% of C(N+1) B01's final position** → C(N+1) B02 starts scrolling in, back into quarter-note beat rhythm.
 
-### Key mechanical changes from current implementation
-- C(N) release is no longer a fixed scroll formula — triggered by C(N+1) B01 landing
-- `rowOverlap` in YAML drives C(N+1) skeleton Y offset relative to C(N) (interlock geometry anchor)
-- Transition has its own scroll budget (the "half note") — longer than a beat, shorter than a chapter. Exact px TBD.
-- C(N+1) B01 scroll-in must drive C(N) upward simultaneously (shared scroll phase)
-
 ### Implementation status
-**Implemented** on `experiment/inter-chapter-transition`. The designed sequence is mechanically correct. Geometry verified with JS diagnostics. Pending Craig's visual confirmation and any tuning.
+**Implemented and merged to main.** Mechanically correct. Visually confirmed C01→C02.
 
 ---
 
-## Plan for Next Session (session 13)
+## Plan for Next Session (session 14)
 
-1. Build C03 content in Figma + compile to YAML
-2. Add `transition:` entry between C02 and C03 (standard half-note, rowOverlap: 1)
-3. Remove 1000px `padding-bottom` TODO from `_layout.scss` (no longer needed once C03 is in place)
-4. Consider merging `experiment/inter-chapter-transition` → `main`
+1. **Verify** screenshot sticky position + content text width in browser (JS diagnostics first)
+2. **Verify** C03 beat sequencing end-to-end
+3. **Tune** skeleton tiles if needed (YAML + placements)
+4. **C02→C03 transition** — verify half-note plays correctly between chapters
 
 **Start by reading this file. One change at a time. Verify before reporting.**
 
@@ -173,10 +169,11 @@ This is the designed transition replacing the placeholder scroll-tied fade. Appl
 ## Open Priorities
 
 ### Next session
-- Inter-chapter transition design (Craig's vision)
-- Remove 1000px padding-bottom
+- Browser verify C03 screenshot + content text positioning
+- C03 beat sequencing + mosaic choreography
+- C02→C03 transition
 
-### Post-transition
+### Post-C03
 - Re-verify Chapter 01 end-to-end
 - Skeleton auto-derivation in pages.js
 

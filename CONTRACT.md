@@ -827,6 +827,51 @@ pushTravelPx  = mosaicH - rowOverlap × ROW_UNIT + GAP_PX               = 576px
 
 ---
 
+## Screenshot Panel (`chapter__screenshot`)
+
+A chapter-level element for chapters that feature a large fixed application screenshot alongside the mosaic. Sibling to `chapter__content` and `chapter__mosaic` — **not a mosaic tile**.
+
+### When to use
+
+Author a `screenshot:` field at the chapter level in `page.yml`. The template renders the panel automatically when the field is present. No other flags required.
+
+### YAML shape
+
+```yaml
+# chapter level — not inside pages or tiles
+screenshot:
+  src: "/assets/images/impact-feed-v01.png"
+  hasAlt: true
+  alt: "Descriptive alt text"
+```
+
+Required: `src`. Optional: `alt` (required when `hasAlt: true`).
+Future: `caption`, controls.
+
+### Fixed geometry
+
+- Width: `screenshot-start → screenshot-end` = **816px** (3 mosaic columns + 2 gaps)
+- Height: `row-1-start → row-3-end` = **560px** (3 rows × 176px + 2 gaps × 16px)
+- Padding: `var(--spacing-xs)` (8px) top and sides. No bottom padding — bottom reserve is derived residual.
+- Image: always **800 × 500px** explicit (16:10, fills padded width exactly). `CONTRACT_EXCEPTION`.
+- Bottom reserve: `560px − 8px − 500px = 52px`. Holds future caption and controls. **Never hardcoded.**
+
+### Behavior
+
+- `position: sticky; top: 64px` (CHROME_TOP) — same as `chapter__mosaic`.
+- Enters/exits via `is-visible` / `is-exiting` CSS classes — **identical timing to `chapter__content`** (both panels animate in chorus on B01).
+- z-index set by `choreography.js` to one above the chapter's mosaic z-index, so mosaic beats scroll behind the screenshot.
+
+### Mosaic authoring note
+
+The screenshot occupies a fixed area of the chapter grid. Mosaic tiles that fall within the screenshot region should be omitted (cells "turned off") — same pattern as the existing selective cell authoring in other chapters.
+
+### Template
+
+`compiled-page.njk` renders `components/screenshot.njk` when `chapter.screenshot` is defined. `screenshot.njk` uses `components/media.njk` as a sub-include for the image (no `figcaption` inside). The `chapter__screenshot__footer` div is the bottom reserve area — empty today, reserved for caption and controls.
+
+---
+
 ## Debug Method
 
 When a mismatch occurs:

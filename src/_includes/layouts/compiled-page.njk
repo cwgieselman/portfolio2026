@@ -30,7 +30,7 @@
 
     {% if chapter.chapterOffset is not defined %}<!-- CHAPTER_ERROR: chapterOffset required on {{ chapterKey }} -->{% endif %}
 
-    <div class="layout__chapter" data-chapter-key="{{ chapter.chapterKey }}" data-chapter-offset="{{ chapter.chapterOffset }}">
+    <div class="layout__chapter{% if chapter.screenshot %} layout__chapter--screenshot{% endif %}" data-chapter-key="{{ chapter.chapterKey }}" data-chapter-offset="{{ chapter.chapterOffset }}">
 
       {# Left column — richtext blocks, animated in/out by choreography.js #}
       {% if chapter.content %}
@@ -40,6 +40,12 @@
           {% include "components/richtext.njk" %}
         {% endfor %}
       </div>
+      {% endif %}
+
+      {# Screenshot panel — fixed geometry, sibling to content and mosaic #}
+      {% if chapter.screenshot %}
+      {% set screenshotParams = chapter.screenshot %}
+      {% include "components/screenshot.njk" %}
       {% endif %}
 
       {# Right column — pages stacked at same origin #}

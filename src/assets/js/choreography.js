@@ -179,14 +179,18 @@
     // -- Set chapter__mosaic height and z-index --------------------------
 
     chapterList.forEach((chapter, chapterIdx) => {
-      const mosaic = chapter.querySelector(".chapter__mosaic");
+      const mosaic      = chapter.querySelector(".chapter__mosaic");
+      const screenshot  = chapter.querySelector(".chapter__screenshot");
       if (!mosaic) return;
       const data = chapterData.find(d => d.chapter === chapter);
       if (!data) return;
       mosaic.style.height = data.mosaicH + "px";
       // z-index: earlier chapters paint above later ones.
       // +2 offset ensures chapter mosaics always clear skeleton z-index (1).
-      mosaic.style.zIndex = String(chapterList.length - chapterIdx + 1);
+      const mosaicZ = chapterList.length - chapterIdx + 1;
+      mosaic.style.zIndex = String(mosaicZ);
+      // Screenshot must sit above the mosaic so beats scroll behind it.
+      if (screenshot) screenshot.style.zIndex = String(mosaicZ + 1);
     });
 
     // -- Position skeleton elements --------------------------------------
@@ -309,13 +313,14 @@
           const scrollEnd   = scrollStart + BEAT_PX;
 
           if (beatIdx === 0) {
-            const content = chapter.querySelector(".chapter__content");
-            if (content) {
+            const content    = chapter.querySelector(".chapter__content");
+            const screenshot = chapter.querySelector(".chapter__screenshot");
+            if (content || screenshot) {
               // Exit at the chapter's release point (= tPushEnd), not chapterEnd.
               // C(N) content scrolls off with the chapter when C(N) releases.
               const releasePoint = chapterStart + parseInt(chapter.style.height) - mosaicH - CHROME_TOP;
-              contentRanges.push({ content, selfieCell: null, showAt: scrollStart,
-                                   hideAt: releasePoint });
+              contentRanges.push({ content, screenshot, selfieCell: null,
+                                   showAt: scrollStart, hideAt: releasePoint });
             }
           }
           beats.push({ chapterIdx, pageIdx, page, scrollStart, scrollEnd, landY: 0 });
@@ -369,11 +374,12 @@
 
         // Chapter content for transition target: reveal when B01 lands (C(N) releases).
         // C(N+1) content appears at the same moment C(N) content exits — clean exchange.
-        const content = chapter.querySelector(".chapter__content");
-        if (content) {
+        const content    = chapter.querySelector(".chapter__content");
+        const screenshot = chapter.querySelector(".chapter__screenshot");
+        if (content || screenshot) {
           const chapterEnd = chapterStart + parseInt(chapter.style.height);
           const showAt     = pushData ? pushData.pushEnd : chapterStart;
-          contentRanges.push({ content, selfieCell: null, showAt, hideAt: chapterEnd });
+          contentRanges.push({ content, screenshot, selfieCell: null, showAt, hideAt: chapterEnd });
         }
 
         return; // target chapter fully handled
@@ -390,10 +396,11 @@
 
         if (beatIdx === 0) {
           const content    = chapter.querySelector(".chapter__content");
+          const screenshot = chapter.querySelector(".chapter__screenshot");
           const selfieCell = document.querySelector("[data-mosaic-variant=\"selfie\"]");
-          if (content) {
-            contentRanges.push({ content, selfieCell, showAt: scrollStart,
-                                 hideAt: chapterEnd });
+          if (content || screenshot) {
+            contentRanges.push({ content, screenshot, selfieCell,
+                                 showAt: scrollStart, hideAt: chapterEnd });
           }
         }
         beats.push({ chapterIdx, pageIdx, page, scrollStart, scrollEnd, landY: 0 });
@@ -409,17 +416,17 @@
       const scrollY = window.scrollY;
 
       // ── Field text visibility ─────────────────────────────────────────
-      contentRanges.forEach(({ content, selfieCell, showAt, hideAt }) => {
+      contentRanges.forEach(({ content, screenshot, selfieCell, showAt, hideAt }) => {
+        // content and screenshot enter/exit in chorus — same timing, same classes.
+        const panels = [content, screenshot].filter(Boolean);
         if (scrollY < showAt) {
-          content.classList.remove("is-visible", "is-exiting");
+          panels.forEach(el => el.classList.remove("is-visible", "is-exiting"));
           if (selfieCell) selfieCell.classList.remove("is-exiting");
         } else if (scrollY >= hideAt) {
-          content.classList.remove("is-visible");
-          content.classList.add("is-exiting");
+          panels.forEach(el => { el.classList.remove("is-visible"); el.classList.add("is-exiting"); });
           if (selfieCell) selfieCell.classList.add("is-exiting");
         } else {
-          content.classList.add("is-visible");
-          content.classList.remove("is-exiting");
+          panels.forEach(el => { el.classList.add("is-visible"); el.classList.remove("is-exiting"); });
           if (selfieCell) selfieCell.classList.remove("is-exiting");
         }
       });

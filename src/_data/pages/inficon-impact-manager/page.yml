@@ -349,3 +349,141 @@ chapters:
                 row: "4 / 5"
               content: |
                 <span class="mosaic-body">and I mapped the functionality of the interface technicians used to assign and log the fixes.</span>
+
+  - transition:
+      forChapter: "chapter-03"
+      rowOverlap: 1
+      fadePx: 50
+      pausePx: 50
+
+  - chapterKey: "chapter-03"
+    chapterOffset: 1
+    screenshot:
+      src: "/assets/images/inficon--screen--impactManager-feed.png"
+      hasAlt: true
+      alt: "The Impact Manager Feed interface showing a prioritized list of production line anomalies with status badges, timestamps, and disposition workflow controls."
+    skeleton:
+      - ".  s  s  s"
+      - ".  .  .  s"
+      - ".  .  .  s"
+      - ".  .  .  ."
+    content:
+      - kind: "p"
+        text: "Impact Manager 0.1 officially shipped for production use at the pilot FAB after 2 cycles of controlled User testing and iteration."
+
+    pages:
+      - pageKey: "page-00"
+        mosaic:
+          id: "inficon-impact-manager--chapter-03--page-00"
+          cols: 4
+          rows: 4
+          tiles:
+            # Row 1 — visible above the screenshot panel
+            - id: article-01
+              type: skeleton
+              desktop:
+                col: "2 / 3"
+                row: "1 / 2"
+            - id: article-02
+              type: skeleton
+              desktop:
+                col: "3 / 4"
+                row: "1 / 2"
+            - id: article-03
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "1 / 2"
+            # Col 4 rows 2–3 — visible to right of screenshot
+            - id: article-04
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "2 / 3"
+            - id: article-05
+              type: skeleton
+              desktop:
+                col: "4 / 5"
+                row: "3 / 4"
+
+      # Beat 01 — screenshot + richtext enter; mosaic beat is empty
+      - pageKey: "page-01"
+        mosaic:
+          id: "inficon-impact-manager--chapter-03--page-01"
+          cols: 4
+          rows: 4
+          tiles: []
+
+      # Beat 02 — stat tiles row 1, cols 2–3 (above screenshot panel)
+      - pageKey: "page-02"
+        mosaic:
+          id: "inficon-impact-manager--chapter-03--page-02"
+          cols: 4
+          rows: 4
+          tiles:
+            - id: article-01
+              type: frame
+              theme: primary-dark
+              desktop:
+                col: "2 / 3"
+                row: "1 / 2"
+              content: |
+                <span class="mosaic-stat">3</span>
+                <span class="mosaic-lead">Iterations</span>
+                <span class="mosaic-body">Alpha | Beta | v0.1</span>
+            - id: article-02
+              type: frame
+              theme: primary-light
+              desktop:
+                col: "3 / 4"
+                row: "1 / 2"
+              content: |
+                <span class="mosaic-stat">12</span>
+                <span class="mosaic-lead">Weeks</span>
+                <span class="mosaic-body">until 100% adoption at pilot facility</span>
+
+      # Beat 03 — col 4 rows 1–2 (right of screenshot)
+      - pageKey: "page-03"
+        mosaic:
+          id: "inficon-impact-manager--chapter-03--page-03"
+          cols: 4
+          rows: 4
+          tiles:
+            - id: article-01
+              type: frame
+              theme: secondary-dark
+              desktop:
+                col: "4 / 5"
+                row: "1 / 2"
+              content: |
+                <span class="mosaic-body">Accelerated roll out of v0.1 to</span>
+                <span class="mosaic-stat">6</span>
+                <span class="mosaic-lead">FABs</span>
+            - id: article-02
+              type: frame
+              theme: secondary-light
+              desktop:
+                col: "4 / 5"
+                row: "2 / 3"
+              content: |
+                <span class="mosaic-lead-italic">~18 months ahead of the planned schedule</span>
+                <span class="mosaic-lead">and</span>
+                <span class="mosaic-lead-italic">with significant additional expense.</span>
+
+      # Beat 04 — col 4 row 3 (right of screenshot)
+      - pageKey: "page-04"
+        mosaic:
+          id: "inficon-impact-manager--chapter-03--page-04"
+          cols: 4
+          rows: 4
+          tiles:
+            - id: article-01
+              type: frame
+              theme: secondary-dark
+              desktop:
+                col: "4 / 5"
+                row: "3 / 4"
+              content: |
+                <span class="mosaic-stat">$6</span>
+                <span class="mosaic-lead">Million</span>
+                <span class="mosaic-body">in accelerated licensing revenue</span>
