@@ -69,6 +69,15 @@ debugging to undo what took two minutes to break.
 
 ---
 
+## Session Startup Checklist
+
+1. **Open Firefox** to `localhost:8080/portfolio/inficon-impact-manager/` for visual verification. Claude Code launches its own separate Firefox instance (remote debug port) — yours is for Craig's-eyes-on confirmation. They are independent.
+2. **Dev server** — confirm `npm start` is running before either instance loads the page.
+3. **Read `_docs/session-state.md`** — authoritative state for the build.
+4. **Read any PR doc in `_docs/`** if one exists.
+
+---
+
 ## Session State
 
 `_docs/session-state.md` is the single source of truth for where the

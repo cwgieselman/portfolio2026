@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 9, 2026 (session 11)*
+*Last updated: April 9, 2026 (session 12)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -65,9 +65,24 @@ runway padding, scroll restoration fix. All committed.
 
 ---
 
+## What Was Done This Session (session 12)
+
+### Skeleton horizontal alignment fix (`choreography.js`)
+- **Bug:** C02 skeleton was shifted ~60px right of the mosaic column.
+- **Root cause:** `getBoundingClientRect().left` was read at `DOMContentLoaded`, mid-reflow (chapter heights/marginTops set by JS hadn't fully settled). Also would drift on viewport resize since `margin-inline: auto` recenters the chapter grid.
+- **Fix:** Extracted skeleton positioning into `positionSkeletons()`. Deferred to `window.load` (settled layout). Also attached debounced `window.resize` handler so it tracks on resize.
+- **Verified:** Diagnostic confirmed skeleton `left` now matches C02 mosaic `left` at 604px.
+
+### WORKFLOW.md — Session Startup Checklist added
+Documented the two-Firefox-instance behavior (MCP debug instance vs. Craig's browser) and the startup steps.
+
+---
+
 ## Uncommitted Changes
 
-None — all committed (transition work + full doc update).
+`choreography.js` — skeleton positioning fix
+`_docs/WORKFLOW.md` — session startup checklist
+`_docs/session-state.md` — this update
 
 ---
 
@@ -132,7 +147,7 @@ This is the designed transition replacing the placeholder scroll-tied fade. Appl
 
 ---
 
-## Plan for Next Session (session 12)
+## Plan for Next Session (session 13)
 
 1. Build C03 content in Figma + compile to YAML
 2. Add `transition:` entry between C02 and C03 (standard half-note, rowOverlap: 1)

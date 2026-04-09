@@ -190,18 +190,35 @@
     });
 
     // -- Position skeleton elements --------------------------------------
-    // Skeleton is position:fixed — align its left edge to the chapter mosaic column.
-    // Read mosaic left at init (scrollY=0) — sticky doesn't affect horizontal position.
+    // Skeleton is position:fixed — must track the mosaic column's horizontal position.
+    // Deferred to window.load because DOMContentLoaded can fire mid-reflow (chapter
+    // heights and marginTops set by JS above haven't fully settled yet).
+    // Re-runs on resize because margin-inline:auto recenters the chapter grid.
 
-    skeletonEls.forEach(skeletonEl => {
-      const forKey       = skeletonEl.dataset.for;
-      const targetChapter = chapterList.find(ch => ch.dataset.chapterKey === forKey);
-      if (!targetChapter) return;
-      const mosaic = targetChapter.querySelector(".chapter__mosaic");
-      if (!mosaic) return;
-      const mosaicLeft = mosaic.getBoundingClientRect().left;
-      skeletonEl.style.left = mosaicLeft + "px";
-      skeletonEl.style.zIndex = "1"; // above background, below chapter mosaics (z ≥ 3)
+    const positionSkeletons = () => {
+      skeletonEls.forEach(skeletonEl => {
+        const forKey        = skeletonEl.dataset.for;
+        const targetChapter = chapterList.find(ch => ch.dataset.chapterKey === forKey);
+        if (!targetChapter) return;
+        const mosaic = targetChapter.querySelector(".chapter__mosaic");
+        if (!mosaic) return;
+        skeletonEl.style.left   = mosaic.getBoundingClientRect().left + "px";
+        skeletonEl.style.zIndex = "1"; // above background, below chapter mosaics (z ≥ 3)
+      });
+    };
+
+    // Deferred measurement — layout settled by load time.
+    if (document.readyState === "complete") {
+      positionSkeletons();
+    } else {
+      window.addEventListener("load", positionSkeletons, { once: true });
+    }
+
+    // Re-measure on resize (debounced — margin-inline:auto shifts with viewport width).
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(positionSkeletons, 100);
     });
 
     // -- Hide non-first chapter mosaics ----------------------------------
