@@ -234,15 +234,6 @@
 #mosaic--inficon-impact-manager--chapter-01--page-03 { overflow: visible; }
 #mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"] { overflow: visible; }
 
-// Fade transition -- driven by choreography.js .is-exiting class
-#mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"]::before {
-    opacity: 1;
-    transition: opacity 0.5s ease;
-}
-
-#mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"].is-exiting::before {
-    opacity: 0;
-}
 
 #mosaic--inficon-impact-manager--chapter-01--page-03 .mosaic-tile[data-mosaic-variant="selfie"]::before {
     content: "";

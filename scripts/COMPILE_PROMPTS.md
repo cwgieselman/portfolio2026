@@ -667,6 +667,15 @@ chapters:
                 <span class="mosaic-body">Week on-site at the pilot FAB in France</span>
             ...
 
+  # transition: entries are authored manually AFTER compile — not in Figma.
+  # Insert between chapters whenever an editorial gap ("half note") is desired.
+  # See CONTRACT.md §Inter-Chapter Transition for full spec.
+  - transition:
+      forChapter: "chapter-02"
+      rowOverlap: 1
+      # fadePx: 50    # optional — overrides global default (50px)
+      # pausePx: 50   # optional — overrides global default (50px)
+
   - chapterKey: "chapter-02"
     chapterOffset: 1
     skeleton:
@@ -680,6 +689,8 @@ chapters:
         mosaic:
           ...
 ```
+
+**Note on `transition:` entries:** These are NOT compiled from Figma. The compile prompt generates chapters only. After compile, hand-author `transition:` blocks between chapters where the designed inter-chapter transition applies. Set `chapterOffset: 1` on the target chapter. See `CONTRACT.md §Inter-Chapter Transition` for geometry and tuning details.
 
 ---
 

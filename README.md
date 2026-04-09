@@ -109,8 +109,13 @@ The editorial structure follows a book metaphor throughout — in code, YAML, te
 | Scroll stack unit | Page | `pages:` in YAML |
 | Grid composition | Mosaic | `.mosaic` |
 | Composition cell | Mosaic tile | `.mosaic-tile` / `tiles:` in YAML |
+| Inter-chapter transition | Transition ("half note") | `transition:` in YAML chapters array |
 
 YAML key `tiles:` maps to HTML `<article>` elements. Intentional semantic split — documented in `CONTRACT.md`.
+
+### Chapter Transition
+
+Chapters are separated by a `transition:` entry in the `chapters:` YAML array. This drives the "half note" scroll transition: the next chapter's skeleton fades in at a 1-row mosaic interlock, B01 scrolls in over it, and the two chapters briefly travel together before the source chapter releases. `pushTravelPx` and all geometry are derived from `rowOverlap` — no magic numbers in YAML. Full spec: `CONTRACT.md §Inter-Chapter Transition`.
 
 ---
 

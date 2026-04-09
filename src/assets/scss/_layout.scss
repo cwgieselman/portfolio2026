@@ -283,6 +283,36 @@ body {
     // .chapter__mosaic .layout__page .content-cell removed — mosaic is now
     // a direct child of layout__page, no content-cell wrapper in the mosaic path.
 
+    /* -- Inter-chapter skeleton boundary ------------------------------------ */
+    /* Extracted from C(N+1) and rendered as a fixed sibling between chapters. */
+    /* position:fixed removes it from document flow entirely.                  */
+    /* choreography.js owns all positioning, opacity, and z-index at runtime.  */
+
+    .chapter__skeleton {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 752px;  // CONTRACT_EXCEPTION: MONEY mosaic width — matches chapter__mosaic
+        height: 752px; // CONTRACT_EXCEPTION: MONEY mosaic height
+        opacity: 0;
+        pointer-events: none;
+        // Grid stacking mirrors chapter__mosaic — single page at origin
+        display: grid;
+        grid-template-columns: 752px;
+        grid-template-rows: 752px;
+        // z-index, top, left set by choreography.js at runtime
+    }
+
+    .chapter__skeleton .layout__page {
+        // Mirrors chapter__mosaic .layout__page — single page stacked at origin
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+        padding-inline: 0;
+        container-type: inline-size;
+        container-name: content-cell;
+    }
+
 }
 
 /* -- Designed section (>= 1248px) -------------------------------------------

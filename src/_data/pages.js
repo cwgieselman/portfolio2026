@@ -44,6 +44,23 @@ module.exports = function pagesDataLoader() {
       );
     }
 
+    // Pre-process transition entries: attach P00 tile data from the referenced
+    // chapter and flag that chapter so the template skips its P00.
+    if (parsed.chapters) {
+      const chaptersByKey = {};
+      for (const item of parsed.chapters) {
+        if (item.chapterKey) chaptersByKey[item.chapterKey] = item;
+      }
+      for (const item of parsed.chapters) {
+        if (!item.transition) continue;
+        const target = chaptersByKey[item.transition.forChapter];
+        if (target && target.pages && target.pages.length > 0) {
+          item.transition.skeletonPage = target.pages[0];
+          target.skeletonExtracted = true;
+        }
+      }
+    }
+
     pages[pageKey] = parsed;
   }
 

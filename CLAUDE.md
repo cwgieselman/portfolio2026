@@ -351,3 +351,41 @@ The Mosaic is the grid composition component for case study pages. Full contract
     hasAlt: true
     alt: "Descriptive alt text"
 ```
+
+---
+
+## Inter-Chapter Transition System
+
+The "half note" transition is the standard editorial gap between chapters in a choreographed story. It is defined by a `transition:` entry in the `chapters:` array, hand-authored after compile (not in Figma).
+
+**YAML (sits between chapter entries, not nested inside either):**
+```yaml
+chapters:
+  - chapterKey: "chapter-01"
+    ...
+
+  - transition:
+      forChapter: "chapter-02"   # required — target chapterKey
+      rowOverlap: 1              # required — rows of mosaic interlock
+      fadePx: 50                 # optional — skeleton fade scroll budget
+      pausePx: 50                # optional — interlock hold scroll budget
+
+  - chapterKey: "chapter-02"
+    chapterOffset: 1             # must be >= rowOverlap
+    ...
+```
+
+**Key mechanical facts:**
+- `pages.js` extracts C(N+1)'s P00 as `transition.skeletonPage`; sets `skeletonExtracted: true` on target
+- `compiled-page.njk` renders P00 as a `<div class="chapter__skeleton">` — `position: fixed`, never in flow
+- C(N+1)'s mosaic renders without P00 (it's now owned by the skeleton sibling)
+- `choreography.js` owns all skeleton position/opacity/z-index at runtime
+- `pushTravelPx = mosaicH - rowOverlap × ROW_UNIT + GAP_PX` — derived, not authored
+- Chapter content handoff is atomic: C(N) exits and C(N+1) enters at the same scroll position
+
+**Files touched when adding a new transition:**
+- `page.yml` — add `transition:` entry + set `chapterOffset` on target
+- `placements/_<pageKey>.scss` — already has P00 skeleton rules; no new rules needed
+- No template changes required
+
+**Full spec:** `CONTRACT.md §Inter-Chapter Transition`
