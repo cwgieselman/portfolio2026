@@ -196,6 +196,12 @@ chapters:
                 <span class="mosaic-body">&lt;waves hand at the room as it is today&gt;</span>
                 <span class="mosaic-lead-italic">more useful to you?"</span>
 
+  - transition:
+      forChapter: "chapter-02"
+      rowOverlap: 1
+      fadePx: 50    # optional — overrides global TRANSITION_FADE_PX
+      pausePx: 50   # optional — overrides global TRANSITION_PAUSE_PX
+
   - chapterKey: "chapter-02"
     chapterOffset: 1
     skeleton:

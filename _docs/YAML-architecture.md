@@ -10,7 +10,9 @@ Reference doc for authoring `src/_data/pages/<pageKey>/page.yml`.
 page
   pageHeader
   chapters
-    chapter
+    chapter          ← chapterKey entry
+    transition       ← optional inter-chapter transition entry (sibling of chapter, not nested)
+    chapter          ← next chapterKey entry
       skeleton
       content
       pages
@@ -58,12 +60,45 @@ One narrative unit. Owns a skeleton page (P00) and one or more content pages (P0
 | Key | Type | Required | Notes |
 |-----|------|----------|-------|
 | `chapterKey` | string | yes | e.g. `"chapter-01"` |
-| `chapterOffset` | integer | yes | Rows of overlap with the previous chapter. `0` = no overlap |
+| `chapterOffset` | integer | yes | Rows of overlap with the previous chapter. `0` = no overlap. Must be `>= rowOverlap` when a `transition:` precedes this chapter. |
 | `skeleton` | array of strings | yes | Reference-only grid map — not read by templates |
 | `content` | array | yes | One or more richtext block objects — rendered in the left column |
 | `pages` | array | yes | One or more page objects |
 
-**`chapterOffset`** drives a negative `margin-top` in JS: `offset × 192px` (one cell + one gap at MONEY state).
+**`chapterOffset`** drives a negative `margin-top` in JS. For transition targets, the margin is derived from `pushTravelPx`, not from `chapterOffset` directly.
+
+---
+
+## Transition (Inter-Chapter)
+
+An optional entry in the `chapters:` array that sits between two chapter objects. Defines the "half note" transition between C(N) and C(N+1). Not nested inside either chapter.
+
+```yaml
+chapters:
+  - chapterKey: "chapter-01"
+    ...
+
+  - transition:
+      forChapter: "chapter-02"
+      rowOverlap: 1
+      fadePx: 50    # optional — scroll pixels for skeleton fade-in
+      pausePx: 50   # optional — scroll pixels for interlock hold
+
+  - chapterKey: "chapter-02"
+    chapterOffset: 1
+    ...
+```
+
+| Key | Type | Required | Notes |
+|-----|------|----------|-------|
+| `forChapter` | string | yes | `chapterKey` of the following chapter |
+| `rowOverlap` | integer | yes | Rows of mosaic interlock. `1` = standard half-note transition. |
+| `fadePx` | integer | no | Scroll pixels for skeleton fade-in. Default: `50`. |
+| `pausePx` | integer | no | Scroll pixels for interlock pause. Default: `50`. |
+
+**Processing:** `pages.js` extracts P00 from C(N+1) as `transition.skeletonPage` and sets `skeletonExtracted: true` on the target chapter. The template renders P00 as a `position:fixed` sibling (`chapter__skeleton`) rather than inside the chapter's mosaic. `choreography.js` owns all skeleton positioning, opacity, and timing at runtime.
+
+**`pushTravelPx`** is derived automatically: `mosaicH - rowOverlap × ROW_UNIT + GAP_PX`. Not a YAML field.
 
 ### Skeleton
 

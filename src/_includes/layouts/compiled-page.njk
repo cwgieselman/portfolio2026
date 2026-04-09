@@ -8,12 +8,29 @@
   {% if not data.mode %}<!-- PAGE_ERROR: mode required on {{ pageKey }} -->{% endif %}
   <div class="layout__story layout__story--{{ data.mode }}">
 
-    {% for chapter in data.chapters %}
+    {% for item in data.chapters %}
+
+    {% if item.transition %}
+
+      {# Inter-chapter skeleton boundary — position:fixed, owned by choreography.js #}
+      <div class="chapter__skeleton"
+           data-for="{{ item.transition.forChapter }}"
+           data-row-overlap="{{ item.transition.rowOverlap }}"
+           {% if item.transition.fadePx is not undefined %}data-fade-px="{{ item.transition.fadePx }}"{% endif %}
+           {% if item.transition.pausePx is not undefined %}data-pause-px="{{ item.transition.pausePx }}"{% endif %}
+           aria-hidden="true">
+        {% set cell = item.transition.skeletonPage %}
+        {% include "layouts/page.njk" %}
+      </div>
+
+    {% elif item.chapterKey %}
+
+    {% set chapter = item %}
     {% set chapterKey = chapter.chapterKey %}
 
     {% if chapter.chapterOffset is not defined %}<!-- CHAPTER_ERROR: chapterOffset required on {{ chapterKey }} -->{% endif %}
 
-    <div class="layout__chapter" data-chapter-offset="{{ chapter.chapterOffset }}">
+    <div class="layout__chapter" data-chapter-key="{{ chapter.chapterKey }}" data-chapter-offset="{{ chapter.chapterOffset }}">
 
       {# Left column — richtext blocks, animated in/out by choreography.js #}
       {% if chapter.content %}
@@ -28,12 +45,17 @@
       {# Right column — pages stacked at same origin #}
       <div class="chapter__mosaic">
         {% for pageItem in chapter.pages %}
+        {# Skip P00 if its skeleton has been extracted as a sibling #}
+        {% if not (loop.first and chapter.skeletonExtracted) %}
         {% set cell = pageItem %}
         {% include "layouts/page.njk" %}
+        {% endif %}
         {% endfor %}
       </div>
 
     </div>
+
+    {% endif %}
     {% endfor %}
 
   </div>

@@ -1,5 +1,5 @@
 # Session State
-*Last updated: April 8, 2026 (session 9)*
+*Last updated: April 9, 2026 (session 12)*
 
 > **THIS FILE IS AUTHORITATIVE STATE -- read it before touching anything.**
 > Both Claude.ai and Claude Code read this file.
@@ -9,89 +9,96 @@
 
 ## Branch
 
-`main` — all work committed through session 9.
+`experiment/inter-chapter-transition` — branched from `main` (session 10). Spike for the designed inter-chapter transition. `main` is the safe fallback at session 9 state.
 
 ---
 
 ## Where We Are
 
 ### Real project
-`localhost:8080/portfolio/inficon-impact-manager/` — Both chapters rendering. Chapter handoff working (seamless sticky release/start). Beat alignment correct. Skeleton tiles accurate for both chapters.
+`localhost:8080/portfolio/inficon-impact-manager/` — Both chapters rendering. The designed "half note" inter-chapter transition is implemented and mechanically correct.
 
-Chapter 01 and Chapter 02 are both enabled. Scroll behavior is mechanically correct. Inter-chapter transition is a placeholder (scroll-tied fade) pending Craig's designed transition.
+**Transition working:**
+- C02 skeleton fades in at 1-row interlock with C01 bottom (col 3–4 in row 1)
+- Brief scroll-bound pause holds the interlock
+- C02 B01 scrolls in from below; skeleton holds at interlockTop during push
+- C01 releases when B01 lands; both chapters scroll together (push travel)
+- C02 goes sticky at CHROME_TOP; B02 starts at 90% through push travel
+- C01 scrolls off page naturally — no fade after release
 
 ### Sandbox
 `portfolio-sandbox/` — abandoned. Not a reliable reference.
 
 ---
 
-## What Was Done This Session (session 9)
+## What Was Done This Session (sessions 10–11)
 
-### Beat alignment fix
-`landY: 0` for all beats. The negative `landY` offsets were fighting the empty rows
-at the top of each beat's tile placement (which already encode the 16px gap). With
-`landY: 0`, beats land exactly on the skeleton and grid gaps align correctly.
-Removed unused `GAP_PX` constant.
+#### Session 9 (reference)
+Beat alignment (`landY: 0`), z-index stacking, pointer-events scaffold, chapter
+handoff margin, placeholder opacity transitions, skeleton tile accuracy, scroll
+runway padding, scroll restoration fix. All committed.
 
-### Chapter z-index stacking
-Set `z-index` on `.chapter__mosaic` elements in decreasing order (C01=2, C02=1).
-Earlier chapters always paint above later ones during the overlap zone.
+### Session 10–11: Half-note inter-chapter transition
 
-### pointer-events scaffold
-`pointer-events: none` on `.mosaic-tile` in `_mosaic.scss`. Re-enable per custom
-tile via `[data-mosaic-variant]` selectors in placements. No interactive tiles yet.
+**Architecture:**
+- `transition:` entry in YAML between chapters carries `forChapter`, `rowOverlap`, `fadePx`, `pausePx`
+- `pages.js` pre-processes: extracts C(N+1) P00 as `skeletonPage`, sets `skeletonExtracted: true` on C(N+1)
+- `compiled-page.njk`: renders skeleton as `<div class="chapter__skeleton">` fixed sibling; skips P00 from C(N+1)'s mosaic
+- `_layout.scss`: `.chapter__skeleton` is `position: fixed; width: 752px; height: 752px`; left/top/z-index owned by JS
+- `choreography.js`: full transition sequencing — fade, pause, push, push travel, B02 start
 
-### Chapter handoff margin corrected
-Changed from `-(mosaicH - CHROME_TOP)` to `-mosaicH`. With the current chapter height
-formula, `-mosaicH` gives a seamless handoff: C(N).release = C(N+1).stickyStart.
-The old comment claiming -752 caused overlap was wrong (based on a previous implementation).
+**Key geometry:**
+- `interlockTop = CHROME_TOP + mosaicH - rowOverlap * ROW_UNIT + GAP_PX` (640px for rowOverlap=1)
+- `pushTravelPx = mosaicH - rowOverlap * ROW_UNIT + GAP_PX` (576px for rowOverlap=1) — derived, not tunable
+- C(N+1) `marginTop = -(mosaicH - pushTravelPx)` → C(N+1) goes sticky pushTravelPx after B01 lands
+- B02 starts at `pushEnd + TRANSITION_OVERLAP * pushTravelPx` (90% through push travel)
 
-### Inter-chapter opacity transitions (placeholder)
-- Non-first chapters: fade in over one BEAT_PX before their sticky phase starts
-  (hides them in normal flow before they're needed).
-- Non-last chapters: scroll-tied fade out after release — opacity tracks mosaic's
-  upward travel from CHROME_TOP to off-screen over (CHROME_TOP + mosaicH) px of scroll.
-- These are placeholder mechanics. Craig has a designed inter-chapter transition in
-  mind — this will be replaced next session.
+**YAML tuning knobs:** `fadePx`, `pausePx` (per-transition overrides of globals; defaults 50/50)
 
-### Skeleton tile accuracy
-C01 skeleton: removed article-14/15 (row4-cols3-4 — never populated by any C01 beat).
-C02 skeleton: removed article-01 (row1-col2) and article-04 (row2-col1) — never
-populated by any C02 beat. YAML tile lists and placements CSS both corrected.
-Skeleton map comments updated in both places.
+**Fixes applied this session:**
+- Gutter offset (+GAP_PX in interlockTop formula)
+- Skeleton holds at interlockTop during push phase (not sliding)
+- C(N+1) marginTop correctly delays sticky point by pushTravelPx
+- pushTravelPx accounts for rowOverlap (not a global constant)
+- B02 timing tied to push travel (not push beat)
+- C01 fade-out after release removed — C01 scrolls off naturally
 
-**Open architectural item:** skeleton should be auto-derived from beat tile union
-at 11ty compile time (in `pages.js`), not hand-maintained. Deferred to its own session.
+---
 
-### Scroll runway
-Added `padding-bottom: 1000px` to `.layout__story` in `_layout.scss` with a
-`TODO: REMOVE` comment. Temporary — gives enough scroll space to test the full
-C01→C02 transition during design iteration.
+## What Was Done This Session (session 12)
 
-### Scroll restoration fix (from PR doc, now committed)
-`history.scrollRestoration = 'manual'` + `window.scrollTo(0,0)` on init.
-PR doc deleted (stale).
+### Skeleton horizontal alignment fix (`choreography.js`)
+- **Bug:** C02 skeleton was shifted ~60px right of the mosaic column.
+- **Root cause:** `getBoundingClientRect().left` was read at `DOMContentLoaded`, mid-reflow (chapter heights/marginTops set by JS hadn't fully settled). Also would drift on viewport resize since `margin-inline: auto` recenters the chapter grid.
+- **Fix:** Extracted skeleton positioning into `positionSkeletons()`. Deferred to `window.load` (settled layout). Also attached debounced `window.resize` handler so it tracks on resize.
+- **Verified:** Diagnostic confirmed skeleton `left` now matches C02 mosaic `left` at 604px.
+
+### WORKFLOW.md — Session Startup Checklist added
+Documented the two-Firefox-instance behavior (MCP debug instance vs. Craig's browser) and the startup steps.
 
 ---
 
 ## Uncommitted Changes
 
-None — all committed.
+`choreography.js` — skeleton positioning fix
+`_docs/WORKFLOW.md` — session startup checklist
+`_docs/session-state.md` — this update
 
 ---
 
 ## What Is Currently Broken / Unresolved
 
-### Inter-chapter transition (next session priority)
-Craig has a specific design in mind for how C01→C02 should feel. The current
-scroll-tied fade is a mechanical placeholder. Bring Figma keyframes next session.
+### Needs visual confirmation
+Craig needs to verify the transition end-to-end in his own browser. The MCP Firefox
+instance confirmed correct geometry but the user's viewport/timing experience is
+the true test.
 
 ### Dead scroll after last beat
 Chapter height formula: `mosaicH + beatCount * BEAT_PX + CHROME_TOP`.
 With OVERLAP=0.5, beats consume `(beatCount-1)*OVERLAP*BEAT_PX + BEAT_PX` of scroll.
 Over-allocates by `(beatCount-1)*BEAT_PX*(1-OVERLAP)` = 300px for 3 beats.
 Result: 300px of extra dead scroll after last beat lands before chapter releases.
-Not fixed — deferred. May be moot once transition is designed.
+Not fixed — deferred. May be moot now that transition consumes that budget.
 
 ### Skeleton auto-derivation
 Skeletons hand-maintained in YAML. Should be computed in `pages.js` from beat union.
@@ -113,13 +120,39 @@ Skeletons hand-maintained in YAML. Should be computed in `pages.js` from beat un
 
 ---
 
-## Plan for Next Session
+## Inter-Chapter Transition Design (session 10 — full concept)
 
-1. Craig explains the inter-chapter transition design
-2. Pull Figma keyframes if needed
-3. Implement the designed transition (replacing placeholder opacity mechanics)
-4. Remove the 1000px padding-bottom TODO
-5. Commit
+This is the designed transition replacing the placeholder scroll-tied fade. Applies when editorial goals call for chapter separation — not required when mosaics are flush.
+
+### The "half note" metaphor
+- Beats arrive as **quarter notes** — regular rhythm, same scroll budget each
+- Chapter transitions arrive as **half notes** — longer breath, clears the deck
+
+### Sequence
+1. **C(N) last beat lands** → C(N+1) skeleton fades in, scroll-bound (subtle, not dead scroll). C(N+1) skeleton positioned so its top row overlaps C(N)'s bottom row by 1 row — grids interlock like puzzle pieces / Tetris.
+2. **Brief scroll-bound pause** — holds the interlocked state. Maintains assembly rhythm.
+3. **C(N+1) B01 scrolls in** over the skeleton. As it scrolls, it physically pushes C(N) upward — C(N) still sticky, but scroll budget shared between C(N+1) arriving and C(N) moving up.
+4. **C(N+1) B01 lands** → this is C(N)'s release point. C(N) unsticks and scrolls off.
+5. **C(N+1) B01 sticks** at CHROME_TOP. C(N) finishes scrolling off the page.
+6. **At ~90% of C(N+1) B01's final position** → C(N+1) B02 starts scrolling in, back into quarter-note beat rhythm.
+
+### Key mechanical changes from current implementation
+- C(N) release is no longer a fixed scroll formula — triggered by C(N+1) B01 landing
+- `rowOverlap` in YAML drives C(N+1) skeleton Y offset relative to C(N) (interlock geometry anchor)
+- Transition has its own scroll budget (the "half note") — longer than a beat, shorter than a chapter. Exact px TBD.
+- C(N+1) B01 scroll-in must drive C(N) upward simultaneously (shared scroll phase)
+
+### Implementation status
+**Implemented** on `experiment/inter-chapter-transition`. The designed sequence is mechanically correct. Geometry verified with JS diagnostics. Pending Craig's visual confirmation and any tuning.
+
+---
+
+## Plan for Next Session (session 13)
+
+1. Build C03 content in Figma + compile to YAML
+2. Add `transition:` entry between C02 and C03 (standard half-note, rowOverlap: 1)
+3. Remove 1000px `padding-bottom` TODO from `_layout.scss` (no longer needed once C03 is in place)
+4. Consider merging `experiment/inter-chapter-transition` → `main`
 
 **Start by reading this file. One change at a time. Verify before reporting.**
 
